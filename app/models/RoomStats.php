@@ -290,19 +290,24 @@ trait RoomStats
             $hot_cache->expire($minutes_num_stat_key, 3600 * 3);
 
             // 爆礼物
-            if (isDevelopmentEnv() || in_array($room->id, Rooms::getGameWhiteList())) {
-                $room->statBoomIncome($income, $time);
-            }
+            $room->statBoomIncome($sender_id, $income, $time);
 
             debug($minutes_stat_key);
         }
     }
 
     // 爆礼物流水值记录
-    public function statBoomIncome($income, $time)
+    public function statBoomIncome($sender_id, $income, $time)
     {
+        $boom_config = BoomConfigs::getBoomConfigByCache($this->boom_config_id);
+
+        if (isBlank($boom_config)) {
+            return;
+        }
+
         $cache = self::getHotWriteCache();
         $room_id = $this->id;
+
 
         // 单位周期 房间当前流水值
         $cur_income_key = self::generateBoomCurIncomeKey($room_id);
@@ -315,10 +320,13 @@ trait RoomStats
 
         $expire = endOfDay() - $time;
 
-        $expire = 180;
+        if (isDevelopmentEnv()) {
+            $expire = 180;
+        }
 
         $boom_list_key = 'boom_gifts_list';
-        $total_income = BoomHistories::getBoomTotalValue();
+        $total_value = fetch($boom_config, 'total_value');
+        $start_value = fetch($boom_config, 'start_value');
 
         // 判断房间是否在进行爆礼物活动
         if ($cache->exists($room_boon_gift_sign_key)) {
@@ -330,27 +338,31 @@ trait RoomStats
             // 单位周期 截止目前房间总流水
             $cur_total_income = $cur_income + $income;
 
-            if ($cur_total_income >= $total_income) {
+            if ($cur_total_income >= $total_value) {
                 // 爆礼物
                 $cache->setex($room_boon_gift_sign_key, 180, $time);
                 $cache->del($cur_income_key);
                 $cache->zrem($boom_list_key, $room_id);
 
-                $this->pushBoomIncomeMessage($total_income, $cur_total_income);
+                $this->pushBoomIncomeMessage($total_value, $cur_total_income);
 
                 unlock($lock);
 
                 return;
             }
 
+            $record_key = Rooms::generateBoomRecordKey($room_id);
+
+            $cache->zincrby($record_key, $income, $sender_id);
+            $cache->expire($record_key, $expire);
             $res = $cache->setex($cur_income_key, $expire, $cur_total_income);
 
-            if ($res && $cur_total_income >= BoomHistories::getBoomStartLine()) {
+            if ($res && $cur_total_income >= $start_value) {
 
                 if (!$cache->zscore($boom_list_key, $room_id)) {
                     $cache->zadd($boom_list_key, time(), $room_id);
                 }
-                $this->pushBoomIncomeMessage($total_income, $cur_total_income);
+                $this->pushBoomIncomeMessage($total_value, $cur_total_income);
             }
         }
 
@@ -364,7 +376,7 @@ trait RoomStats
         $room_boon_gift_sign_key = Rooms::generateRoomBoomGiftSignKey($this->id);
 
         if ($cache->exists($room_boon_gift_sign_key)) {
-            return \BoomHistories::getBoomTotalValue();
+            return $this->getBoomTotalValue();
         }
 
         $cur_income = $cache->get($cur_income_key);
@@ -375,6 +387,11 @@ trait RoomStats
     static public function generateBoomCurIncomeKey($room_id)
     {
         return 'boom_target_value_room_' . $room_id;
+    }
+
+    static public function generateBoomRecordKey($room_id)
+    {
+        return 'boom_room_record_' . $room_id;
     }
 
     //房间收益列表

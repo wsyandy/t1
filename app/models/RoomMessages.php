@@ -102,17 +102,18 @@ trait RoomMessages
         }
     }
 
-    function pushBoomIncomeMessage($total_income, $cur_income, $status = STATUS_ON)
+    function pushBoomIncomeMessage($total_value, $current_value, $status = STATUS_ON)
     {
+        $boom_config = \BoomConfigs::getBoomConfigByCache($this->boom_config_id);
         $body = [
             'action' => 'boom_gift',
             'boom_gift' => [
                 'expire_at' => Rooms::getBoomGiftExpireAt($this->id),
                 'client_url' => 'url://m/backpacks',
-                'svga_image_url' => BoomHistories::getSvgaImageUrl(),
-                'total_value' => (int)$total_income,
+                'svga_image_url' => \BoomConfigs::getSvgaImageUrl($boom_config),
+                'total_value' => (int)$total_value,
                 'show_rank' => 1000000,
-                'current_value' => (int)$cur_income,
+                'current_value' => (int)$current_value,
                 'render_type' => 'svga',
                 'status' => $status,
                 'image_color' => 'blue'
