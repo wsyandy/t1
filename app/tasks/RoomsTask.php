@@ -186,11 +186,17 @@ class RoomsTask extends \Phalcon\Cli\Task
             list($room_id, $user_id) = explode("_", $target_id);
             if (!$room_id || !$user_id) {
                 info('no ', $room_id, $user_id);
+                Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
                 continue;
             }
 
             $user = Users::findFirstById($user_id);
             $room = Rooms::findFirstById($room_id);
+            if(!$user || !$room){
+                info('no ', $room_id, $user_id);
+                Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
+                continue;
+            }
 
             $current_room_id = $user->current_room_id;
             $current_room_seat_id = $user->current_room_seat_id;
