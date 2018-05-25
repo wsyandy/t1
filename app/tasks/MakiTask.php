@@ -51,11 +51,12 @@ class MakiTask extends Phalcon\Cli\Task
         if (count($users) < 1) return;
 
         foreach ($users as $user) {
-            echoLine('操作user_id@'.$user->id);
+
             if ($user->isInAnyRoom()) {
                 echoLine('不操作user_id@'.$user->id);
                 continue;
             }
+            echoLine('操作user_id@'.$user->id);
 
             foreach ($orders as $order) {
                 $order == 'up' && $user->upRoomSeat($user->id, $room->id);
