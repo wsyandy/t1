@@ -46,32 +46,22 @@ class MakiTask extends Phalcon\Cli\Task
         if (!$room) return;
         echoLine('进入房间');
 
-
         $redis = Users::getHotWriteCache();
         $key = 'pressure_app_user_id_list';
         $entered_users = $redis->zrevrange($key, 0, -1, 'withscores');
 
-
-        if (isset($orders['enter'])) {
-
+        if (in_array('enter', $orders)) {
             $users = Users::findPagination(['order' => 'id desc'], mt_rand(1, 50), 4);
             if (count($users) < 1) return;
-
             foreach ($users as $user) {
+                if ($user->isInAnyRoom()) continue;
                 $redis->zadd($key, time(), $user->id);
-
                 Rooms::addWaitEnterSilentRoomList($user->id);
                 Rooms::delay()->enterSilentRoom($room->id, $user->id);
             }
         }
 
-
-        $i = 0;
         foreach ($entered_users as $user) {
-
-            if ($user->isInAnyRoom()) continue;
-
-            $i++;
             foreach ($orders as $order) {
                 $order == 'up' && $user->upRoomSeat($user->id, $room->id);
                 $order == 'send' && $user->sendGift($user->id, $room->id);
@@ -80,6 +70,5 @@ class MakiTask extends Phalcon\Cli\Task
 
             }
         }
-        echoLine($i.'个用户执行');
     }
 }
