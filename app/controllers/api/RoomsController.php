@@ -319,7 +319,7 @@ class RoomsController extends BaseController
 
         $boom_config = \BoomConfigs::getBoomConfig();
 
-        if ($boom_config && $room->hasBoomGift($boom_config->start_value)) {
+        if ($boom_config && $room->hasBoomGift($boom_config)) {
 
             $res['boom_gift'] = [
                 'expire_at' => \Rooms::getBoomGiftExpireAt($room_id),

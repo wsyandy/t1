@@ -684,13 +684,13 @@ trait RoomAttrs
         return $key;
     }
 
-    function hasBoomGift($start_value)
+    function hasBoomGift($boom_config)
     {
         $cache = \Rooms::getHotWriteCache();
-        $room_boon_gift_sign_key = Rooms::generateRoomBoomGiftSignKey($this->id);
-        $cur_income = $this->getCurrentBoomGiftValue();
+        $room_boom_gift_sign_key = Rooms::generateRoomBoomGiftSignKey($this->id);
+        $cur_income = $this->getCurrentBoomGiftValue($boom_config);
 
-        if ($cur_income >= $start_value || $cache->exists($room_boon_gift_sign_key)) {
+        if ($cur_income >= $boom_config->start_value || $cache->exists($room_boom_gift_sign_key)) {
             return true;
         }
 
