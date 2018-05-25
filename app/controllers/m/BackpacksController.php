@@ -113,33 +113,33 @@ class BackpacksController extends BaseController
                     break;
                 }
 
-            case $rate > 42 && $rate <= 45:
+            case $rate > 41 && $rate <= 44:
                 {
                     $type = BACKPACK_DIAMOND_TYPE;
                     $num = 39;
                     break;
                 }
 
-            case $rate > 45 && $rate <= 48:
+            case $rate > 44 && $rate <= 47:
                 {
                     $type = BACKPACK_DIAMOND_TYPE;
                     $num = 50;
                     break;
                 }
 
-            case $rate > 48 && $rate <= 50:
+            case $rate > 47 && $rate <= 49:
                 {
                     $type = BACKPACK_DIAMOND_TYPE;
                     $num = 77;
                     break;
                 }
-            case $rate > 50 && $rate <= 51:
+            case $rate > 49 && $rate <= 50:
                 {
                     $type = BACKPACK_DIAMOND_TYPE;
                     $num = 99;
                     break;
                 }
-            case $rate > 51 && $rate <= 56:
+            case $rate > 50 && $rate <= 56:
                 {
                     $type = BACKPACK_GOLD_TYPE;
                     $num = 9;
@@ -151,20 +151,20 @@ class BackpacksController extends BaseController
                     $num = 26;
                     break;
                 }
-            case $rate > 65 && $rate <= 75:
+            case $rate > 64 && $rate <= 75:
                 {
                     $type = BACKPACK_GOLD_TYPE;
                     $num = 55;
                     break;
                 }
 
-            case $rate > 76 && $rate <= 83:
+            case $rate > 75 && $rate <= 83:
                 {
                     $type = BACKPACK_GOLD_TYPE;
                     $num = 77;
                     break;
                 }
-            case $rate > 84 && $rate <= 90:
+            case $rate > 83 && $rate <= 90:
                 {
                     $type = BACKPACK_GOLD_TYPE;
                     $num = 128;
