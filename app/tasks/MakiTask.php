@@ -72,4 +72,95 @@ class MakiTask extends Phalcon\Cli\Task
             }
         }
     }
+
+
+    function t2()
+    {
+        $order_list = ['up', 'down', 'enter', 'exit', 'send', 'message', 'kick'];
+        $params = array_intersect(self::$params, $order_list);
+
+        $room_id = 136971;
+        $room = Rooms::findById($room_id);
+
+        $redis = Users::getHotWriteCache();
+        $key = 'pressure_app_user_id_list';
+        $users_number = $redis->zcard($key);
+        $users = $redis->zrevrange($key, 0, -1, 'withscores');
+
+        if (empty($params)) $params = $order_list;
+        $order = count($params) == 1 ? $params[0] : $params[array_rand($params)];
+
+        $real_users = array_rand($users, mt_rand(1, $users_number));
+        !is_array($real_users) && $real_users = [$real_users];
+        $real_users = Users::findByIds(array_values($real_users));
+
+        foreach ($real_users as $user) {
+            $order == 'up' && $user->upRoomSeat($user->id, $room->id);
+            $order == 'send' && $user->sendGift($user->id, $room->id);
+            $order == 'message' && $user->sendTopTopicMessage($user->id, $room->id);
+            $order == 'exit' && $room->exitSilentRoom($user);
+        }
+
+    }
+
+
+    function t3()
+    {
+        $orders = empty(self::$params) ? ['enter', 'exit', 'up', 'down', 'message', 'send'] : self::$params;
+
+        $room_id = 137039;
+        $room = Rooms::findById($room_id);
+
+        $room_seat = RoomSeats::findFirst(['conditions' => 'room_id = :room_id: and user_id > 0',
+            'bind' => ['room_id' => $room->id]]);
+
+        $conditions = [
+            'conditions' => 'user_type = :user_type: and user_status  = :user_status:',
+            'bind' => [
+                'user_type' => USER_TYPE_SILENT,
+                'user_status' => USER_STATUS_ON,
+            ],
+            'limit' => 4,
+        ];
+        $users = Users::find($conditions);
+
+        foreach ($users as $user) {
+
+            foreach ($orders as $order) {
+
+                switch ($order) {
+
+                    case 'enter':
+
+                        Rooms::addWaitEnterSilentRoomList($user->id);
+                        Rooms::delay()->enterSilentRoom($room->id, $user->id);
+                        break;
+
+                    case 'exit':
+                        $room->exitSilentRoom($user);
+                        break;
+
+                    case 'up':
+                        $user->upRoomSeat($user->id, $room->id);
+                        break;
+
+                    case 'down':
+                        $user->asyncDownRoomSeat($user->id, $room_seat->id);
+                        break;
+
+                    case 'message':
+                        $user->sendTopTopicMessage($user->id, $room->id);
+                        break;
+
+                    case 'send':
+                        $user->sendGift($user->id, $room->id);
+                        break;
+
+                    default:
+                        continue;
+                        break;
+                }
+            }
+        }
+    }
 }
