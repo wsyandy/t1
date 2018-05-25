@@ -39,25 +39,24 @@ class MakiTask extends Phalcon\Cli\Task
         $orders = ['up', 'down', 'enter', 'exit', 'send', 'message'];
         $orders = (isset(self::$params[0]) && self::$params[0] == 'list') ? $orders : array_intersect(self::$params, $orders);
         if (empty($orders)) return;
-        echoLine('执行指令@'.implode(',', $orders));
 
-        $room = Rooms::findFirstById(137039);
+
+        $room_id = true ? 137039 : 136971;
+        $room = Rooms::findFirstById($room_id);
         if (!$room) return;
+        echoLine('进入房间');
 
-        $users = Users::find([
-                    'order' => 'id desc',
-                    'limit' => 4
-                ]);
+        $users = Users::findPagination(['order' => 'id desc'], mt_rand(1, 50), 4);
         if (count($users) < 1) return;
 
+        $i = 0;
         foreach ($users as $user) {
 
             if ($user->isInAnyRoom()) {
-                echoLine('不操作user_id@'.$user->id);
                 continue;
             }
-            echoLine('操作user_id@'.$user->id);
 
+            $i++;
             foreach ($orders as $order) {
                 $order == 'up' && $user->upRoomSeat($user->id, $room->id);
                 $order == 'send' && $user->sendGift($user->id, $room->id);
@@ -66,7 +65,9 @@ class MakiTask extends Phalcon\Cli\Task
                     Rooms::addWaitEnterSilentRoomList($user->id);
                     Rooms::delay()->enterSilentRoom($room->id, $user->id);
                 }
+
             }
         }
+        echoLine($i.'个用户执行');
     }
 }
