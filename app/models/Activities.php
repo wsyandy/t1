@@ -447,7 +447,7 @@ class Activities extends BaseModel
         if ($this->isTotalGiftCharmWeekList()) {
             $start_at = date("Ymd", beginOfWeek($this->start_at));
             $end_at = date("Ymd", endOfWeek($this->start_at));
-            $key = "gift_charm_week_list_activity_stat_gift_id_" . $this->id . "_start_" . $start_at . "_end_" . $end_at;
+            $key = "total_gift_charm_week_list_activity_stat_activity_id_" . $this->id . "_start_" . $start_at . "_end_" . $end_at;
         }
 
         return $key;
