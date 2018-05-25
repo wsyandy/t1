@@ -351,7 +351,11 @@ trait RoomAttrs
     function getNotDrawRedPacketNum($user)
     {
         $ids = self::getNotDrawRedPacketIds($user);
-        return count($ids);
+        if($ids){
+            return count($ids);
+        }
+
+        return 0;
     }
 
     function getNotDrawRedPacket($user)
