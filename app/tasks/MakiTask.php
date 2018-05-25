@@ -43,10 +43,6 @@ class MakiTask extends Phalcon\Cli\Task
         $room = Rooms::findFirstById(137039);
         if (!$room) return;
 
-
-        $users = $room->selectSilentUsers(4);
-        var_dump($users);
-        return;
         $users = Users::find([
                     'order' => 'id desc',
                     'limit' => 4
