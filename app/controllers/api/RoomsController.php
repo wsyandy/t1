@@ -749,7 +749,7 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '无效的房间');
         }
 
-        $room->updateLastAt($this->currentUser());
+        $room->updateUserActiveList($this->currentUser());
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '发送成功');
     }
