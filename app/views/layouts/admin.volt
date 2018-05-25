@@ -225,6 +225,17 @@
                 </ul>
             </li>
         {% endif %}
+        <!--测试-->
+        {% if isAllowed('simulate','index') %}
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">测试<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    {% if isAllowed('simulate','index') %}
+                        <li><a href="/admin/simulate">模拟消息</a></li>
+                    {% endif %}
+                </ul>
+            </li>
+        {% endif %}
 
         <!-- 统计 -->
         {% if isAllowed('stats','hours') or isAllowed('stats','days') or isAllowed('active_users','day_rank_list') or
