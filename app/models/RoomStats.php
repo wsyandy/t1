@@ -344,12 +344,14 @@ trait RoomStats
                 $cache->del($cur_income_key);
                 $cache->zrem($boom_list_key, $room_id);
                 $cache->setex("room_boom_diamond_num_room_id_" . $room_id, 180, 0);
-
+                //$cache->setex();
                 $this->pushBoomIncomeMessage($total_value, $cur_total_income);
 
                 //临时查询
                 $sender = Users::findFirstById($sender_id);
-                $this->pushTopTopicMessage($sender, "恭喜【{$sender->nickname}】在【{$this->name}】内，成功引爆火箭，快来抢礼物吧！");
+                $content = "恭喜【{$sender->nickname}】在【{$this->name}】内，成功引爆火箭，快来抢礼物吧！";
+                Rooms::delay()->asyncAllNoticePush($content,  ['type' => 'top_topic_message', 'hot' => 1]);
+                //$this->pushTopTopicMessage($sender, ['type' => 'top_topic_message', 'hot' => 1]);
                 unlock($lock);
 
                 return;

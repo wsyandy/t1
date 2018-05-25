@@ -75,133 +75,142 @@ class BackpacksController extends BaseController
 
         $rate = mt_rand(1, 100);
 
-        switch ($rate) {
-            case $rate >= 1 && $rate <= 5:
-                {
-                    $type = BACKPACK_DIAMOND_TYPE;
-                    $num = 1;
-                    break;
-                }
-            case $rate > 5 && $rate <= 13:
-                {
-                    $type = BACKPACK_DIAMOND_TYPE;
-                    $num = 3;
-                    break;
-                }
-            case $rate > 13 && $rate <= 23:
-                {
-                    $type = BACKPACK_DIAMOND_TYPE;
-                    $num = 8;
-                    break;
-                }
-            case $rate > 23 && $rate <= 30:
-                {
-                    $type = BACKPACK_DIAMOND_TYPE;
-                    $num = 11;
-                    break;
-                }
-            case $rate > 30 && $rate <= 36:
-                {
-                    $type = BACKPACK_DIAMOND_TYPE;
-                    $num = 18;
-                    break;
-                }
-            case $rate > 36 && $rate <= 41:
-                {
-                    $type = BACKPACK_DIAMOND_TYPE;
-                    $num = 28;
-                    break;
-                }
+//        switch ($rate) {
+//            case $rate >= 1 && $rate <= 5:
+//                {
+//                    $type = BACKPACK_DIAMOND_TYPE;
+//                    $num = 1;
+//                    break;
+//                }
+//            case $rate > 5 && $rate <= 13:
+//                {
+//                    $type = BACKPACK_DIAMOND_TYPE;
+//                    $num = 3;
+//                    break;
+//                }
+//            case $rate > 13 && $rate <= 23:
+//                {
+//                    $type = BACKPACK_DIAMOND_TYPE;
+//                    $num = 8;
+//                    break;
+//                }
+//            case $rate > 23 && $rate <= 30:
+//                {
+//                    $type = BACKPACK_DIAMOND_TYPE;
+//                    $num = 11;
+//                    break;
+//                }
+//            case $rate > 30 && $rate <= 36:
+//                {
+//                    $type = BACKPACK_DIAMOND_TYPE;
+//                    $num = 18;
+//                    break;
+//                }
+//            case $rate > 36 && $rate <= 41:
+//                {
+//                    $type = BACKPACK_DIAMOND_TYPE;
+//                    $num = 28;
+//                    break;
+//                }
+//
+//            case $rate > 41 && $rate <= 44:
+//                {
+//                    $type = BACKPACK_DIAMOND_TYPE;
+//                    $num = 39;
+//                    break;
+//                }
+//
+//            case $rate > 44 && $rate <= 47:
+//                {
+//                    $type = BACKPACK_DIAMOND_TYPE;
+//                    $num = 50;
+//                    break;
+//                }
+//
+//            case $rate > 47 && $rate <= 49:
+//                {
+//                    $type = BACKPACK_DIAMOND_TYPE;
+//                    $num = 77;
+//                    break;
+//                }
+//            case $rate > 49 && $rate <= 50:
+//                {
+//                    $type = BACKPACK_DIAMOND_TYPE;
+//                    $num = 99;
+//                    break;
+//                }
+//            case $rate > 50 && $rate <= 56:
+//                {
+//                    $type = BACKPACK_GOLD_TYPE;
+//                    $num = 9;
+//                    break;
+//                }
+//            case $rate > 56 && $rate <= 64:
+//                {
+//                    $type = BACKPACK_GOLD_TYPE;
+//                    $num = 26;
+//                    break;
+//                }
+//            case $rate > 64 && $rate <= 75:
+//                {
+//                    $type = BACKPACK_GOLD_TYPE;
+//                    $num = 55;
+//                    break;
+//                }
+//
+//            case $rate > 75 && $rate <= 83:
+//                {
+//                    $type = BACKPACK_GOLD_TYPE;
+//                    $num = 77;
+//                    break;
+//                }
+//            case $rate > 83 && $rate <= 90:
+//                {
+//                    $type = BACKPACK_GOLD_TYPE;
+//                    $num = 128;
+//                    break;
+//                }
+//            case $rate > 90 && $rate <= 95:
+//                {
+//                    $type = BACKPACK_GOLD_TYPE;
+//                    $num = 166;
+//                    break;
+//                }
+//            case $rate > 95 && $rate <= 98:
+//                {
+//                    $type = BACKPACK_GOLD_TYPE;
+//                    $num = 288;
+//                    break;
+//                }
+//            case $rate > 98 && $rate <= 100:
+//                {
+//                    $type = BACKPACK_GOLD_TYPE;
+//                    $num = 77;
+//                    break;
+//                }
+//
+//        }
 
-            case $rate > 41 && $rate <= 44:
-                {
-                    $type = BACKPACK_DIAMOND_TYPE;
-                    $num = 39;
-                    break;
-                }
+        $type = BACKPACK_DIAMOND_TYPE;
+        $num = mt_rand(1, 500);
 
-            case $rate > 44 && $rate <= 47:
-                {
-                    $type = BACKPACK_DIAMOND_TYPE;
-                    $num = 50;
-                    break;
-                }
+//        if (BACKPACK_DIAMOND_TYPE == $type) {
+//
+//        }
 
-            case $rate > 47 && $rate <= 49:
-                {
-                    $type = BACKPACK_DIAMOND_TYPE;
-                    $num = 77;
-                    break;
-                }
-            case $rate > 49 && $rate <= 50:
-                {
-                    $type = BACKPACK_DIAMOND_TYPE;
-                    $num = 99;
-                    break;
-                }
-            case $rate > 50 && $rate <= 56:
-                {
-                    $type = BACKPACK_GOLD_TYPE;
-                    $num = 9;
-                    break;
-                }
-            case $rate > 56 && $rate <= 64:
-                {
-                    $type = BACKPACK_GOLD_TYPE;
-                    $num = 26;
-                    break;
-                }
-            case $rate > 64 && $rate <= 75:
-                {
-                    $type = BACKPACK_GOLD_TYPE;
-                    $num = 55;
-                    break;
-                }
+        $amount = $cache->get("room_boom_diamond_num_room_id_" . $room_id);
 
-            case $rate > 75 && $rate <= 83:
-                {
-                    $type = BACKPACK_GOLD_TYPE;
-                    $num = 77;
-                    break;
-                }
-            case $rate > 83 && $rate <= 90:
-                {
-                    $type = BACKPACK_GOLD_TYPE;
-                    $num = 128;
-                    break;
-                }
-            case $rate > 90 && $rate <= 95:
-                {
-                    $type = BACKPACK_GOLD_TYPE;
-                    $num = 166;
-                    break;
-                }
-            case $rate > 95 && $rate <= 98:
-                {
-                    $type = BACKPACK_GOLD_TYPE;
-                    $num = 288;
-                    break;
-                }
-            case $rate > 98 && $rate <= 100:
-                {
-                    $type = BACKPACK_GOLD_TYPE;
-                    $num = 77;
-                    break;
-                }
+        info("boom_record", $amount, $room_id, $num, $this->currentUser()->id);
 
-        }
+        $total_amount = mt_rand(5000, 10000);
 
-        if (BACKPACK_DIAMOND_TYPE == $type) {
+        if ($amount > $total_amount) {
+            $type = BACKPACK_GOLD_TYPE;
+            $num = mt_rand(10, 5000);
+        } else {
             $cache->incrby("room_boom_diamond_num_room_id_" . $room_id, $num);
-            $amount = $cache->get("room_boom_diamond_num_room_id_" . $room_id);
-
-            info("boom_record", $amount, $room_id, $num, $this->currentUser()->id);
-
-            if ($amount >= 1500) {
-                $type = BACKPACK_GOLD_TYPE;
-                $num = 1000;
-            }
         }
+
         // 1 随机类型
         //$type = array_rand(array_flip(self::$boom_type));
 

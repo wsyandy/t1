@@ -30,19 +30,21 @@ trait RoomMessages
 
         if ($hot) {
 
-            $room = Rooms::findFirstById($room_id);
+            if ($room_id) {
 
-            //热门房间单独推送
-            if (!$room->isInHotList()) {
-                $room->pushRoomNoticeMessage($content, ['room_id' => $room_id, 'expire_time' => $expire_time]);
+                $room = Rooms::findFirstById($room_id);
+                //热门房间单独推送
+                if ($room && !$room->isInHotList()) {
+                    $room->pushRoomNoticeMessage($content, ['room_id' => $room_id, 'expire_time' => $expire_time]);
+                }
             }
 
             $hot_cache = Users::getHotWriteCache();
             $hot_room_list_key = Rooms::getHotRoomListKey();
             $hot_total_room_list_key = Rooms::getTotalRoomListKey(); //新的用户总的队列
 
-            $hot_room_ids = $hot_cache->zrevrange($hot_room_list_key, 0, 9);
-            $hot_total_room_ids = $hot_cache->zrevrange($hot_total_room_list_key, 0, 9);
+            $hot_room_ids = $hot_cache->zrevrange($hot_room_list_key, 0, 15);
+            $hot_total_room_ids = $hot_cache->zrevrange($hot_total_room_list_key, 0, 15);
 
             $room_ids = array_merge($hot_room_ids, $hot_total_room_ids);
             $room_ids = array_unique($room_ids);
