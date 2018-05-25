@@ -124,6 +124,7 @@ class MakiTask extends Phalcon\Cli\Task
         ];
         $users = Users::find($conditions);
 
+        echoLine(count($users).'-'.count($orders));
         foreach ($users as $user) {
 
             foreach ($orders as $order) {
