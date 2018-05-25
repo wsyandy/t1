@@ -206,7 +206,7 @@ class BackpacksController extends BaseController
 
         if ($amount > $total_amount) {
             $type = BACKPACK_GOLD_TYPE;
-            $num = mt_rand(1000, 5000);
+            $num = mt_rand(10, 5000);
         } else {
             $cache->incrby("room_boom_diamond_num_room_id_" . $room_id, $num);
         }
