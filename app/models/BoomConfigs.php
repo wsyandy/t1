@@ -34,7 +34,7 @@ class BoomConfigs extends BaseModel
         ];
     }
 
-    function getSvgaImageSmallUrl()
+    function getSvgaImageUrl()
     {
         if (isBlank($this->svga_image)) {
             return '';
