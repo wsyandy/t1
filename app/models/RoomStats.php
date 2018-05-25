@@ -344,7 +344,7 @@ trait RoomStats
                 $cache->del($cur_income_key);
                 $cache->zrem($boom_list_key, $room_id);
                 $cache->setex("room_boom_diamond_num_room_id_" . $room_id, 180, 0);
-
+                //$cache->setex();
                 $this->pushBoomIncomeMessage($total_value, $cur_total_income);
 
                 //临时查询
