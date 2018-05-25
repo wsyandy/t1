@@ -299,7 +299,7 @@ trait RoomStats
     // 爆礼物流水值记录
     public function statBoomIncome($sender_id, $income, $time)
     {
-        $boom_config = BoomConfigs::getBoomConfigByCache($this->boom_config_id);
+        $boom_config = BoomConfigs::getBoomConfig();
 
         if (isBlank($boom_config)) {
             return;
@@ -327,6 +327,7 @@ trait RoomStats
         $boom_list_key = 'boom_gifts_list';
         $total_value = fetch($boom_config, 'total_value');
         $start_value = fetch($boom_config, 'start_value');
+        $svga_image_url = $boom_config->svga_image_url;
 
         // 判断房间是否在进行爆礼物活动
         if ($cache->exists($room_boon_gift_sign_key)) {
@@ -344,13 +345,16 @@ trait RoomStats
                 $cache->del($cur_income_key);
                 $cache->zrem($boom_list_key, $room_id);
                 $cache->setex("room_boom_diamond_num_room_id_" . $room_id, 180, 0);
-                //$cache->setex();
-                $this->pushBoomIncomeMessage($total_value, $cur_total_income);
+                $cache->setex('room_boom_user_room_id_' . $room_id, $sender_id);
+
+                $params = ['total_value' => $total_value, 'cur_total_income' => $cur_total_income, 'svga_image_url' => $svga_image_url];
+
+                $this->pushBoomIncomeMessage($params);
 
                 //临时查询
                 $sender = Users::findFirstById($sender_id);
                 $content = "恭喜【{$sender->nickname}】在【{$this->name}】内，成功引爆火箭，快来抢礼物吧！";
-                Rooms::delay()->asyncAllNoticePush($content,  ['type' => 'top_topic_message', 'hot' => 1]);
+                Rooms::delay()->asyncAllNoticePush($content, ['type' => 'top_topic_message', 'hot' => 1]);
                 //$this->pushTopTopicMessage($sender, ['type' => 'top_topic_message', 'hot' => 1]);
                 unlock($lock);
 
@@ -368,21 +372,24 @@ trait RoomStats
                 if (!$cache->zscore($boom_list_key, $room_id)) {
                     $cache->zadd($boom_list_key, time(), $room_id);
                 }
-                $this->pushBoomIncomeMessage($total_value, $cur_total_income);
+
+                $params = ['total_value' => $total_value, 'cur_total_income' => $cur_total_income, 'svga_image_url' => $svga_image_url];
+
+                $this->pushBoomIncomeMessage($params);
             }
         }
 
         unlock($lock);
     }
 
-    function getCurrentBoomGiftValue()
+    function getCurrentBoomGiftValue($boom_config)
     {
         $cache = \Rooms::getHotWriteCache();
         $cur_income_key = \Rooms::generateBoomCurIncomeKey($this->id);
         $room_boon_gift_sign_key = Rooms::generateRoomBoomGiftSignKey($this->id);
 
         if ($cache->exists($room_boon_gift_sign_key)) {
-            return \BoomConfigs::getBoomTotalValue($this->id);
+            return $boom_config->total_value;
         }
 
         $cur_income = $cache->get($cur_income_key);

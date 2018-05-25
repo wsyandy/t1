@@ -317,16 +317,16 @@ class RoomsController extends BaseController
         }
 
 
-        if ($room->boom_config_id && $room->hasBoomGift()) {
+        $boom_config = \BoomConfigs::getBoomConfig();
 
-            $boom_config = \BoomConfigs::getBoomConfigByCache($room->boom_config_id);
+        if ($boom_config && $room->hasBoomGift($boom_config->start_value)) {
 
             $res['boom_gift'] = [
                 'expire_at' => \Rooms::getBoomGiftExpireAt($room_id),
                 'client_url' => 'url://m/backpacks',
-                'svga_image_url' => \BoomConfigs::getSvgaImageUrl($boom_config),
-                'total_value' => \BoomConfigs::getBoomTotalValue($boom_config),
-                'current_value' => \BoomConfigs::getCurrentBoomGiftValue($boom_config, $room_id),
+                'svga_image_url' => $boom_config->getSvgaImageUrl(),
+                'total_value' => $boom_config->total_value,
+                'current_value' => $room->getCurrentBoomGiftValue(),
                 'show_rank' => 1000000,
                 'render_type' => 'svga',
                 'status' => STATUS_ON,

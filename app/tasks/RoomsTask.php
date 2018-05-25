@@ -1060,7 +1060,6 @@ class RoomsTask extends \Phalcon\Cli\Task
 
     function disappearBoomGiftRocketAction()
     {
-        $total_income = BoomHistories::getBoomTotalValue();
         $boom_list_key = 'boom_gifts_list';
 
         $cache = Rooms::getHotWriteCache();
@@ -1079,8 +1078,10 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             foreach ($rooms as $room) {
 
-                $cur_income_key = Rooms::generateBoomCurIncomeKey($room->id);
-                $cur_income = $cache->get($cur_income_key);
+                $cur_income = $room->getCurrentBoomGiftValue();
+                $boom_config = \BoomConfigs::getBoomConfigByCache($room->boom_config_id);
+                $total_income = \BoomConfigs::getBoomTotalValue($boom_config);
+
                 if (!$cur_income) {
                     $cache->zrem($boom_list_key, $room->id);
                     $room->pushBoomIncomeMessage($total_income, $cur_income, STATUS_OFF);

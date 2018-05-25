@@ -351,7 +351,7 @@ trait RoomAttrs
     function getNotDrawRedPacketNum($user)
     {
         $ids = self::getNotDrawRedPacketIds($user);
-        if($ids){
+        if ($ids) {
             info($this->id, $user->id, 'count', count($ids));
             return count($ids);
         }
@@ -684,14 +684,11 @@ trait RoomAttrs
         return $key;
     }
 
-    function hasBoomGift()
+    function hasBoomGift($start_value)
     {
         $cache = \Rooms::getHotWriteCache();
         $room_boon_gift_sign_key = Rooms::generateRoomBoomGiftSignKey($this->id);
         $cur_income = $this->getCurrentBoomGiftValue();
-
-        $boom_config = BoomConfigs::getBoomConfigByCache($this->boom_config_id);
-        $start_value = fetch($boom_config, 'start_value');
 
         if ($cur_income >= $start_value || $cache->exists($room_boon_gift_sign_key)) {
             return true;
