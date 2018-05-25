@@ -326,7 +326,7 @@ class RoomsController extends BaseController
                 'client_url' => 'url://m/backpacks',
                 'svga_image_url' => $boom_config->getSvgaImageUrl(),
                 'total_value' => $boom_config->total_value,
-                'current_value' => $room->getCurrentBoomGiftValue(),
+                'current_value' => $room->getCurrentBoomGiftValue($boom_config),
                 'show_rank' => 1000000,
                 'render_type' => 'svga',
                 'status' => STATUS_ON,
