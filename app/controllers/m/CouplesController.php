@@ -18,29 +18,24 @@ class CouplesController extends BaseController
         }
 
         $lock_key = 'ready_cp_lock_room_' . $room_id;
-
         $lock = tryLock($lock_key);
 
         $pursuer = ['avatar_url' => '/m/images/ico_plus.png', 'uid' => '', 'nickname' => '虚位以待'];
-
         $data = $room->getReadyCpInfo();
 
         info($this->params(), $data);
 
-        $room = \Rooms::findFirstById($room_id);
         $is_host = $user->isRoomHost($room);
         $sponsor_id = fetch($data, 'sponsor_id');
 
+        //没有初始化数据，且当前用户不是房主
         if (!$sponsor_id && !$is_host) {
             unlock($lock);
             return $this->response->redirect('app://back');
         }
 
-        $room_host_user = $user->toCpJson();
-
         info('比较数据', $data);
         $pursuer_id = fetch($data, 'pursuer_id');
-
         //如果当前房间没有初始化数据，说明为房主开启cp，初始化cp数据
         if (!$sponsor_id && $is_host) {
             \Couples::createReadyCpInfo($user);
@@ -51,28 +46,30 @@ class CouplesController extends BaseController
                 'image_url' => $image_url, 'client_url' => "url://m/couples?room_id=" . $room_id];
 
             \Couples::sendCpFinishMessage($user, $body);
-        } else if ($user->id != $sponsor_id && !$pursuer_id && $user->current_room_seat_id) {
-            //当前用户不是发起者，并且追求者还没有入驻过
-            $room_host_id = $sponsor_id;
-            $room_host_user = \Users::findFirstById($room_host_id)->toCpJson();
+        }
+
+        //当前用户不是发起者，还没有追求者，并且当前用户有麦位（麦位上的人）
+        if ($user->id != $sponsor_id && !$pursuer_id && $user->current_room_seat_id) {
             $pursuer = $user->toCpJson();
 
             //更新数据
             \Couples::updateReadyCpInfo($user, $room_id);
-        } else if (!$user->current_room_seat_id && !$pursuer_id) {
-            $room_host_user = \Users::findFirstById($sponsor_id)->toCpJson();
-            $pursuer = ['avatar_url' => '/m/images/ico_plus.png', 'uid' => '', 'nickname' => '虚位以待'];
-        } else {
-            info('cp数据', $data);
-            $room_host_id = $sponsor_id;
-            $room_host_user = \Users::findFirstById($room_host_id)->toCpJson();
-            if ($pursuer_id) {
-                $pursuer = \Users::findFirstById($pursuer_id)->toCpJson();
-            }
         }
 
+        //双方都已经入驻
+        if ($sponsor_id && $pursuer_id) {
+            $pursuer = \Users::findFirstById($pursuer_id)->toCpJson();
+        }
+
+        //当前用户不是房主且没有麦位，显示弹框
         if (!$user->current_room_seat_id && !$is_host) {
             $is_show_alert = true;
+        }
+
+        if ($sponsor_id) {
+            $room_host_user = \Users::findFirstById($sponsor_id)->toChatJson();
+        } else {
+            $room_host_user = $user->toChatJson();
         }
 
         unlock($lock);
@@ -100,11 +97,13 @@ class CouplesController extends BaseController
             }
         }
 
-        if ($pursuer_id && $sponsor_id != $user->id && $pursuer_id != $user->id) {
+        if ($user->id != $sponsor_id && $user->id != $pursuer_id) {
             return $this->renderJSON(ERROR_CODE_FAIL, '别羡慕了，赶紧找个对象，去自己的房间发起“CP”吧');
         }
 
+        //判断两者是否已经组成cp，如果已经组成cp，直接跳转cp证页面，推over
         $score = \Couples::checkCpRelation($pursuer_id, $sponsor_id);
+        info($score);
         if ($score) {
             $opts = [
                 'sponsor_id' => $sponsor_id,
@@ -117,7 +116,7 @@ class CouplesController extends BaseController
             return $this->renderJSON(ERROR_CODE_SUCCESS, '看看你们共同的证明！', $opts);
         }
 
-
+        //当前用户为发起者，查看对方状态，如果小于2，说明还未确认
         if ($user->id == $pursuer_id) {
             $sponsor_status = $cache->hget($key, $sponsor_id);
             if ($sponsor_status < 2) {
@@ -126,7 +125,11 @@ class CouplesController extends BaseController
             } else {
                 $cache->hincrby($key, $user->id, 1);
                 //成功组成cp，去相互保存对方的id
-                \Couples::cpSeraglioInfo($user, $room_id);
+                $result = \Couples::cpSeraglioInfo($user, $room_id);
+                if (!$result) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '已超时，请重新发起');
+                }
+
                 $opts = [
                     'sponsor_id' => $sponsor_id,
                     'pursuer_id' => $pursuer_id
@@ -144,7 +147,11 @@ class CouplesController extends BaseController
             } else {
                 $cache->hincrby($key, $user->id, 1);
                 //成功组成cp，去相互保存对方的id
-                \Couples::cpSeraglioInfo($user, $room_id);
+                $result = \Couples::cpSeraglioInfo($user, $room_id);
+                if (!$result) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '已超时，请重新发起');
+                }
+
                 $opts = [
                     'sponsor_id' => $sponsor_id,
                     'pursuer_id' => $pursuer_id
@@ -153,7 +160,6 @@ class CouplesController extends BaseController
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '恭喜有情人终成眷属，是前生造定事，莫错过姻缘！', $opts);
             }
         }
-        return $this->renderJSON(ERROR_CODE_FAIL, '别羡慕了，赶紧找个对象，去自己的房间发起“CP”吧');
     }
 
     function marriageAction()
@@ -162,30 +168,18 @@ class CouplesController extends BaseController
         $pursuer_id = $this->params('pursuer_id');
         $other_user_id = $this->params('other_user_id');
 
+        //如果有other_user_id代表该用户是我的cp列表也过来的
         if ($other_user_id) {
-            $user_db = \Users::getUserDb();
             $user_id = $this->currentUserId();
-            $relations_key = \Couples::generateSeraglioKey($user_id);
-            $status = $user_db->zscore($relations_key, $other_user_id);
-            info('状态', $status);
-            //状态    如果为1，说明该用户为当初的发起者，当前用户为追求者
-            switch ($status) {
-                case 1:
-                    $sponsor_id = $other_user_id;
-                    $pursuer_id = $user_id;
-                    break;
-                case 2:
-                    $sponsor_id = $user_id;
-                    $pursuer_id = $other_user_id;
-                    break;
-            }
-        }
+            //第一个参数id来生成key，查看第二个用户id的身份 1 为发起者 2位追求者
+            list($sponsor_id, $pursuer_id) = \Couples::checkCpRelation($user_id, $other_user_id, true);
 
-        if (!\Couples::checkCpRelation($sponsor_id, $pursuer_id)) {
+        }
+        if (!$sponsor_id || !$pursuer_id) {
             return $this->response->redirect('app://back');
         }
 
-        info($sponsor_id, $pursuer_id);
+        info('发起者', $sponsor_id, '追求者', $pursuer_id);
         $sponsor = \Users::findFirstById($sponsor_id);
         $pursuer = \Users::findFirstById($pursuer_id);
 
@@ -200,6 +194,12 @@ class CouplesController extends BaseController
         $sponsor->avatar_base64_url = \Couples::base64EncodeImage(httpSave($sponsor->avatar_url, $couple_new_file));
         $pursuer->avatar_base64_url = \Couples::base64EncodeImage(httpSave($pursuer->avatar_url, $couple_new_file));
 
+        $is_show_clear_cp = false;
+        if (isDevelopmentEnv()) {
+            $is_show_clear_cp = true;
+        }
+
+        $this->view->is_show_clear_cp = $is_show_clear_cp;
         $this->view->sponsor = json_encode($sponsor->toCpJson(), JSON_UNESCAPED_UNICODE);
         $this->view->pursuer = json_encode($pursuer->toCpJson(), JSON_UNESCAPED_UNICODE);
         $this->view->marriage_at_text = date('Y-m-d', $marriage_at);
@@ -262,8 +262,25 @@ class CouplesController extends BaseController
         $cache->del($key);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '清除成功');
-
     }
 
+    //解除cp关系
+    function relieveCoupleAction()
+    {
+        $current_user_id = $this->currentUserId();
+        $first_user_id = $this->params('first_user_id');
+        $second_user_id = $this->params('second_user_id');
+        //第一个参数id来生成key，查看第二个用户id的身份 1 为发起者 2位追求者
+        list($sponsor_id, $pursuer_id) = \Couples::checkCpRelation($first_user_id, $second_user_id, true);
+        info('发起者', $sponsor_id, '追求者', $pursuer_id);
 
+        if (!$sponsor_id || !$pursuer_id) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '你们已经不是cp关系了哦');
+        }
+
+        \Couples::clearCoupleInfo($sponsor_id, $pursuer_id);
+        \Couples::pushClearCoupleMessage($current_user_id, $sponsor_id, $pursuer_id);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功解除CP！');
+    }
 }

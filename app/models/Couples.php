@@ -14,6 +14,8 @@ class Couples extends BaseModel
         info('初始化', $cache->hgetall($key));
 
         $cache->expire($key, 10 * 60);
+        //同时起一个异步推送scoket
+        self::delay(10 * 60 - 5)->asyncFinishCp($user, $key);
     }
 
     static function generateReadyCpInfoKey($room_id)
@@ -40,7 +42,7 @@ class Couples extends BaseModel
         $pursuer_id = fetch($data, 'pursuer_id');
 
         if (!$sponsor_id || !$pursuer_id) {
-            return;
+            return false;
         }
 
         //相互各自保存在自己的后宫里面
@@ -61,6 +63,8 @@ class Couples extends BaseModel
         $cache->del($key);
         $body = ['action' => 'game_notice', 'type' => 'over', 'content' => 'cp结束',];
         self::sendCpFinishMessage($user, $body);
+
+        return true;
     }
 
     static function generateSeraglioKey($user_id)
@@ -148,10 +152,16 @@ class Couples extends BaseModel
                 $member = $sender_id . '_' . $receive_id;
                 break;
         }
-//        info('更新情侣值', $amount, $member);
+
+
+        info('更新情侣值', $amount, $member);
+        //520当天总榜，暂已停用
+
+
 //        $cp_info_key = self::generateCpInfoKey();
 //        $db->zincrby($cp_info_key, $amount, $member);
 
+        //同步双方的情侣值
         $sender_key = self::generateCpInfoForUserKey($sender_id);
         $db->zincrby($sender_key, $amount, $receive_id);
 
@@ -179,13 +189,34 @@ class Couples extends BaseModel
         return 'cp_info_for_user_' . $user_id;
     }
 
-    static function checkCpRelation($pursuer_id, $sponsor_id)
+    static function checkCpRelation($user_id, $other_user_id, $condition = false)
     {
         $db = \Users::getUserDb();
-        $key = self::generateSeraglioKey($pursuer_id);
-        $score = $db->zscore($key, $sponsor_id);
+        $key = self::generateSeraglioKey($user_id);
+        $status = $db->zscore($key, $other_user_id);
 
-        return $score;
+        //状态  通过user_id生成key，查看other_user_id的身份  如果为1，说明该用户为当初的发起者，当前用户为追求者
+        //condition 默认为false   true=>根据身份判断双方身份，直接返回代表身份的ID  false=>仅用于查看判断双方是否是cp关系
+        if ($status > 0) {
+            if ($condition) {
+                $sponsor_id = 0;
+                $pursuer_id = 0;
+                switch ($status) {
+                    case 1:
+                        $sponsor_id = $other_user_id;
+                        $pursuer_id = $user_id;
+                        break;
+                    case 2:
+                        $sponsor_id = $user_id;
+                        $pursuer_id = $other_user_id;
+                        break;
+                }
+                return [$sponsor_id, $pursuer_id];
+            }
+            return $status;
+        }
+
+        return null;
 
     }
 
@@ -206,6 +237,7 @@ class Couples extends BaseModel
             $all_data[$i]['sponsor_nickname'] = \Users::findFirstById($ids[0])->nickname;
             $all_data[$i]['pursuer_nickname'] = \Users::findFirstById($ids[1])->nickname;
 
+            //双方的情侣值皆为同步累加，随意取一方即可
             $cp_score_key = self::generateCpInfoForUserKey($ids[0]);
             $all_data[$i]['score'] = $db->zscore($cp_score_key, $ids[1]);
             $i++;
@@ -221,6 +253,7 @@ class Couples extends BaseModel
         return $pagination;
     }
 
+    //解决html2canvas 网络头像资源问题，下载文件生成base64
     static function base64EncodeImage($image_file)
     {
         $image_info = getimagesize($image_file);
@@ -251,5 +284,67 @@ class Couples extends BaseModel
             }
         }
         return $all_users;
+    }
+
+    //清空双方cp信息
+    static function clearCoupleInfo($sponsor_id, $pursuer_id)
+    {
+        $user_db = \Users::getUserDb();
+        //在自己的后宫集合中删除对方
+        $sponsor_seraglio_key = \Couples::generateSeraglioKey($sponsor_id);
+        $pursuer_seraglio_key = \Couples::generateSeraglioKey($pursuer_id);
+        info($user_db->zrange($sponsor_seraglio_key, 0, -1), '>>>>>>>>', $user_db->zrange($pursuer_seraglio_key, 0, -1));
+        $user_db->zrem($sponsor_seraglio_key, $pursuer_id);
+        $user_db->zrem($pursuer_seraglio_key, $sponsor_id);
+
+        //清除双方结为cp的时间
+        $cp_marriage_time_key = \Couples::generateCpMarriageTimeKey();
+        if ($user_db->zscore($cp_marriage_time_key, $sponsor_id . '_' . $pursuer_id) > 0) {
+            $user_db->zrem($cp_marriage_time_key, $sponsor_id . '_' . $pursuer_id);
+        }
+
+
+        //删除总榜情侣值
+        $cp_info_key = \Couples::generateCpInfoKey();
+        if ($user_db->zscore($cp_info_key, $sponsor_id . '_' . $pursuer_id) > 0) {
+            $user_db->zrem($cp_info_key, $sponsor_id . '_' . $pursuer_id);
+        }
+
+        //删除各自保存的情侣值
+        $sender_key = \Couples::generateCpInfoForUserKey($sponsor_id);
+        if ($user_db->zscore($sender_key, $pursuer_id) > 0) {
+            $user_db->zrem($sender_key, $pursuer_id);
+        }
+
+        $sender_key = \Couples::generateCpInfoForUserKey($pursuer_id);
+        if ($user_db->zscore($sender_key, $sponsor_id) > 0) {
+            $user_db->zrem($sender_key, $sponsor_id);
+        }
+    }
+
+    //解除cp，推送个推给另外一方
+    static function pushClearCoupleMessage($current_user_id, $sponsor_id, $pursuer_id)
+    {
+        $relieved_user_id = $current_user_id == $sponsor_id ? $sponsor_id : $pursuer_id;
+        $accord_relieved_user_id = $current_user_id == $sponsor_id ? $pursuer_id : $sponsor_id;
+        $accord_relieved_user = \Users::findFirstById($accord_relieved_user_id);
+        $relieved_user = \Users::findFirstById($relieved_user_id);
+        if ($relieved_user) {
+            $push_data = ['title' => '很可惜', 'body' => '您与' . $accord_relieved_user->nickname . '的情侣关系已被对方解除，情侣值已被清空，并从排行榜中移除。'];
+            info($relieved_user->getPushContext(), $relieved_user->getPushReceiverContext());
+            \Pushers::push($relieved_user->getPushContext(), $relieved_user->getPushReceiverContext(), $push_data);
+        }
+    }
+
+    static function asyncFinishCp($user, $key)
+    {
+        $cache = \Users::getHotWriteCache();
+        $sponsor_id = $cache->hget($key, 'sponsor_id');
+        if (!$sponsor_id) {
+            return;
+        }
+
+        $body = ['action' => 'game_notice', 'type' => 'over', 'content' => 'cp结束',];
+        self::sendCpFinishMessage($user, $body);
     }
 }
