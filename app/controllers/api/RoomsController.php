@@ -306,12 +306,12 @@ class RoomsController extends BaseController
             $res['pk_history'] = $pk_history->toSimpleJson();
         }
 
-        if (in_array($room_id, \Rooms::getGameWhiteList()) || isInternalIp($this->remoteIp())) {
+        if (in_array($room_id, \Rooms::getGameWhiteList()) || isInternalIp($this->remoteIp()) || isDevelopmentEnv()) {
 
             // 房间红包
-            $underway_red_packet = $room->getNotDrawRedPacket($this->currentUser());
-            if ($underway_red_packet) {
-                $res['red_packet'] = ['num' => count($underway_red_packet), 'client_url' => 'url://m/red_packets/red_packets_list?room_id=' . $room_id];
+            $underway_red_packet_num = $room->getNotDrawRedPacketNum($this->currentUser());
+            if ($underway_red_packet_num) {
+                $res['red_packet'] = ['num' => $underway_red_packet_num, 'client_url' => 'url://m/red_packets/red_packets_list?room_id=' . $room_id];
             }
 
         }

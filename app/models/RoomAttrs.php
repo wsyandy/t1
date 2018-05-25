@@ -331,7 +331,7 @@ trait RoomAttrs
         return $time;
     }
 
-    function getNotDrawRedPacket($user)
+    function getNotDrawRedPacketIds($user)
     {
         $cache = \Users::getUserDb();
         //当前房间所有还在进行中的红包ids
@@ -341,8 +341,27 @@ trait RoomAttrs
         //当前用户领取过的红包ids
         $user_get_red_packet_ids = \RedPackets::UserGetRedPacketIds($this->id, $user->id);
         $ids = array_diff($underway_ids, $user_get_red_packet_ids);
-        $room_red_packets = \RedPackets::findByIds($ids);
+        $ids = array_filter($ids);
 
+        info($this->id, $user->id, 'underway_ids', $underway_ids, $user_get_red_packet_ids, $ids);
+
+        return $ids;
+    }
+
+    function getNotDrawRedPacketNum($user)
+    {
+        $ids = self::getNotDrawRedPacketIds($user);
+        if($ids){
+            return count($ids);
+        }
+
+        return 0;
+    }
+
+    function getNotDrawRedPacket($user)
+    {
+        $ids = self::getNotDrawRedPacketIds($user);
+        $room_red_packets = \RedPackets::findByIds($ids);
         return $room_red_packets;
     }
 

@@ -84,11 +84,22 @@ class RedPackets extends BaseModel
     static $RED_PACKET_TYPE = [RED_PACKET_TYPE_ALL => '都可以领取', RED_PACKET_TYPE_ATTENTION => '关注房主才能领取', RED_PACKET_TYPE_STAY_AT_ROOM => '在房间满3分钟才能领取'];
     static $STATUS = [STATUS_ON => '进行中', STATUS_OFF => '结束'];
 
+    static function getCacheEndPoint()
+    {
+        $config = self::di('config');
+        $endpoints = explode(',', $config->user_db_endpoints);
+        return $endpoints[0];
+    }
+
+    function generateId()
+    {
+        return 'red_packet_for_user_' . strval($this->user_id) . '_' . time() . mt_rand(1000, 10000);
+    }
+
     function beforeCreate()
     {
         $this->id = $this->generateId();
     }
-
 
     function afterCreate()
     {
@@ -171,18 +182,6 @@ class RedPackets extends BaseModel
         return 'user_send_red_packets_' . $user_id;
     }
 
-    static function getCacheEndPoint()
-    {
-        $config = self::di('config');
-        $endpoints = explode(',', $config->user_db_endpoints);
-        return $endpoints[0];
-    }
-
-    function generateId()
-    {
-        return 'red_packet_for_user_' . strval($this->user_id) . '_' . time() . mt_rand(1000, 10000);
-    }
-
     static function createReadPacket($user, $room, $opts)
     {
         $send_red_packet_history = new \RedPackets();
@@ -217,8 +216,8 @@ class RedPackets extends BaseModel
 
     static function asyncFinishRedPacket($red_packet_id)
     {
-        $red_packet = \RedPackets::findFirstById($red_packet_id);
 
+        $red_packet = \RedPackets::findFirstById($red_packet_id);
         if (isPresent($red_packet) && $red_packet->status != STATUS_OFF) {
             if ($red_packet->balance_diamond > 0) {
                 $opts = ['remark' => '红包余额返还钻石' . $red_packet->balance_diamond, 'mobile' => $red_packet->user->mobile, 'target_id' => $red_packet->id];
@@ -230,6 +229,18 @@ class RedPackets extends BaseModel
             $red_packet->balance_num = 0;
             $red_packet->status = STATUS_OFF;
             $red_packet->update();
+
+            $user = $red_packet->user;
+            if ($user) {
+                $user->has_red_packet = STATUS_ON;
+                $user->update();
+            }
+
+            $room = $red_packet->room;
+            if ($room) {
+                $room->has_red_packet = STATUS_ON;
+                $room->update();
+            }
         }
     }
 
@@ -394,7 +405,7 @@ class RedPackets extends BaseModel
     static function pushRedPacketMessageForUser($room, $user, $notify_type)
     {
         $url = self::generateRedPacketUrl($room->id);
-        $underway_red_packet_num = count($room->getNotDrawRedPacket($user));
+        $underway_red_packet_num = $room->getNotDrawRedPacketNum($user);
         $room->pushRedPacketMessage($user, $underway_red_packet_num, $url, $notify_type);
     }
 
