@@ -317,7 +317,7 @@ class RoomsController extends BaseController
         }
 
 
-        if ($room->hasBoomGift()) {
+        if ($room->boom_config_id && $room->hasBoomGift()) {
 
             $boom_config = \BoomConfigs::getBoomConfigByCache($room->boom_config_id);
 

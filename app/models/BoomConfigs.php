@@ -40,7 +40,7 @@ class BoomConfigs extends BaseModel
             return '';
         }
 
-        return StoreFile::getUrl($this->svga_image) . '@!small';
+        return StoreFile::getUrl($this->svga_image);
     }
 
     static function getBoomConfigByCache($boom_config_id)
@@ -68,13 +68,13 @@ class BoomConfigs extends BaseModel
 
         $cur_income = $cache->get($cur_income_key);
 
-        return $cur_income;
+        return intval($cur_income);
     }
 
     static function getBoomTotalValue($boom_config)
     {
         $total_value = fetch($boom_config, 'total_value');
-        return $total_value;
+        return intval($total_value);
     }
 
     static function getSvgaImageUrl($boom_config)
