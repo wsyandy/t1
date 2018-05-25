@@ -203,7 +203,9 @@ class BackpacksController extends BaseController
 
         info("boom_record", $amount, $room_id, $num, $this->currentUser()->id);
 
-        if ($amount > 5000) {
+        $total_amount = mt_rand(5000, 10000);
+
+        if ($amount > $total_amount) {
             $type = BACKPACK_GOLD_TYPE;
             $num = 1000;
         }
