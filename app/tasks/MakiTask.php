@@ -128,9 +128,10 @@ class MakiTask extends Phalcon\Cli\Task
         $users = Users::find($conditions);
 
         echoLine(count($users).'-'.count($orders));
+        $i = 0;
         foreach ($users as $user) {
             if ($user->isInAnyRoom()) {
-                echoLine('continue');
+                $i++;
                 continue;
             }
 
@@ -166,5 +167,6 @@ class MakiTask extends Phalcon\Cli\Task
 
             }
         }
+        echoLine($i.'个用户不执行');
     }
 }
