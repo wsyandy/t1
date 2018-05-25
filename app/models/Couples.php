@@ -90,8 +90,9 @@ class Couples extends BaseModel
         $key = self::generateCpMarriageTimeKey();
         $time = $db->zscore($key, $sponsor_id . '_' . $pursuer_id);
         if (!$time) {
-            $time = $db->zscore($key, $pursuer_id . '_' . $sponsor_id);
+            $time = time();
         }
+
         return $time;
     }
 
