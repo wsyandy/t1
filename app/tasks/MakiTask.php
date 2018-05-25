@@ -128,40 +128,36 @@ class MakiTask extends Phalcon\Cli\Task
         foreach ($users as $user) {
 
             foreach ($orders as $order) {
+
                 echoLine($order);
+                if ($order == 'enter') {
 
-                switch ($order) {
+                    Rooms::addWaitEnterSilentRoomList($user->id);
+                    Rooms::delay()->enterSilentRoom($room->id, $user->id);
 
-                    case 'enter':
+                } elseif ($order == 'exit') {
 
-                        Rooms::addWaitEnterSilentRoomList($user->id);
-                        Rooms::delay()->enterSilentRoom($room->id, $user->id);
-                        break;
+                    $room->exitSilentRoom($user);
 
-                    case 'exit':
-                        $room->exitSilentRoom($user);
-                        break;
+                } elseif ($order == 'up') {
 
-                    case 'up':
-                        $user->upRoomSeat($user->id, $room->id);
-                        break;
+                    $user->upRoomSeat($user->id, $room->id);
 
-                    case 'down':
-                        $user->asyncDownRoomSeat($user->id, $room_seat->id);
-                        break;
+                } elseif ($order == 'down') {
 
-                    case 'message':
-                        $user->sendTopTopicMessage($user->id, $room->id);
-                        break;
+                    $user->asyncDownRoomSeat($user->id, $room_seat->id);
 
-                    case 'send':
-                        $user->sendGift($user->id, $room->id);
-                        break;
+                } elseif ($order == 'message') {
 
-                    default:
-                        continue;
-                        break;
+                    $user->sendTopTopicMessage($user->id, $room->id);
+
+                } elseif ($order == 'send') {
+
+                    $user->sendGift($user->id, $room->id);
+                } else {
+                    continue;
                 }
+
             }
         }
     }
