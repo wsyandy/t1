@@ -41,7 +41,7 @@ class MakiTask extends Phalcon\Cli\Task
         if (empty($orders)) return;
 
 
-        $room_id = true ? 137039 : 136971;
+        $room_id = 137039; //136971;
         $room = Rooms::findFirstById($room_id);
         if (!$room) return;
         echoLine('进入房间');
