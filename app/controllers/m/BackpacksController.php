@@ -5,6 +5,7 @@
  * Date: 2018/5/8
  * Time: 13:38
  */
+
 namespace m;
 
 class BackpacksController extends BaseController
@@ -37,14 +38,14 @@ class BackpacksController extends BaseController
         $room_id = $user->current_room_id;
 
         // 前三排行
-        $boom_histories = \BoomHistories::historiesTopList($user->id,3);
+        $boom_histories = \BoomHistories::historiesTopList($user->id, 3);
         $boom_histories = $boom_histories->toJson('boom', 'toSimpleJson')['boom'];
 
         // 没爆礼物不抽奖
         $expire = \Rooms::getBoomGiftExpireAt($room_id);
 
-        if (empty($expire)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '未开始爆礼物', ['target' => $boom_histories]);
+        if (isBlank($expire)) {
+           // return $this->renderJSON(ERROR_CODE_FAIL, '未开始爆礼物', ['target' => $boom_histories]);
         }
 
         // 抽奖物品保存至爆礼物结束时间
@@ -63,7 +64,7 @@ class BackpacksController extends BaseController
         }
 
         // 未领取不抽奖
-        if ($cache->exists($user_sign_key) && $user_sign!=1) {
+        if ($cache->exists($user_sign_key) && $user_sign != 1) {
             return $this->renderJSON(ERROR_CODE_FAIL, '已抽奖，请先领取！', ['target' => $boom_histories]);
         }
 
@@ -118,7 +119,7 @@ class BackpacksController extends BaseController
         $user_sign = $cache->get($user_sign_key);
 
         // 超三分钟未领取礼物
-        if (empty($user_sign))
+        if (isBlank($user_sign))
             return $this->renderJSON(ERROR_CODE_FAIL, '爆礼物3分钟内未领取！');
 
         // 抽奖的奖品
@@ -126,7 +127,7 @@ class BackpacksController extends BaseController
         $type = $json['type'];
         $prizes = $json['target'];
 
-        if (empty($prizes)) {
+        if (isBlank($prizes)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '加入背包错误');
         }
 

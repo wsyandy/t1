@@ -51,7 +51,7 @@ class BoomConfigs extends BaseModel
 
         $db = \Rooms::getRoomDb();
 
-        $data = $db->hget('boom_config_cache_id' . $boom_config_id);
+        $data = $db->hgetall('boom_config_cache_id' . $boom_config_id);
 
         return $data;
     }
