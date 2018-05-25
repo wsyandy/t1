@@ -20,7 +20,7 @@ class Activities extends BaseModel
 
     //活动类型
     static $ACTIVITY_TYPE = ['gift_minutes_list' => '礼物分钟榜单', 'gift_charm_day_list' => '礼物魅力日榜单',
-        'gift_charm_week_list' => '礼物魅力周榜单', 'gif_wealth_day_list' => '礼物财富日榜单', 'gift_wealth_week_list' => '礼物财富周榜单'];
+        'gift_charm_week_list' => '礼物魅力周榜单', 'total_gift_charm_week_list' => '总礼物魅力周榜', 'gif_wealth_day_list' => '礼物财富日榜单', 'gift_wealth_week_list' => '礼物财富周榜单'];
 
     function getImageUrl()
     {
@@ -342,7 +342,7 @@ class Activities extends BaseModel
                     continue;
                 }
 
-                if ($activity->isGiftCharmWeekList() || $activity->isGiftWealthWeekList()) {
+                if ($activity->isGiftCharmWeekList() || $activity->isGiftWealthWeekList() || $activity->isTotalGiftCharmWeekList()) {
                     self::giftWeekRankListStat($activity, $gift_order, $opts);
                     continue;
                 }
@@ -378,6 +378,11 @@ class Activities extends BaseModel
         return 'gift_minutes_list' == $this->activity_type;
     }
 
+    function isTotalGiftCharmWeekList()
+    {
+        return 'total_gift_charm_week_list' == $this->activity_type;
+    }
+
     //礼物周榜活动
     static function giftWeekRankListStat($activity, $gift_order, $opts = [])
     {
@@ -390,7 +395,7 @@ class Activities extends BaseModel
 
         $db = Users::getUserDb();
 
-        if ($activity->isGiftCharmWeekList()) {
+        if ($activity->isGiftCharmWeekList() || $activity->isTotalGiftCharmWeekList()) {
             $db->zincrby($key, $amount, $user_id);
         } else {
             $db->zincrby($key, $amount, $sender_id);
@@ -437,6 +442,12 @@ class Activities extends BaseModel
             $start_at = date("Ymd", beginOfWeek($this->start_at));
             $end_at = date("Ymd", endOfWeek($this->start_at));
             $key = "gift_wealth_week_list_activity_stat_gift_id_" . $gift_id . "_start_" . $start_at . "_end_" . $end_at;
+        }
+
+        if ($this->isTotalGiftCharmWeekList()) {
+            $start_at = date("Ymd", beginOfWeek($this->start_at));
+            $end_at = date("Ymd", endOfWeek($this->start_at));
+            $key = "gift_charm_week_list_activity_stat_gift_id_" . $this->id . "_start_" . $start_at . "_end_" . $end_at;
         }
 
         return $key;

@@ -687,7 +687,7 @@ class ActivitiesController extends BaseController
 
             if (!$gift_id) {
 
-                $key = \Users::generateFieldRankListKey('week', 'charm', $opts);
+                $key = \Users::generateFieldRankListKey('week', $type, $opts);
 
 
             } else {
