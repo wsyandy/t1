@@ -310,6 +310,13 @@ trait RoomAttrs
 
     function getPkHistory()
     {
+
+        $key = PkHistories::generatePkListKey();
+        $hot_cache = PkHistories::getHotWriteCache();
+        if (!$hot_cache->zscore($key, $this->id)) {
+            return null;
+        }
+
         $game_history = \PkHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and expire_at>:current_time:',
             'bind' => ['room_id' => $this->id, 'status' => STATUS_OFF, 'current_time' => time()], 'order' => 'id desc']);
 
