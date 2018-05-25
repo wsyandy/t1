@@ -317,21 +317,21 @@ class RoomsController extends BaseController
         }
 
 
-        if ($room->hasBoomGift()) {
+        if ($room->boom_config_id && $room->hasBoomGift()) {
 
             $boom_config = \BoomConfigs::getBoomConfigByCache($room->boom_config_id);
 
-//            $res['boom_gift'] = [
-//                'expire_at' => \Rooms::getBoomGiftExpireAt($room_id),
-//                'client_url' => 'url://m/backpacks',
-//                'svga_image_url' => \BoomConfigs::getSvgaImageUrl($boom_config),
-//                'total_value' => \BoomConfigs::getBoomTotalValue($boom_config),
-//                'current_value' => \BoomConfigs::getCurrentBoomGiftValue($boom_config, $room_id),
-//                'show_rank' => 1000000,
-//                'render_type' => 'svga',
-//                'status' => STATUS_ON,
-//                'image_color' => 'blue'
-//            ];
+            $res['boom_gift'] = [
+                'expire_at' => \Rooms::getBoomGiftExpireAt($room_id),
+                'client_url' => 'url://m/backpacks',
+                'svga_image_url' => \BoomConfigs::getSvgaImageUrl($boom_config),
+                'total_value' => \BoomConfigs::getBoomTotalValue($boom_config),
+                'current_value' => \BoomConfigs::getCurrentBoomGiftValue($boom_config, $room_id),
+                'show_rank' => 1000000,
+                'render_type' => 'svga',
+                'status' => STATUS_ON,
+                'image_color' => 'blue'
+            ];
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
