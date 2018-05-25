@@ -39,33 +39,35 @@ class MakiTask extends Phalcon\Cli\Task
         $orders = ['up', 'down', 'enter', 'exit', 'send', 'message'];
         $orders = (isset(self::$params[0]) && self::$params[0] == 'list') ? $orders : array_intersect(self::$params, $orders);
         if (empty($orders)) return;
-        echoLine('执行指令@'.implode(',', $orders));
 
-        $room = Rooms::findFirstById(137039);
+
+        $room_id = 137039; //136971;137039
+        $room = Rooms::findFirstById($room_id);
         if (!$room) return;
+        echoLine('进入房间');
 
-        $users = Users::find([
-                    'order' => 'id desc',
-                    'limit' => 4
-                ]);
-        if (count($users) < 1) return;
+        $redis = Users::getHotWriteCache();
+        $key = 'pressure_app_user_id_list';
+        $entered_users = $redis->zrevrange($key, 0, -1, 'withscores');
 
-        foreach ($users as $user) {
-
-            if ($user->isInAnyRoom()) {
-                echoLine('不操作user_id@'.$user->id);
-                continue;
+        if (in_array('enter', $orders)) {
+            $users = Users::findPagination(['order' => 'id desc'], mt_rand(1, 50), 4);
+            if (count($users) < 1) return;
+            foreach ($users as $user) {
+                if ($user->isInAnyRoom()) continue;
+                $redis->zadd($key, time(), $user->id);
+                Rooms::addWaitEnterSilentRoomList($user->id);
+                Rooms::delay()->enterSilentRoom($room->id, $user->id);
             }
-            echoLine('操作user_id@'.$user->id);
+        }
 
+        foreach ($entered_users as $user) {
             foreach ($orders as $order) {
                 $order == 'up' && $user->upRoomSeat($user->id, $room->id);
                 $order == 'send' && $user->sendGift($user->id, $room->id);
                 $order == 'message' && $user->sendTopTopicMessage($user->id, $room->id);
-                if ($order == 'enter') {
-                    Rooms::addWaitEnterSilentRoomList($user->id);
-                    Rooms::delay()->enterSilentRoom($room->id, $user->id);
-                }
+                $order == 'exit' && $room->exitSilentRoom($user);
+
             }
         }
     }

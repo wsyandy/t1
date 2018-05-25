@@ -129,7 +129,7 @@
     $(function () {
         var is_show_alert = "{{ is_show_alert }}"
         if (is_show_alert) {
-            alert('您还不在麦位上，再去争取机会啊！');
+            alert('您还不在麦位上，快去争取机会啊！');
         }
 
         if (!vm.pursuer.uid) {
