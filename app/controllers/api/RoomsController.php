@@ -306,7 +306,7 @@ class RoomsController extends BaseController
             $res['pk_history'] = $pk_history->toSimpleJson();
         }
 
-        if (in_array($room_id, \Rooms::getGameWhiteList()) || isInternalIp($this->remoteIp())) {
+        if (in_array($room_id, \Rooms::getGameWhiteList()) || isInternalIp($this->remoteIp()) || isDevelopmentEnv()) {
 
             // 房间红包
             $underway_red_packet_num = $room->getNotDrawRedPacketNum($this->currentUser());
