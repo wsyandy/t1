@@ -169,4 +169,36 @@ class MakiTask extends Phalcon\Cli\Task
         }
         echoLine($i.'个用户不执行');
     }
+
+
+
+    function t4()
+    {
+
+        $number = self::$params[0] ?? 5;
+
+        $room_id = 137039;
+        $user_id = 41785;
+
+        $room = Rooms::findFirstById($room_id);
+        $user = Users::findById($user_id);
+
+        $room_seat = RoomSeats::findFirst(['conditions' => 'room_id = :room_id: and user_id > 0',
+            'bind' => ['room_id' => $room->id]]);
+
+        Rooms::addWaitEnterSilentRoomList($user->id);
+        Rooms::delay()->enterSilentRoom($room->id, $user->id);
+
+        $user->upRoomSeat($user->id, $room->id);
+
+        for ($i=0; $i<$number; $i++) {
+
+            $user->sendTopTopicMessage($user->id, $room->id);
+            $user->sendGift($user->id, $room->id);
+
+        }
+
+        isset(self::$params[1]) && $user->asyncDownRoomSeat($user->id, $room_seat->id);
+        isset(self::$params[2]) && $room->exitSilentRoom($user);
+    }
 }
