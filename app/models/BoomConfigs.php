@@ -13,16 +13,16 @@ class BoomConfigs extends BaseModel
 
     function afterCreate()
     {
-        $sd = \Rooms::getRoomDb();
-        $sd->hmset('boom_config_cache_id' . $this->id , ['id' => $this->id, 'start_value' => $this->start_value,
-            'total_value' => $this->total_value , 'svga_image_small_url' => $this->svga_image_small_url ]);
+        $db = \Rooms::getRoomDb();
+        $db->hmset('boom_config_cache_id' . $this->id, ['id' => $this->id, 'start_value' => $this->start_value,
+            'total_value' => $this->total_value, 'svga_image_small_url' => $this->svga_image_small_url]);
     }
 
     function afterUpdate()
     {
-        $sd = \Rooms::getRoomDb();
-        $sd->hmset('boom_config_cache_id' . $this->id , ['id' => $this->id, 'start_value' => $this->start_value,
-            'total_value' => $this->total_value , 'svga_image_small_url' => $this->svga_image_small_url ]);
+        $db = \Rooms::getRoomDb();
+        $db->hmset('boom_config_cache_id' . $this->id, ['id' => $this->id, 'start_value' => $this->start_value,
+            'total_value' => $this->total_value, 'svga_image_small_url' => $this->svga_image_small_url]);
     }
 
     function mergeJson()
@@ -43,4 +43,16 @@ class BoomConfigs extends BaseModel
         return StoreFile::getUrl($this->svga_image) . '@!small';
     }
 
+    static function getBoomConfigByCache($boom_config_id)
+    {
+        if (!$boom_config_id) {
+            return [];
+        }
+
+        $db = \Rooms::getRoomDb();
+
+        $data = $db->hget('boom_config_cache_id' . $boom_config_id);
+
+        return $data;
+    }
 }

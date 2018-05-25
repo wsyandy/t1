@@ -3450,6 +3450,10 @@ class Users extends BaseModel
         $expire = $db->ttl($key);
         $time = 3600 * 24;
 
+        if (isDevelopmentEnv()) {
+            $time = 60;
+        }
+
         if ($expire > $time) {
             //已签到
             return 0;
