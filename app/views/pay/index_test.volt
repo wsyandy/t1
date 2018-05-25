@@ -13,7 +13,7 @@
 
 <div id="app">
     <div class="weixin_chongzhi_top">
-        <input required="required" type="text" class="name_input" id="user_id" placeholder="请输入您的Hi~ID" />
+        <input required="required" type="text" class="name_input" id="user_id" placeholder="请输入您的Hi~ID"/>
         <i class="close_btn" @click="closeBtn"></i>
         <p class="name"></p>
     </div>
@@ -71,87 +71,88 @@
 </div>
 
 <script type="text/javascript">
-    $(function(){
+    $(function () {
 
         var options = {
-                data: {
-                    pay_amount: 0,
-                    product_id: 0,
-                    payment_channel_id: 0,
-                    user_id: 0,
-                    form_status: 0
-                },
-                methods: {
+            data: {
+                pay_amount: 0,
+                product_id: 0,
+                payment_channel_id: 0,
+                user_id: 0,
+                form_status: 0
+            },
+            methods: {
 
-                    product: function (id, amount) {
-                        var user_id = $('#user_id').val(),
-                            self = $('.product_'+id);
+                product: function (id, amount) {
+                    var user_id = $('#user_id').val(),
+                        self = $('.product_' + id);
 
-                        if (!user_id) {
-                            vm.tips('请填写正确的HI ID');
-                            return false;
-                        }
-
-                        if (vm.user_id != user_id) {
-
-                            vm.user_id = user_id;
-                            $.authPost('/pay/check_user', {'user_id': user_id}, function (response) {
-                                $(".name").text(response.nickname);
-                            });
-                        }
-
-                        vm.user_id = user_id;
-                        vm.pay_amount = amount;
-                        vm.product_id = id;
-                        self.addClass('weixin_cz_selected').siblings().removeClass('weixin_cz_selected');
-                        vm.changeAmount();
-                    },
-
-                    paymentChannel: function (id) {
-                        if (!vm.product_id) {
-                            vm.tips('请选择钻石!');
-                            return false;
-                        }
-
-                        vm.payment_channel_id = id;
-                        var self = $('.payment_channel_'+id);
-                        self.addClass('zhifubao_pay_li').siblings().removeClass('zhifubao_pay_li');
-
-
-                        if (vm.form_status == 1) {
-                            return false;
-                        }
-
-                        var data = {
-                            payment_channel_id: vm.payment_channel_id,
-                            product_id: vm.product_id,
-                            user_id: vm.user_id
-                        };
-                        vm.form_status = 1
-                        $.authPost('/pay/create', data, function (response) {
-                            if (response.error_code == 0) {
-                                location.href = response.url;
-                            } else
-                                alert(response.error_reason);
-                        });
-                    },
-
-                    changeAmount: function () {
-                        $('#change_amount').text(vm.pay_amount);
-                    },
-
-                    tips: function (string) {
-                        alert(string);
-                    },
-
-                    closeBtn: function () {
-                        $('.name_input').val('');
+                    if (!user_id) {
+                        vm.tips('请填写正确的HI ID');
+                        return false;
                     }
 
+                    if (vm.user_id != user_id) {
+
+                        vm.user_id = user_id;
+                        $.authPost('/pay/check_user', {'user_id': user_id}, function (response) {
+                            $(".name").text(response.nickname);
+                        });
+                    }
+
+                    vm.user_id = user_id;
+                    vm.pay_amount = amount;
+                    vm.product_id = id;
+                    self.addClass('weixin_cz_selected').siblings().removeClass('weixin_cz_selected');
+                    vm.changeAmount();
+                },
+
+                paymentChannel: function (id) {
+                    if (!vm.product_id) {
+                        vm.tips('请选择钻石!');
+                        return false;
+                    }
+
+                    vm.payment_channel_id = id;
+                    var self = $('.payment_channel_' + id);
+                    self.addClass('zhifubao_pay_li').siblings().removeClass('zhifubao_pay_li');
+
+
+                    if (vm.form_status == 1) {
+                        return false;
+                    }
+
+                    var data = {
+                        payment_channel_id: vm.payment_channel_id,
+                        product_id: vm.product_id,
+                        user_id: vm.user_id
+                    };
+                    vm.form_status = 1
+                    $.authPost('/pay/create', data, function (response) {
+                        if (response.error_code == 0) {
+                            location.href = response.url;
+                        } else
+                            alert(response.error_reason);
+                    });
+                },
+
+                changeAmount: function () {
+                    $('#change_amount').text(vm.pay_amount);
+                },
+
+                tips: function (string) {
+                    alert(string);
+                },
+
+                closeBtn: function () {
+                    $('.name_input').val('');
                 }
-            },
-            vm = XVue(options);
-            vm.changeAmount();
+
+            }
+        }
+
+        var vm = new XVue(opts);
+        vm.changeAmount();
 
     })
 </script>
