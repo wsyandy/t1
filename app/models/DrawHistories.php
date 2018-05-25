@@ -268,7 +268,7 @@ class DrawHistories extends BaseModel
         $type = fetch($datum, 'type');
         $number = fetch($datum, 'number');
 
-        $pool_rate = mt_rand(700, 942) / 1000;
+        $pool_rate = mt_rand(700, 940) / 1000;
 
         $hour = intval(date("H"));
 
@@ -330,12 +330,12 @@ class DrawHistories extends BaseModel
                         return 0;
                     }
 
-                    if ($user_total_get_amount + 3000 > $total_pay_amount) {
+                    if ($user_total_get_amount + 5000 > $total_pay_amount) {
                         info('continue hit10w超出支出', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
                         return 0;
                     }
 
-                    if ($total_pay_amount < 15000 || !$user->union_id || !$user->segment || mt_rand(1, 100) < 80) {
+                    if ($total_pay_amount < 15000 && !$user->union_id || $total_pay_amount < 50000 || !$user->segment || mt_rand(1, 100) < 70) {
                         info('continue hit10w没资格', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
                         return 0;
                     }
@@ -513,6 +513,7 @@ class DrawHistories extends BaseModel
 
         $is_block_user = self::isBlockUser($user);
         if ($is_block_user) {
+            info('屏蔽用户', $user->id, 'total_pay_amount', $total_pay_amount);
             $user_rate_multi = 1;
         } else {
             // 计算用户倍率
