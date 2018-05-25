@@ -58,7 +58,7 @@ h1,h2,h3,h4{
 	top: 24px;
 	width: 18px;
 	height: 18px;
-	background: url(/m/images/close_btn.png) no-repeat;
+	background: url(../images/close_btn.png) no-repeat;
 	background-size: 100%;
 	display: none;
 }
@@ -123,7 +123,7 @@ input::-webkit-input-placeholder{
 	display: inline-block;
 	height: 16px;
 	width: 16px;
-	background: url(/m/images/zuan_new.png) no-repeat;
+	background: url(../images/zuan_new.png) no-repeat;
 	background-size: 100%;
 	position: absolute;
 	left: 10px;
@@ -149,11 +149,11 @@ input::-webkit-input-placeholder{
 	text-align: center;
 	width: 67px;
 	height: 15px;
-	background: url(/m/images/youhui.png) no-repeat;
+	background: url(../images/youhui.png) no-repeat;
 	background-size: 100%;
 	position: absolute;
-	right: -4px;
-	top:3px;
+	right: 0px;
+	top:-6px;
 	font-size: 10px;
 	color: #FFFFFF;
 	font-weight: normal;
@@ -172,7 +172,7 @@ input::-webkit-input-placeholder{
 	display: inline-block;
 	width: 16px;
 	height: 16px;
-	background: url(/m/images/zuan_new.png) no-repeat;
+	background: url(../images/zuan_new.png) no-repeat;
 	background-size: 100%;
 }
 .zuan_top .top span{
@@ -239,7 +239,7 @@ input::-webkit-input-placeholder{
 	display: inline-block;
 	width: 18px;
 	height: 18px;
-	background: url(/m/images/no_select.png) no-repeat;
+	background: url(../images/no_select.png) no-repeat;
 	background-size: 100%;
 	top: 50%;
 	right: 15px;
@@ -250,15 +250,15 @@ input::-webkit-input-placeholder{
     transform: translateY(-50%);
 }
 .money_pay_list .zhifubao{
-	background: url(/m/images/zhifubao_select.png) no-repeat;
+	background: url(../images/zhifubao_select.png) no-repeat;
 	background-size: 100%;
 }
 .money_pay_list .weixin{
-	background: url(/m/images/weixin_select.png) no-repeat;
+	background: url(../images/weixin_select.png) no-repeat;
 	background-size: 100%;
 }
 .zhifubao_pay_li b{
-	background: url(/m/images/selected.png) no-repeat !important;
+	background: url(../images/selected.png) no-repeat !important;
 	background-size: 100% !important;
 }
 .money_pay_question{
@@ -273,13 +273,13 @@ input::-webkit-input-placeholder{
 	display: inline-block;
 	width: 12px;
 	height: 12px;
-	background: url(/m/images/question.png)no-repeat;
+	background: url(../images/question.png)no-repeat;
 	background-size: 100%;
 	margin-right: 5px;
 	vertical-align: middle;
 }
 .wenti{
-	background: url(/m/images/wenti.png) no-repeat !important;
+	background: url(../images/wenti.png) no-repeat !important;
 	background-size: 100% !important;
 }
 .money_pay_question p{
@@ -298,7 +298,7 @@ input::-webkit-input-placeholder{
 	display: inline-block;
 	width: 13px;
 	height: 13px;
-	background: url(/m/images/icon_buttom.png) no-repeat;
+	background: url(../images/icon_buttom.png) no-repeat;
 	background-size: 100%;
 	margin-right: 10px;
 }
@@ -346,13 +346,13 @@ input::-webkit-input-placeholder{
 .mine_money .icon_money{
     width: 20px;
     height: 20px;
-    background: url(/m/images/icon_money.png) no-repeat;
+    background: url(../images/icon_money.png) no-repeat;
     background-size: 100%;
 }
 .mine_money .icon_right{
     width: 10px;
     height: 10px;
-    background: url(/m/images/icon_right.png) no-repeat;
+    background: url(../images/icon_right.png) no-repeat;
     background-size: 100%;
 }
 .mine_money a span{
