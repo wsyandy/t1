@@ -46,7 +46,7 @@ class BackpacksController extends BaseController
         $expire = \Rooms::getBoomGiftExpireAt($room_id);
 
         if (isBlank($expire)) {
-            // return $this->renderJSON(ERROR_CODE_FAIL, '未开始爆礼物', ['target' => $boom_histories]);
+            return $this->renderJSON(ERROR_CODE_FAIL, '未开始爆礼物', ['target' => $boom_histories]);
         }
 
         // 抽奖物品保存至爆礼物结束时间
@@ -189,6 +189,18 @@ class BackpacksController extends BaseController
                     break;
                 }
 
+        }
+
+        if (BACKPACK_DIAMOND_TYPE == $type) {
+            $cache->incrby("room_boom_diamond_num_room_id_" . $room_id, $num);
+            $amount = $cache->get("room_boom_diamond_num_room_id_" . $room_id);
+
+            info("boom_record", $amount, $room_id, $num, $this->currentUser()->id);
+
+            if ($amount >= 1500) {
+                $type = BACKPACK_GOLD_TYPE;
+                $num = 1000;
+            }
         }
         // 1 随机类型
         //$type = array_rand(array_flip(self::$boom_type));

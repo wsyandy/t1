@@ -343,6 +343,7 @@ trait RoomStats
                 $cache->setex($room_boon_gift_sign_key, 180, $time);
                 $cache->del($cur_income_key);
                 $cache->zrem($boom_list_key, $room_id);
+                $cache->setex("room_boom_diamond_num_room_id_" . $room_id, 180, 0);
 
                 $this->pushBoomIncomeMessage($total_value, $cur_total_income);
 
