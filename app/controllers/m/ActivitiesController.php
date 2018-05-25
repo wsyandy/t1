@@ -669,9 +669,16 @@ class ActivitiesController extends BaseController
         $this->giftCharmRankActivity();
     }
 
+    //礼物周榜活动    2018-05-28
+    function giftCharmWeek20180528rankActivityAction()
+    {
+        $this->giftCharmRankActivity();
+    }
+
     function getCurrentActivityRankListAction()
     {
         if ($this->request->isAjax()) {
+            $user = $this->currentUser();
             $type = $this->params('type', 'charm');
             $gift_id = $this->params('gift_id');
             $id = $this->params('id');
@@ -685,21 +692,54 @@ class ActivitiesController extends BaseController
             $activity_end = date("Ymd", endOfWeek($activity->start_at));
             $opts = ['start' => $activity_start, 'end' => $activity_end];
 
-            if (!$gift_id) {
+            if (!$gift_id && $type != 'total_gifts') {
 
-                $key = \Users::generateFieldRankListKey('week', 'charm', $opts);
+                $key = \Users::generateFieldRankListKey('week', $type, $opts);
 
 
             } else {
                 $key = $activity->getStatKey($gift_id);
             }
 
-            $users = \Users::findFieldRankListByKey($key, 'charm', 1, 10);
+            $users = \Users::findFieldRankListByKey($key, $type, 1, 10);
+
+            debug($key);
+
+            $current_user_info = $user->getCurrentWeekActivityInfo($key);
+
+
+            if (count($users)) {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '', array_merge($users->toJson('users', 'toRankListJson'), ['current_user_info' => $current_user_info]));
+            } else {
+                return $this->renderJSON(ERROR_CODE_FAIL, '暂无数据');
+            }
+        }
+    }
+
+    function getCurrentActivityCpRankListAction()
+    {
+        if ($this->request->isAjax()) {
+            $type = $this->params('type', 'cp');
+            $id = $this->params('id');
+            $activity = \Activities::findFirstById($id);
+
+            if (!$activity) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+            }
+
+            $activity_start = date("Ymd", beginOfWeek($activity->start_at));
+            $activity_end = date("Ymd", endOfWeek($activity->start_at));
+            $opts = ['start' => $activity_start, 'end' => $activity_end];
+
+            $key = \Users::generateFieldRankListKey('week', $type, $opts);
+
+
+            $users = \Couples::findCpRankListByKey($key, 1, 10);
 
             debug($key);
 
             if (count($users)) {
-                return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toRankListJson'));
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['users' => $users]);
             } else {
                 return $this->renderJSON(ERROR_CODE_FAIL, '暂无数据');
             }

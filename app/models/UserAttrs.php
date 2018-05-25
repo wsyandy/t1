@@ -1180,4 +1180,16 @@ trait UserAttrs
     {
         return "财富: " . valueToStr($this->wealth);
     }
+
+    function getCurrentWeekActivityInfo($key)
+    {
+        $db = \Users::getUserDb();
+        $current_rank = $this->getRankByKey($key);
+        $current_user_info['current_rank'] = $current_rank <= 100 ? $current_rank : $current_rank + 1000;
+        $current_user_info['current_score'] = $db->zscore($key, $this->id);
+        $current_user_info['nickname'] = $this->nickname;
+        $current_user_info['avatar_url'] = $this->avatar_url;
+
+        return $current_user_info;
+    }
 }

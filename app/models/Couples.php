@@ -138,16 +138,16 @@ class Couples extends BaseModel
             return null;
         }
 
-//        //状态    如果为1，说明接收者为当初的发起者，赠送者为追求者
-//        $member = '';
-//        switch ($status) {
-//            case 1:
-//                $member = $receive_id . '_' . $sender_id;
-//                break;
-//            case 2:
-//                $member = $sender_id . '_' . $receive_id;
-//                break;
-//        }
+        //状态    如果为1，说明接收者为当初的发起者，赠送者为追求者
+        $member = '';
+        switch ($status) {
+            case 1:
+                $member = $receive_id . '_' . $sender_id;
+                break;
+            case 2:
+                $member = $sender_id . '_' . $receive_id;
+                break;
+        }
 //        info('更新情侣值', $amount, $member);
 //        $cp_info_key = self::generateCpInfoKey();
 //        $db->zincrby($cp_info_key, $amount, $member);
@@ -157,6 +157,11 @@ class Couples extends BaseModel
 
         $receive_key = self::generateCpInfoForUserKey($receive_id);
         $db->zincrby($receive_key, $amount, $sender_id);
+
+        //记录周榜情侣值
+        $cp_week_charm_key = \Users::generateFieldRankListKey('week', 'cp');
+        info('情侣值周榜增加', $cp_week_charm_key, $member);
+        $db->zincrby($cp_week_charm_key, $amount, $member);
     }
 
     static function sendCpFinishMessage($user, $body)
@@ -225,5 +230,26 @@ class Couples extends BaseModel
         fclose($file);
         unlink($image_file);
         return $base64_image;
+    }
+
+    //周榜
+    static function findCpRankListByKey($key, $page, $per_page)
+    {
+        $db = \Users::getUserDb();
+
+        $offset = $per_page * ($page - 1);
+        $res = $db->zrevrange($key, $offset, $offset + $per_page - 1);
+
+        $all_users = [];
+        foreach ($res as $index => $re) {
+            $ids = explode('_', $re);
+            $users = \Users::findByIds($ids);
+            if (isPresent($users)) {
+                $all_users[$index][] = $users[0]->toCpJson();
+                $all_users[$index][] = $users[1]->toCpJson();
+
+            }
+        }
+        return $all_users;
     }
 }
