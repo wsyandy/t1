@@ -49,6 +49,7 @@ class MakiTask extends Phalcon\Cli\Task
         $redis = Users::getHotWriteCache();
         $key = 'pressure_app_user_id_list';
         $entered_users = $redis->zrevrange($key, 0, -1, 'withscores');
+        $entered_users = array_keys($entered_users);
 
         if (in_array('enter', $orders)) {
             $users = Users::findPagination(['order' => 'id desc'], mt_rand(1, 50), 4);
@@ -68,7 +69,6 @@ class MakiTask extends Phalcon\Cli\Task
                 $order == 'send' && $user->sendGift($user->id, $room->id);
                 $order == 'message' && $user->sendTopTopicMessage($user->id, $room->id);
                 $order == 'exit' && $room->exitSilentRoom($user);
-                $order == 'kick' && $room->kickingRoom($user->id, 1);
             }
         }
     }
