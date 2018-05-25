@@ -343,6 +343,8 @@ trait RoomAttrs
         $ids = array_diff($underway_ids, $user_get_red_packet_ids);
         $ids = array_filter($ids);
 
+        info($this->id, $user->id, 'underway_ids', $underway_ids, $user_get_red_packet_ids, $ids);
+
         return $ids;
     }
 
