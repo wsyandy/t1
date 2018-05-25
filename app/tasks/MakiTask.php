@@ -106,7 +106,10 @@ class MakiTask extends Phalcon\Cli\Task
 
     function t3()
     {
-        $orders = empty(self::$params) ? ['enter', 'exit', 'up', 'down', 'message', 'send'] : self::$params;
+        if (isset(self::$params[0])) {
+            $params = explode(',', self::$params[0]);
+        }
+        $orders = empty($params) ? ['enter', 'exit', 'up', 'down', 'message', 'send'] : $params;
 
         $room_id = 137039;
         $room = Rooms::findById($room_id);
@@ -120,16 +123,19 @@ class MakiTask extends Phalcon\Cli\Task
                 'user_type' => USER_TYPE_SILENT,
                 'user_status' => USER_STATUS_ON,
             ],
-            'limit' => 4,
+            'limit' => self::$params[1] ?? 4,
         ];
         $users = Users::find($conditions);
 
         echoLine(count($users).'-'.count($orders));
         foreach ($users as $user) {
+            if ($user->isInAnyRoom()) {
+                echoLine('continue');
+                continue;
+            }
 
             foreach ($orders as $order) {
 
-                echoLine($order);
                 if ($order == 'enter') {
 
                     Rooms::addWaitEnterSilentRoomList($user->id);
