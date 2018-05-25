@@ -258,9 +258,7 @@ class GiftOrders extends BaseModel
                 $gift_order->type = $type;
             }
 
-            debug('判断前赠送者当前房间ID', $sender_current_room_id);
             if ($sender_current_room_id) {
-                debug('赠送者当前房间ID', $sender_current_room_id);
                 $result = \PkHistories::checkPkHistoryForUser($sender_current_room_id);
                 if ($result) {
                     info('当前房间有pk正在进行', $gift_order->amount);
@@ -454,13 +452,13 @@ class GiftOrders extends BaseModel
         }
         $content = "<p style='font-size: 14px;text-align: left'><span style='color: #F5DF00'>{$sender->nickname}</span><span style='color: white'>送给</span><span style='color: #F5DF00'>{$user->nickname}</span><span style='color: #F5DF00'>{$name}×{$gift_num}</span>";
         if ($amount >= $min_amount && $amount < $max_amount) {
-            $content .="<span style='color: white'>,豪气冲天！</span>";
+            $content .= "<span style='color: white'>,豪气冲天！</span>";
         }
         if ($amount >= $max_amount) {
-            $content .="<span style='color: white'>,真情感动天地！</span>";
+            $content .= "<span style='color: white'>,真情感动天地！</span>";
         }
 
-        $content .="</p>";
+        $content .= "</p>";
 
 
         return $content;
