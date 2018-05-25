@@ -55,4 +55,30 @@ class BoomConfigs extends BaseModel
 
         return $data;
     }
+
+    static function getCurrentBoomGiftValue($config, $room_id)
+    {
+        $cache = \Rooms::getHotWriteCache();
+        $cur_income_key = \Rooms::generateBoomCurIncomeKey($room_id);
+        $room_boon_gift_sign_key = Rooms::generateRoomBoomGiftSignKey($room_id);
+
+        if ($cache->exists($room_boon_gift_sign_key)) {
+            return self::getBoomTotalValue($config);
+        }
+
+        $cur_income = $cache->get($cur_income_key);
+
+        return $cur_income;
+    }
+
+    static function getBoomTotalValue($boom_config)
+    {
+        $total_value = fetch($boom_config, 'total_value');
+        return $total_value;
+    }
+
+    static function getSvgaImageUrl($boom_config)
+    {
+        return fetch($boom_config, 'svga_image_small_url');
+    }
 }
