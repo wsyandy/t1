@@ -298,7 +298,7 @@ trait RoomAttrs
     function getGameHistory()
     {
         $hot_cache = GameHistories::getHotWriteCache();
-        if(!$hot_cache->get('game_history_room_'.$this->id)){
+        if (!$hot_cache->get('game_history_room_' . $this->id)) {
             return null;
         }
 
@@ -1112,5 +1112,10 @@ trait RoomAttrs
     function isBroadcast()
     {
         return ROOM_THEME_TYPE_BROADCAST == $this->theme_type || ROOM_THEME_TYPE_USER_BROADCAST == $this->theme_type;
+    }
+
+    function hasBoom()
+    {
+
     }
 }
