@@ -347,6 +347,9 @@ trait RoomStats
 
                 $this->pushBoomIncomeMessage($total_value, $cur_total_income);
 
+                //临时查询
+                $sender = Users::findFirstById($sender_id);
+                $this->pushTopTopicMessage($sender, "恭喜【{$sender->nickname}】在【{$this->name}】内，成功引爆火箭，快来抢礼物吧！");
                 unlock($lock);
 
                 return;
