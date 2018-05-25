@@ -40,7 +40,7 @@ class BoomConfigs extends BaseModel
             return '';
         }
 
-        return StoreFile::getUrl($this->svga_image) . '@!small';
+        return StoreFile::getUrl($this->svga_image);
     }
 
     static function getBoomConfigByCache($boom_config_id)
