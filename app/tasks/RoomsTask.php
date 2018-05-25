@@ -221,7 +221,7 @@ class RoomsTask extends \Phalcon\Cli\Task
             }
 
             // 在频道，角色错误
-            if ($in_channel && $user_role == USER_ROLE_BROADCASTER && ($user->id != $room->user_id || $user->current_room_seat_id < 1)) {
+            if ($in_channel && $user_role == USER_ROLE_BROADCASTER && $user->id != $room->user_id && $current_room_seat_id < 1) {
                 AgoraApi::kickingRule($user, $room, 1);
                 Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
                 $room->exitRoom($user);
@@ -242,7 +242,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             info('fd已连接', $user->id, 'user_fd', $user_fd, 'room_id', $room->id, 'current_room_id', $current_room_id, 'last_at', date("YmdH", $user->last_at));
             Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
-            
+
         }
     }
 
