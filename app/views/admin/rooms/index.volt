@@ -71,7 +71,7 @@
     是否加锁: {{ room.lock_text }}<br/>
     是否热门: {{ room.hot_text }}|是否置顶: {{ room.top_text }}|是否最新: {{ room.new_text }}<br/>
     协议: {{ intval(room.user_agreement_num) }}<br/>
-    当前爆礼物值: {{ room.current_boom_gift_value }}<br/>
+    当前爆礼物值: {{ room.getCurrentBoomGiftValue(boom_config) }}<br/>
     {% if room.union_id %}
         公会: {{ room.union.name }}<br/>
         公会类型: {{ room.union.type_text }}<br/>

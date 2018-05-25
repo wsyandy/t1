@@ -75,6 +75,7 @@ class RoomsController extends BaseController
         $this->view->name = $name;
         $this->view->user_id = $user_id ? $user_id : '';
         $this->view->user_uid = $user_uid ? $user_uid : '';
+        $this->view->boom_config = \BoomConfigs::getBoomConfig();
         $this->view->online_room_num = \Rooms::count(['conditions' => 'online_status = ' . STATUS_ON]);
         $this->view->status_on_room_num = \Rooms::count(['conditions' => 'online_status = ' . STATUS_ON]);
     }
@@ -271,6 +272,7 @@ class RoomsController extends BaseController
         $this->view->rooms = $pagination;
         $this->view->total_entries = $rooms->total_entries;
         $this->view->hot = 1;
+        $this->view->boom_config = \BoomConfigs::getBoomConfig();
     }
 
     function typesAction()

@@ -106,6 +106,8 @@ trait RoomMessages
 
     function pushBoomIncomeMessage($opts = [])
     {
+        info($this->id, $opts);
+
         $total_value = fetch($opts, 'total_value');
         $current_value = fetch($opts, 'current_value');
         $status = fetch($opts, 'status', STATUS_ON);
