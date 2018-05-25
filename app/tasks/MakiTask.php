@@ -39,6 +39,7 @@ class MakiTask extends Phalcon\Cli\Task
         $orders = ['up', 'down', 'enter', 'exit', 'send', 'message'];
         $orders = (isset(self::$params[0]) && self::$params[0] == 'list') ? $orders : array_intersect(self::$params, $orders);
         if (empty($orders)) return;
+        echoLine('执行指令@'.implode(',', $orders));
 
         $room = Rooms::findFirstById(137039);
         if (!$room) return;
@@ -50,7 +51,11 @@ class MakiTask extends Phalcon\Cli\Task
         if (count($users) < 1) return;
 
         foreach ($users as $user) {
-            if ($user->isInAnyRoom()) continue;
+            echoLine('操作user_id@'.$user->id);
+            if ($user->isInAnyRoom()) {
+                echoLine('不操作user_id@'.$user->id);
+                continue;
+            }
 
             foreach ($orders as $order) {
                 $order == 'up' && $user->upRoomSeat($user->id, $room->id);
