@@ -36,7 +36,7 @@ class MakiTask extends Phalcon\Cli\Task
 
     function t1()
     {
-        $orders = ['up', 'down', 'enter', 'exit', 'send', 'message'];
+        $orders = ['up', 'down', 'enter', 'exit', 'send', 'message', 'kick'];
         $orders = (isset(self::$params[0]) && self::$params[0] == 'list') ? $orders : array_intersect(self::$params, $orders);
         if (empty($orders)) return;
 
@@ -62,12 +62,13 @@ class MakiTask extends Phalcon\Cli\Task
         }
 
         foreach ($entered_users as $user) {
+            $user = Users::findFirstById($user);
             foreach ($orders as $order) {
                 $order == 'up' && $user->upRoomSeat($user->id, $room->id);
                 $order == 'send' && $user->sendGift($user->id, $room->id);
                 $order == 'message' && $user->sendTopTopicMessage($user->id, $room->id);
                 $order == 'exit' && $room->exitSilentRoom($user);
-
+                $order == 'kick' && $room->kickingRoom($user->id, 1);
             }
         }
     }
