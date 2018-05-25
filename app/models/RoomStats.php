@@ -337,9 +337,9 @@ trait RoomStats
         } else {
 
             // 单位周期 截止目前房间总流水
-            $cur_total_income = $cur_income + $income;
+            $current_value = $cur_income + $income;
 
-            if ($cur_total_income >= $total_value) {
+            if ($current_value >= $total_value) {
                 // 爆礼物
                 $cache->setex($room_boon_gift_sign_key, 180, $time);
                 $cache->del($cur_income_key);
@@ -347,7 +347,7 @@ trait RoomStats
                 $cache->setex("room_boom_diamond_num_room_id_" . $room_id, 180, 0);
                 $cache->setex('room_boom_user_room_id_' . $room_id, 180, $sender_id);
 
-                $params = ['total_value' => $total_value, 'cur_total_income' => $cur_total_income, 'svga_image_url' => $svga_image_url];
+                $params = ['total_value' => $total_value, 'current_value' => $current_value, 'svga_image_url' => $svga_image_url];
 
                 $this->pushBoomIncomeMessage($params);
 
@@ -365,15 +365,15 @@ trait RoomStats
 
             $cache->zincrby($record_key, $income, $sender_id);
             $cache->expire($record_key, $expire);
-            $res = $cache->setex($cur_income_key, $expire, $cur_total_income);
+            $res = $cache->setex($cur_income_key, $expire, $current_value);
 
-            if ($res && $cur_total_income >= $start_value) {
+            if ($res && $current_value >= $start_value) {
 
                 if (!$cache->zscore($boom_list_key, $room_id)) {
                     $cache->zadd($boom_list_key, time(), $room_id);
                 }
 
-                $params = ['total_value' => $total_value, 'cur_total_income' => $cur_total_income, 'svga_image_url' => $svga_image_url];
+                $params = ['total_value' => $total_value, 'current_value' => $current_value, 'svga_image_url' => $svga_image_url];
 
                 $this->pushBoomIncomeMessage($params);
             }
