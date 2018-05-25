@@ -238,6 +238,10 @@ class AgoraApi extends BaseModel
     {
 
         $product_channel = $room->product_channel;
+        if(!$product_channel){
+            return [false, 0];
+        }
+
         $channel_name = $room->channel_name;
         $app_id = $product_channel->getImAppId();
         $user_id = $user->id;
