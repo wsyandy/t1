@@ -231,13 +231,13 @@ class RedPackets extends BaseModel
             $red_packet->update();
 
             $user = $red_packet->user;
-            if($user){
+            if ($user) {
                 $user->has_red_packet = STATUS_ON;
                 $user->update();
             }
 
             $room = $red_packet->room;
-            if($room){
+            if ($room) {
                 $room->has_red_packet = STATUS_ON;
                 $room->update();
             }
@@ -405,7 +405,7 @@ class RedPackets extends BaseModel
     static function pushRedPacketMessageForUser($room, $user, $notify_type)
     {
         $url = self::generateRedPacketUrl($room->id);
-        $underway_red_packet_num = count($room->getNotDrawRedPacket($user));
+        $underway_red_packet_num = $room->getNotDrawRedPacketNum($user);
         $room->pushRedPacketMessage($user, $underway_red_packet_num, $url, $notify_type);
     }
 

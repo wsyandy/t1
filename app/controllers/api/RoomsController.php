@@ -309,9 +309,9 @@ class RoomsController extends BaseController
         if (in_array($room_id, \Rooms::getGameWhiteList()) || isInternalIp($this->remoteIp())) {
 
             // 房间红包
-            $underway_red_packet = $room->getNotDrawRedPacket($this->currentUser());
-            if ($underway_red_packet) {
-                $res['red_packet'] = ['num' => count($underway_red_packet), 'client_url' => 'url://m/red_packets/red_packets_list?room_id=' . $room_id];
+            $underway_red_packet_num = $room->getNotDrawRedPacketNum($this->currentUser());
+            if ($underway_red_packet_num) {
+                $res['red_packet'] = ['num' => $underway_red_packet_num, 'client_url' => 'url://m/red_packets/red_packets_list?room_id=' . $room_id];
             }
 
         }
