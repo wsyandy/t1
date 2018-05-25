@@ -198,7 +198,6 @@ class BackpacksController extends BaseController
 //
 //        }
 
-        $cache->incrby("room_boom_diamond_num_room_id_" . $room_id, $num);
         $amount = $cache->get("room_boom_diamond_num_room_id_" . $room_id);
 
         info("boom_record", $amount, $room_id, $num, $this->currentUser()->id);
@@ -208,8 +207,9 @@ class BackpacksController extends BaseController
         if ($amount > $total_amount) {
             $type = BACKPACK_GOLD_TYPE;
             $num = 1000;
+        } else {
+            $cache->incrby("room_boom_diamond_num_room_id_" . $room_id, $num);
         }
-
 
         // 1 随机类型
         //$type = array_rand(array_flip(self::$boom_type));
