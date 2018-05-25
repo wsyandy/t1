@@ -9,6 +9,76 @@
 class MeiTask extends \Phalcon\Cli\Task
 {
 
+    function test63Action()
+    {
+        $cond = [
+            'conditions' => 'created_at >= :start: and created_at <= :end: and pay_status = :pay_status:',
+            'bind' => [
+                'start' => beginOfDay(strtotime('2018-05-24')),
+                'end' => endOfDay(strtotime('2018-05-24')),
+                'pay_status' > PAYMENT_PAY_STATUS_SUCCESS
+            ],
+            'columns' => 'distinct user_id'
+        ];
+
+        $payments = Payments::find($cond);
+
+        echoLine(count($payments));
+
+        $num = 0;
+        $new_num = 0;
+        $pay_num = 0;
+        $new_pay_num = 0;
+        $pay_amount = 0;
+        $new_pay_amount = 0;
+
+        foreach ($payments as $payment) {
+
+            $user_id = $payment->user_id;
+            $user = Users::findFirstById($user_id);
+
+            if ($user->isShieldHotRoom()) {
+
+                $cond = [
+                    'conditions' => 'created_at >= :start: and created_at <= :end: and pay_status = :pay_status: and user_id = :user_id:',
+                    'bind' => [
+                        'start' => beginOfDay(strtotime('2018-05-24')),
+                        'end' => endOfDay(strtotime('2018-05-24')),
+                        'pay_status' > PAYMENT_PAY_STATUS_SUCCESS,
+                        'user_id' => $user->id
+                    ],
+                    'columns' => 'id'
+                ];
+
+                $count = Payments::count($cond);
+                $pay_num += $count;
+                $num++;
+
+                $pay_cond = [
+                    'conditions' => 'created_at >= :start: and created_at <= :end: and pay_status = :pay_status: and user_id = :user_id:',
+                    'bind' => [
+                        'start' => beginOfDay(strtotime('2018-05-24')),
+                        'end' => endOfDay(strtotime('2018-05-24')),
+                        'pay_status' > PAYMENT_PAY_STATUS_SUCCESS,
+                        'user_id' => $user->id
+                    ],
+                    'column' => 'paid_amount'
+                ];
+
+                $paid_amount = Payments::sum($pay_cond);
+                $pay_amount += $paid_amount;
+
+                if ($user->register_at >= beginOfDay(strtotime('2018-05-24'))) {
+                    $new_num++;
+                    $new_pay_num += $count;
+                    $new_pay_amount += $paid_amount;
+                }
+            }
+        }
+
+        echoLine("支付人数:", $num, "新用户支付人数:", $new_num, '支付次数:', $pay_num, '新用户支付次数:', $new_pay_num, '支付金额:', $pay_amount, '新用户支付金额:', $new_pay_amount);
+    }
+
     //屏蔽用户统计
     function test62Action()
     {
