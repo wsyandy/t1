@@ -113,18 +113,18 @@
             用户等级: ${ user.level }
         </td>
         <td>
-            <a href="/admin/rooms/send_topic_msg?user_id={{ user.id }}" class="modal_action">发公屏消息</a><br/>
-            <a href="/admin/rooms/enter_room?user_id={{ user.id }}" class="modal_action">进房间</a>
-            <a href="/admin/rooms/exit_room?user_id={{ user.id }}" class="modal_action">退房间</a><br/>
-            <a href="/admin/rooms/send_gift?user_id={{ user.id }}" class="modal_action">送礼物</a><br/>
-            <a href="/admin/rooms/up?user_id={{ user.id }}" class="modal_action">上麦</a>
-            <a href="/admin/rooms/down?user_id={{ user.id }}" class="modal_action">下麦</a><br/>
-            <a href="/admin/rooms/hang_up?user_id={{ user.id }}" class="modal_action">挂断电话</a><br/>
-            <a href="/admin/rooms/room_notice?user_id={{ user.id }}" class="modal_action">房间信息通知</a><br/>
-            <a href="/admin/rooms/red_packet?user_id={{ user.id }}" class="modal_action">红包</a>
-            <a href="/admin/rooms/pk?user_id={{ user.id }}" class="modal_action">PK</a><br/>
-            <a href="/admin/rooms/boom_gift?user_id={{ user.id }}" class="modal_action">爆礼物</a>
-            <a href="/admin/rooms/sink_notice?user_id={{ user.id }}" class="modal_action">下沉通知</a><br/>
+            <a href="/admin/rooms/send_topic_msg?user_id=${ user.id }" class="modal_action">发公屏消息</a><br/>
+            <a href="/admin/rooms/enter_room?user_id=${ user.id }" class="modal_action">进房间</a>
+            <a href="/admin/rooms/exit_room?user_id=${ user.id }" class="modal_action">退房间</a><br/>
+            <a href="/admin/rooms/send_gift?user_id=${ user.id }" class="modal_action">送礼物</a><br/>
+            <a href="/admin/rooms/up?user_id=${ user.id }" class="modal_action">上麦</a>
+            <a href="/admin/rooms/down?user_id=${ user.id }" class="modal_action">下麦</a><br/>
+            <a href="/admin/rooms/hang_up?user_id=${ user.id }" class="modal_action">挂断电话</a><br/>
+            <a href="/admin/rooms/room_notice?user_id=${ user.id }" class="modal_action">房间信息通知</a><br/>
+            <a href="/admin/rooms/red_packet?user_id=${ user.id }" class="modal_action">红包</a>
+            <a href="/admin/rooms/pk?user_id=${ user.id }" class="modal_action">PK</a><br/>
+            <a href="/admin/rooms/boom_gift?user_id=${ user.id }" class="modal_action">爆礼物</a>
+            <a href="/admin/rooms/sink_notice?user_id=${ user.id }" class="modal_action">下沉通知</a><br/>
         </td>
 
     </tr>
