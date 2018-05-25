@@ -185,6 +185,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             list($room_id, $user_id) = explode("_", $target_id);
             if (!$room_id || !$user_id) {
+                info('no ', $room_id, $user_id);
                 continue;
             }
 
