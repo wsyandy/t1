@@ -376,7 +376,7 @@ trait RoomStats
         $room_boon_gift_sign_key = Rooms::generateRoomBoomGiftSignKey($this->id);
 
         if ($cache->exists($room_boon_gift_sign_key)) {
-            return $this->getBoomTotalValue();
+            return \BoomConfigs::getBoomTotalValue($this->id);
         }
 
         $cur_income = $cache->get($cur_income_key);
