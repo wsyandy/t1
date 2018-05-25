@@ -205,13 +205,13 @@ class RoomsTask extends \Phalcon\Cli\Task
             if (!$current_room_id || $current_room_id != $room->id) {
                 // 声网检测
                 if (!AgoraApi::exitChannel($user, $room)) {
-                    info('在其他房间 退出声网失败 room_is_change', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdH", $user->last_at));
+                    info('在其他房间 退出声网失败 room_is_change', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdHis", $user->last_at));
                     continue;
                 }
 
                 Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
                 $room->exitRoom($user);
-                info('在其他房间 room_is_change', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdH", $user->last_at));
+                info('在其他房间 room_is_change', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdHis", $user->last_at));
                 continue;
             }
 
@@ -221,7 +221,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             // 不在频道
             if (!$in_channel) {
-                info('不在频道 退出房间', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdH", $user->last_at));
+                info('不在频道 退出房间', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdHis", $user->last_at));
                 Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
                 $room->exitRoom($user);
                 continue;
@@ -232,7 +232,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                 AgoraApi::kickingRule($user, $room, 1);
                 Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
                 $room->exitRoom($user);
-                info('角色错误 退出房间', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdH", $user->last_at));
+                info('角色错误 退出房间', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdHis", $user->last_at));
                 continue;
             }
 
@@ -247,7 +247,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            info('fd已连接', $user->id, 'user_fd', $user_fd, 'room_id', $room->id, 'current_room_id', $current_room_id, 'last_at', date("YmdH", $user->last_at));
+            info('fd已连接', $user->id, 'user_fd', $user_fd, 'room_id', $room->id, 'current_room_id', $current_room_id, 'last_at', date("YmdHis", $user->last_at));
             Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
 
         }
