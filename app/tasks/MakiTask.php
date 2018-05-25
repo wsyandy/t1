@@ -128,6 +128,7 @@ class MakiTask extends Phalcon\Cli\Task
         foreach ($users as $user) {
 
             foreach ($orders as $order) {
+                echoLine($order);
 
                 switch ($order) {
 
