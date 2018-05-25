@@ -325,8 +325,8 @@ trait RoomStats
         }
 
         $boom_list_key = 'boom_gifts_list';
-        $total_value = fetch($boom_config, 'total_value');
-        $start_value = fetch($boom_config, 'start_value');
+        $total_value = $boom_config->total_value;
+        $start_value = $boom_config->start_value;
         $svga_image_url = $boom_config->svga_image_url;
 
         // 判断房间是否在进行爆礼物活动

@@ -1140,17 +1140,4 @@ trait RoomAttrs
     {
         return ROOM_THEME_TYPE_BROADCAST == $this->theme_type || ROOM_THEME_TYPE_USER_BROADCAST == $this->theme_type;
     }
-
-    function hasBoomConfig()
-    {
-        $boom_config = BoomConfigs::getBoomConfigByCache($this->boom_config_id);
-
-        if (isBlank($boom_config)) {
-            return false;
-        }
-
-        $status = fetch($boom_config, 'status');
-
-        return STATUS_ON == intval($status);
-    }
 }
