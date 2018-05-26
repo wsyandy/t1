@@ -450,7 +450,7 @@ trait RoomStats
 
         if ($cache->exists($room_boon_gift_sign_key)) {
 
-            $total_value = $boom_config->total_value * $this->getBoomNum();
+            $total_value = $boom_config->total_value * ($this->getBoomNum() - 1);
 
             if ($total_value > 250000) {
                 $total_value = 250000;
