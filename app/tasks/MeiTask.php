@@ -14,7 +14,7 @@ class MeiTask extends \Phalcon\Cli\Task
 
         $cache = Users::getHotWriteCache();
         $cur_income_key = \Rooms::generateBoomCurIncomeKey(137039);
-        $cache->set($cur_income_key, 145000);
+        $cache->set($cur_income_key, 14000);
 
 //        $cache->setex('ddd', 180, 1);
         echoLine($cache->ttl('ddd'));

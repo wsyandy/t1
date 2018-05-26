@@ -339,7 +339,7 @@ class RoomsController extends BaseController
                 'expire_at' => \Rooms::getBoomGiftExpireAt($room_id),
                 'client_url' => 'url://m/boom_histories',
                 'svga_image_url' => $boom_config->getSvgaImageUrl(),
-                'total_value' => 100000,
+                'total_value' => intval($total_value),
                 'current_value' => intval($room->getCurrentBoomGiftValue($boom_config)),
                 'show_rank' => 1000000,
                 'render_type' => 'svga',
