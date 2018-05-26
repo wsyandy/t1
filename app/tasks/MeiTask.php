@@ -9,6 +9,12 @@
 class MeiTask extends \Phalcon\Cli\Task
 {
 
+    function test64Action()
+    {
+        $sender = Users::findFirstById(6);
+        \Backpacks::sendGift($sender, '41971,41966', 13, []);
+    }
+
     function test63Action()
     {
         $cache = Users::getHotWriteCache();
