@@ -316,8 +316,10 @@ trait RoomStats
     {
         $boom_config = BoomConfigs::getBoomConfig();
         $interval_value = 50000;
+        $is_company_user = false;
 
         if ($this->user->isCompanyUser()) {
+            $is_company_user = true;
             $boom_config = BoomConfigs::getTestBoomConfig();
             $interval_value = 500;
         }
@@ -400,9 +402,12 @@ trait RoomStats
                 $this->pushBoomIncomeMessage($params);
 
                 //临时查询
-                $sender = Users::findFirstById($sender_id);
-                $content = "恭喜【{$sender->nickname}】在【{$this->name}】内，成功引爆火箭，快来抢礼物吧！";
-                Rooms::delay()->asyncAllNoticePush($content, ['type' => 'top_topic_message', 'hot' => 1]);
+                if (!$is_company_user) {
+                    $sender = Users::findFirstById($sender_id);
+                    $content = "恭喜【{$sender->nickname}】在【{$this->name}】内，成功引爆火箭，快来抢礼物吧！";
+                    Rooms::delay()->asyncAllNoticePush($content, ['type' => 'top_topic_message', 'hot' => 1]);
+                }
+
                 unlock($lock);
 
                 return;
