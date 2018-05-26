@@ -32,8 +32,10 @@ class BoomHistoriesController extends BaseController
         $boom_histories = $boom_histories->toJson('boom_histories', 'toSimpleJson');
 
         if (!$room_id) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '您已不在当前房间' . $room_id, $boom_histories);
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误', $boom_histories);
         }
+
+        $room = \Rooms::findFirstById($room_id);
 
         // 没爆礼物不抽奖
         $expire_at = \Rooms::getBoomGiftExpireAt($room_id);
@@ -56,28 +58,51 @@ class BoomHistoriesController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '已领取！', $boom_histories);
         }
 
+        $target_id = 0;
         //用户贡献值 控制概率
         $record_key = \Rooms::generateBoomRecordKey($room_id);
         $amount = $cache->zscore($record_key, $user->id);
-        $rate = mt_rand(1, 100);
+        $boom_user_id = $room->getBoomUserId();
+        $type = BOOM_HISTORY_GIFT_TYPE;
+        $number = 1;
+        $boom_num = $room->getBoomNum();
 
-        $type = BOOM_HISTORY_DIAMOND_TYPE;
-        $number = mt_rand(1, 500);
+        if ($boom_user_id == $user->id) {
 
-        $amount = $cache->get("room_boom_diamond_num_room_id_" . $room_id);
+            $gift_id = \BoomHistories::randomBoomUserGiftId();
+            $target_id = $gift_id;
 
-        info("boom_record", $amount, $room_id, $number, $this->currentUser()->id);
+            info($user->id, $target_id, $boom_user_id);
 
-        $total_amount = mt_rand(5000, 10000);
+        } elseif ($amount > 0) {
 
-        if ($amount > $total_amount) {
-            $type = BOOM_HISTORY_GOLD_TYPE;
-            $number = mt_rand(10, 5000);
+            $rank = $cache->zrrank($record_key, $user->id);
+
+            if ($rank && $rank >= 0 && $rank < 3) {
+                $gift_id = \BoomHistories::randomContributionUserGiftIdByRank($rank);
+
+            } else {
+                $res = \BoomHistories::randomBoomGiftIdByBoomNum($room, $boom_num);
+            }
+
+            if ($gift_id) {
+                $target_id = $gift_id;
+                info($user->id, $rank, $target_id);
+            }
         } else {
-            $cache->incrby("room_boom_diamond_num_room_id_" . $room_id, $number);
+            $res = \BoomHistories::randomBoomGiftIdByBoomNum($room, $boom_num, 60);
+
+            if (!$res) {
+                $gift_id = 28;
+                $target_id = $gift_id;
+                $type = BOOM_HISTORY_GIFT_TYPE;
+                $number = 1;
+            }
         }
 
-        $res = \BoomHistories::createBoomHistory($user, ['target_id' => 0, 'type' => $type, 'number' => $number, 'room_id' => $room_id]);
+        info("boom_record", "用户id:", $this->currentUser()->id, "贡献值:", $amount, "房间id:", $room_id, "个数", $number);
+
+        $res = \BoomHistories::createBoomHistory($user, ['target_id' => $target_id, 'type' => $type, 'number' => $number, 'room_id' => $room_id]);
 
         list($code, $reason, $boom_history) = $res;
 
