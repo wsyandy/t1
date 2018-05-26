@@ -420,7 +420,14 @@ trait RoomStats
         $room_boon_gift_sign_key = Rooms::generateRoomBoomGiftSignKey($this->id);
 
         if ($cache->exists($room_boon_gift_sign_key)) {
-            return $boom_config->total_value;
+
+            $total_value = $boom_config->total_value * $this->getBoomNum();
+
+            if ($total_value > 250000) {
+                $total_value = 250000;
+            }
+
+            return $total_value;
         }
 
         $cur_income = $cache->get($cur_income_key);
