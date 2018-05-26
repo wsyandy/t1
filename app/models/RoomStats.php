@@ -425,7 +425,7 @@ trait RoomStats
 
         $cur_income = $cache->get($cur_income_key);
 
-        return $cur_income;
+        return intval($cur_income);
     }
 
     static public function generateBoomCurIncomeKey($room_id)
