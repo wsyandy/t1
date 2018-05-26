@@ -45,50 +45,6 @@ class Backpacks extends BaseModel
         return $list;
     }
 
-
-    /**
-     * @param $user_id
-     * @param $target_id
-     * @param $number
-     * @param $type
-     * @return array
-     */
-    static public function doCreate($user_id, $target_id, $number, $type)
-    {
-        $prize = array(
-            'target_id' => $target_id,
-            'type' => $type,
-            'number' => $number
-        );
-
-        $boom_histories = new BoomHistories();
-        $boom_histories->createBoomHistories($user_id, $target_id, $type, $number);
-
-        if ($type == BACKPACK_GIFT_TYPE) {
-
-            if (empty($target_id))
-                return [ERROR_CODE_FAIL, '', null];
-
-
-            if (!self::createTarget($user_id, $target_id, $number, BACKPACK_GIFT_TYPE))
-                return [ERROR_CODE_FAIL, '加入背包失败', null];
-
-        } elseif ($type == BACKPACK_DIAMOND_TYPE) {
-
-            $opts['remark'] = '爆礼物获得' . $number . '钻石';
-            \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_IN_BOOM, $number, $opts);
-
-        } elseif ($type == BACKPACK_GOLD_TYPE) {
-
-            $opts['remark'] = '爆礼物获得' . $number . '金币';
-            \GoldHistories::changeBalance($user_id, GOLD_TYPE_IN_BOOM, $number, $opts);
-
-        }
-
-        return [ERROR_CODE_SUCCESS, '', $prize];
-    }
-
-
     /**
      * 数据写入背包
      * @param $user_id
@@ -98,76 +54,55 @@ class Backpacks extends BaseModel
      * @param int $status
      * @return bool
      */
-    static public function createTarget($user_id, $target_id, $number, $type, $status = STATUS_ON)
+    static function createBackpack($user, $opts = [])
     {
-        $backpack = new \Backpacks();
+        $type = fetch($opts, 'type');
+        $number = fetch($opts, 'number');
+        $target_id = fetch($opts, 'target_id');
+        $user_id = $user->id;
 
-        // 礼物类型
-        if ($type == BACKPACK_GIFT_TYPE) {
+        if (!$type || !$number || !$target_id) {
+            return false;
+        }
 
-            $conditions = [
-                'conditions' => 'user_id = :user_id: and target_id = :target_id:',
-                'bind' => [
-                    'user_id' => $user_id,
-                    'target_id' => $target_id
-                ]
-            ];
+        $conditions = [
+            'conditions' => 'user_id = :user_id: and target_id = :target_id: and type = :type:',
+            'bind' => [
+                'user_id' => $user_id,
+                'target_id' => $target_id,
+                'type' => $type
+            ]
+        ];
 
-            // 已经爆过的礼物更新数量
-            if (Backpacks::count($conditions) >= 1) {
-                $item = Backpacks::findByConditions([
-                    'user_id' => $user_id,
-                    'target_id' => $target_id
-                ]);
-                $item = $item->toJson('backpack');
-                $id = $item['backpack'][0]['id'];
-                $backpack->id = $id;
-                $backpack->increase('number', $number);
+        $backpack = Backpacks::findFirst($conditions);
+
+        if ($backpack) {
+
+            $backpack->number += $number;
+
+            if ($backpack->update()) {
                 return true;
             }
+
+            return false;
         }
+
+        $backpack = new \Backpacks();
 
         // 新增礼物进背包
         $backpack->user_id = $user_id;
         $backpack->target_id = $target_id;
         $backpack->number = $number;
         $backpack->type = $type;
-        $backpack->status = $status;
-        $backpack->created_at = time();
-        $backpack->updated_at = time();
+        $backpack->status = STATUS_ON;
         $backpack->save();
-        return true;
-    }
 
-
-    /**
-     * 爆钻石或金币
-     * @param int $type
-     * @return array
-     */
-    static public function getBoomDiamondOrGold($type, $number)
-    {
-
-        if ($type == BACKPACK_DIAMOND_TYPE) {
-            $name = '钻石';
-            $image = \Backpacks::getDiamondImage();
-        } else {
-            $name = '金币';
-            $image = \Backpacks::getGoldImage();
+        if ($backpack->save()) {
+            return true;
         }
 
-        // 嵌套array 返回接口固定结构数据
-        $target = [
-            [
-                'id' => 0,
-                'name' => $name,
-                'image_url' => $image,
-                'number' => $number
-            ]
-        ];
-        return $target;
+        return false;
     }
-
 
     /**
      * @return array
@@ -178,7 +113,7 @@ class Backpacks extends BaseModel
             // 礼物背包
             $gift = $this->getGift();
 
-            return array(
+            return [
                 'id' => $this->id,
                 'number' => $this->number,
                 'image_url' => $gift->getImageUrl(),
@@ -188,13 +123,13 @@ class Backpacks extends BaseModel
                 'svga_image_url' => $gift->getImageSmallUrl(),
                 'expire_day' => $gift->expire_day,
                 'show_rank' => $gift->show_rank
-            );
+            ];
         }
-        return array(
+
+        return [
             'id' => $this->id,
             'number' => $this->number
-        );
-
+        ];
     }
 
 

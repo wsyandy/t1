@@ -11,6 +11,21 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function test63Action()
     {
+
+        $user = Users::findFirstById(6);
+        $user->current_room_id = 266;
+        $user->update();
+        $cur_income_key = Rooms::generateBoomCurIncomeKey(1002212);
+        $cache = Rooms::getHotWriteCache();
+        $cache->setex($cur_income_key, endOfDay() - time(), 34405);
+
+        $gifts = Gifts::findBy(['pay_type' => GIFT_PAY_TYPE_DIAMOND]);
+
+        foreach ($gifts as $gift) {
+            $gift->show_rank = $gift->amount;
+            $gift->update();
+        }
+
         $cond = [
             'conditions' => 'created_at >= :start: and created_at <= :end: and pay_status = :pay_status:',
             'bind' => [

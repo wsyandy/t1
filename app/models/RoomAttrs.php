@@ -269,7 +269,7 @@ trait RoomAttrs
 
         debug('boom_test', $room_id, $room_sign_key, $time);
 
-        if (empty($time)) {
+        if (isBlank($time)) {
             return 0;
         }
 
