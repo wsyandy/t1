@@ -297,7 +297,7 @@ trait RoomStats
     }
 
     // 爆礼物流水值记录
-    public function statBoomIncome($sender_id, $income, $time)
+    function statBoomIncome($sender_id, $income, $time)
     {
         $boom_config = BoomConfigs::getBoomConfig();
 
@@ -355,7 +355,6 @@ trait RoomStats
                 $sender = Users::findFirstById($sender_id);
                 $content = "恭喜【{$sender->nickname}】在【{$this->name}】内，成功引爆火箭，快来抢礼物吧！";
                 Rooms::delay()->asyncAllNoticePush($content, ['type' => 'top_topic_message', 'hot' => 1]);
-                //$this->pushTopTopicMessage($sender, ['type' => 'top_topic_message', 'hot' => 1]);
                 unlock($lock);
 
                 return;
