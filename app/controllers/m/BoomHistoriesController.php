@@ -79,16 +79,17 @@ class BoomHistoriesController extends BaseController
 
             $rank = $cache->zrank($record_key, $user->id);
             $gift_id = 0;
-            
+            $data = [];
+
             if ($rank && $rank >= 0 && $rank < 3) {
                 $gift_id = \BoomHistories::randomContributionUserGiftIdByRank($rank);
 
                 if (!$gift_id) {
-                    $data = \BoomHistories::randomBoomGiftIdByBoomNum($room, $boom_num);
+                    $data = \BoomHistories::randomBoomGiftIdByBoomNum($room);
                 }
 
             } else {
-                $data = \BoomHistories::randomBoomGiftIdByBoomNum($room, $boom_num);
+                $data = \BoomHistories::randomBoomGiftIdByBoomNum($room);
             }
 
             if (!$data && !$gift_id) {
@@ -129,7 +130,7 @@ class BoomHistoriesController extends BaseController
                 if (isDevelopmentEnv()) {
                     $gift_id = 54;
                 }
-                
+
                 $target_id = $gift_id;
                 $type = BOOM_HISTORY_GIFT_TYPE;
                 $number = 1;
