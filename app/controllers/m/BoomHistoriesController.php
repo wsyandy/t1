@@ -67,6 +67,7 @@ class BoomHistoriesController extends BaseController
         $number = 1;
         $boom_num = $room->getBoomNum();
 
+        $lock = tryLock("boom_room_lock_" . $room_id);
         if ($boom_user_id == $user->id) {
 
             $gift_id = \BoomHistories::randomBoomUserGiftId();
@@ -146,11 +147,12 @@ class BoomHistoriesController extends BaseController
         list($code, $reason, $boom_history) = $res;
 
         if ($code == ERROR_CODE_FAIL) {
+            unlock($lock);
             return $this->renderJSON($code, $reason);
         }
 
         $cache->setex($user_sign_key, $expire, 1);
-
+        unlock($lock);
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['boom_histories' => [$boom_history->toSimpleJson()]]);
     }
 
