@@ -383,8 +383,11 @@ trait RoomStats
                 $cache->setex('room_boom_user_room_id_' . $room_id, $boom_expire, $sender_id); //引爆者
 
                 $boom_num_key = 'room_boom_num_room_id_' . $room_id;
+                $boom_num_day_key = 'room_boom_num_room_id_' . $room_id . "_" . date("Ymd");
                 $cache->incrby($boom_num_key, 1); //爆礼物次数
+                $cache->incrby($boom_num_day_key, 1); //爆礼物次数
                 $cache->expire($boom_num_key, $expire);
+                $cache->expire($boom_num_day_key, $expire);
 
                 $params = ['total_value' => $total_value, 'current_value' => $current_value, 'svga_image_url' => $svga_image_url,
                     'boom_num' => $this->getBoomNum()];
