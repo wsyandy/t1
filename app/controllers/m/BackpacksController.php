@@ -197,7 +197,7 @@ class BackpacksController extends BaseController
 
         info("boom_record", $amount, $room_id, $num, $this->currentUser()->id);
 
-        $total_amount = mt_rand(35000, 50000);
+        $total_amount = mt_rand(40000, 50000);
         if ($amount > $total_amount) {
             $num = mt_rand(1, 10);
         }
