@@ -8,7 +8,7 @@
 
 namespace m;
 
-class BackpacksController extends BaseController
+class BoomHistoriesController extends BaseController
 {
 
     static $boom_type = [BACKPACK_GIFT_TYPE, BACKPACK_DIAMOND_TYPE, BACKPACK_GOLD_TYPE];

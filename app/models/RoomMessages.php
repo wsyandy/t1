@@ -117,7 +117,7 @@ trait RoomMessages
             'action' => 'boom_gift',
             'boom_gift' => [
                 'expire_at' => Rooms::getBoomGiftExpireAt($this->id),
-                'client_url' => 'url://m/backpacks',
+                'client_url' => 'url://m/boom_histories',
                 'svga_image_url' => $svga_image_url,
                 'total_value' => intval($total_value),
                 'show_rank' => 1000000,

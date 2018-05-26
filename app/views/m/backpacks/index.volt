@@ -178,7 +178,7 @@
         methods: {
             targetList: function () {
 
-                $.authGet('/m/backpacks/prize', {
+                $.authGet('/m/boom_histories/prize', {
                     sid: vm.sid,
                     code: vm.code,
                 }, function (resp) {
@@ -196,7 +196,7 @@
             },
             
             boomHistories: function () {
-                $.authGet('/m/backpacks/history', {
+                $.authGet('/m/boom_histories/history', {
                     sid: vm.sid,
                     code: vm.code,
                 }, function (resp) {
@@ -212,7 +212,7 @@
                     console.log('领取过!');
                     return ;
                 }
-                $.authPost('/m/backpacks/create', {
+                $.authPost('/m/boom_histories', {
                     sid: vm.sid,
                     code: vm.code,
                     target: vm.cache_list
