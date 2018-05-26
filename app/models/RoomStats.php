@@ -450,7 +450,13 @@ trait RoomStats
 
         if ($cache->exists($room_boon_gift_sign_key)) {
 
-            $total_value = $boom_config->total_value * ($this->getBoomNum() - 1);
+            $interval_value = 50000;
+
+            if ($this->user->isCompanyUser()) {
+                $interval_value = 500;
+            }
+
+            $total_value = $boom_config->total_value + ($this->getBoomNum() - 1) * $interval_value;
 
             if ($total_value > 250000) {
                 $total_value = 250000;
