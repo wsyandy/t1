@@ -321,6 +321,12 @@ class RoomsController extends BaseController
             $boom_num = $room->getBoomNum();
             $room_boon_gift_sign_key = \Rooms::generateRoomBoomGiftSignKey($room_id);
             $cache = \Rooms::getHotReadCache();
+            $total_value = $boom_config->total_value + 50000 * $boom_num;
+
+            if ($total_value > 250000) {
+                $total_value = 250000;
+            }
+            
             // 判断房间是否在进行爆礼物活动
             if ($cache->exists($room_boon_gift_sign_key)) {
                 $boom_num--;
@@ -333,7 +339,7 @@ class RoomsController extends BaseController
                 'expire_at' => \Rooms::getBoomGiftExpireAt($room_id),
                 'client_url' => 'url://m/boom_histories',
                 'svga_image_url' => $boom_config->getSvgaImageUrl(),
-                'total_value' => $boom_config->total_value,
+                'total_value' => $total_value,
                 'current_value' => $room->getCurrentBoomGiftValue($boom_config),
                 'show_rank' => 1000000,
                 'render_type' => 'svga',
