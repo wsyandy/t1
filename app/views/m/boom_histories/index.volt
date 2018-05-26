@@ -212,17 +212,10 @@
                 createBackpack: function () {
 
                     if (vm.get_boom) {
-                        console.log('领取过!');
                         return;
                     }
-                    $.authPost('/m/boom_histories', {
-                        sid: vm.sid,
-                        code: vm.code,
-                        target: vm.cache_list
-                    }, function (resp) {
-                        console.log(resp);
-                        vm.get_boom = true;
-                    })
+
+                    vm.get_boom = true;
                 }
 
             }
