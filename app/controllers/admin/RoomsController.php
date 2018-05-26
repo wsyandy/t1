@@ -212,10 +212,15 @@ class RoomsController extends BaseController
         if ($this->request->isPost()) {
 
             $user_agreement_num = $this->params('user_agreement_num');
-            $room->user_agreement_num = $user_agreement_num;
+            $user_num = $user_agreement_num - $room->user_agreement_num;
 
             if ($room->update()) {
-                \Rooms::delay()->addUserAgreement($room->id);
+                if($user_num > 0){
+                    \Rooms::delay()->addUserAgreement($room->id, $user_num);
+                }else{
+                    \Rooms::delay()->deleteUserAgreement($room->id, abs($user_num));
+                }
+
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '编辑成功', ['room' => $room->toDetailJson()]);
             }
 
