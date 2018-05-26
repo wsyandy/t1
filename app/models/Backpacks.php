@@ -190,7 +190,7 @@ class Backpacks extends BaseModel
         return BACKPACK_GIFT_TYPE == $this->type;
     }
 
-    function sendGift($user, $user_id, $gift_num, $opt = [])
+    function sendGift($sender, $user_id, $gift_num, $opt = [])
     {
         $receiver_ids = explode(',', $user_id);
 
@@ -211,6 +211,9 @@ class Backpacks extends BaseModel
             return [ERROR_CODE_FAIL, '赠送失败', null];
         }
 
+        $receiver_id = $receiver_ids[0];
+        $receiver = Users::findFirstById($receiver_id);
+
         // 背包减去数量
         $this->number = $this->number - $send_number;
 
@@ -218,7 +221,21 @@ class Backpacks extends BaseModel
 
             $notify_type = fetch($opt, 'notify_type');
 
-            \GiftOrders::asyncCreateGiftOrder($user->id, $receiver_ids, $gift->id);
+            $gift_amount = $gift->amount;
+            if (!$gift->isNormal()) {
+                $gift_amount = 0;
+            }
+
+            $opts = [
+                'type' => GIFT_ORDER_TYPE_USER_BACKPACK_SEND,
+                'gift_amount' => $gift_amount,
+                'sender_current_room_id' => $sender->current_room_id,
+                'receiver_current_room_id' => $receiver->current_room_id,
+                'time' => time(),
+                'gift_num' => $gift_num
+            ];
+
+            \GiftOrders::delay()->asyncCreateGiftOrder($sender->id, $receiver_ids, $gift->id, $opts);
 
             $notify_data = \ImNotify::generateNotifyData(
                 'gifts',
@@ -227,13 +244,13 @@ class Backpacks extends BaseModel
                 [
                     'gift' => $gift,
                     'gift_num' => $gift_num,
-                    'sender' => $user,
+                    'sender' => $sender,
                     'user_id' => $receiver_ids[0]
                 ]
             );
 
             $gift_amount = count($receiver_ids) * $gift->amount;
-            $res = array_merge($notify_data, ['diamond' => $user->diamond, 'gold' => $user->gold, 'total_amount' => $gift_amount, 'pay_type' => $gift->pay_type]);
+            $res = array_merge($notify_data, ['diamond' => $sender->diamond, 'gold' => $sender->gold, 'total_amount' => $gift_amount, 'pay_type' => $gift->pay_type]);
 
             $error_reason = "赠送成功";
 
