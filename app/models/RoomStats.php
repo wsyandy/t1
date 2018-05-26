@@ -253,6 +253,13 @@ trait RoomStats
         return intval($cache->get('room_boom_num_room_id_' . $this->id)); //爆礼物次数
     }
 
+    //引爆火箭者用户id
+    function getBoomUserId()
+    {
+        $cache = self::getHotReadCache();
+        return intval($cache->get('room_boom_user_room_id_' . $this->id)); //爆礼物次数
+    }
+
     //按天统计房间收益和送礼物人数,送礼物个数
     static function statDayIncome($room, $income, $sender_id, $gift_num, $opts = [])
     {
@@ -367,7 +374,10 @@ trait RoomStats
                 $cache->setex($room_boon_gift_sign_key, $boom_expire, $time); //爆钻时间
                 $cache->setex("room_boom_diamond_num_room_id_" . $room_id, $boom_expire, 0); //爆钻总额
                 $cache->setex('room_boom_user_room_id_' . $room_id, $boom_expire, $sender_id); //引爆者
-                $cache->incrby('room_boom_num_room_id_' . $room_id, 1); //爆礼物次数
+
+                $boom_num_key = 'room_boom_num_room_id_' . $room_id;
+                $cache->incrby($boom_num_key, 1); //爆礼物次数
+                $cache->expire($boom_num_key, $expire);
 
                 $params = ['total_value' => $total_value, 'current_value' => $current_value, 'svga_image_url' => $svga_image_url,
                     'boom_num' => $this->getBoomNum()];

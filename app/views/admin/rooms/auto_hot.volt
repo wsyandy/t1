@@ -70,6 +70,7 @@
     热门总分值: {{ room.total_score_by_cache }}<br/>
     当前爆礼物值: {{ room.getCurrentBoomGiftValue(boom_config) }}<br/>
     当天爆礼次数: {{ room.getBoomNum() }}<br/>
+    当次引爆爆者ID: {{ room.getBoomUserId() }}<br/>
     {% if room.union_id %}
         公会: {{ room.union.name }}<br/>
         公会类型: {{ room.union.type_text }}<br/>
