@@ -347,6 +347,10 @@ trait RoomStats
             $start_value = $boom_config->start_value;
             $svga_image_url = $boom_config->svga_image_url;
 
+            if ($total_value > 250000) {
+                $total_value = 250000;
+            }
+
 
             // 单位周期 截止目前房间总流水
             $current_value = $cur_income + $income;
