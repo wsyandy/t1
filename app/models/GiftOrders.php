@@ -289,6 +289,11 @@ class GiftOrders extends BaseModel
 
     function updateUserGiftData($gift, $opts = [])
     {
+        if (!$gift->isNormal()) {
+            info("gift_Normal", $gift->id, $opts);
+            return;
+        }
+
         $time = fetch($opts, 'time', time());
 
         if ($gift->isCar()) {
