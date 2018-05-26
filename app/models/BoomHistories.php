@@ -152,8 +152,7 @@ class BoomHistories extends BaseModel
 
         $key = "boom_gift_hit_num_room_id{$room->id}" . "_{$id}_boom_num_" . $boom_num;
         $cache->incrby($key, 1);
-
-
+        $cache->expire($key, 600);
         return $gift_data;
     }
 
