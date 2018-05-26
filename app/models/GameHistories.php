@@ -102,6 +102,16 @@ class GameHistories extends BaseModel
         return $game_history;
     }
 
+    function getEnterGameMenu($room, $root_host){
+
+        $res = ['url' => 'url://m/games/tyt?game_id=' . $this->game_id, 'icon' => $root_host . 'images/go_game.png'];
+        if ($this->game->code == 'jump') {
+            $res = ['url' => 'url://m/jumps/transfer_game_url?room_id=' . $room->id . '&game_history_id=' . $this->id, 'icon' => $root_host . 'images/go_game.png'];
+        }
+
+        return $res;
+    }
+
     function generateGameUrl($current_user, $room)
     {
         $is_host = $current_user->isRoomHost($room);
