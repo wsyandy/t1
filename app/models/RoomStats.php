@@ -343,7 +343,7 @@ trait RoomStats
             $expire = endOfDay() - $time;
 
             if (isDevelopmentEnv()) {
-                $expire = 180;
+                $expire = 600;
             }
 
             $boom_list_key = 'boom_gifts_list';
