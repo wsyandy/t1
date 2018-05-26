@@ -214,6 +214,7 @@ class RoomsController extends BaseController
             $user_agreement_num = $this->params('user_agreement_num');
             $user_num = $user_agreement_num - $room->user_agreement_num;
 
+            $room->user_agreement_num = $user_agreement_num;
             if ($room->update()) {
                 if($user_num > 0){
                     \Rooms::delay()->addUserAgreement($room->id, $user_num);
