@@ -405,7 +405,7 @@ trait RoomStats
             $cache->expire($record_key, $expire); //爆礼物贡献清除
             $cache->expire($record_day_key, $expire); //爆礼物贡献清除
 
-            if (isDevelopmentEnv() && $cache->ttl($cur_income_key) <= 1) {
+            if (isDevelopmentEnv() && $cache->exists($cur_income_key) && $cache->ttl($cur_income_key) <= 1) {
                 $cache->del($cur_income_key);
                 return;
             }
