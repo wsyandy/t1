@@ -319,7 +319,7 @@ class RoomsController extends BaseController
         if ($boom_config && $room->hasBoomGift($boom_config)) {
 
             $boom_num = $room->getBoomNum();
-            $room_boon_gift_sign_key = Rooms::generateRoomBoomGiftSignKey($room_id);
+            $room_boon_gift_sign_key = \Rooms::generateRoomBoomGiftSignKey($room_id);
             $cache = \Rooms::getHotReadCache();
             // 判断房间是否在进行爆礼物活动
             if ($cache->exists($room_boon_gift_sign_key)) {
