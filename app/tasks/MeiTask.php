@@ -9,6 +9,15 @@
 class MeiTask extends \Phalcon\Cli\Task
 {
 
+    function test65Action()
+    {
+
+        $cache = Users::getHotWriteCache();
+        $cur_income_key = \Rooms::generateBoomCurIncomeKey(1001987);
+        $cache->del($cur_income_key);
+        $cache->del('room_boom_num_room_id_' . 1001987);
+    }
+
     function test64Action()
     {
 

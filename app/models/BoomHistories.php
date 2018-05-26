@@ -39,7 +39,7 @@ class BoomHistories extends BaseModel
                 $gift_id = 15;
                 break;
             case $rate > 70 && $rate <= 90:
-                $gift_id = 33;
+                $gift_id = 74;
                 break;
             case $rate > 90 && $rate <= 100:
                 $gift_id = 87;
@@ -52,7 +52,7 @@ class BoomHistories extends BaseModel
     //贡献这礼物 rank 用户贡献的排名
     static function randomContributionUserGiftIdByRank($rank)
     {
-        $gift_ids = [15, 16, 33, 87];
+        $gift_ids = [15, 16, 74, 87];
 
         $can_get_gift = false;
 
