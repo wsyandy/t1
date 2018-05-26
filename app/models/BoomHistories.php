@@ -148,7 +148,7 @@ class BoomHistories extends BaseModel
         $cache = self::getHotWriteCache();
         $gift_data = $gift_datas[array_rand($gift_datas)];
         $id = fetch($gift_data, 'id');
-        $boom_num = $room->boomNum();
+        $boom_num = $room->getBoomNum();
 
         $key = "boom_gift_hit_num_room_id{$room->id}" . "_{$id}_boom_num_" . $boom_num;
         $cache->incrby($key, 1);
@@ -162,7 +162,7 @@ class BoomHistories extends BaseModel
         $cache = self::getHotWriteCache();
         $id = fetch($data, 'id');
         $total_number = fetch($data, 'total_number');
-        $num = $room->boomNum();
+        $num = $room->getBoomNum();
         $key = "boom_gift_hit_num_room_id{$room->id}" . "_{$id}_boom_num_" . $num;
         $hit_num = $cache->get($key);
         info($room->id, $key, $hit_num, $data);
