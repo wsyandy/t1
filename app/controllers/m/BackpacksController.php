@@ -202,7 +202,7 @@ class BackpacksController extends BaseController
             $num = mt_rand(1, 10);
         }
 
-        if($total_amount > 50000){
+        if($total_amount > 30000){
             $num = 1;
         }
 
