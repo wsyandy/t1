@@ -192,12 +192,12 @@ class BackpacksController extends BaseController
 //        }
 
         $type = BACKPACK_DIAMOND_TYPE;
-        $num = mt_rand(1, 1000);
+        $num = mt_rand(1, 600);
         $amount = $cache->get("room_boom_diamond_num_room_id_" . $room_id);
 
         info("boom_record", $amount, $room_id, $num, $this->currentUser()->id);
 
-        $total_amount = mt_rand(40000, 50000);
+        $total_amount = mt_rand(10000, 30000);
         if ($amount > $total_amount) {
             $num = mt_rand(1, 10);
         }
