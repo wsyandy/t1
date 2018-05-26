@@ -54,4 +54,10 @@ class BoomConfigs extends BaseModel
 
         return $boom_config;
     }
+
+    static function getTestBoomConfig()
+    {
+        $boom_config = BoomConfigs::findFirstById(1);
+        return $boom_config;
+    }
 }

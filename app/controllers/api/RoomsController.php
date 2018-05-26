@@ -315,13 +315,19 @@ class RoomsController extends BaseController
 
 
         $boom_config = \BoomConfigs::getBoomConfig();
+        $interval_value = 50000;
+
+        if ($room->user->isCompanyUser()) {
+            $boom_config = \BoomConfigs::getTestBoomConfig();
+            $interval_value = 500;
+        }
 
         if ($boom_config && $room->hasBoomGift($boom_config)) {
 
             $boom_num = $room->getBoomNum();
             $room_boon_gift_sign_key = \Rooms::generateRoomBoomGiftSignKey($room_id);
             $cache = \Rooms::getHotReadCache();
-            $total_value = $boom_config->total_value + 50000 * $boom_num;
+            $total_value = $boom_config->total_value + $interval_value * $boom_num;
 
             if ($total_value > 250000) {
                 $total_value = 250000;

@@ -315,6 +315,12 @@ trait RoomStats
     function statBoomIncome($sender_id, $income, $time)
     {
         $boom_config = BoomConfigs::getBoomConfig();
+        $interval_value = 50000;
+
+        if ($this->user->isCompanyUser()) {
+            $boom_config = BoomConfigs::getTestBoomConfig();
+            $interval_value = 500;
+        }
 
         if (isBlank($boom_config)) {
             return;
@@ -349,9 +355,8 @@ trait RoomStats
             }
 
             $boom_list_key = 'boom_gifts_list';
-            $interval_value = 50000;
-            $boom_num = $this->getBoomNum();
 
+            $boom_num = $this->getBoomNum();
             $total_value = $boom_config->total_value + $interval_value * $boom_num;
             $start_value = $boom_config->start_value;
             $svga_image_url = $boom_config->svga_image_url;
