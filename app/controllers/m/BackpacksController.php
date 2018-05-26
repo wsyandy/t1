@@ -202,6 +202,10 @@ class BackpacksController extends BaseController
             $num = mt_rand(1, 10);
         }
 
+        if($total_amount > 50000){
+            $num = 1;
+        }
+
         $cache->incrby("room_boom_diamond_num_room_id_" . $room_id, $num);
 
         // 1 随机类型
