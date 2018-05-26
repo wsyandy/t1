@@ -91,6 +91,11 @@ class BoomHistoriesController extends BaseController
 
             if (!$data && !$gift_id) {
                 $gift_id = 28;
+
+                if (isDevelopmentEnv()) {
+                    $gift_id = 54;
+                }
+
                 $target_id = $gift_id;
                 $type = BOOM_HISTORY_GIFT_TYPE;
                 $number = 1;
@@ -103,6 +108,11 @@ class BoomHistoriesController extends BaseController
                 $number = fetch($data, 'number');
             } else {
                 $gift_id = 28;
+
+                if (isDevelopmentEnv()) {
+                    $gift_id = 54;
+                }
+
                 $target_id = $gift_id;
                 $type = BOOM_HISTORY_GIFT_TYPE;
                 $number = 1;
@@ -113,6 +123,11 @@ class BoomHistoriesController extends BaseController
 
             if (!$data) {
                 $gift_id = 28;
+
+                if (isDevelopmentEnv()) {
+                    $gift_id = 54;
+                }
+                
                 $target_id = $gift_id;
                 $type = BOOM_HISTORY_GIFT_TYPE;
                 $number = 1;
