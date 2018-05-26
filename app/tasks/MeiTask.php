@@ -11,7 +11,11 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function test64Action()
     {
+
         $cache = Users::getHotWriteCache();
+        $cur_income_key = \Rooms::generateBoomCurIncomeKey(137039);
+        $cache->set($cur_income_key, 150000);
+
 //        $cache->setex('ddd', 180, 1);
         echoLine($cache->ttl('ddd'));
         $sender = Users::findFirstById(6);

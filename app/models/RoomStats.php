@@ -315,6 +315,14 @@ trait RoomStats
     function statBoomIncome($sender_id, $income, $time)
     {
         $boom_config = BoomConfigs::getBoomConfig();
+        $interval_value = 50000;
+        $is_company_user = false;
+
+        if ($this->user->isCompanyUser()) {
+            $is_company_user = true;
+            $boom_config = BoomConfigs::getTestBoomConfig();
+            $interval_value = 500;
+        }
 
         if (isBlank($boom_config)) {
             return;
@@ -349,9 +357,8 @@ trait RoomStats
             }
 
             $boom_list_key = 'boom_gifts_list';
-            $interval_value = 50000;
-            $boom_num = $this->getBoomNum();
 
+            $boom_num = $this->getBoomNum();
             $total_value = $boom_config->total_value + $interval_value * $boom_num;
             $start_value = $boom_config->start_value;
             $svga_image_url = $boom_config->svga_image_url;
@@ -383,8 +390,11 @@ trait RoomStats
                 $cache->setex('room_boom_user_room_id_' . $room_id, $boom_expire, $sender_id); //引爆者
 
                 $boom_num_key = 'room_boom_num_room_id_' . $room_id;
+                $boom_num_day_key = 'room_boom_num_room_id_' . $room_id . "_" . date("Ymd");
                 $cache->incrby($boom_num_key, 1); //爆礼物次数
+                $cache->incrby($boom_num_day_key, 1); //爆礼物次数
                 $cache->expire($boom_num_key, $expire);
+                $cache->expire($boom_num_day_key, $expire);
 
                 $params = ['total_value' => $total_value, 'current_value' => $current_value, 'svga_image_url' => $svga_image_url,
                     'boom_num' => $this->getBoomNum()];
@@ -392,9 +402,12 @@ trait RoomStats
                 $this->pushBoomIncomeMessage($params);
 
                 //临时查询
-                $sender = Users::findFirstById($sender_id);
-                $content = "恭喜【{$sender->nickname}】在【{$this->name}】内，成功引爆火箭，快来抢礼物吧！";
-                Rooms::delay()->asyncAllNoticePush($content, ['type' => 'top_topic_message', 'hot' => 1]);
+                if (!$is_company_user) {
+                    $sender = Users::findFirstById($sender_id);
+                    $content = "恭喜【{$sender->nickname}】在【{$this->name}】内，成功引爆火箭，快来抢礼物吧！";
+                    Rooms::delay()->asyncAllNoticePush($content, ['type' => 'top_topic_message', 'hot' => 1]);
+                }
+
                 unlock($lock);
 
                 return;

@@ -315,21 +315,28 @@ class RoomsController extends BaseController
 
 
         $boom_config = \BoomConfigs::getBoomConfig();
+        $interval_value = 50000;
+
+        if ($room->user->isCompanyUser()) {
+            $boom_config = \BoomConfigs::getTestBoomConfig();
+            $interval_value = 500;
+        }
 
         if ($boom_config && $room->hasBoomGift($boom_config)) {
 
             $boom_num = $room->getBoomNum();
             $room_boon_gift_sign_key = \Rooms::generateRoomBoomGiftSignKey($room_id);
             $cache = \Rooms::getHotReadCache();
-            $total_value = $boom_config->total_value + 50000 * $boom_num;
-
-            if ($total_value > 250000) {
-                $total_value = 250000;
-            }
             
             // 判断房间是否在进行爆礼物活动
             if ($cache->exists($room_boon_gift_sign_key)) {
                 $boom_num--;
+            }
+
+            $total_value = $boom_config->total_value + $interval_value * $boom_num;
+
+            if ($total_value > 250000) {
+                $total_value = 250000;
             }
 
             $image_colors = [1 => 'blue', 2 => 'green', 3 => 'orange'];
@@ -339,8 +346,8 @@ class RoomsController extends BaseController
                 'expire_at' => \Rooms::getBoomGiftExpireAt($room_id),
                 'client_url' => 'url://m/boom_histories',
                 'svga_image_url' => $boom_config->getSvgaImageUrl(),
-                'total_value' => $total_value,
-                'current_value' => $room->getCurrentBoomGiftValue($boom_config),
+                'total_value' => intval($total_value),
+                'current_value' => intval($room->getCurrentBoomGiftValue($boom_config)),
                 'show_rank' => 1000000,
                 'render_type' => 'svga',
                 'status' => STATUS_ON,
