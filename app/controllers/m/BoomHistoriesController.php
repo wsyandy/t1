@@ -81,22 +81,45 @@ class BoomHistoriesController extends BaseController
             if ($rank && $rank >= 0 && $rank < 3) {
                 $gift_id = \BoomHistories::randomContributionUserGiftIdByRank($rank);
 
+                if (!$gift_id) {
+                    $data = \BoomHistories::randomBoomGiftIdByBoomNum($room, $boom_num);
+                }
+
             } else {
-                $res = \BoomHistories::randomBoomGiftIdByBoomNum($room, $boom_num);
+                $data = \BoomHistories::randomBoomGiftIdByBoomNum($room, $boom_num);
             }
 
-            if ($gift_id) {
-                $target_id = $gift_id;
-                info($user->id, $rank, $target_id);
-            }
-        } else {
-            $res = \BoomHistories::randomBoomGiftIdByBoomNum($room, $boom_num, 60);
-
-            if (!$res) {
+            if (!$data && !$gift_id) {
                 $gift_id = 28;
                 $target_id = $gift_id;
                 $type = BOOM_HISTORY_GIFT_TYPE;
                 $number = 1;
+            } elseif ($gift_id) {
+                $target_id = $gift_id;
+                info($user->id, $rank, $target_id);
+            } elseif ($data) {
+                $type = fetch($data, 'type');
+                $target_id = fetch($data, 'target_id');
+                $number = fetch($data, 'number');
+            } else {
+                $gift_id = 28;
+                $target_id = $gift_id;
+                $type = BOOM_HISTORY_GIFT_TYPE;
+                $number = 1;
+            }
+
+        } else {
+            $data = \BoomHistories::randomBoomGiftIdByBoomNum($room, 60);
+
+            if (!$data) {
+                $gift_id = 28;
+                $target_id = $gift_id;
+                $type = BOOM_HISTORY_GIFT_TYPE;
+                $number = 1;
+            } else {
+                $type = fetch($data, 'type');
+                $target_id = fetch($data, 'target_id');
+                $number = fetch($data, 'number');
             }
         }
 

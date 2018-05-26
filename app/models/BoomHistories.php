@@ -89,7 +89,7 @@ class BoomHistories extends BaseModel
     }
 
     //$num 爆礼物次数
-    static function randomBoomGiftIdByBoomNum($room, $num, $rate = 0)
+    static function randomBoomGiftIdByBoomNum($room, $rate = 0)
     {
         if ($rate) {
 
@@ -100,35 +100,77 @@ class BoomHistories extends BaseModel
             }
         }
 
+        $boom_num = $room->boomNum();
+        $num = $boom_num;
+
         if ($num > 3) {
             $num = 3;
         }
 
         $datas = [
             1 => [
-                1 => ['type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 20, 'target_id' => 66, 'number' => 1],
-                2 => ['type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 20, 'number' => 50],
-                3 => ['type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 10, 'number' => 100],
+                1 => ['id' => 1, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 20, 'target_id' => 66, 'number' => 1],
+                2 => ['id' => 2, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 20, 'number' => 50],
+                3 => ['id' => 3, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 10, 'number' => 100],
             ],
             2 => [
-                1 => ['type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 20, 'target_id' => 94, 'number' => 1],
-                2 => ['type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 20, 'number' => 100],
-                3 => ['type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 10, 'number' => 200],
+                1 => ['id' => 4, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 20, 'target_id' => 94, 'number' => 1],
+                2 => ['id' => 5, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 20, 'number' => 100],
+                3 => ['id' => 6, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 10, 'number' => 200],
             ],
             3 => [
-                1 => ['type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 20, 'target_id' => 47, 'number' => 1],
-                2 => ['type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 20, 'number' => 188],
-                3 => ['type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 10, 'number' => 300],
+                1 => ['id' => 7, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 20, 'target_id' => 47, 'number' => 1],
+                2 => ['id' => 8, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 20, 'number' => 188],
+                3 => ['id' => 9, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 10, 'number' => 300],
             ]
         ];
 
 
         $data = fetch($datas, $num);
+        $gift_datas = [];
 
-        $gift_ids = fetch($data, $num);
+        foreach ($data as $datum) {
 
-        $gift_id = $gift_ids[array_rand($gift_ids)];
-        return $gift_id;
+            $res = self::isLimit($room, $datum);
+
+            if ($res) {
+                info($datum);
+                continue;
+            }
+
+            $gift_datas[] = $datum;
+        }
+
+        if (isBlank($gift_datas)) {
+            return null;
+        }
+
+        $cache = self::getHotWriteCache();
+        $gift_data = $gift_datas[array_rand($gift_datas)];
+        $id = fetch($gift_data, 'id');
+        $boom_num = $room->boomNum();
+
+        $key = "boom_gift_hit_num_room_id{$room->id}" . "_{$id}_boom_num_" . $boom_num;
+        $cache->incrby($key, 1);
+
+
+        return $gift_data;
+    }
+
+    static function isLimit($room, $data)
+    {
+        $cache = self::getHotWriteCache();
+        $id = fetch($data, 'id');
+        $total_number = fetch($data, 'total_number');
+        $num = $room->boomNum();
+        $key = "boom_gift_hit_num_room_id{$room->id}" . "_{$id}_boom_num_" . $num;
+        $hit_num = $cache->get($key);
+        info($room->id, $key, $hit_num, $data);
+        if ($hit_num >= $total_number) {
+            return true;
+        }
+
+        return false;
     }
 
     static function randomDiamond($total_value)
