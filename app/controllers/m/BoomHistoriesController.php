@@ -77,9 +77,7 @@ class BoomHistoriesController extends BaseController
             $cache->incrby("room_boom_diamond_num_room_id_" . $room_id, $number);
         }
 
-        $target = \BoomHistories::getBoomDiamondOrGold($type, $number);
-
-        $res = \BoomHistories::createBoomHistory($user, ['target_id' => 0, 'type' => $type, 'number' => $number]);
+        $res = \BoomHistories::createBoomHistory($user, ['target_id' => 0, 'type' => $type, 'number' => $number, 'room_id' => $room_id]);
 
         list($code, $reason, $boom_history) = $res;
 
