@@ -443,7 +443,7 @@ trait RoomStats
                 $total_value = 250000;
             }
 
-            return $total_value;
+            return intval($total_value);
         }
 
         $cur_income = $cache->get($cur_income_key);
