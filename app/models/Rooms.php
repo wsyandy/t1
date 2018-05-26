@@ -897,7 +897,7 @@ class Rooms extends BaseModel
         }
 
         $enter_num = 0;
-        $users = $room->selectSilentUsers($user_agreement_num + 50);
+        $users = $room->selectSilentUsers($user_agreement_num + 100);
         foreach ($users as $user) {
 
             if ($user->isInAnyRoom()) {
