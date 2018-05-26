@@ -72,7 +72,7 @@ class BoomHistoriesController extends BaseController
             $gift_id = \BoomHistories::randomBoomUserGiftId();
             $target_id = $gift_id;
 
-            info($user->id, $target_id, $boom_user_id);
+            info("boom_user", $user->id, $target_id, $boom_user_id);
 
         } elseif ($amount > 0) {
 
@@ -81,6 +81,7 @@ class BoomHistoriesController extends BaseController
             $data = [];
 
             if ($rank && $rank >= 0 && $rank < 3) {
+
                 $gift_id = \BoomHistories::randomContributionUserGiftIdByRank($rank);
 
                 if (!$gift_id) {
@@ -120,6 +121,8 @@ class BoomHistoriesController extends BaseController
                 $number = 1;
             }
 
+            info("contribution_user", $user->id, $target_id, $boom_user_id, $type, $number);
+
         } else {
             $data = \BoomHistories::randomBoomGiftIdByBoomNum($room, 60);
 
@@ -138,6 +141,8 @@ class BoomHistoriesController extends BaseController
                 $target_id = fetch($data, 'target_id');
                 $number = fetch($data, 'number');
             }
+
+            info("random_boom_gift", $user->id, $target_id, $type, $number);
         }
 
         info("boom_record", "用户id:", $this->currentUser()->id, "贡献值:", $amount, "房间id:", $room_id, "个数", $number);
