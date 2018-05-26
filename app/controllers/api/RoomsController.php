@@ -317,11 +317,6 @@ class RoomsController extends BaseController
         $boom_config = \BoomConfigs::getBoomConfig();
         $interval_value = 50000;
 
-        if ($room->user->isCompanyUser()) {
-            $boom_config = \BoomConfigs::getTestBoomConfig();
-            $interval_value = 500;
-        }
-
         if ($boom_config && $room->hasBoomGift($boom_config)) {
 
             $boom_num = $room->getBoomNum();
