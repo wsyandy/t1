@@ -100,7 +100,7 @@ class BoomHistories extends BaseModel
             }
         }
 
-        $boom_num = $room->boomNum();
+        $boom_num = $room->getBoomNum();
         $num = $boom_num;
 
         if ($num > 3) {

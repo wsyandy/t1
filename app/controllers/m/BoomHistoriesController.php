@@ -65,7 +65,6 @@ class BoomHistoriesController extends BaseController
         $boom_user_id = $room->getBoomUserId();
         $type = BOOM_HISTORY_GIFT_TYPE;
         $number = 1;
-        $boom_num = $room->getBoomNum();
 
         $lock = tryLock("boom_room_lock_" . $room_id);
         if ($boom_user_id == $user->id) {
