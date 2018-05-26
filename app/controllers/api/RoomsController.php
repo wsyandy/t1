@@ -272,20 +272,17 @@ class RoomsController extends BaseController
 
         $res = [];
 
-        // 发起游戏
-        $game_history = $room->getGameHistory();
         $ready_cp_info = $room->getReadyCpInfo();
         $sponsor_id = fetch($ready_cp_info, 'sponsor_id');
-
-        if (isBlank($sponsor_id)) {
-            if ($game_history) {
-                $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root_host . 'images/go_game.png'];
-                if ($game_history->game->code == 'jump' && isDevelopmentEnv()) {
-                    $res['game'] = ['url' => 'url://m/jumps/transfer_game_url?room_id=' . $room_id . '&game_history_id=' . $game_history->id, 'icon' => $root_host . 'images/go_game.png'];
-                }
-            }
-        } else {
+        if ($sponsor_id) {
             $res['game'] = ['url' => 'url://m/couples?room_id=' . $room_id, 'icon' => $root_host . 'images/go_cp.png'];
+
+        } else {
+            // 发起游戏
+            $game_history = $room->getGameHistory();
+            if ($game_history) {
+                $res['game'] = $game_history->getEnterGameMenu($room, $root_host);
+            }
         }
 
 
