@@ -11,6 +11,10 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function test63Action()
     {
+        $cache = Users::getHotWriteCache();
+        $record_key = \Rooms::generateBoomRecordKey(137039);
+        echoLine($cache->zrange($record_key, 0, -1, 'withscores'));
+        echoLine($cache->zrank($record_key, 41792));
 
         $user = Users::findFirstById(6);
         $user->current_room_id = 266;
