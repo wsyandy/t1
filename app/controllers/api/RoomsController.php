@@ -318,6 +318,10 @@ class RoomsController extends BaseController
 
         if ($boom_config && $room->hasBoomGift($boom_config)) {
 
+            $boom_num = $room->getBoomNum();
+            $image_colors = [1 => 'blue', 2 => 'green', 3 => 'orange'];
+            $image_color = fetch($image_colors, $boom_num + 1, 'orange');
+
             $res['boom_gift'] = [
                 'expire_at' => \Rooms::getBoomGiftExpireAt($room_id),
                 'client_url' => 'url://m/boom_histories',
@@ -327,7 +331,7 @@ class RoomsController extends BaseController
                 'show_rank' => 1000000,
                 'render_type' => 'svga',
                 'status' => STATUS_ON,
-                'image_color' => 'blue'
+                'image_color' => $image_color
             ];
         }
 

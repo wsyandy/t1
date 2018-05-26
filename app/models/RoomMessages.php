@@ -112,6 +112,9 @@ trait RoomMessages
         $current_value = fetch($opts, 'current_value');
         $status = fetch($opts, 'status', STATUS_ON);
         $svga_image_url = fetch($opts, 'svga_image_url');
+        $boom_num = fetch($opts, 'boom_num');
+        $image_colors = [1 => 'blue', 2 => 'green', 3 => 'orange'];
+        $image_color = fetch($image_colors, $boom_num + 1, 'orange');
 
         $body = [
             'action' => 'boom_gift',
@@ -124,7 +127,7 @@ trait RoomMessages
                 'current_value' => intval($current_value),
                 'render_type' => 'svga',
                 'status' => $status,
-                'image_color' => 'blue'
+                'image_color' => $image_color
             ]
         ];
 
