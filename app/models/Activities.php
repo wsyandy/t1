@@ -20,7 +20,8 @@ class Activities extends BaseModel
 
     //活动类型
     static $ACTIVITY_TYPE = ['gift_minutes_list' => '礼物分钟榜单', 'gift_charm_day_list' => '礼物魅力日榜单',
-        'gift_charm_week_list' => '礼物魅力周榜单', 'total_gift_charm_week_list' => '总礼物魅力周榜', 'gif_wealth_day_list' => '礼物财富日榜单', 'gift_wealth_week_list' => '礼物财富周榜单'];
+        'gift_charm_week_list' => '礼物魅力周榜单', 'total_gift_charm_week_list' => '总礼物魅力周榜', 'gif_wealth_day_list' => '礼物财富日榜单',
+        'gift_wealth_week_list' => '礼物财富周榜单'];
 
     function getImageUrl()
     {
