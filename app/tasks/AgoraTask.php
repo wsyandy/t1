@@ -22,7 +22,6 @@ class AgoraTask extends \Phalcon\Cli\Task
 
         $uid = $params[0];
         $user = Users::findFirstByUid($uid);
-        echoLine($user);
         if (!$user) {
             echoLine('error ', $params);
             return;
