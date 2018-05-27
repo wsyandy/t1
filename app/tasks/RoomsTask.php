@@ -167,7 +167,7 @@ class RoomsTask extends \Phalcon\Cli\Task
         }
     }
 
-    function checkExceExitRoomsAction()
+    function checkExceExitRooms2Action()
     {
 
         $hot_cache = Rooms::getHotReadCache();
@@ -253,7 +253,7 @@ class RoomsTask extends \Phalcon\Cli\Task
         }
     }
 
-    function check2Action()
+    function checkExceExitRoomsAction()
     {
 
         $hot_cache = Rooms::getHotReadCache();
