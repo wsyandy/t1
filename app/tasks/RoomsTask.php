@@ -192,8 +192,8 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             $user = Users::findFirstById($user_id);
             $room = Rooms::findFirstById($room_id);
-            if(!$user || !$room){
-                info('no ', $room_id, $user_id);
+            if (!$user || !$room || $user->id == $room->user_id) {
+                info('no obj or 房主', $room_id, $user_id);
                 Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
                 continue;
             }
