@@ -253,6 +253,91 @@ class RoomsTask extends \Phalcon\Cli\Task
         }
     }
 
+    function check2Action()
+    {
+
+        $hot_cache = Rooms::getHotReadCache();
+        $cache_key = Rooms::generateAbnormalExitRoomListKey();
+
+        while(true) {
+
+            $end_at = time() - 60;
+            $target_ids = $hot_cache->zrangebyscore($cache_key, '-inf', $end_at, array('limit' => array(0, 1)));
+            if(count($target_ids) < 1){
+                return;
+            }
+
+            $target_id = $target_ids[0];
+            list($room_id, $user_id) = explode("_", $target_id);
+            if (!$room_id || !$user_id) {
+                info('no ', $room_id, $user_id);
+                Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
+                continue;
+            }
+
+            $user = Users::findFirstById($user_id);
+            $room = Rooms::findFirstById($room_id);
+            if (!$user || !$room || $user->id == $room->user_id) {
+                info('no_obj or 房主', $room_id, $user_id);
+                Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
+                continue;
+            }
+
+            $current_room_id = $user->current_room_id;
+            $current_room_seat_id = $user->current_room_seat_id;
+
+            // 不在房间 或 在其他房间
+            if (!$current_room_id || $current_room_id != $room->id) {
+                // 声网检测
+                if (!AgoraApi::exitChannel($user, $room)) {
+                    info('在其他房间 退出声网失败 room_is_change', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdHis", $user->last_at));
+                    continue;
+                }
+
+                Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
+                $room->exitRoom($user);
+                info('在其他房间 room_is_change', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdHis", $user->last_at));
+                continue;
+            }
+
+            // 在原来房间
+
+            list($in_channel, $user_role) = AgoraApi::inChannel($user, $room);
+
+            // 不在频道
+            if (!$in_channel) {
+                info('不在频道 退出房间', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdHis", $user->last_at));
+                Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
+                $room->exitRoom($user);
+                continue;
+            }
+
+            // 在频道，角色错误
+            if ($in_channel && $user_role == USER_ROLE_BROADCASTER && $user->id != $room->user_id && $current_room_seat_id < 1) {
+                AgoraApi::kickingRule($user, $room, 1);
+                Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
+                $room->exitRoom($user);
+                info('角色错误 退出房间', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdHis", $user->last_at));
+                continue;
+            }
+
+            $user_fd = $user->getUserFd();
+            if (!$user_fd) {
+
+                info('fd未连接 退出房间', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdHis", $user->last_at));
+
+                Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
+                $room->exitRoom($user);
+                AgoraApi::kickingRule($user, $room, 1);
+                continue;
+            }
+
+            info('fd已连接', $user->id, 'user_fd', $user_fd, 'room_id', $room->id, 'current_room_id', $current_room_id, 'last_at', date("YmdHis", $user->last_at));
+            Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
+
+        }
+    }
+
     //释放所有离线沉默房间
     function clearAllOfflineSilentRoomsAction()
     {
