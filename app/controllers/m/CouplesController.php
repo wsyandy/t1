@@ -197,6 +197,7 @@ class CouplesController extends BaseController
 
         $couple_file_name = 'couple_' . md5(uniqid(mt_rand())) . '.jpg';
         $couple_new_file = APP_ROOT . 'temp/' . $couple_file_name;
+        // StoreFile::download($sponsor->avatar, $couple_new_file);
         $sponsor->avatar_base64_url = \Couples::base64EncodeImage(httpSave($sponsor->avatar_url, $couple_new_file));
         $pursuer->avatar_base64_url = \Couples::base64EncodeImage(httpSave($pursuer->avatar_url, $couple_new_file));
 
