@@ -57,21 +57,21 @@ class BoomHistories extends BaseModel
         $can_get_gift = false;
 
         switch ($rank) {
-            case 1:
+            case 0:
                 $rate = mt_rand(1, 100);
 
                 if ($rate > 0 && $rate <= 50) {
                     $can_get_gift = true;
                 }
                 break;
-            case 2;
+            case 1;
                 $rate = mt_rand(1, 100);
 
                 if ($rate > 0 && $rate <= 30) {
                     $can_get_gift = true;
                 }
                 break;
-            case 3:
+            case 2:
                 $rate = mt_rand(1, 100);
 
                 if ($rate > 0 && $rate <= 10) {

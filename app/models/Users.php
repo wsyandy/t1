@@ -1308,6 +1308,13 @@ class Users extends BaseModel
     {
         info($this->id, date('YmdHis', $this->register_at), date('YmdHis', $this->last_at));
         \Stats::delay()->record('user', 'register', $this->getStatAttrs());
+
+        if(isDevelopmentEnv()){
+            $attrs = $this->getStatAttrs();
+            $attrs['mobile'] = $this->mobile;
+            $attrs['third_unionid'] = $this->third_unionid;
+            \Stats::delay()->record('user', 'active_user', $attrs);
+        }
     }
 
     static function checkRegisterThirdUnionid($third_unionid, $third_name)
