@@ -1193,14 +1193,14 @@ trait UserAttrs
         return $current_user_info;
     }
 
-    function getCurrentWeekActivityCpInfo()
+    function getCurrentWeekActivityCpInfo($start_at)
     {
         $db = \Users::getUserDb();
         //先去当前用户的周情侣值最高的数据，拼接成员，到周总榜，拿到当前排名和当前分数
         $total_cp_week_charm_key = \Users::generateFieldRankListKey('week', 'cp');
 
         //当前用户周情侣值
-        $cp_week_charm_key = \Couples::generateCoupleWeekValueKey($this->id);
+        $cp_week_charm_key = \Couples::generateCoupleWeekValueKey($this->id, $start_at);
         $height_data = $db->zrevrange($cp_week_charm_key, 0, 0);
         $current_score = 0;
         if ($height_data) {
@@ -1218,7 +1218,7 @@ trait UserAttrs
             }
 
             $rank = $db->zrrank($total_cp_week_charm_key, $member);
-            $current_score =  $db->zscore($total_cp_week_charm_key, $member);
+            $current_score = $db->zscore($total_cp_week_charm_key, $member);
 
             if (is_null($rank)) {
                 $total_entries = $db->zcard($total_cp_week_charm_key);
