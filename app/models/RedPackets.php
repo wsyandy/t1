@@ -159,7 +159,7 @@ class RedPackets extends BaseModel
         if (isDevelopmentEnv()) {
             $time = 5 * 60;
         }
-        
+
         // 红包退款
         self::delay($time)->asyncCheckRefund($red_packet->id);
 
@@ -340,12 +340,20 @@ class RedPackets extends BaseModel
         $cond = ['conditions' => 'user_status!=:user_status: and last_at>:last_at:',
             'bind' => ['user_status' => USER_TYPE_SILENT, 'last_at' => time() - 2 * 60 * 60]
         ];
+
         $client_url = 'app://rooms/detail?id=' . $room_id;
         $users = \Users::find($cond);
+
         foreach ($users as $user) {
+
             $body = ['action' => 'sink_notice', 'title' => '快来抢红包啦！！', 'content' => $content, 'client_url' => $client_url];
+
             $intranet_ip = $user->getIntranetIp();
             $receiver_fd = $user->getUserFd();
+
+            if(!$intranet_ip || !$receiver_fd){
+                continue;
+            }
 
             $result = \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
             info('推送结果=>', $result, '结构=>', $body);
