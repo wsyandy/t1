@@ -4,12 +4,10 @@
 {{ block_end() }}
 <div class="vueBox" id="app">
     <img :src="bg_header" class="bg_header" alt="">
-
     {% if time() >= activity.start_at %}
         <img :src="bg_main" class="bg_main" alt="">
         <img :src="bg_footer" class="bg_footer" alt="">
     {% endif %}
-
     <img :src="rule_btn" class="rule_btn" alt="" @click="ruleShow">
     <div class="weekly_header">
         <img :src="title01" class="title01" alt="">
