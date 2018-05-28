@@ -47,6 +47,14 @@ class RedPackets extends BaseModel
         //当前正在进行中的红包id集合
         $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($this->room_id);
         $cache->zadd($underway_red_packet_list_key, time(), $this->id);
+
+        if ($this->diamond >= 1000) {
+            $this->user->has_red_packet = STATUS_ON;
+            $this->user->update();
+
+            $this->room->has_red_packet = STATUS_ON;
+            $this->room->update();
+        }
     }
 
     function afterUpdate()
@@ -62,12 +70,13 @@ class RedPackets extends BaseModel
             self::pushRedPacketMessageForUser($this->room, $this->user, 'bc');
 
 
-            $this->user->has_red_packet = STATUS_OFF;
-            $this->user->update();
-            $room = $this->room;
-            if ($room) {
-                $room->has_red_packet = STATUS_OFF;
-                $room->update();
+            if ($this->diamond >= 1000) {
+                $this->user->has_red_packet = STATUS_OFF;
+                $this->user->update();
+                if($this->room){
+                    $this->room->has_red_packet = STATUS_OFF;
+                    $this->room->update();
+                }
             }
         }
     }
@@ -139,6 +148,9 @@ class RedPackets extends BaseModel
             $red_packet->$column = fetch($opts, $column);
         }
 
+        $red_packet->user = $user;
+        $red_packet->room = $room;
+
         if (!$red_packet->create()) {
             return null;
         }
@@ -147,17 +159,9 @@ class RedPackets extends BaseModel
         if (isDevelopmentEnv()) {
             $time = 5 * 60;
         }
-
+        
         // 红包退款
         self::delay($time)->asyncCheckRefund($red_packet->id);
-
-        if ($red_packet->diamond >= 1000) {
-            $user->has_red_packet = STATUS_ON;
-            $user->update();
-
-            $room->has_red_packet = STATUS_ON;
-            $room->update();
-        }
 
         return $red_packet;
     }
