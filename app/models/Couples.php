@@ -152,16 +152,51 @@ class Couples extends BaseModel
 //        $cp_info_key = self::generateCpInfoKey();
 //        $db->zincrby($cp_info_key, $amount, $member);
 
+        self::updateCoupleTotalValue($sender_id, $receive_id, $amount);
+
+        //记录周榜情侣值
+        self::updateCoupleWeekValue($member, $amount);
+        //统计各自的周榜情侣值
+        self::updateCoupleWeekValueForUser($sender_id, $receive_id, $amount);
+    }
+
+    //双方各自的同步总cp值
+    static function updateCoupleTotalValue($sender_id, $receive_id, $amount)
+    {
+        $db = \Users::getUserDb();
         $sender_key = self::generateCpInfoForUserKey($sender_id);
         $db->zincrby($sender_key, $amount, $receive_id);
 
         $receive_key = self::generateCpInfoForUserKey($receive_id);
         $db->zincrby($receive_key, $amount, $sender_id);
+    }
 
-        //记录周榜情侣值
+    //记录周榜情侣值
+    static function updateCoupleWeekValue($member, $amount)
+    {
+        $db = \Users::getUserDb();
         $cp_week_charm_key = \Users::generateFieldRankListKey('week', 'cp');
         info('情侣值周榜增加', $cp_week_charm_key, $member);
         $db->zincrby($cp_week_charm_key, $amount, $member);
+    }
+
+    //记录各自的一周的情侣值
+    static function updateCoupleWeekValueForUser($sender_id, $receive_id, $amount)
+    {
+        $db = \Users::getUserDb();
+        $sender_key = self::generateCoupleWeekValueKey($sender_id);
+        $db->zincrby($sender_key, $amount, $receive_id);
+
+        $receive_key = self::generateCoupleWeekValueKey($receive_id);
+        $db->zincrby($receive_key, $amount, $sender_id);
+
+        info('情侣值周榜增加', $sender_key, $receive_key, $amount);
+    }
+
+
+    static function generateCoupleWeekValueKey($user_id)
+    {
+        return 'couple_week_value_' . $user_id . '_' . date("Ymd", beginOfWeek());
     }
 
     static function sendCpFinishMessage($user, $body)
@@ -223,7 +258,7 @@ class Couples extends BaseModel
 
     static function base64EncodeImage($image_file)
     {
-        if(!$image_file){
+        if (!$image_file) {
             return null;
         }
 

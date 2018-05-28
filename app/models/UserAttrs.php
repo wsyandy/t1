@@ -1192,4 +1192,57 @@ trait UserAttrs
 
         return $current_user_info;
     }
+
+    function getCurrentWeekActivityCpInfo()
+    {
+        $db = \Users::getUserDb();
+        //先去当前用户的周情侣值最高的数据，拼接成员，到周总榜，拿到当前排名和当前分数
+        $total_cp_week_charm_key = \Users::generateFieldRankListKey('week', 'cp');
+
+        //当前用户周情侣值
+        $cp_week_charm_key = \Couples::generateCoupleWeekValueKey($this->id);
+        $height_data = $db->zrevrange($cp_week_charm_key, 0, 0);
+        $current_score = 0;
+        if ($height_data) {
+            $other_user_id = $height_data[0];
+
+            $key = \Couples::generateSeraglioKey($this->id);
+            $status = $db->zscore($key, $other_user_id);
+            switch ($status) {
+                case 1:
+                    $member = $other_user_id . '_' . $this->id;
+                    break;
+                case 2:
+                    $member = $this->id . '_' . $other_user_id;
+                    break;
+            }
+
+            $rank = $db->zrrank($total_cp_week_charm_key, $member);
+            $current_score =  $db->zscore($total_cp_week_charm_key, $member);
+
+            if (is_null($rank)) {
+                $total_entries = $db->zcard($total_cp_week_charm_key);
+                if ($total_entries) {
+                    $rank = $total_entries;
+                }
+            }
+
+            $current_rank = $rank + 1;
+            $current_user_info['current_score'] = $db->zscore($total_cp_week_charm_key, $member);
+        } else {
+            $total_entries = $db->zcard($total_cp_week_charm_key);
+            if ($total_entries) {
+                $rank = $total_entries;
+            }
+
+            $current_rank = $rank + 1;
+        }
+
+        $current_user_info['current_rank'] = $current_rank <= 100 ? $current_rank : $current_rank + 1000;
+        $current_user_info['current_score'] = $current_score;
+        $current_user_info['nickname'] = $this->nickname;
+        $current_user_info['avatar_url'] = $this->avatar_url;
+
+        return $current_user_info;
+    }
 }

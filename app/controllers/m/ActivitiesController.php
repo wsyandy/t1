@@ -623,11 +623,17 @@ class ActivitiesController extends BaseController
         $last_activity_start = date("Ymd", beginOfWeek($last_activity->start_at));
         $last_activity_end = date("Ymd", endOfWeek($last_activity->start_at));
 
+        $type = 'charm';
+        if ($last_activity_id == 25) {
+            $type = 'wealth';
+        }
+
         $last_opts = [
             'last_activity' => $last_activity,
             'last_gifts' => $last_gifts,
             'last_activity_start' => $last_activity_start,
-            'last_activity_end' => $last_activity_end
+            'last_activity_end' => $last_activity_end,
+            'type' => $type
         ];
 
         $last_activity_rank_list_users = \Activities::getLastActivityRankListUsers($last_opts);
@@ -723,6 +729,7 @@ class ActivitiesController extends BaseController
     function getCurrentActivityCpRankListAction()
     {
         if ($this->request->isAjax()) {
+            $user = $this->currentUser();
             $type = $this->params('type', 'cp');
             $id = $this->params('id');
             $activity = \Activities::findFirstById($id);
@@ -739,11 +746,12 @@ class ActivitiesController extends BaseController
 
 
             $users = \Couples::findCpRankListByKey($key, 1, 10);
-
+            $current_user_cp_info = $user->getCurrentWeekActivityCpInfo();
             debug($key);
+            info('当前用户信息',$current_user_cp_info);
 
             if (count($users)) {
-                return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['users' => $users]);
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['users' => $users, 'current_user_cp_info' => $current_user_cp_info]);
             } else {
                 return $this->renderJSON(ERROR_CODE_FAIL, '暂无数据');
             }
