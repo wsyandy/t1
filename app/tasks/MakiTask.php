@@ -278,14 +278,15 @@ class MakiTask extends Phalcon\Cli\Task
         if (!empty($params)) {
             $exec = 0;
             $exec_position = 2;
-            for ($i=0; $i<$exec_position; $i++) {
+            for ($i = 0; $i < $exec_position; $i++) {
                 isset($params[$i]) && (intval($params[$i]) > 0) && ++$exec;
             }
             $orders = array_slice($params, $exec);
             $exec == 1 && $room_id = $params[0];
             $exec == 2 && list($room_id, $user_number) = $params;
-        } else
-            $orders = ['enter', 'send', 'message'];
+        }
+
+        empty($orders) && $orders = ['enter', 'send', 'message'];
 
 
         // 房间 麦位
