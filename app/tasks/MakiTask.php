@@ -272,7 +272,7 @@ class MakiTask extends Phalcon\Cli\Task
     {
         $params = self::$params;
         $user_number = 5;
-        $room_id = 137039;
+        $room_id = 136971;
 
         // 拿取命令
         if (!empty($params)) {
@@ -297,14 +297,27 @@ class MakiTask extends Phalcon\Cli\Task
                     ]);
 
         // 用户
-        $users = Users::find([
+        /*$users = Users::find([
                     'conditions' => 'user_type = :user_type: and user_status  = :user_status:',
                     'bind' => [
                         'user_type' => USER_TYPE_SILENT,
                         'user_status' => USER_STATUS_ON,
                     ],
                     'limit' => $user_number,
-                ]);
+                ]);*/
+
+        $conditions = [
+            'conditions' => 'user_type = :user_type: and user_status  = :user_status:',
+            'bind' => [
+                'user_type' => USER_TYPE_SILENT,
+                'user_status' => USER_STATUS_ON,
+            ],
+            'limit' => $user_number
+        ];
+
+        $max_number = Users::count($conditions);
+        $page_size = ceil($max_number / $user_number);
+        $users = Users::findPagination($conditions, mt_rand(1, $page_size), $user_number);
 
         foreach ($users as $user) {
 
