@@ -791,6 +791,8 @@ class ActivitiesController extends BaseController
 
     function wealthRankListAction()
     {
+        $id = $this->params("id");
+        $activity = \Activities::findFirstById($id);
 
         $activity_start = date("Ymd", beginOfWeek($activity->start_at));
         $activity_end = date("Ymd", endOfWeek($activity->start_at));
