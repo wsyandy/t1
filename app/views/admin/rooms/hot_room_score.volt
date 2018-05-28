@@ -8,7 +8,7 @@
         <th>在线人数分值</th>
         <th>用户停留时长分值</th>
         <th>房主分值</th>
-        <th>主持认证用户分值</th>
+        <th>实名认证用户分值</th>
     </tr>
     </thead>
     <tbody id="stat_list">
