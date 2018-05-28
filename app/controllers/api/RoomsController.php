@@ -276,7 +276,6 @@ class RoomsController extends BaseController
         $sponsor_id = fetch($ready_cp_info, 'sponsor_id');
         if ($sponsor_id) {
             $res['game'] = ['url' => 'url://m/couples?room_id=' . $room_id, 'icon' => $root_host . 'images/go_cp.png'];
-
         } else {
             // 发起游戏
             $game_history = $room->getGameHistory();
@@ -284,7 +283,6 @@ class RoomsController extends BaseController
                 $res['game'] = $game_history->getEnterGameMenu($room, $root_host);
             }
         }
-
 
         //房间活动列表
         $platform = $this->context('platform');
@@ -304,50 +302,16 @@ class RoomsController extends BaseController
         }
 
         if (isInternalIp($this->remoteIp()) || isDevelopmentEnv()) {
-
             // 房间红包
             $underway_red_packet_num = $room->getNotDrawRedPacketNum($this->currentUser());
             if ($underway_red_packet_num) {
                 $res['red_packet'] = ['num' => $underway_red_packet_num, 'client_url' => 'url://m/red_packets/red_packets_list?room_id=' . $room_id];
             }
-
         }
 
-
         $boom_config = \BoomConfigs::getBoomConfig();
-        $interval_value = 50000;
-
         if ($boom_config && $room->hasBoomGift()) {
-
-            $boom_num = $room->getBoomNum();
-            $room_boon_gift_sign_key = \Rooms::generateRoomBoomGiftSignKey($room_id);
-            $cache = \Rooms::getHotReadCache();
-            
-            // 判断房间是否在进行爆礼物活动
-            if ($cache->exists($room_boon_gift_sign_key)) {
-                $boom_num--;
-            }
-
-            $total_value = $boom_config->total_value + $interval_value * $boom_num;
-
-            if ($total_value > 250000) {
-                $total_value = 250000;
-            }
-
-            $image_colors = [1 => 'blue', 2 => 'green', 3 => 'orange'];
-            $image_color = fetch($image_colors, $boom_num + 1, 'orange');
-
-            $res['boom_gift'] = [
-                'expire_at' => \Rooms::getBoomGiftExpireAt($room_id),
-                'client_url' => 'url://m/boom_histories',
-                'svga_image_url' => $boom_config->getSvgaImageUrl(),
-                'total_value' => intval($total_value),
-                'current_value' => intval($room->getCurrentBoomGiftValue()),
-                'show_rank' => 1000000,
-                'render_type' => 'svga',
-                'status' => STATUS_ON,
-                'image_color' => $image_color
-            ];
+            $res['boom_gift'] = $room->getBoomGiftData($boom_config);
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
