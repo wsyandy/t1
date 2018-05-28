@@ -35,7 +35,7 @@
                     <div class="bg01_prize">
                         <img :src="prize02" class="prize" alt="">
                         <p>【豪华游艇】 </p>
-                        <p> 一个</p>
+                        <p> 赠送权*1</p>
 
                     </div>
 
