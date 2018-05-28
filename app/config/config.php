@@ -3,11 +3,12 @@
 return new \Phalcon\Config([
     'alioss' => [
         'crypt_key' => env('crypt_key', md5(APP_NAME . '_' . APP_ENV)),
-        'host' => env('alioss_host', 'http://oss-cn-hangzhou.aliyuncs.com'),
+        'host' => env('alioss_host', 'http://mt-development.oss-cn-hangzhou-internal.aliyuncs.com'),
         'access_key' => env('alioss_access_key', 'LTAIEcaQFRJz6qai'),
         'secret_key' => env('alioss_secret_key', 'iFWLfYotm6TWpjkGBY4DICRYjTbVsm'),
         'bucket' => env('alioss_bucket', 'mt-development'),
         'domain' => env('alioss_domain', 'http://mt-development.oss-cn-hangzhou.aliyuncs.com')
+
     ],
 
     'hot_cache_endpoints' => env('hot_cache_endpoints', 'redis://127.0.0.1:6379/' . APP_NAME),
