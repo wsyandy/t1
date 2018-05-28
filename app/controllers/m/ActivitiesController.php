@@ -729,6 +729,7 @@ class ActivitiesController extends BaseController
     function getCurrentActivityCpRankListAction()
     {
         if ($this->request->isAjax()) {
+            $user = $this->currentUser();
             $type = $this->params('type', 'cp');
             $id = $this->params('id');
             $activity = \Activities::findFirstById($id);
@@ -745,11 +746,12 @@ class ActivitiesController extends BaseController
 
 
             $users = \Couples::findCpRankListByKey($key, 1, 10);
-
+            $current_user_cp_info = $user->getCurrentWeekActivityCpInfo();
             debug($key);
+            info('当前用户信息',$current_user_cp_info);
 
             if (count($users)) {
-                return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['users' => $users]);
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['users' => $users, 'current_user_cp_info' => $current_user_cp_info]);
             } else {
                 return $this->renderJSON(ERROR_CODE_FAIL, '暂无数据');
             }
