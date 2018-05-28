@@ -4,9 +4,10 @@
 {{ block_end() }}
 <div class="vueBox" id="app">
     <img :src="bg_header" class="bg_header" alt="">
-    <img :src="bg_main" class="bg_main" alt="">
-    <img :src="bg_footer" class="bg_footer" alt="">
-
+    {% if time() >= activity.start_at %}
+        <img :src="bg_main" class="bg_main" alt="">
+        <img :src="bg_footer" class="bg_footer" alt="">
+    {% endif %}
     <img :src="rule_btn" class="rule_btn" alt="" @click="ruleShow">
     <div class="weekly_header">
         <img :src="title01" class="title01" alt="">
@@ -61,7 +62,7 @@
             <ul class="lastweekly_list">
                 {% if last_week_charm_rank_list_user %}
                     <li>
-                        <img src="/m/images/list_title01.png" alt="头像"/>
+                        <img src="/m/images/list_title01.png" alt="头像" class="list_icon"/>
                         <div class="list_info">
                             <img src="" class="list_avatar" alt="">
                             <p>{{ last_week_charm_rank_list_user['nickname'] }}</p>
@@ -102,86 +103,86 @@
             </div>
         </div>
         {% if time() >= activity.start_at %}
-        <div class="bg04">
-            <ul class="tabs">
-                <li v-for="item,index in tabs" :class="{'cur':curIdx==index}" @click="tabSelect(index)">
-                    <span v-text="item"></span>
-                </li>
-            </ul>
-            <div class="tabs_tips">
-                <span v-show="curIdx==0">贡献榜为用户送出礼物的周总值进行排名</span>
-                <span v-show="curIdx==1">魅力榜为用户收到礼物的周总值进行排名</span>
-                <span v-show="curIdx==2">礼物榜为用户收到本周新礼物的周总值进行排名</span>
-                {#<span v-show="curIdx==3">情侣榜为情侣互相赠送的礼物周总值进行排名</span>#}
-            </div>
-            <div class="myself">
-                <img class="myself_avatar" :src="current_user_info['avatar_url']" alt="" v-show="curIdx!=3">
-                <div class="myself_text">
-                    <div class="myself_name" v-show="curIdx!=3">
-                        <span v-text="current_user_info['nickname']"></span>
-                    </div>
-                    <div class="myself_info" v-show="curIdx==0">
-                        <p>贡献榜排名：<span class="highlight" v-text="current_user_info['current_rank']"></span>名</p>
-                        <p>贡献值：<span class="highlight"
-                                     v-text="current_user_info['current_score']?current_user_info['current_score']:0"></span>分
-                        </p>
-                    </div>
-                    <div class="myself_info" v-show="curIdx==1">
-                        <p>魅力榜排名：<span class="highlight" v-text="current_user_info['current_rank']"></span>名</p>
-                        <p>魅力值：<span class="highlight"
-                                     v-text="current_user_info['current_score']?current_user_info['current_score']:0"></span>分
-                        </p>
-                    </div>
-                    <div class="myself_info" v-show="curIdx==2">
-                        <p>礼物榜排名：<span class="highlight" v-text="current_user_info['current_rank']"></span>名</p>
-                        <p>礼物值：<span class="highlight"
-                                     v-text="current_user_info['current_score']?current_user_info['current_score']:0"></span>分
-                        </p>
-                    </div>
-                    {#<div class="myself_info" v-show="curIdx==3">#}
-                    {#<p>情侣榜排名：<span class="highlight" v-text="current_user_info['current_rank']"></span>名</p>#}
-                    {#<p>情侣值：<span class="highlight" v-text="current_user_info['current_score']?current_user_info['current_score']:0"></span>分</p>#}
-                    {#</div>#}
-
+            <div class="bg04">
+                <ul class="tabs">
+                    <li v-for="item,index in tabs" :class="{'cur':curIdx==index}" @click="tabSelect(index)">
+                        <span v-text="item"></span>
+                    </li>
+                </ul>
+                <div class="tabs_tips">
+                    <span v-show="curIdx==0">贡献榜为用户送出礼物的周总值进行排名</span>
+                    <span v-show="curIdx==1">魅力榜为用户收到礼物的周总值进行排名</span>
+                    <span v-show="curIdx==2">礼物榜为用户收到本周新礼物的周总值进行排名</span>
+                    <span v-show="curIdx==3">情侣榜为情侣互相赠送的礼物周总值进行排名</span>
                 </div>
+                <div class="myself">
+                    <img class="myself_avatar" :src="current_user_info['avatar_url']" alt="" v-show="curIdx!=3">
+                    <div class="myself_text">
+                        <div class="myself_name" v-show="curIdx!=3">
+                            <span v-text="current_user_info['nickname']"></span>
+                        </div>
+                        <div class="myself_info" v-show="curIdx==0">
+                            <p>贡献榜排名：<span class="highlight" v-text="current_user_info['current_rank']"></span>名</p>
+                            <p>贡献值：<span class="highlight"
+                                         v-text="current_user_info['current_score']?current_user_info['current_score']:0"></span>分
+                            </p>
+                        </div>
+                        <div class="myself_info" v-show="curIdx==1">
+                            <p>魅力榜排名：<span class="highlight" v-text="current_user_info['current_rank']"></span>名</p>
+                            <p>魅力值：<span class="highlight"
+                                         v-text="current_user_info['current_score']?current_user_info['current_score']:0"></span>分
+                            </p>
+                        </div>
+                        <div class="myself_info" v-show="curIdx==2">
+                            <p>礼物榜排名：<span class="highlight" v-text="current_user_info['current_rank']"></span>名</p>
+                            <p>礼物值：<span class="highlight"
+                                         v-text="current_user_info['current_score']?current_user_info['current_score']:0"></span>分
+                            </p>
+                        </div>
+                        {#<div class="myself_info" v-show="curIdx==3">#}
+                        {#<p>情侣榜排名：<span class="highlight" v-text="current_user_info['current_rank']"></span>名</p>#}
+                        {#<p>情侣值：<span class="highlight" v-text="current_user_info['current_score']?current_user_info['current_score']:0"></span>分</p>#}
+                        {#</div>#}
+
+                    </div>
+                </div>
+                <ul class="rank_list" v-show="curIdx!=3">
+                    <li v-for="(user,index) in users"
+                        :class="[index==0?'rank_first':''|| index==1?'rank_second':''|| index==2?'rank_third':'']">
+                        <div class="rank_info">
+                            <div class="rank_num">
+                                <span v-text="index+1"></span>
+                            </div>
+                            <div class="rank_avatar_bg">
+                                <img class="rank_avatar" :src="user.avatar_url" alt="">
+                            </div>
+
+                            <div class="rank_name">
+                                <span v-text="user.nickname"></span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+
+                <ul class="lover_list" v-show="curIdx==3">
+                    <li v-for="(cp_user,index) in cp_users">
+                        <div class="lover_info">
+                            <div class="lover_num">
+                                <span v-text="index+1" v-if="index>2"></span>
+                                <img class="lover_number" :src="lover_num[index]" alt="" v-if="index<3">
+                            </div>
+                            <img class="lover_avatar" :src="cp_user[0]['avatar_url']" alt="">
+                            <div class="lover_name">
+                                <span v-text="cp_user[0]['nickname']"></span>
+                            </div>
+                            <img class="lover_avatar" :src="cp_user[1]['avatar_url']" alt="">
+                            <div class="lover_name">
+                                <span v-text="cp_user[1]['nickname']"></span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
             </div>
-            <ul class="rank_list" v-show="curIdx!=3">
-                <li v-for="(user,index) in users"
-                    :class="[index==0?'rank_first':''|| index==1?'rank_second':''|| index==2?'rank_third':'']">
-                    <div class="rank_info">
-                        <div class="rank_num">
-                            <span v-text="index+1"></span>
-                        </div>
-                        <div class="rank_avatar_bg">
-                            <img class="rank_avatar" :src="user.avatar_url" alt="">
-                        </div>
-
-                        <div class="rank_name">
-                            <span v-text="user.nickname"></span>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-
-            <ul class="lover_list" v-show="curIdx==3">
-                <li v-for="(cp_user,index) in cp_users">
-                    <div class="lover_info">
-                        <div class="lover_num">
-                            <span v-text="index+1" v-if="index>2"></span>
-                            <img class="lover_number" :src="lover_num[index]" alt="" v-if="index<3">
-                        </div>
-                        <img class="lover_avatar" :src="cp_user[0]['avatar_url']" alt="">
-                        <div class="lover_name">
-                            <span v-text="cp_user[0]['nickname']"></span>
-                        </div>
-                        <img class="lover_avatar" :src="cp_user[1]['avatar_url']" alt="">
-                        <div class="lover_name">
-                            <span v-text="cp_user[1]['nickname']"></span>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-        </div>
         {% endif %}
         <div class="footer">
             <span>- 活动最终解释权归HI语音官方团队 -</span>
