@@ -335,7 +335,7 @@ define('BOOM_HISTORY_GOLD_TYPE', 3); // 金币
 
 //红包领取类型
 define('RED_PACKET_TYPE_ALL', 'all');    //都可以领取
-define('RED_PACKET_TYPE_ATTENTION', 'attention');    //关注房主才能领取
+define('RED_PACKET_TYPE_FOLLOW', 'follow');    //关注房主才能领取
 define('RED_PACKET_TYPE_STAY_AT_ROOM', 'stay_at_room');    //在房间满3分钟才能领取
 define('RED_PACKET_TYPE_NEARBY', 'nearby');    //附近的人才能领取
 

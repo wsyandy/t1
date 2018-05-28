@@ -73,7 +73,7 @@
                             val.class = "red_list_qiang";
                         }
 
-                        if (val.red_packet_type == 'attention') {
+                        if (val.red_packet_type == 'follow') {
                             val.text = "关注可抢";
                             val.class = "red_list_fangzhu";
                         }

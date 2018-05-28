@@ -2,12 +2,6 @@
 
 class RedPackets extends BaseModel
 {
-    static $_only_cache = true;
-
-    /**
-     * @type string
-     */
-    private $_id;
 
     /**
      * @type Users
@@ -18,54 +12,7 @@ class RedPackets extends BaseModel
      */
     private $_room;
 
-    /**
-     * @type integer
-     */
-    private $_diamond;
-
-    /**
-     * @type integer
-     */
-    private $_user_id;
-
-    /**
-     * @type integer
-     */
-    private $_num;
-
-    /**
-     * @type integer
-     */
-    private $_status;
-
-    /**
-     * @type integer
-     */
-    private $_created_at;
-
-    /**
-     * @type integer
-     */
-    private $_room_id;
-
-    /**
-     * @type string
-     */
-    private $_red_packet_type;
-
-    /**
-     * @type integer
-     */
-    private $_nearby_distance;
-
-    /**
-     * @type integer
-     */
-    private $_balance_diamond;
-    /**
-     * @type integer
-     */
-    private $_balance_num;
+    public $distance_start_at = 0;
 
     static $VALIDATES = [
         'id' => ['null' => '不能为空'],
@@ -80,54 +27,48 @@ class RedPackets extends BaseModel
         'balance_num' => ['null' => '不能为空']
     ];
 
-    // RED_PACKET_TYPE_NEARBY => '附近的人才能领取'
-    static $RED_PACKET_TYPE = [RED_PACKET_TYPE_ALL => '都可以领取', RED_PACKET_TYPE_ATTENTION => '关注房主才能领取', RED_PACKET_TYPE_STAY_AT_ROOM => '在房间满3分钟才能领取'];
+    static $RED_PACKET_TYPE = [RED_PACKET_TYPE_ALL => '都可以领取', RED_PACKET_TYPE_FOLLOW => '关注房主才能领取', RED_PACKET_TYPE_STAY_AT_ROOM => '在房间满3分钟才能领取'];
+
     static $STATUS = [STATUS_ON => '进行中', STATUS_OFF => '结束'];
 
-    static function getCacheEndPoint()
-    {
-        $config = self::di('config');
-        $endpoints = explode(',', $config->user_db_endpoints);
-        return $endpoints[0];
-    }
-
-    function generateId()
-    {
-        return 'red_packet_for_user_' . strval($this->user_id) . '_' . time() . mt_rand(1000, 10000);
-    }
+    static $SEX = [USER_SEX_MALE => '男', USER_SEX_FEMALE => '女', USER_SEX_COMMON => '不限'];
 
     function beforeCreate()
     {
-        $this->id = $this->generateId();
+        if (!$this->sex && $this->sex !== USER_SEX_FEMALE) {
+            $this->sex = USER_SEX_COMMON;
+        }
     }
 
     function afterCreate()
     {
+
         $cache = \Users::getUserDb();
-        //当前房间对应红包id集合
-        $send_red_packet_list_key = self::generateRedPacketListKey($this->room_id);
         //当前正在进行中的红包id集合
-        $underway_red_packet_list_key = self::generateUnderwayRedPacketListKey($this->room_id);
-        info('添加', $underway_red_packet_list_key);
-
-        //当前用户发过的红包id集合
-        $user_send_red_packets_key = self::generateUserSendRedPacketsKey($this->user_id);
-
-        //generateUnderwayRedPacketListKey
-        $cache->zadd($send_red_packet_list_key, time(), $this->id);
+        $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($this->room_id);
         $cache->zadd($underway_red_packet_list_key, time(), $this->id);
-        $cache->zadd($user_send_red_packets_key, time(), $this->id);
     }
 
     function afterUpdate()
     {
         if ($this->hasChanged('status') && $this->status == STATUS_OFF) {
-            info('红包已经结束回收，删除对应进行中的红包id', $this->id, $this->status);
+
             $cache = \Users::getUserDb();
-            $underway_red_packet_list_key = self::generateUnderwayRedPacketListKey($this->room_id);
+            $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($this->room_id);
             $cache->zrem($underway_red_packet_list_key, $this->id);
 
+            info('红包已经结束回收，删除对应进行中的红包id', $underway_red_packet_list_key, $this->id, $this->status);
+
             self::pushRedPacketMessageForUser($this->room, $this->user, 'bc');
+
+
+            $this->user->has_red_packet = STATUS_OFF;
+            $this->user->update();
+            $room = $this->room;
+            if ($room) {
+                $room->has_red_packet = STATUS_OFF;
+                $room->update();
+            }
         }
     }
 
@@ -141,7 +82,7 @@ class RedPackets extends BaseModel
             'num' => $this->num,
             'status_text' => $this->status_text,
             'created_at_text' => $this->created_at_text,
-            'user_avatar_url' => $this->user->avatar_url,
+            'user_avatar_url' => $this->user->avatar_small_url,
             'red_packet_type' => $this->red_packet_type,
             'sex' => $this->sex,
             'distance_start_at' => $this->distance_start_at
@@ -153,7 +94,7 @@ class RedPackets extends BaseModel
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
-            'user_avatar_url' => $this->user->avatar_url,
+            'user_avatar_url' => $this->user->avatar_small_url,
             'user_nickname' => $this->user->nickname,
             'diamond' => $this->diamond,
             'num' => $this->num,
@@ -163,85 +104,25 @@ class RedPackets extends BaseModel
         ];
     }
 
-
-    //生成房间红包列表key
-    static function generateRedPacketListKey($current_room_id)
-    {
-        return 'send_red_packet_list_for_' . $current_room_id;
-    }
-
     //正在进行中的红包的key
-    static function generateUnderwayRedPacketListKey($current_room_id)
+    static function getUnderwayRedPacketListKey($current_room_id)
     {
-        return 'underway_red_packet_list_for_' . $current_room_id;
+        return 'room_underway_red_packet_list_' . $current_room_id;
     }
 
-    //用户发过的红包的key
-    static function generateUserSendRedPacketsKey($user_id)
+    function generateRedPacketUserListKey()
     {
-        return 'user_send_red_packets_' . $user_id;
+        return 'red_packet_user_list_' . $this->id;
     }
 
-    static function createReadPacket($user, $room, $opts)
+    static function generateUserRoomRedPacketsKey($room_id, $user_id)
     {
-        $send_red_packet_history = new \RedPackets();
-        foreach (['user_id', 'diamond', 'num', 'status', 'room_id', 'red_packet_type', 'sex', 'nearby_distance', 'balance_num', 'balance_diamond'] as $column) {
-            $send_red_packet_history->$column = fetch($opts, $column);
-        }
-        if ($send_red_packet_history->create()) {
-            $opts = [
-                'type' => 'create',
-                'content' => $user->nickname . '在房间内发红包，手快有，手慢无，赶紧去抢吧',
-                'notify_type' => 'bc'
-            ];
-            self::sendSocketForRedPacket($user, $room, $opts);
-            $time = 24 * 60 * 60;
-            if (isDevelopmentEnv()) {
-                $time = 5 * 60;
-            }
-
-            self::delay($time)->asyncFinishRedPacket($send_red_packet_history->id);
-
-            if ($send_red_packet_history->diamond >= 1000) {
-                $user->has_red_packet = STATUS_ON;
-                $user->update();
-
-                $room->has_red_packet = STATUS_ON;
-                $room->update();
-            }
-            return $send_red_packet_history;
-        }
-        return null;
+        return 'red_packet_list_room_' . $room_id . '_user_' . $user_id;
     }
 
-    static function asyncFinishRedPacket($red_packet_id)
+    static function generateUserRedPacketsKey($user_id)
     {
-
-        $red_packet = \RedPackets::findFirstById($red_packet_id);
-        if (isPresent($red_packet) && $red_packet->status != STATUS_OFF) {
-            if ($red_packet->balance_diamond > 0) {
-                $opts = ['remark' => '红包余额返还钻石' . $red_packet->balance_diamond, 'mobile' => $red_packet->user->mobile, 'target_id' => $red_packet->id];
-                \AccountHistories::changeBalance($red_packet->user_id, ACCOUNT_TYPE_RED_PACKET_RESTORATION, $red_packet->balance_diamond, $opts);
-            }
-
-            info('回收红包', $red_packet->balance_diamond);
-            $red_packet->balance_diamond = 0;
-            $red_packet->balance_num = 0;
-            $red_packet->status = STATUS_OFF;
-            $red_packet->update();
-
-            $user = $red_packet->user;
-            if ($user) {
-                $user->has_red_packet = STATUS_ON;
-                $user->update();
-            }
-
-            $room = $red_packet->room;
-            if ($room) {
-                $room->has_red_packet = STATUS_ON;
-                $room->update();
-            }
-        }
+        return 'red_packet_list_user_' . $user_id;
     }
 
     static function generateRedPacketUrl($room_id)
@@ -249,45 +130,111 @@ class RedPackets extends BaseModel
         return 'url://m/red_packets/red_packets_list?room_id=' . $room_id;
     }
 
-    static function findRedPacketList($room, $page, $per_page, $user)
+    static function createRedPacket($user, $room, $opts)
     {
-        $underway_red_packet_list_key = self::generateUnderwayRedPacketListKey($room->id);
-        $cache_db = \Users::getUserDb();
 
+        $red_packet = new \RedPackets();
+
+        foreach (['user_id', 'room_id', 'status', 'red_packet_type', 'diamond', 'num', 'balance_num', 'balance_diamond', 'sex', 'nearby_distance'] as $column) {
+            $red_packet->$column = fetch($opts, $column);
+        }
+
+        if (!$red_packet->create()) {
+            return null;
+        }
+
+        $time = 24 * 60 * 60;
+        if (isDevelopmentEnv()) {
+            $time = 5 * 60;
+        }
+
+        // 红包退款
+        self::delay($time)->asyncCheckRefund($red_packet->id);
+
+        if ($red_packet->diamond >= 1000) {
+            $user->has_red_packet = STATUS_ON;
+            $user->update();
+
+            $room->has_red_packet = STATUS_ON;
+            $room->update();
+        }
+
+        return $red_packet;
+    }
+
+    static function asyncCheckRefund($red_packet_id)
+    {
+
+        $red_packet = \RedPackets::findFirstById($red_packet_id);
+        if (!$red_packet || $red_packet->status == STATUS_ON) {
+            return;
+        }
+
+        $user = $red_packet->user;
+        if ($red_packet->balance_diamond > 0) {
+            $opts = ['remark' => '红包余额返还钻石' . $red_packet->balance_diamond, 'mobile' => $user->mobile, 'target_id' => $red_packet->id];
+            \AccountHistories::changeBalance($user, ACCOUNT_TYPE_RED_PACKET_RESTORATION, $red_packet->balance_diamond, $opts);
+        }
+
+        info('回收红包', $red_packet->id, $red_packet->user_id, $red_packet->room_id, $red_packet->balance_diamond);
+
+        $red_packet->balance_diamond = 0;
+        $red_packet->balance_num = 0;
+        $red_packet->status = STATUS_OFF;
+        $red_packet->update();
+    }
+
+    // 房间里的红包
+    static function findRedPacketList($user, $room, $page, $per_page = 20)
+    {
+
+        $cache_db = \Users::getUserDb();
+        $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($room->id);
         $total = $cache_db->zcard($underway_red_packet_list_key);
         $offset = ($page - 1) * $per_page;
         $red_packet_ids = $cache_db->zrevrange($underway_red_packet_list_key, $offset, $offset + $per_page - 1);
         $red_packets = \RedPackets::findByIds($red_packet_ids);
-//        $screen_red_packets = self::getScreenRedPackets($red_packets, $user);
+
         foreach ($red_packets as $red_packet) {
-            $distance_start_at = $red_packet->getDistanceStartTime($room, $user->id);
+            $distance_start_at = $red_packet->getDistanceStartTime($user);
             $red_packet->distance_start_at = $distance_start_at;
         }
 
         return new \PaginationModel($red_packets, $total, $page, $per_page);
     }
 
-    static function getScreenRedPackets($red_packets, $user)
+    // 可以领取的时间
+    function getDistanceStartTime($user)
     {
-        $screen_red_packets = [];
-        foreach ($red_packets as $red_packet) {
-            //这里以后还要加距离限制
-            if ($red_packet->red_packet_type != 'nearby' || ($red_packet->red_packet_type == 'nearby' && ($red_packet->sex == USER_SEX_COMMON || $red_packet->sex == $user->sex))) {
-                $screen_red_packets[] = $red_packet;
-            }
+
+        if($this->red_packet_type != RED_PACKET_TYPE_STAY_AT_ROOM){
+            return 0;
         }
-        return $screen_red_packets;
+
+        //获取用户进房间的时间
+        $time = $this->room->getTimeForUserInRoom($user->id);
+        //如果用户进房间的时间小于红包的创建时间，则需要以红包创建时间为节点等待3分钟，否则以用户进房间的时间为节点等待3分钟
+        $distance_start_at = $time + 3 * 60 - time() > 0 ? $time + 3 * 60 - time() : 0;
+        if ($time <= $this->created_at) {
+            $distance_start_at = $this->created_at + 3 * 60 - time() > 0 ? $this->created_at + 3 * 60 - time() : 0;
+        }
+
+        return $distance_start_at;
     }
 
-    static function grabRedPacket($user, $room, $red_packet_id)
+    function grabRedPacket($user, $room)
     {
-        $get_diamond = \RedPackets::getRedPacketDiamond($room->id, $user->id, $red_packet_id);
+
+        $get_diamond = $this->getRedPacketDiamond($user->id);
+
         if ($get_diamond) {
+
             $opts = [
                 'type' => 'update',
                 'content' => '恭喜' . $user->nickname . '抢到了' . $get_diamond . '个钻石',
                 'notify_type' => 'ptp'
             ];
+
             self::sendSocketForRedPacket($user, $room, $opts);
 
             return [ERROR_CODE_SUCCESS, $get_diamond];
@@ -296,23 +243,19 @@ class RedPackets extends BaseModel
         return [ERROR_CODE_SUCCESS, null];
     }
 
-    static function getRedPacketDiamond($current_room_id, $user_id, $red_packet_id)
+    function getRedPacketDiamond($user_id)
     {
         $cache = \Users::getUserDb();
-        //房间内对应抢到红包的用户的红包ID的集合
-        $key = self::generateRedPacketForRoomKey($current_room_id, $user_id);
+        $user_room_key = self::generateUserRoomRedPacketsKey($this->room_id, $user_id);
+        $user_red_key = self::generateUserRedPacketsKey($user_id);
 
-        //对应的抢到这个红包的用户ID集合
-        $user_key = self::generateRedPacketInRoomForUserKey($current_room_id, $red_packet_id);
+        $balance_diamond = $this->balance_diamond;
+        $balance_num = $this->balance_num;
 
-        $red_packet = \RedPackets::findFirstById($red_packet_id);
-        $balance_diamond = $red_packet->balance_diamond;
-        $balance_num = $red_packet->balance_num;
-
-        if ($balance_diamond && $balance_num && $red_packet->status == STATUS_ON) {
+        if ($balance_diamond && $balance_num && $this->status == STATUS_ON) {
             $usable_balance_diamond = $balance_diamond - ($balance_num - 1);
-            if ($usable_balance_diamond > ceil($red_packet->diamond * 0.5)) {
-                $get_diamond = mt_rand(1, ceil($red_packet->diamond * 0.4));
+            if ($usable_balance_diamond > ceil($this->diamond * 0.5)) {
+                $get_diamond = mt_rand(1, ceil($this->diamond * 0.4));
             } else {
                 $get_diamond = mt_rand(1, $usable_balance_diamond);
             }
@@ -320,20 +263,22 @@ class RedPackets extends BaseModel
             if ($balance_num == 1) {
                 $get_diamond = $balance_diamond;
             }
-            $red_packet->balance_diamond = $balance_diamond - $get_diamond;
-            $red_packet->balance_num = $balance_num - 1;
-            $red_packet->update();
-            if ($red_packet->balance_num <= 0) {
-                $red_packet->status = STATUS_OFF;
-                $red_packet->update();
+            $this->balance_diamond = $balance_diamond - $get_diamond;
+            $this->balance_num = $balance_num - 1;
+            $this->update();
+            if ($this->balance_num <= 0) {
+                $this->status = STATUS_OFF;
+                $this->update();
 
                 //红包抢完公屏socket，红包过时回收的话只发送红包socket，所以两者放在afterUpdate统一处理
-                $content = $red_packet->user->nickname . '发的红包已抢完';
-                self::pushRedPacketTopTopicMessage($red_packet->room, $content);
+                $content = $this->user->nickname . '发的红包已抢完';
+                self::pushRedPacketTopTopicMessage($this->room, $content);
             }
 
-            $cache->zadd($key, $get_diamond, $red_packet_id);
-            $cache->zadd($user_key, time(), $user_id);
+            $red_user_list_key = $this->generateRedPacketUserListKey();
+            $cache->zadd($red_user_list_key, time(), $user_id);
+            $cache->zadd($user_room_key, $get_diamond, $this->id);
+            $cache->zadd($user_red_key, time(), $this->id);
 
             return $get_diamond;
         }
@@ -342,21 +287,10 @@ class RedPackets extends BaseModel
 
     }
 
-    static function generateRedPacketInRoomForUserKey($current_room_id, $red_packet_id)
-    {
-        return 'get_red_packet_in_room_' . $current_room_id . '_for_red_packet_' . $red_packet_id;
-    }
-
-
-    static function generateRedPacketForRoomKey($room_id, $user_id)
-    {
-        return 'get_red_packet_in_room_' . $room_id . '_for_user_' . $user_id;
-    }
-
     static function UserGetRedPacketIds($room_id, $user_id)
     {
         $cache = \Users::getUserDb();
-        $key = self::generateRedPacketForRoomKey($room_id, $user_id);
+        $key = self::generateUserRoomRedPacketsKey($room_id, $user_id);
         $user_get_red_packet_ids = $cache->zrange($key, 0, -1);
         return $user_get_red_packet_ids;
     }
@@ -377,20 +311,6 @@ class RedPackets extends BaseModel
         if (isDevelopmentEnv() && $type == 'create') {
             self:: pushRedPacketSinkMessage($room->id, $content);
         }
-    }
-
-    function getDistanceStartTime($room, $user_id)
-    {
-        //获取用户进房间的时间
-        $time = $room->getTimeForUserInRoom($user_id);
-
-        //如果用户进房间的时间小于红包的创建时间，则需要以红包创建时间为节点等待3分钟，否则以用户进房间的时间为节点等待3分钟
-        $distance_start_at = $time + 3 * 60 - time() > 0 ? $time + 3 * 60 - time() : 0;
-        if ($time <= $this->created_at) {
-            $distance_start_at = $this->created_at + 3 * 60 - time() > 0 ? $this->created_at + 3 * 60 - time() : 0;
-        }
-
-        return $distance_start_at;
     }
 
     //红包的公屏socket

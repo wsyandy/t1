@@ -18,7 +18,7 @@
                         <div class="daojishi" id="time"></div>
                     </div>
                     <div id="end_time">
-                        <p v-if="red_packet_type == 'attention'">发了一个红包，关注房主可领取</p>
+                        <p v-if="red_packet_type == 'follow'">发了一个红包，关注房主可领取</p>
                         <p v-if="red_packet_type == 'stay_at_room'">进入房间3分钟后可领取</p>
                         <div class="qiang_red" @click="getRedPacket"></div>
                     </div>

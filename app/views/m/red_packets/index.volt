@@ -142,7 +142,7 @@
                 if(this.type == "all"){
                     this.diamond_num_limit = "100";
                 }
-                if(this.type == "attention" || this.type == "stay_at_room"){
+                if(this.type == "follow" || this.type == "stay_at_room"){
                     this.diamond_num_limit = "1000";
                 }
                 if(this.type == "nearby"){

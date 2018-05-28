@@ -302,11 +302,11 @@ trait RoomMessages
 
         $res = \services\SwooleUtils::send('push', $intranet_ip, self::config('websocket_local_server_port'), $payload);
         if ($res) {
-            info('push ok ', $user->id, $user->sid, 'room', $this->id, $payload);
+            info('push ok ', '发送者', $user->id, 'fd', $receiver_fd, 'room', $this->id, $payload);
             return true;
         }
 
-        info("Exce push", $user->id, $user->sid, 'room', $this->id, $payload);
+        info("Exce push", '发送者', $user->id, 'fd', $receiver_fd, 'room', $this->id, $payload);
 
         return false;
     }
