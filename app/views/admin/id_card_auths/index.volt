@@ -28,7 +28,7 @@
         姓名:<a href="/admin/users?user[id_eq]={{ id_card_auth.user_id }}">{{ id_card_auth.user_nickname }}</a><br/>
     {% endif %}
     性别:{{ id_card_auth.user.sex_text }}<br/>
-    主播认证状态:{{ id_card_auth.user.id_card_auth_text }}<br/>
+    实名认证状态:{{ id_card_auth.user.id_card_auth_text }}<br/>
 {% endmacro %}
 
 {% macro account_link(id_card_auth) %}
