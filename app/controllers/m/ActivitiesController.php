@@ -747,8 +747,11 @@ class ActivitiesController extends BaseController
 
     function wealthRankListAction()
     {
+        $activity_start = date("Ymd", beginOfWeek($activity->start_at));
+        $activity_end = date("Ymd", endOfWeek($activity->start_at));
+        $opts = ['start' => $activity_start, 'end' => $activity_end];
 
-        $users = \Users::findFieldRankList("week", 'wealth', 1, 10);
+        $users = \Users::findFieldRankList("week", 'wealth', 1, 10, $opts);
 
         $res = $users->toJson('users', 'toRankListJson');
 
