@@ -1193,7 +1193,8 @@ trait UserAttrs
         return $current_user_info;
     }
 
-    function getCurrentWeekActivityCpInfo($start_at,$opts)
+
+    function getCurrentWeekActivityCpInfo($start_at, $opts = [])
     {
         $db = \Users::getUserDb();
         //先去当前用户的周情侣值最高的数据，拼接成员，到周总榜，拿到当前排名和当前分数
