@@ -1193,16 +1193,17 @@ trait UserAttrs
         return $current_user_info;
     }
 
-    function getCurrentWeekActivityCpInfo($start_at)
+    function getCurrentWeekActivityCpInfo($start_at,$opts)
     {
         $db = \Users::getUserDb();
         //先去当前用户的周情侣值最高的数据，拼接成员，到周总榜，拿到当前排名和当前分数
-        $total_cp_week_charm_key = \Users::generateFieldRankListKey('week', 'cp');
+        $total_cp_week_charm_key = \Users::generateFieldRankListKey('week', 'cp', $opts);
 
         //当前用户周情侣值
         $cp_week_charm_key = \Couples::generateCoupleWeekValueKey($this->id, $start_at);
         $height_data = $db->zrevrange($cp_week_charm_key, 0, 0);
         $current_score = 0;
+        info($height_data);
         if ($height_data) {
             $other_user_id = $height_data[0];
 
