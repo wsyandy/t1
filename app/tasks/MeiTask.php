@@ -44,7 +44,7 @@ class MeiTask extends \Phalcon\Cli\Task
     function test63Action()
     {
         $cache = Users::getHotWriteCache();
-        $record_key = \Rooms::generateBoomRecordKey(137039);
+        $record_key = \Rooms::generateBoomRecordDayKey(137039);
         echoLine($cache->zrange($record_key, 0, -1, 'withscores'));
         echoLine($cache->zrank($record_key, 41792));
 
