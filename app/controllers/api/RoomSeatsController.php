@@ -55,7 +55,10 @@ class RoomSeatsController extends BaseController
         }
 
         $room_seat = \RoomSeats::findFirstById($room_seat_id);
+
         if (!$room_seat) {
+            unlock($room_seat_lock);
+            unlock($room_seat_user_lock);
             return $this->renderJSON(ERROR_CODE_FAIL, '麦位参数非法');
         }
 

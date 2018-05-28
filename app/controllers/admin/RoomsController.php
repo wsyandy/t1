@@ -61,6 +61,17 @@ class RoomsController extends BaseController
         $total_entries = $total_page * $per_page;
         $cond['order'] = "last_at desc, user_type asc, id desc";
         $rooms = \Rooms::findPagination($cond, $page, $per_page, $total_entries);
+
+        $types = \Rooms::$TYPES;
+        $type_arr = [];
+        foreach ($rooms as $room) {
+            $type_arr = explode(',',$room->types);
+            $arr = [];
+            foreach($type_arr as $v){
+               $arr[] = $types[$v];
+            }
+            $room->types = implode(',',$arr);
+        }
         $this->view->rooms = $rooms;
         $this->view->hot = $hot;
         $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
@@ -261,13 +272,23 @@ class RoomsController extends BaseController
         $room_ids = $hot_cache->zrevrange($hot_room_list_key, 0, -1);
 
         $rooms = \Rooms::findByIds($room_ids);
+        $types = \Rooms::$TYPES;
+        $type_arr = [];
 
         foreach ($rooms as $room) {
+
             if ($room->hot == STATUS_ON) {
                 $room->auto_hot = 0;
             } else {
                 $room->auto_hot = 1;
             }
+
+            $type_arr = explode(',',$room->types);
+            $arr = [];
+            foreach($type_arr as $v){
+                $arr[] = $types[$v];
+            }
+            $room->types = implode(',',$arr);
         }
 
         $pagination = new \PaginationModel($rooms, $hot_cache->zcard($hot_room_list_key), $page, $per_page);
@@ -306,7 +327,7 @@ class RoomsController extends BaseController
 
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $room);
         if ($room->update()) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', ['room' => $room->toDetailJson()]);
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '配置失败');
         }

@@ -19,6 +19,11 @@
         {{ options(Rooms.THEME_TYPE) }}
     </select>
 
+    <label for="theme_type_eq">房间类型</label>
+    <select name="room[types_eq]" id="types_eq">
+        {{ options(Rooms.TYPES, types) }}
+    </select>
+
     <input type="hidden" name="room[hot]" , value="{{ hot }}">
 
     <label for="id_eq">ID</label>
@@ -57,10 +62,11 @@
     {% if room.audio_id > 0 %}
         音频ID:<a href="/admin/audios?audio[id_eq]={{ room.audio_id }}">{{ room.audio_id }}</a><br/>
     {% endif %}
-    是否热门：{{ room.hot_text }}
+    是否热门：{{ room.hot_text }}<br/>
+    房间类型: {{ room.types }}
 {% endmacro %}
 
-{% macro room_status_info(room) %}
+{% macro room_status_info(room, boom_config) %}
     {{ room.status_text }}|{{ room.online_status_text }}|{{ room.user_type_text }}<br/>
     最后活跃时间: {{ room.last_at_text }}<br/>
     公频聊天状态: {{ room.chat_text }}<br/>
@@ -68,7 +74,7 @@
     是否热门: {{ room.hot_text }}|是否置顶: {{ room.top_text }}<br/>
     协议: {{ intval(room.user_agreement_num) }}<br/>
     热门总分值: {{ room.total_score_by_cache }}<br/>
-    当前爆礼物值: {{ room.getCurrentBoomGiftValue(boom_config) }}<br/>
+    当前爆礼物值: {{ room.getCurrentBoomGiftValue() }}<br/>
     当天爆礼次数: {{ room.getBoomNum() }}<br/>
     当次引爆爆者ID: {{ room.getBoomUserId() }}<br/>
     {% if room.union_id %}
@@ -116,7 +122,8 @@
             {@if room.audio_id > 0 }
             音频ID:<a href="/admin/audios?audio[id_eq]=${ room.audio_id }">${ room.audio_id }</a><br/>
             {@/if}
-            是否热门：${ room.hot_text }
+            是否热门：${ room.hot_text }<br/>
+            房间类型：${ room.types }
         </td>
         <td>
             {% if isAllowed('users','index') %}

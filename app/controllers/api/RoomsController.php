@@ -317,7 +317,7 @@ class RoomsController extends BaseController
         $boom_config = \BoomConfigs::getBoomConfig();
         $interval_value = 50000;
 
-        if ($boom_config && $room->hasBoomGift($boom_config)) {
+        if ($boom_config && $room->hasBoomGift()) {
 
             $boom_num = $room->getBoomNum();
             $room_boon_gift_sign_key = \Rooms::generateRoomBoomGiftSignKey($room_id);
@@ -342,7 +342,7 @@ class RoomsController extends BaseController
                 'client_url' => 'url://m/boom_histories',
                 'svga_image_url' => $boom_config->getSvgaImageUrl(),
                 'total_value' => intval($total_value),
-                'current_value' => intval($room->getCurrentBoomGiftValue($boom_config)),
+                'current_value' => intval($room->getCurrentBoomGiftValue()),
                 'show_rank' => 1000000,
                 'render_type' => 'svga',
                 'status' => STATUS_ON,

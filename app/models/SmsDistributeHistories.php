@@ -89,20 +89,22 @@ class SmsDistributeHistories extends BaseModel
             return [ERROR_CODE_FAIL, '密码错误'];
         }
 
-        $stat_db = \Stats::getStatDb();
-        if ($stat_db->zscore('sms_distribute_history_register_device_ids', $current_user->device_id)) {
-            info('false sms_distribute_history_register_device_ids', $current_user->id, $mobile, $current_user->device_id, $ip);
-            return [ERROR_CODE_FAIL, '该设备已分销'];
+        if (isProduction()) {
+            $stat_db = \Stats::getStatDb();
+            if ($stat_db->zscore('sms_distribute_history_register_device_ids', $current_user->device_id)) {
+                info('false sms_distribute_history_register_device_ids', $current_user->id, $mobile, $current_user->device_id, $ip);
+                return [ERROR_CODE_FAIL, '该设备已分销'];
+            }
+
+            if ($stat_db->zscore('sms_distribute_history_register_ips', $ip)) {
+                info('false sms_distribute_history_register_ips', $current_user->id, $mobile, $current_user->device_id, $ip);
+                return [ERROR_CODE_FAIL, '该设备已分销！'];
+            }
+
+
+            $stat_db->zadd('sms_distribute_history_register_device_ids', time(), $current_user->device_id);
+            $stat_db->zadd('sms_distribute_history_register_ips', time(), $ip);
         }
-
-        if ($stat_db->zscore('sms_distribute_history_register_ips', $ip)) {
-            info('false sms_distribute_history_register_ips', $current_user->id, $mobile, $current_user->device_id, $ip);
-            return [ERROR_CODE_FAIL, '该设备已分销！'];
-        }
-
-
-        $stat_db->zadd('sms_distribute_history_register_device_ids', time(), $current_user->device_id);
-        $stat_db->zadd('sms_distribute_history_register_ips', time(), $ip);
 
         $sms_distribute_history->user_id = $current_user->id;
         $sms_distribute_history->status = AUTH_SUCCESS;
