@@ -306,8 +306,6 @@ trait RoomStats
 
             // 爆礼物
             $room->statBoomIncome($sender_id, $income, $time);
-
-            debug($minutes_stat_key);
         }
     }
 
@@ -410,6 +408,7 @@ trait RoomStats
             $cache->expire($record_day_key, $expire); //爆礼物贡献清除
 
             if (isDevelopmentEnv() && $cache->exists($cur_income_key) && $cache->ttl($cur_income_key) <= 1) {
+                unlock($lock);
                 $cache->del($cur_income_key);
                 return;
             }
