@@ -41,7 +41,6 @@
         },
         mounted:function () {
 
-
         },
         methods: {
             RedPacketsList: function () {
@@ -62,7 +61,7 @@
                     vm.total_page = resp.total_page;
 
                     $.each(resp.red_packets, function (i, val) {
-                        
+
                         if (!val.is_grabbed) {
                             val.text = "抢";
                             val.class = "red_list_qiang";
