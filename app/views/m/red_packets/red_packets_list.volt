@@ -16,13 +16,13 @@
                 <div class="num red_list_style red_list_get_red" v-if="v.is_grabbed">已抢过</div>
 
                 <div class="num red_list_style" v-bind:class="v.class" v-if="v.is_grab"
-                     @click="toGrabRedPacket(v.id,v.red_packet_type)">${v.text}
+                     @click="toGrabRedPacket(v.id)">${v.text}
                 </div>
 
                 <div class="num red_list_style red_list_time " v-if="v.is_stay" :class="['daojishi'+i]"
-                     @click="toGrabRedPacket(v.id,v.red_packet_type)" ></div>
+                     @click="toGrabRedPacket(v.id)" ></div>
                 <div class="num red_list_style red_list_qiang " :class="['daojishiJS'+i]" style="display: none;"
-                     v-if="v.red_packet_type == 'stay_at_room'" @click="toGrabRedPacket(v.id,v.red_packet_type)">抢
+                     v-if="v.red_packet_type == 'stay_at_room'" @click="toGrabRedPacket(v.id)">抢
                     </div>
             </div>
         </li>
@@ -98,9 +98,8 @@
 
                 vm.page++;
             },
-            toGrabRedPacket: function (id, type) {
-                var url = "/m/red_packets/grab_red_packets?sid=" + this.sid + "&code=" + this.code + "&red_packet_id=" + id + "&red_packet_type=" + type;
-
+            toGrabRedPacket: function (id) {
+                var url = "/m/red_packets/grab_red_packets?sid=" + this.sid + "&code=" + this.code + "&red_packet_id=" + id;
                 location.href = url;
             }
         }

@@ -73,7 +73,7 @@ class RedPackets extends BaseModel
             if ($this->diamond >= 1000) {
                 $this->user->has_red_packet = STATUS_OFF;
                 $this->user->update();
-                if($this->room){
+                if ($this->room) {
                     $this->room->has_red_packet = STATUS_OFF;
                     $this->room->update();
                 }
@@ -211,7 +211,7 @@ class RedPackets extends BaseModel
     function getDistanceStartTime($user)
     {
 
-        if($this->red_packet_type != RED_PACKET_TYPE_STAY_AT_ROOM){
+        if ($this->red_packet_type != RED_PACKET_TYPE_STAY_AT_ROOM) {
             return 0;
         }
 
@@ -229,26 +229,36 @@ class RedPackets extends BaseModel
     function grabRedPacket($user, $room)
     {
 
-        $get_diamond = $this->getRedPacketDiamond($user->id);
+        $lock_key = 'grab_red_packet_' . $this->id;
+        $lock = tryLock($lock_key);
+        if (!$lock) {
+            return 0;
+        }
+
+        $red_racket = RedPackets::findFirstById($this->id);
+        $get_diamond = $red_racket->getRedPacketDiamond($user->id);
+
+        unlock($lock);
 
         if ($get_diamond) {
 
+            $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $user->mobile, 'target_id' => $this->id];
+            \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_RED_PACKET_INCOME, $get_diamond, $opts);
+
             $opts = [
-                'type' => 'update',
-                'content' => '恭喜' . $user->nickname . '抢到了' . $get_diamond . '个钻石',
-                'notify_type' => 'ptp'
+                'type' => 'update', 'notify_type' => 'ptp',
+                'content' => '恭喜' . $user->nickname . '抢到了' . $get_diamond . '个钻石'
             ];
 
             self::sendSocketForRedPacket($user, $room, $opts);
-
-            return [ERROR_CODE_SUCCESS, $get_diamond];
         }
 
-        return [ERROR_CODE_SUCCESS, null];
+        return $get_diamond;
     }
 
     function getRedPacketDiamond($user_id)
     {
+
         $cache = \Users::getUserDb();
         $user_room_key = self::generateUserRoomRedPacketsKey($this->room_id, $user_id);
         $user_red_key = self::generateUserRedPacketsKey($user_id);
@@ -257,6 +267,7 @@ class RedPackets extends BaseModel
         $balance_num = $this->balance_num;
 
         if ($balance_diamond && $balance_num && $this->status == STATUS_ON) {
+
             $usable_balance_diamond = $balance_diamond - ($balance_num - 1);
             if ($usable_balance_diamond > ceil($this->diamond * 0.5)) {
                 $get_diamond = mt_rand(1, ceil($this->diamond * 0.4));
@@ -267,6 +278,7 @@ class RedPackets extends BaseModel
             if ($balance_num == 1) {
                 $get_diamond = $balance_diamond;
             }
+
             $this->balance_diamond = $balance_diamond - $get_diamond;
             $this->balance_num = $balance_num - 1;
             $this->update();
@@ -351,7 +363,7 @@ class RedPackets extends BaseModel
             $intranet_ip = $user->getIntranetIp();
             $receiver_fd = $user->getUserFd();
 
-            if(!$intranet_ip || !$receiver_fd){
+            if (!$intranet_ip || !$receiver_fd) {
                 continue;
             }
 

@@ -92,20 +92,18 @@
                 var data = {
                     sid: this.sid,
                     code: this.code,
-                    red_packet_id: vm.red_packet_id,
-                    red_packet_type: vm.red_packet_type,
-                }
-
-
+                    red_packet_id: vm.red_packet_id
+                };
 
                 $.authGet('/m/red_packets/grab_red_packets', data, function (resp) {
-                    console.log(resp);
+
                     vm.getRed = true;
                     if (!resp.error_code) {
 
                         vm.res = resp.error_reason;
                         vm.getDiamond = resp.get_diamond;
                         vm.congratulation = true;
+
                     } else if (resp.error_code == -400) {
 
                         vm.attentionHost = true;
@@ -117,10 +115,8 @@
                         vm.grabbed = false;
 
                     } else {
-
                         vm.res = resp.error_reason;
                         vm.pity = true;
-
                     }
 
                     hide_grab();
@@ -171,7 +167,7 @@
 
     $(function () {
         var t = {{ distance_start_at }};
-console.log(t);
+
         if(vm.red_packet_type != "stay_at_room"){
              t = t-180;
         }

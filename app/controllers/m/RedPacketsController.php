@@ -113,7 +113,7 @@ class RedPacketsController extends BaseController
             $red_packets = \RedPackets::findRedPacketList($user, $room, $page, $pre_page);
             if ($red_packets) {
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '红包列表',
-                        $red_packets->toJson('red_packets', 'toSimpleJson')
+                    $red_packets->toJson('red_packets', 'toSimpleJson')
                 );
             }
 
@@ -126,90 +126,74 @@ class RedPacketsController extends BaseController
 
     function grabRedPacketsAction()
     {
+
         $user = $this->currentUser();
         $red_packet_id = $this->params('red_packet_id');
-        $red_packet_type = $this->params('red_packet_type');
-        $sex = $this->params('sex');
 
         $red_packet = \RedPackets::findFirstById($red_packet_id);
         if (!$red_packet) {
             return $this->response->redirect('app://back');
         }
 
+        $sex = $red_packet->sex;
+        $red_packet_type = $red_packet->red_packet_type;
         //用户进来的时间
         $room = $red_packet->room;
-        $distance_start_at = $red_packet->getDistanceStartTime($user);
+        $distance_start_at = 0;
 
         $user_nickname = $red_packet->user->nickname;
         $user_avatar_url = $red_packet->user->avatar_url;
 
         if ($this->request->isAjax()) {
-            $lock_key = 'grab_red_packet_' . $red_packet_id;
-            $lock = tryLock($lock_key);
-            $cache = \Users::getUserDb();
-            $key = \RedPackets::generateUserRoomRedPacketsKey($room->id, $user->id);
-            $score = $cache->zscore($key, $red_packet_id);
-            if ($score) {
-                unlock($lock);
-                return $this->renderJSON(ERROR_CODE_BLOCKED_ACCOUNT, '已抢过');
-            }
 
             if ($red_packet->status == STATUS_OFF) {
-                unlock($lock);
                 return $this->renderJSON(ERROR_CODE_FAIL, '已经抢光啦');
+            }
+
+            $cache = \Users::getUserDb();
+            $user_red_key = \RedPackets::generateUserRedPacketsKey($user->id);
+            $score = $cache->zscore($user_red_key, $red_packet_id);
+            if ($score) {
+                return $this->renderJSON(ERROR_CODE_BLOCKED_ACCOUNT, '已抢过');
             }
 
             //时间限制
             if ($red_packet_type == RED_PACKET_TYPE_STAY_AT_ROOM) {
-                $time = $red_packet->getDistanceStartTime($user);
-                if ($time > 0) {
-                    unlock($lock);
-                    return $this->renderJSON(ERROR_CODE_FAIL, '不要心急，您还没有待满三分钟哦！');
+                $distance_start_at = $red_packet->getDistanceStartTime($user);
+                if ($distance_start_at > 0) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '不要心急，您还没在房间待满三分钟哦！');
                 }
             }
 
             //当类型为附近的人的时候才会对用户性别有要求
             if ($red_packet_type == RED_PACKET_TYPE_NEARBY) {
                 //未做=>距离的判断
-                if ($sex != USER_SEX_COMMON) {
-                    if ($sex != $user->sex) {
-                        $sex_content = $sex == USER_SEX_MALE ? '小哥哥' : '小姐姐';
-                        unlock($lock);
-                        return $this->renderJSON(ERROR_CODE_FAIL, '这个红包只有' . $sex_content . '才可以抢哦！');
-                    }
+                if ($sex != USER_SEX_COMMON && $sex != $user->sex) {
+                    $sex_content = $sex == USER_SEX_MALE ? '小哥哥' : '小姐姐';
+                    return $this->renderJSON(ERROR_CODE_FAIL, '这个红包只有' . $sex_content . '才可以抢哦！');
                 }
             }
 
             //是否关注房主
             if ($red_packet_type == RED_PACKET_TYPE_FOLLOW) {
-                info('房主id', $room->user_id);
+
                 if ($room->user_id == $user->id) {
-                    unlock($lock);
-                    return $this->renderJSON(ERROR_CODE_FAIL, '房主好意思抢自己的红包嘛');
+                    return $this->renderJSON(ERROR_CODE_FAIL, '不能抢自己的红包哦');
                 }
-                $follow_key = 'follow_list_user_id' . $user->id;
-                $follow_ids = $cache->zrange($follow_key, 0, -1);
-                if (!in_array($room->user_id, $follow_ids)) {
+
+                if ($user->isFollow($room->user)) {
                     $client_url = '/m/red_packets/followers';
-                    unlock($lock);
                     return $this->renderJSON(ERROR_CODE_FORM, '需要关注房主才可领取', ['client_url' => $client_url]);
                 }
             }
 
-            list($error_code, $get_diamond) = $red_packet->grabRedPacket($user, $room);
+            $get_diamond = $red_packet->grabRedPacket($user, $room);
             $error_reason = '手慢了，红包抢完了！';
             if ($get_diamond) {
-                if (mb_strlen($user_nickname) > 5) {
-                    $user_nickname = mb_substr($user_nickname, 0, 5) . '...';
-                }
                 $error_reason = '抢到' . $user_nickname . '发的钻石红包';
-                //在这里增加钻石
-                $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $this->currentUser()->mobile, 'target_id' => $red_packet_id];
-                \AccountHistories::changeBalance($this->currentUser(), ACCOUNT_TYPE_RED_PACKET_INCOME, $get_diamond, $opts);
             }
-            unlock($lock);
 
-            return $this->renderJSON($error_code, $error_reason, ['get_diamond' => $get_diamond]);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, $error_reason, ['get_diamond' => $get_diamond]);
         }
 
         $this->view->red_packet = $red_packet;
