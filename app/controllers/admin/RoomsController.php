@@ -70,7 +70,7 @@ class RoomsController extends BaseController
             foreach($type_arr as $v){
                $arr[] = $types[$v];
             }
-            $room->types = implode(',',$arr);;
+            $room->types = implode(',',$arr);
         }
         $this->view->rooms = $rooms;
         $this->view->hot = $hot;
@@ -277,8 +277,6 @@ class RoomsController extends BaseController
 
         foreach ($rooms as $room) {
 
-            $room->types = $types[$room->types];
-
             if ($room->hot == STATUS_ON) {
                 $room->auto_hot = 0;
             } else {
@@ -329,7 +327,7 @@ class RoomsController extends BaseController
 
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $room);
         if ($room->update()) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', ['room' => $room->toDetailJson()]);
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '配置失败');
         }

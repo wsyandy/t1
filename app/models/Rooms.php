@@ -85,6 +85,17 @@ class Rooms extends BaseModel
 
             self::delay()->updateShieldRoomList($this->id);
         }
+
+        $this->getTypesName($this->types);
+
+    }
+
+    function mergeJson()
+    {
+        return [
+            'types' => $this->types,
+
+        ];
     }
 
     /**
@@ -1678,6 +1689,18 @@ class Rooms extends BaseModel
 //        }
 
         unlock($lock);
+    }
+
+    function getTypesName($type){
+        $types = \Rooms::$TYPES;
+        $type_arr = explode(',',$type);
+        $arr = [];
+        foreach($type_arr as $v){
+            $arr[] = $types[$v];
+        }
+        $this->types = implode(',',$arr);
+
+        return $this->types;
     }
 
 }
