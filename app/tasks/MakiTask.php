@@ -266,4 +266,58 @@ class MakiTask extends Phalcon\Cli\Task
 
 
     }
+
+
+    function t6()
+    {
+        $params = self::$params;
+        $user_number = 5;
+        $room_id = 137039;
+
+        // 拿取命令
+        if (!empty($params)) {
+            $exec = 0;
+            $exec_position = 2;
+            for ($i=0; $i<$exec_position; $i++) {
+                isset($params[$i]) && (intval($params[$i]) > 0) && ++$exec;
+            }
+            $orders = array_slice($params, $exec);
+            $exec == 1 && $room_id = $params[0];
+            $exec == 2 && list($room_id, $user_number) = $params;
+        } else
+            $orders = ['enter', 'send', 'message'];
+
+
+        // 房间 麦位
+        $room = Rooms::findFirstById($room_id);
+        $room_seat = RoomSeats::findFirst([
+                        'conditions' => 'room_id = :room_id: and user_id > 0',
+                        'bind' => ['room_id' => $room->id]
+                    ]);
+
+        // 用户
+        $users = Users::find([
+                    'conditions' => 'user_type = :user_type: and user_status  = :user_status:',
+                    'bind' => [
+                        'user_type' => USER_TYPE_SILENT,
+                        'user_status' => USER_STATUS_ON,
+                    ],
+                    'limit' => $user_number,
+                ]);
+
+        foreach ($users as $user) {
+
+            if (in_array('enter', $orders)) {
+                Rooms::addWaitEnterSilentRoomList($user->id);
+                Rooms::delay()->enterSilentRoom($room->id, $user->id);
+            }
+            in_array('up', $orders) && $user->upRoomSeat($user->id, $room->id);
+
+            in_array('send', $orders) && $user->sendGift($user->id, $room->id);
+            in_array('message', $orders) && $user->sendTopTopicMessage($user->id, $room->id);
+
+            in_array('down', $orders) && $user->asyncDownRoomSeat($user->id, $room_seat->id);
+            in_array('exit', $orders) && $room->exitSilentRoom($user);
+        }
+    }
 }
