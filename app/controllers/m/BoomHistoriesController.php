@@ -60,7 +60,7 @@ class BoomHistoriesController extends BaseController
 
         $target_id = 0;
         //用户贡献值 控制概率
-        $record_key = \Rooms::generateBoomRecordKey($room_id);
+        $record_key = \Rooms::generateBoomRecordDayKey($room_id);
         $amount = $cache->zscore($record_key, $user->id);
         $boom_user_id = $room->getBoomUserId();
         $type = BOOM_HISTORY_GIFT_TYPE;

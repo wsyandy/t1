@@ -329,7 +329,7 @@ trait RoomStats
 
 
         // 单位周期 房间当前流水值
-        $cur_income_day_key = self::generateBoomCurIncomeDayKey($room_id);
+        $cur_income_day_key = self::generateBoomCurIncomeDayKey($room_id, $time);
         $cur_income = $cache->get($cur_income_day_key);
 
         $lock = tryLock($cur_income_day_key);
@@ -345,10 +345,13 @@ trait RoomStats
             $expire = endOfDay() - $time;
 
             if (isDevelopmentEnv()) {
-                $expire = 600;
+                $minutes = date("YmdHi", $time);
+                $interval = intval(intval($minutes) % 10);
+                $minutes_end = $minutes + (10 - $interval);
+                $expire = strtotime($minutes_end . '59') - time();
             }
 
-            $boom_list_key = 'boom_gifts_list';
+            $boom_list_day_key = 'boom_gifts_list_' . date("Ymd", $time);
 
             $boom_num = $this->getBoomNum();
             $total_value = $boom_config->total_value + $interval_value * $boom_num;
@@ -362,7 +365,7 @@ trait RoomStats
 
             // 单位周期 截止目前房间总流水
             $current_value = $cur_income + $income;
-            $record_key = Rooms::generateBoomRecordKey($room_id);
+            $record_key = Rooms::generateBoomRecordDayKey($room_id, $time);
 
             if ($current_value >= $total_value) {
 
@@ -370,7 +373,7 @@ trait RoomStats
 
                 // 爆礼物
                 $cache->del($cur_income_day_key);
-                $cache->zrem($boom_list_key, $room_id); //正在爆礼物房间的房间清除
+                $cache->zrem($boom_list_day_key, $room_id); //正在爆礼物房间的房间清除
 
                 $cache->expire($record_key, $boom_expire); //爆礼物贡献清除
                 $cache->setex($room_boon_gift_sign_key, $boom_expire, $time); //爆钻时间
@@ -379,17 +382,7 @@ trait RoomStats
                 $cache->setex('room_boom_user_room_id_' . $room_id, $boom_expire, $sender_id); //引爆者
                 $boom_num_day_key = 'room_boom_num_room_id_' . $room_id . "_" . date("Ymd", $time);
                 $cache->incrby($boom_num_day_key, 1); //爆礼物次数
-
-
-                if (isProduction()) {
-                    $cache->expire($boom_num_day_key, $expire);
-                } else {
-                    $minutes = date("YmdHi");
-                    $interval = intval(intval($minutes) % 10);
-                    $minutes_end = $minutes + (10 - $interval);
-                    $expire = strtotime($minutes_end . '59') - time();
-                    $cache->expire($boom_num_day_key, $expire);
-                }
+                $cache->expire($boom_num_day_key, $expire);
 
                 $params = ['total_value' => $total_value, 'current_value' => $current_value, 'svga_image_url' => $svga_image_url,
                     'boom_num' => $this->getBoomNum()];
@@ -419,10 +412,11 @@ trait RoomStats
 
             if ($res && $current_value >= $start_value) {
 
-                if (!$cache->zscore($boom_list_key, $room_id)) {
-                    $cache->zadd($boom_list_key, time(), $room_id);
+                if (!$cache->zscore($boom_list_day_key, $room_id)) {
+                    $cache->zadd($boom_list_day_key, time(), $room_id);
                 }
 
+                $cache->expire($boom_list_day_key, $time);
                 $params = ['total_value' => $total_value, 'current_value' => $current_value,
                     'svga_image_url' => $svga_image_url, 'boom_num' => $boom_num];
 
@@ -457,19 +451,22 @@ trait RoomStats
         return intval($cur_income);
     }
 
-    static public function generateBoomCurIncomeKey($room_id)
+    static public function generateBoomCurIncomeDayKey($room_id, $time = 0)
     {
-        return 'boom_target_value_room_' . $room_id;
+        if (!$time) {
+            $time = time();
+        }
+
+        return 'boom_target_value_room_' . $room_id . "_" . date("Ymd", $time);
     }
 
-    static public function generateBoomCurIncomeDayKey($room_id)
+    static public function generateBoomRecordDayKey($room_id, $time = 0)
     {
-        return 'boom_target_value_room_' . $room_id . "_" . date("Ymd");
-    }
+        if (!$time) {
+            $time = time();
+        }
 
-    static public function generateBoomRecordKey($room_id)
-    {
-        return 'boom_room_record_' . $room_id;
+        return 'boom_room_record_' . $room_id . "_" . date("Ymd", $time);
     }
 
     //房间收益列表
