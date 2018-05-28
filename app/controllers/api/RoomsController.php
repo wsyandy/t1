@@ -49,7 +49,7 @@ class RoomsController extends BaseController
 
         if ($hot == STATUS_ON) {
             //热门房间从缓存中拉取
-            $rooms = \Rooms::searchHotRooms($this->currentUser(), $page, $per_page);
+            $rooms = \Rooms::newSearchHotRooms($this->currentUser(), $page, $per_page);
             \Users::findBatch($rooms);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
 

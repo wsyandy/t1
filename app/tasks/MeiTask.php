@@ -13,6 +13,16 @@ class MeiTask extends \Phalcon\Cli\Task
     {
 
         $cache = Users::getHotWriteCache();
+        $key = 'total_new_hot_room_list';
+        $rooms = Rooms::find(['conditions' => ['last_at >= :last_at:', 'bind' => ['last_at' => time() - 3600]], 'columns' => 'distinct id']);
+        $time = time();
+
+        foreach ($rooms as $room) {
+            echoLine($room->id);
+            $time -= 1000;
+            $cache->zadd($key, $time, $room->id);
+        }
+
         $cur_income_key = \Rooms::generateBoomCurIncomeKey(1001987);
         $cache->del($cur_income_key);
         $cache->del('room_boom_num_room_id_' . 1001987);
