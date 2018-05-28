@@ -90,6 +90,10 @@ trait UserAbilities
 
     function canReceiveBoomGiftMessage()
     {
+        if(isDevelopmentEnv()){
+            return true;
+        }
+        
         if ($this->isIos()) {
             return $this->version_code > 19;
         }
