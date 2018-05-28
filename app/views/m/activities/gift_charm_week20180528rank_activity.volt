@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-{{ theme_css('/m/css/gift_week_20180528_rank_activity.css') }}
+{{ theme_css('/m/css/gift_week_20180528_rank_activity1.css') }}
 {{ theme_js('/m/js/resize.js') }}
 {{ block_end() }}
 <div class="vueBox" id="app">
@@ -140,8 +140,10 @@
                             </p>
                         </div>
                         <div class="myself_info" v-show="curIdx==3">
-                        <p>情侣榜排名：<span class="highlight" v-text="current_user_info['current_rank']"></span>名</p>
-                        <p>情侣值：<span class="highlight" v-text="current_user_info['current_score']?current_user_info['current_score']:0"></span>分</p>
+                            <p>情侣榜排名：<span class="highlight" v-text="current_user_info['current_rank']"></span>名</p>
+                            <p>情侣值：<span class="highlight"
+                                         v-text="current_user_info['current_score']?current_user_info['current_score']:0"></span>分
+                            </p>
                         </div>
 
                     </div>
@@ -192,7 +194,7 @@
 
 
     <div class="mask" v-show="showRule">
-        <div class="rule_box " :class="{'slidup':showRule}">
+        <div class="rule_box" :class="{'slidup':showRule}">
             <ul class="rule_list">
                 <li>
                     <span class="rule_num">1</span>
@@ -211,6 +213,10 @@
                 <li>
                     <span class="rule_num">4</span>
                     <p>活动结果将于<span class="highlight">每周一12:00</span>公布，请保持关注</p>
+                </li>
+                <li>
+                    <span class="rule_num">5</span>
+                    <p>每个榜单的冠军奖励均为新礼物冠名权、【九尾妖狐】座驾7天、绝版礼物【豪华游艇】赠送权*1</p>
                 </li>
             </ul>
             <div class="rule_right">- 活动最终解释权归Hi语音官方团队 -</div>
