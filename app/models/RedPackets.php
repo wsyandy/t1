@@ -96,7 +96,8 @@ class RedPackets extends BaseModel
             'user_avatar_url' => $this->user->avatar_small_url,
             'red_packet_type' => $this->red_packet_type,
             'sex' => $this->sex,
-            'distance_start_at' => $this->distance_start_at
+            'distance_start_at' => $this->distance_start_at,
+            'is_grabbed' => $this->is_grabbed
         ];
     }
 
