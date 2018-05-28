@@ -95,6 +95,7 @@ class JumpsController extends BaseController
         //当通过当前方法中转的用户保存在队列当中
         $game_history->saveUserList($user->id);
 
+        header("Access-Control-Allow-Origin: *");
         $this->response->redirect($client_url);
     }
 
