@@ -691,7 +691,7 @@ trait RoomAttrs
 
         $boom_list_day_key = 'boom_gifts_list_' . date("Ymd", time());
 
-        if ($cache->exists($room_boom_gift_sign_key) || $cache->zscore($boom_list_day_key, $this->id)) {
+        if ($cache->exists($room_boom_gift_sign_key) || ($cache->zscore($boom_list_day_key, $this->id) && $this->getCurrentBoomGiftValue() > 0)) {
             return true;
         }
 
