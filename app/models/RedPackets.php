@@ -338,7 +338,7 @@ class RedPackets extends BaseModel
     {
         //这里还没有做是否符合附近人的条件
         $cond = ['conditions' => 'user_status!=:user_status: and last_at>:last_at:',
-            'bind' => ['user_status' => USER_TYPE_SILENT, 'last_at' => time() - 2 * 60 * 60]
+            'bind' => ['user_status' => USER_TYPE_SILENT, 'last_at' => time() - 30 * 60]
         ];
 
         $client_url = 'app://rooms/detail?id=' . $room_id;
