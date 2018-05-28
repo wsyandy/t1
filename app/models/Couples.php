@@ -194,9 +194,12 @@ class Couples extends BaseModel
     }
 
 
-    static function generateCoupleWeekValueKey($user_id)
+    static function generateCoupleWeekValueKey($user_id, $time = '')
     {
-        return 'couple_week_value_' . $user_id . '_' . date("Ymd", beginOfWeek());
+        if (!$time) {
+            $time = time();
+        }
+        return 'couple_week_value_' . $user_id . '_' . date("Ymd", beginOfWeek($time)) . '_' . date("Ymd", endOfWeek($time));
     }
 
     static function sendCpFinishMessage($user, $body)

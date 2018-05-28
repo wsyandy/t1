@@ -746,9 +746,9 @@ class ActivitiesController extends BaseController
 
 
             $users = \Couples::findCpRankListByKey($key, 1, 10);
-            $current_user_cp_info = $user->getCurrentWeekActivityCpInfo();
+            $current_user_cp_info = $user->getCurrentWeekActivityCpInfo($activity->start_at);
             debug($key);
-            info('当前用户信息',$current_user_cp_info);
+            info('当前用户信息', $current_user_cp_info);
 
             if (count($users)) {
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['users' => $users, 'current_user_cp_info' => $current_user_cp_info]);
