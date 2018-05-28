@@ -21,7 +21,7 @@
         <div class="compere_auth" @click="idCardAuth()">
             <div class="compere_avatar">
                 <img class="ico_compere_avatar" src="/m/images/ico_compere_avatar.png" alt="">
-                <span class="compere_tit">主持认证</span>
+                <span class="compere_tit">实名认证</span>
             </div>
             <div class="compere_arrow">
                 <span class="compere_txt">{{ current_user.id_card_auth_text }}</span>
