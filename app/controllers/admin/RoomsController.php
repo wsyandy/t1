@@ -83,9 +83,9 @@ class RoomsController extends BaseController
     function editAction()
     {
         $room = \Rooms::findFirstById($this->params('id'));
-        $room->getHotRoomScoreRatio();
         $res = \BoomConfigs::findByConditions(['status' => STATUS_ON]);
         $boom_configs = ['' => '请选择'];
+
         foreach ($res as $item) {
             $boom_configs[$item->id] = $item->name;
         }
