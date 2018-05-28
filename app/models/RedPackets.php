@@ -13,6 +13,8 @@ class RedPackets extends BaseModel
     private $_room;
 
     public $distance_start_at = 0;
+    // 是否已领取
+    public $is_grabbed = false;
 
     static $VALIDATES = [
         'id' => ['null' => '不能为空'],
@@ -202,9 +204,17 @@ class RedPackets extends BaseModel
         foreach ($red_packets as $red_packet) {
             $distance_start_at = $red_packet->getDistanceStartTime($user);
             $red_packet->distance_start_at = $distance_start_at;
+            $red_packet->is_grabbed = $red_packet->isGrabbed($user);
         }
 
         return new \PaginationModel($red_packets, $total, $page, $per_page);
+    }
+
+    function isGrabbed($user){
+
+        $cache = \Users::getUserDb();
+        $red_user_list_key = $this->generateRedPacketUserListKey();
+        return $cache->zscore($red_user_list_key, $user->id) > 0;
     }
 
     // 可以领取的时间

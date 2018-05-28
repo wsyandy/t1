@@ -15,7 +15,7 @@
                 </div>
                 <div class="num red_list_style red_list_get_red" v-if="v.is_grabbed">已抢过</div>
 
-                <div class="num red_list_style" v-bind:class="v.class" v-if="v.is_grab"
+                <div class="num red_list_style" v-bind:class="v.class" v-if="!v.is_grabbed"
                      @click="toGrabRedPacket(v.id)">${v.text}
                 </div>
 
@@ -37,8 +37,7 @@
             per_page: 3,
             total_page: 1,
             red_packets_list: [],
-            room_id: "{{ room_id }}",
-            user_get_red_packet_ids: [],
+            room_id: "{{ room_id }}"
         },
         mounted:function () {
 
@@ -59,16 +58,12 @@
                 };
 
                 $.authGet('/m/red_packets/red_packets_list', data, function (resp) {
-                    console.log(resp);
-                    vm.total_page = resp.total_page;
-                    vm.user_get_red_packet_ids = resp.user_get_red_packet_ids;
-                    $.each(resp.red_packets, function (i, val) {
 
-                        var index = $.inArray(val.id, vm.user_get_red_packet_ids);
-                        if (index != -1) {
-                            val.is_grabbed = true;
-                        } else {
-                            val.is_grab = true;
+                    vm.total_page = resp.total_page;
+
+                    $.each(resp.red_packets, function (i, val) {
+                        
+                        if (!val.is_grabbed) {
                             val.text = "抢";
                             val.class = "red_list_qiang";
                         }
@@ -77,17 +72,13 @@
                             val.text = "关注可抢";
                             val.class = "red_list_fangzhu";
                         }
+
                         if (val.red_packet_type == 'stay_at_room' && val.distance_start_at > 0) {
                             val.is_stay = true;
-                            val.is_grab = false;
-                            val.is_grabbed = false;
                             val.is_stay_show = false;
 
                             distanceStartAt(val.distance_start_at,i)
                         }
-
-
-//
 
                         vm.red_packets_list.push(val);
                     });
