@@ -90,14 +90,6 @@ class Rooms extends BaseModel
 
     }
 
-    function mergeJson()
-    {
-        return [
-            'types' => $this->types,
-
-        ];
-    }
-
     /**
      * 产生 UID
      */
