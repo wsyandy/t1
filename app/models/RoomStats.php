@@ -366,12 +366,13 @@ trait RoomStats
                 $cache->zrem($boom_list_day_key, $room_id); //正在爆礼物房间的房间清除
                 $cache->expire($cur_income_day_key, $boom_expire);
                 $cache->expire($record_key, $boom_expire); //爆礼物贡献清除
-                $cache->setex($room_boon_gift_sign_key, $boom_expire, $time); //爆钻时间
                 $cache->setex("room_boom_diamond_num_room_id_" . $room_id, $boom_expire, 0); //爆钻总额
                 $cache->setex('room_boom_user_room_id_' . $room_id, $boom_expire, $sender_id); //引爆者
+
                 $boom_num_day_key = 'room_boom_num_room_id_' . $room_id . "_" . date("Ymd", $time);
                 $cache->incrby($boom_num_day_key, 1); //爆礼物次数
                 $cache->expire($boom_num_day_key, $expire);
+                $cache->setex($room_boon_gift_sign_key, $boom_expire, $time); //爆钻时间
 
                 $boom_num++;
                 $params = ['total_value' => $total_value, 'current_value' => $current_value, 'svga_image_url' => $svga_image_url,
