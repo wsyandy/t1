@@ -689,7 +689,9 @@ trait RoomAttrs
         $cache = \Rooms::getHotWriteCache();
         $room_boom_gift_sign_key = Rooms::generateRoomBoomGiftSignKey($this->id);
 
-        if ($cache->exists($room_boom_gift_sign_key)) {
+        $boom_list_day_key = 'boom_gifts_list_' . date("Ymd", time());
+
+        if ($cache->exists($room_boom_gift_sign_key) || $cache->zscore($boom_list_day_key, $this->id)) {
             return true;
         }
 
