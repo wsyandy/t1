@@ -150,7 +150,7 @@
                         <li><a href="/admin/hot_room_histories">上热门申请</a></li>
                     {% endif %}
                     {% if isAllowed("id_card_auths",'index') %}
-                        <li><a href="/admin/id_card_auths">主播认证</a></li>
+                        <li><a href="/admin/id_card_auths">实名认证</a></li>
                     {% endif %}
                 </ul>
             </li>
