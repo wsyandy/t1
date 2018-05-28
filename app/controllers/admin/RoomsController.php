@@ -61,6 +61,11 @@ class RoomsController extends BaseController
         $total_entries = $total_page * $per_page;
         $cond['order'] = "last_at desc, user_type asc, id desc";
         $rooms = \Rooms::findPagination($cond, $page, $per_page, $total_entries);
+
+        $types = \Rooms::$TYPES;
+        foreach ($rooms as $room) {
+            $room->types = $types[$room->types];
+        }
         $this->view->rooms = $rooms;
         $this->view->hot = $hot;
         $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
@@ -261,8 +266,12 @@ class RoomsController extends BaseController
         $room_ids = $hot_cache->zrevrange($hot_room_list_key, 0, -1);
 
         $rooms = \Rooms::findByIds($room_ids);
+        $types = \Rooms::$TYPES;
 
         foreach ($rooms as $room) {
+
+            $room->types = $types[$room->types];
+
             if ($room->hot == STATUS_ON) {
                 $room->auto_hot = 0;
             } else {

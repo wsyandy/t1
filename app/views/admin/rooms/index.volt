@@ -19,6 +19,11 @@
         {{ options(Rooms.THEME_TYPE, theme_type) }}
     </select>
 
+    <label for="theme_type_eq">房间类型</label>
+    <select name="room[types_eq]" id="types_eq">
+        {{ options(Rooms.TYPES, types) }}
+    </select>
+
     <input type="hidden" name="room[hot]" , value="{{ hot }}">
 
     <label for="id_eq">ID</label>
@@ -61,7 +66,8 @@
     {% if room.audio_id > 0 %}
         音频ID:<a href="/admin/audios?audio[id_eq]={{ room.audio_id }}">{{ room.audio_id }}</a><br/>
     {% endif %}
-    是否热门：{{ room.hot_text }}
+    是否热门：{{ room.hot_text }}<br/>
+    房间类型：{{ room.types }}
 {% endmacro %}
 
 {% macro room_status_info(room) %}
@@ -123,7 +129,8 @@
             {@if room.audio_id > 0 }
             音频ID:<a href="/admin/audios?audio[id_eq]=${ room.audio_id }">${ room.audio_id }</a><br/>
             {@/if}
-            是否热门：${ room.hot_text }
+            是否热门：${ room.hot_text }<br/>
+            房间类型：${ room.types }
         </td>
         <td>
             {% if isAllowed('users','index') %}
