@@ -307,6 +307,11 @@ class MakiTask extends Phalcon\Cli\Task
 
         foreach ($users as $user) {
 
+            if ($user->isInAnyRoom()) {
+                info("user_in_other_room", $user->id, $user->current_room_id, $room->id);
+                continue;
+            }
+
             if (in_array('enter', $orders)) {
                 Rooms::addWaitEnterSilentRoomList($user->id);
                 Rooms::delay()->enterSilentRoom($room->id, $user->id);
