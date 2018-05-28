@@ -86,7 +86,7 @@ class Rooms extends BaseModel
             self::delay()->updateShieldRoomList($this->id);
         }
 
-        $this->getTypesName($this->types);
+        //$this->getTypesName($this->types);
 
     }
 
