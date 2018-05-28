@@ -101,6 +101,7 @@
                 <span v-text="sec"></span>
             </div>
         </div>
+        {% if time() >= activity.start_at %}
         <div class="bg04">
             <ul class="tabs">
                 <li v-for="item,index in tabs" :class="{'cur':curIdx==index}" @click="tabSelect(index)">
@@ -181,6 +182,7 @@
                 </li>
             </ul>
         </div>
+        {% endif %}
         <div class="footer">
             <span>- 活动最终解释权归HI语音官方团队 -</span>
         </div>
@@ -267,7 +269,6 @@
 
         },
         created: function () {
-            {#//this.getUsers('{{ gifts[0].id }}');#}
             this.getUsers('wealth');
         },
         methods: {
@@ -284,7 +285,6 @@
                         $.each(resp.users, function (index, item) {
                             vm.cp_users.push(item);
                         });
-                        console.log(vm.cp_users[0][0]);
                     }
                 });
             },

@@ -9,8 +9,49 @@
 class MeiTask extends \Phalcon\Cli\Task
 {
 
+    function test65Action()
+    {
+
+        $cache = Users::getHotWriteCache();
+        $cur_income_key = \Rooms::generateBoomCurIncomeKey(1001987);
+        $cache->del($cur_income_key);
+        $cache->del('room_boom_num_room_id_' . 1001987);
+    }
+
+    function test64Action()
+    {
+
+        $cache = Users::getHotWriteCache();
+        $cur_income_key = \Rooms::generateBoomCurIncomeKey(137039);
+        $cache->set($cur_income_key, 150000);
+
+//        $cache->setex('ddd', 180, 1);
+        echoLine($cache->ttl('ddd'));
+        $sender = Users::findFirstById(6);
+        \Backpacks::sendGift($sender, '41971,41966', 13, []);
+    }
+
     function test63Action()
     {
+        $cache = Users::getHotWriteCache();
+        $record_key = \Rooms::generateBoomRecordKey(137039);
+        echoLine($cache->zrange($record_key, 0, -1, 'withscores'));
+        echoLine($cache->zrank($record_key, 41792));
+
+        $user = Users::findFirstById(6);
+        $user->current_room_id = 266;
+        $user->update();
+        $cur_income_key = Rooms::generateBoomCurIncomeKey(1002212);
+        $cache = Rooms::getHotWriteCache();
+        $cache->setex($cur_income_key, endOfDay() - time(), 34405);
+
+        $gifts = Gifts::findBy(['pay_type' => GIFT_PAY_TYPE_DIAMOND]);
+
+        foreach ($gifts as $gift) {
+            $gift->show_rank = $gift->amount;
+            $gift->update();
+        }
+
         $cond = [
             'conditions' => 'created_at >= :start: and created_at <= :end: and pay_status = :pay_status:',
             'bind' => [

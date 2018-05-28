@@ -285,7 +285,7 @@ class BaseController extends ApplicationController
         $action_name = strtolower($action_name);
 
         // 更新设备或用户状态
-        if (!$this->skipCheckLoginStatus($controller_name, $action_name)) {
+        if (!$this->skipCheckLoginStatus($controller_name, $action_name) && $this->currentUser()) {
             $this->checkLoginStatus();
         }
 

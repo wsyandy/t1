@@ -75,6 +75,7 @@ class RoomsController extends BaseController
         $this->view->name = $name;
         $this->view->user_id = $user_id ? $user_id : '';
         $this->view->user_uid = $user_uid ? $user_uid : '';
+        $this->view->boom_config = \BoomConfigs::getBoomConfig();
         $this->view->online_room_num = \Rooms::count(['conditions' => 'online_status = ' . STATUS_ON]);
         $this->view->status_on_room_num = \Rooms::count(['conditions' => 'online_status = ' . STATUS_ON]);
     }
@@ -211,10 +212,16 @@ class RoomsController extends BaseController
         if ($this->request->isPost()) {
 
             $user_agreement_num = $this->params('user_agreement_num');
-            $room->user_agreement_num = $user_agreement_num;
+            $user_num = $user_agreement_num - $room->user_agreement_num;
 
+            $room->user_agreement_num = $user_agreement_num;
             if ($room->update()) {
-                \Rooms::delay()->addUserAgreement($room->id);
+                if($user_num > 0){
+                    \Rooms::delay()->addUserAgreement($room->id, $user_num);
+                }else{
+                    \Rooms::delay()->deleteUserAgreement($room->id, abs($user_num));
+                }
+
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '编辑成功', ['room' => $room->toDetailJson()]);
             }
 
@@ -271,6 +278,7 @@ class RoomsController extends BaseController
         $this->view->rooms = $pagination;
         $this->view->total_entries = $rooms->total_entries;
         $this->view->hot = 1;
+        $this->view->boom_config = \BoomConfigs::getBoomConfig();
     }
 
     function typesAction()

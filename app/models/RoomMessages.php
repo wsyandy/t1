@@ -30,19 +30,21 @@ trait RoomMessages
 
         if ($hot) {
 
-            $room = Rooms::findFirstById($room_id);
+            if ($room_id) {
 
-            //热门房间单独推送
-            if (!$room->isInHotList()) {
-                $room->pushRoomNoticeMessage($content, ['room_id' => $room_id, 'expire_time' => $expire_time]);
+                $room = Rooms::findFirstById($room_id);
+                //热门房间单独推送
+                if ($room && !$room->isInHotList()) {
+                    $room->pushRoomNoticeMessage($content, ['room_id' => $room_id, 'expire_time' => $expire_time]);
+                }
             }
 
             $hot_cache = Users::getHotWriteCache();
             $hot_room_list_key = Rooms::getHotRoomListKey();
             $hot_total_room_list_key = Rooms::getTotalRoomListKey(); //新的用户总的队列
 
-            $hot_room_ids = $hot_cache->zrevrange($hot_room_list_key, 0, 9);
-            $hot_total_room_ids = $hot_cache->zrevrange($hot_total_room_list_key, 0, 9);
+            $hot_room_ids = $hot_cache->zrevrange($hot_room_list_key, 0, 15);
+            $hot_total_room_ids = $hot_cache->zrevrange($hot_total_room_list_key, 0, 15);
 
             $room_ids = array_merge($hot_room_ids, $hot_total_room_ids);
             $room_ids = array_unique($room_ids);
@@ -102,21 +104,37 @@ trait RoomMessages
         }
     }
 
-    function pushBoomIncomeMessage($total_value, $current_value, $status = STATUS_ON)
+    function pushBoomIncomeMessage($opts = [])
     {
-        $boom_config = \BoomConfigs::getBoomConfigByCache($this->boom_config_id);
+        info($this->id, $opts);
+        $cache = Users::getHotReadCache();
+        $total_value = fetch($opts, 'total_value');
+        $current_value = fetch($opts, 'current_value');
+        $status = fetch($opts, 'status', STATUS_ON);
+        $svga_image_url = fetch($opts, 'svga_image_url');
+        $boom_num = fetch($opts, 'boom_num');
+        $image_colors = [1 => 'blue', 2 => 'green', 3 => 'orange'];
+        $room_boon_gift_sign_key = Rooms::generateRoomBoomGiftSignKey($this->id);
+
+        // 判断房间是否在进行爆礼物活动
+        if ($cache->exists($room_boon_gift_sign_key)) {
+            $boom_num--;
+        }
+
+        $image_color = fetch($image_colors, $boom_num + 1, 'orange');
+
         $body = [
             'action' => 'boom_gift',
             'boom_gift' => [
                 'expire_at' => Rooms::getBoomGiftExpireAt($this->id),
-                'client_url' => 'url://m/backpacks',
-                'svga_image_url' => \BoomConfigs::getSvgaImageUrl($boom_config),
-                'total_value' => (int)$total_value,
+                'client_url' => 'url://m/boom_histories',
+                'svga_image_url' => $svga_image_url,
+                'total_value' => intval($total_value),
                 'show_rank' => 1000000,
-                'current_value' => (int)$current_value,
+                'current_value' => intval($current_value),
                 'render_type' => 'svga',
                 'status' => $status,
-                'image_color' => 'blue'
+                'image_color' => $image_color
             ]
         ];
 

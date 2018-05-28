@@ -483,4 +483,9 @@ class Gifts extends BaseModel
 
         return $root . "images/gift_effect_image2.png";
     }
+
+    function isNormal()
+    {
+        return STATUS_ON == $this->status;
+    }
 }

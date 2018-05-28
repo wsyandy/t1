@@ -269,7 +269,7 @@ trait RoomAttrs
 
         debug('boom_test', $room_id, $room_sign_key, $time);
 
-        if (empty($time)) {
+        if (isBlank($time)) {
             return 0;
         }
 
@@ -351,7 +351,7 @@ trait RoomAttrs
     function getNotDrawRedPacketNum($user)
     {
         $ids = self::getNotDrawRedPacketIds($user);
-        if($ids){
+        if ($ids) {
             info($this->id, $user->id, 'count', count($ids));
             return count($ids);
         }
@@ -604,7 +604,7 @@ trait RoomAttrs
             '妈', '爸', '干你娘', '办理', '国家', '跪舔', '小婊砸', '我日', '超赚', '领导人', '作弊', '毒品', '淫秽', '异性',
             '私交', '涉嫌', '欺诈', '抢购', '招人', '跪求嫖', '艹', '操B', '艹B', '淫荡', '嫩模', '警察', '喘', '毒', '赌厅',
             '调情', '介绍所', '囚禁', '虐待', '包邮', '出售', '官方', '服务', '屁股', '搞基', '约炮', 'sao', '磕炮', '偷情',
-            '系统小助手', '系统', '嫖', '客服小助手', '官方'
+            '系统小助手', '系统', '嫖', '客服小助手', '官方', '习近平'
         ];
 
         foreach ($keywords as $keyword) {
@@ -684,16 +684,13 @@ trait RoomAttrs
         return $key;
     }
 
-    function hasBoomGift()
+    function hasBoomGift($boom_config)
     {
         $cache = \Rooms::getHotWriteCache();
-        $room_boon_gift_sign_key = Rooms::generateRoomBoomGiftSignKey($this->id);
-        $cur_income = $this->getCurrentBoomGiftValue();
+        $room_boom_gift_sign_key = Rooms::generateRoomBoomGiftSignKey($this->id);
+        $cur_income = $this->getCurrentBoomGiftValue($boom_config);
 
-        $boom_config = BoomConfigs::getBoomConfigByCache($this->boom_config_id);
-        $start_value = fetch($boom_config, 'start_value');
-
-        if ($cur_income >= $start_value || $cache->exists($room_boon_gift_sign_key)) {
+        if ($cur_income >= $boom_config->start_value || $cache->exists($room_boom_gift_sign_key)) {
             return true;
         }
 
@@ -1142,18 +1139,5 @@ trait RoomAttrs
     function isBroadcast()
     {
         return ROOM_THEME_TYPE_BROADCAST == $this->theme_type || ROOM_THEME_TYPE_USER_BROADCAST == $this->theme_type;
-    }
-
-    function hasBoomConfig()
-    {
-        $boom_config = BoomConfigs::getBoomConfigByCache($this->boom_config_id);
-
-        if (isBlank($boom_config)) {
-            return false;
-        }
-
-        $status = fetch($boom_config, 'status');
-
-        return STATUS_ON == intval($status);
     }
 }

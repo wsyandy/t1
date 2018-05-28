@@ -21,11 +21,16 @@ class ActivitiesController extends BaseController
         $activities = \Activities::findActivities(['product_channel_id' => $product_channel_id, 'platform' => $platform]);
 
         foreach ($activities as $activity) {
-            if ($activity->isGiftCharmWeekList()) {
+            if ($activity->isGiftCharmWeekList() || $activity->isTotalGiftCharmWeekList()) {
                 $file_name = 'gift_charm_week' . date("Ymd", $activity->start_at) . 'rank_activity';
                 $file_path = APP_ROOT . 'app/views/m/activities/' . $file_name . '.volt';
 
                 if (file_exists($file_path)) {
+
+                    if (isDevelopmentEnv() && $activity->code) {
+                        continue;
+                    }
+
                     $activity->code = $file_name;
                 }
             }
@@ -608,11 +613,10 @@ class ActivitiesController extends BaseController
 
         $last_activity = \Activities::findFirstById($last_activity_id);
 
-        if (!$last_activity) {
+        if ($last_activity_id && !$last_activity) {
             echo "参数错误";
             return false;
         }
-
 
         list($last_gifts, $gifts) = \Gifts::getGiftsList($last_activity, $activity);
 
@@ -672,7 +676,7 @@ class ActivitiesController extends BaseController
     //礼物周榜活动    2018-05-28
     function giftCharmWeek20180528rankActivityAction()
     {
-        $this->giftCharmRankActivity();
+        return $this->giftCharmRankActivity();
     }
 
     function getCurrentActivityRankListAction()
@@ -787,9 +791,7 @@ class ActivitiesController extends BaseController
 
     function wealthRankListAction()
     {
-
         $users = \Users::findFieldRankList("week", 'wealth', 1, 10);
-
         $res = $users->toJson('users', 'toRankListJson');
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);

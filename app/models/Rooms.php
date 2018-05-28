@@ -888,16 +888,16 @@ class Rooms extends BaseModel
         $hot_cache->zrem('wait_enter_silent_room_list', $user_id);
     }
 
-    static function addUserAgreement($room_id)
+    static function addUserAgreement($room_id, $user_agreement_num = 0)
     {
-        $room = Rooms::findFirstById($room_id);
 
+        $room = Rooms::findFirstById($room_id);
         if (!$room || $room->user_agreement_num < 1) {
             return;
         }
 
-        $users = $room->selectSilentUsers($room->user_agreement_num);
-
+        $enter_num = 0;
+        $users = $room->selectSilentUsers($user_agreement_num + 100);
         foreach ($users as $user) {
 
             if ($user->isInAnyRoom()) {
@@ -906,7 +906,6 @@ class Rooms extends BaseModel
             }
 
             $delay_time = mt_rand(1, 120);
-
             if (isDevelopmentEnv()) {
                 $delay_time = mt_rand(1, 30);
             }
@@ -914,30 +913,42 @@ class Rooms extends BaseModel
             info($room->id, $user->id, $delay_time);
             Rooms::addWaitEnterSilentRoomList($user->id);
             Rooms::delay($delay_time)->enterSilentRoom($room->id, $user->id);
+            $enter_num++;
+
+            if($enter_num >= $user_agreement_num){
+                break;
+            }
         }
 
-        info($room->id, $room->user_agreement_num, count($users));
+        info($room->id, $room->user_agreement_num);
     }
 
-    static function deleteUserAgreement($room_id)
+    static function deleteUserAgreement($room_id, $delete_num = 0)
     {
         $room = Rooms::findFirstById($room_id);
-
         if (!$room) {
             return;
         }
 
         $silent_users = $room->findSilentUsers();
+        if(!$delete_num){
+            $delete_num = count($silent_users);
+        }
 
+        $num = 0;
         foreach ($silent_users as $user) {
 
-            $delay_time = mt_rand(1, 120);
-
+            $delay_time = mt_rand(1, 180);
             if (isDevelopmentEnv()) {
                 $delay_time = mt_rand(1, 30);
             }
 
             Rooms::delay($delay_time)->asyncExitSilentRoom($room->id, $user->id);
+            $num++;
+            if($num >= $delete_num){
+                break;
+            }
+
         }
     }
 

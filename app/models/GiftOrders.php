@@ -37,7 +37,9 @@ class GiftOrders extends BaseModel
     ];
 
     static $TYPE = [GIFT_ORDER_TYPE_USER_SEND => '用户赠送', GIFT_ORDER_TYPE_USER_BUY => '购买',
-        GIFT_ORDER_TYPE_SYSTEM_SEND => '系统赠送', GIFT_ORDER_TYPE_ACTIVITY_LUCKY_DRAW => '抽奖赠送'];
+        GIFT_ORDER_TYPE_SYSTEM_SEND => '系统赠送', GIFT_ORDER_TYPE_ACTIVITY_LUCKY_DRAW => '抽奖赠送',
+        GIFT_ORDER_TYPE_USER_BACKPACK_SEND => '背包赠送'
+    ];
 
     function afterCreate()
     {
@@ -204,6 +206,11 @@ class GiftOrders extends BaseModel
         $target_id = fetch($opts, 'target_id');
         $async_verify_data = fetch($opts, 'async_verify_data');
         $type = fetch($opts, 'type');
+        $gift_amount = fetch($opts, 'gift_amount', null); //0是有效的
+
+        if (is_null($gift_amount)) {
+            $gift_amount = $gift->amount;
+        }
 
         if ($async_verify_data) {
 
@@ -233,7 +240,7 @@ class GiftOrders extends BaseModel
             $gift_order->sender_id = $sender_id;
             $gift_order->user_id = $receiver_id;
             $gift_order->gift_id = $gift->id;
-            $gift_order->amount = $gift->amount * $gift_num;
+            $gift_order->amount = $gift_amount * $gift_num;
             $gift_order->name = $gift->name;
             $gift_order->pay_type = $gift->pay_type;
             $gift_order->gift_type = $gift->type;
@@ -289,6 +296,11 @@ class GiftOrders extends BaseModel
 
     function updateUserGiftData($gift, $opts = [])
     {
+        if (!$gift->isNormal()) {
+            info("gift_Normal", $gift->id, $opts);
+            return;
+        }
+
         $time = fetch($opts, 'time', time());
 
         if ($gift->isCar()) {

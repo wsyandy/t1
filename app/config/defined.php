@@ -141,12 +141,12 @@ define('ACCOUNT_TYPE_DISTRIBUTE_PAY', 22); //分销充值
 define('ACCOUNT_TYPE_DISTRIBUTE_EXCHANGE', 23);  //分销兑换
 define('ACCOUNT_TYPE_DRAW_INCOME', 30); //转盘抽奖收入
 define('ACCOUNT_TYPE_DRAW_EXPENSES', 31); //转盘抽奖支出
-define('ACCOUNT_TYPE_RELEASE_WISH_EXPENSES',32);    //发布愿望支出
-define('ACCOUNT_TYPE_GUARD_WISH_EXPENSES',33);  //守护愿望支出
+define('ACCOUNT_TYPE_RELEASE_WISH_EXPENSES', 32);    //发布愿望支出
+define('ACCOUNT_TYPE_GUARD_WISH_EXPENSES', 33);  //守护愿望支出
 define('ACCOUNT_TYPE_IN_BOOM', 34); //爆礼物获得
-define('ACCOUNT_TYPE_RED_PACKET_EXPENSES',35);  //红包支出
-define('ACCOUNT_TYPE_RED_PACKET_INCOME',36);    //红包收入
-define('ACCOUNT_TYPE_RED_PACKET_RESTORATION',37);   //红包余额返还
+define('ACCOUNT_TYPE_RED_PACKET_EXPENSES', 35);  //红包支出
+define('ACCOUNT_TYPE_RED_PACKET_INCOME', 36);    //红包收入
+define('ACCOUNT_TYPE_RED_PACKET_RESTORATION', 37);   //红包余额返还
 
 //金币
 define('GOLD_TYPE_SIGN_IN', 1); //用户签到
@@ -180,6 +180,7 @@ define('GIFT_ORDER_TYPE_USER_SEND', 1); //用户赠送
 define('GIFT_ORDER_TYPE_USER_BUY', 2); //用户购买
 define('GIFT_ORDER_TYPE_SYSTEM_SEND', 3); //系统赠送
 define('GIFT_ORDER_TYPE_ACTIVITY_LUCKY_DRAW', 4); //活动抽奖
+define('GIFT_ORDER_TYPE_USER_BACKPACK_SEND', 5); //活动抽奖
 
 define('PRODUCT_GROUP_FEE_TYPE_DIAMOND', 'diamond'); //钻石
 define('PRODUCT_GROUP_FEE_TYPE_I_GOLD', 'i_gold'); //国际版金币
@@ -326,12 +327,15 @@ define('CREATE_UNION_AMOUNT', 1000); //创建家族所需钻石
 
 // 背包类型
 define('BACKPACK_GIFT_TYPE', 1); // 礼物
-define('BACKPACK_DIAMOND_TYPE', 2); // 钻石
-define('BACKPACK_GOLD_TYPE', 3); // 金币
+
+//爆礼物类型
+define('BOOM_HISTORY_GIFT_TYPE', 1); // 礼物
+define('BOOM_HISTORY_DIAMOND_TYPE', 2); // 钻石
+define('BOOM_HISTORY_GOLD_TYPE', 3); // 金币
 
 //红包领取类型
-define('RED_PACKET_TYPE_ALL','all');    //都可以领取
-define('RED_PACKET_TYPE_ATTENTION','attention');    //关注房主才能领取
-define('RED_PACKET_TYPE_STAY_AT_ROOM','stay_at_room');    //在房间满3分钟才能领取
-define('RED_PACKET_TYPE_NEARBY','nearby');    //附近的人才能领取
+define('RED_PACKET_TYPE_ALL', 'all');    //都可以领取
+define('RED_PACKET_TYPE_ATTENTION', 'attention');    //关注房主才能领取
+define('RED_PACKET_TYPE_STAY_AT_ROOM', 'stay_at_room');    //在房间满3分钟才能领取
+define('RED_PACKET_TYPE_NEARBY', 'nearby');    //附近的人才能领取
 

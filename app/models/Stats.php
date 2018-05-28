@@ -60,8 +60,6 @@ class Stats extends BaseModel
         'payment_success_user' => '支付成功人数',
         'payment_success_average' => '人均支付成功次数',
 
-        'withdraw_total' => '申请提现金额',
-
         //用户签到  分享任务 购买金币  Hi币兑钻石获金币 系统赠送
 //        'gold_obtain_total' => '获得金币总额',
 //        'gold_obtain_num' => '获得金币次数',
@@ -81,10 +79,6 @@ class Stats extends BaseModel
 //        'gold_give_user' => '系统赠送金币人数',
 //        'gold_give_num_average' => '人均系统赠送金币次数',
 //        'gold_give_user_average' => '人均系统赠送金币数额',
-
-        'hi_coin_cost_total' => 'Hi币兑换钻石金额',
-        'hi_coin_cost_user' => 'Hi币兑换钻石人数',
-        'hi_coin_cost_user_average' => '人均Hi币兑换钻石金额',
 
         'diamond_recharge_total' => '新增钻石总额',
         'diamond_recharge_give_total' => '赠送钻石总额',
@@ -110,6 +104,11 @@ class Stats extends BaseModel
         'new_payment_success_user' => '新用户支付成功人数',
         'new_payment_success_average' => '新用户人均支付成功次数',
 
+        'withdraw_total' => '申请提现金额',
+
+        'hi_coin_cost_total' => 'Hi币兑换钻石金额',
+        'hi_coin_cost_user' => 'Hi币兑换钻石人数',
+        'hi_coin_cost_user_average' => '人均Hi币兑换钻石金额',
 
         'order_payment_rate' => '订单转化率%',
         'payment_success_rate' => '支付成功率%',

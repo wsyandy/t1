@@ -1,0 +1,1 @@
+ALTER table boom_histories add COLUMN room_id INTEGER ;

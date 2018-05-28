@@ -34,7 +34,7 @@ class BoomConfigs extends BaseModel
         ];
     }
 
-    function getSvgaImageSmallUrl()
+    function getSvgaImageUrl()
     {
         if (isBlank($this->svga_image)) {
             return '';
@@ -43,42 +43,21 @@ class BoomConfigs extends BaseModel
         return StoreFile::getUrl($this->svga_image);
     }
 
-    static function getBoomConfigByCache($boom_config_id)
+    static function getBoomConfig()
     {
-        if (!$boom_config_id) {
-            return [];
-        }
+        $boom_config = BoomConfigs::findFirst(
+            [
+                'conditions' => 'status = :status:',
+                'bind' => ['status' => STATUS_ON],
+                'order' => 'id desc'
+            ]);
 
-        $db = \Rooms::getRoomDb();
-
-        $data = $db->hgetall('boom_config_cache_id' . $boom_config_id);
-
-        return $data;
+        return $boom_config;
     }
 
-    static function getCurrentBoomGiftValue($config, $room_id)
+    static function getTestBoomConfig()
     {
-        $cache = \Rooms::getHotWriteCache();
-        $cur_income_key = \Rooms::generateBoomCurIncomeKey($room_id);
-        $room_boon_gift_sign_key = Rooms::generateRoomBoomGiftSignKey($room_id);
-
-        if ($cache->exists($room_boon_gift_sign_key)) {
-            return self::getBoomTotalValue($config);
-        }
-
-        $cur_income = $cache->get($cur_income_key);
-
-        return intval($cur_income);
-    }
-
-    static function getBoomTotalValue($boom_config)
-    {
-        $total_value = fetch($boom_config, 'total_value');
-        return intval($total_value);
-    }
-
-    static function getSvgaImageUrl($boom_config)
-    {
-        return fetch($boom_config, 'svga_image_small_url');
+        $boom_config = BoomConfigs::findFirstById(1);
+        return $boom_config;
     }
 }

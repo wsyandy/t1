@@ -272,20 +272,17 @@ class RoomsController extends BaseController
 
         $res = [];
 
-        // 发起游戏
-        $game_history = $room->getGameHistory();
         $ready_cp_info = $room->getReadyCpInfo();
         $sponsor_id = fetch($ready_cp_info, 'sponsor_id');
-
-        if (isBlank($sponsor_id)) {
-            if ($game_history) {
-                $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root_host . 'images/go_game.png'];
-                if ($game_history->game->code == 'jump' && isDevelopmentEnv()) {
-                    $res['game'] = ['url' => 'url://m/jumps/transfer_game_url?room_id=' . $room_id . '&game_history_id=' . $game_history->id, 'icon' => $root_host . 'images/go_game.png'];
-                }
-            }
-        } else {
+        if ($sponsor_id) {
             $res['game'] = ['url' => 'url://m/couples?room_id=' . $room_id, 'icon' => $root_host . 'images/go_cp.png'];
+
+        } else {
+            // 发起游戏
+            $game_history = $room->getGameHistory();
+            if ($game_history) {
+                $res['game'] = $game_history->getEnterGameMenu($room, $root_host);
+            }
         }
 
 
@@ -317,20 +314,39 @@ class RoomsController extends BaseController
         }
 
 
-        if ($room->boom_config_id && $room->hasBoomGift()) {
+        $boom_config = \BoomConfigs::getBoomConfig();
+        $interval_value = 50000;
 
-            $boom_config = \BoomConfigs::getBoomConfigByCache($room->boom_config_id);
+        if ($boom_config && $room->hasBoomGift($boom_config)) {
+
+            $boom_num = $room->getBoomNum();
+            $room_boon_gift_sign_key = \Rooms::generateRoomBoomGiftSignKey($room_id);
+            $cache = \Rooms::getHotReadCache();
+            
+            // 判断房间是否在进行爆礼物活动
+            if ($cache->exists($room_boon_gift_sign_key)) {
+                $boom_num--;
+            }
+
+            $total_value = $boom_config->total_value + $interval_value * $boom_num;
+
+            if ($total_value > 250000) {
+                $total_value = 250000;
+            }
+
+            $image_colors = [1 => 'blue', 2 => 'green', 3 => 'orange'];
+            $image_color = fetch($image_colors, $boom_num + 1, 'orange');
 
             $res['boom_gift'] = [
                 'expire_at' => \Rooms::getBoomGiftExpireAt($room_id),
-                'client_url' => 'url://m/backpacks',
-                'svga_image_url' => \BoomConfigs::getSvgaImageUrl($boom_config),
-                'total_value' => \BoomConfigs::getBoomTotalValue($boom_config),
-                'current_value' => \BoomConfigs::getCurrentBoomGiftValue($boom_config, $room_id),
+                'client_url' => 'url://m/boom_histories',
+                'svga_image_url' => $boom_config->getSvgaImageUrl(),
+                'total_value' => intval($total_value),
+                'current_value' => intval($room->getCurrentBoomGiftValue($boom_config)),
                 'show_rank' => 1000000,
                 'render_type' => 'svga',
                 'status' => STATUS_ON,
-                'image_color' => 'blue'
+                'image_color' => $image_color
             ];
         }
 

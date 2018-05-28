@@ -257,6 +257,10 @@ class Couples extends BaseModel
     //解决html2canvas 网络头像资源问题，下载文件生成base64
     static function base64EncodeImage($image_file)
     {
+        if(!$image_file){
+            return null;
+        }
+
         $image_info = getimagesize($image_file);
         $file = fopen($image_file, 'r');
         $image_data = fread($file, filesize($image_file));
