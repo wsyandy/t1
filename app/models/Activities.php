@@ -518,7 +518,8 @@ class Activities extends BaseModel
 
     static function getLastWeekCharmRankListUser($opts)
     {
-        $last_week_charm_rank_list_key = Users::generateFieldRankListKey('week', 'charm', $opts);
+        $field = fetch($opts, 'field', 'charm');
+        $last_week_charm_rank_list_key = Users::generateFieldRankListKey('week', $field, $opts);
         $users = Users::findFieldRankListByKey($last_week_charm_rank_list_key, 'charm', 1, 1);
 
         $last_week_charm_rank_list_user = [];
