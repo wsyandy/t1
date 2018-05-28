@@ -624,7 +624,7 @@ class ActivitiesController extends BaseController
         $last_activity_end = date("Ymd", endOfWeek($last_activity->start_at));
 
         $type = 'charm';
-        if ($last_activity_start == '20180521' && $last_activity_end == '20180527') {
+        if ($last_activity_id == 25) {
             $type = 'wealth';
         }
 
