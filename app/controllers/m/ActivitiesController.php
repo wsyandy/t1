@@ -797,7 +797,7 @@ class ActivitiesController extends BaseController
         $opts = ['start' => $activity_start, 'end' => $activity_end];
 
         $users = \Users::findFieldRankList("week", 'wealth', 1, 10, $opts);
-        
+
         $res = $users->toJson('users', 'toRankListJson');
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
