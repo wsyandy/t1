@@ -64,7 +64,7 @@
     是否热门：{{ room.hot_text }}
 {% endmacro %}
 
-{% macro room_status_info(room) %}
+{% macro room_status_info(room, boom_config) %}
     房间: {{ room.status_text }}|房主:{{ room.online_status_text }}|用户:{{ room.user_type_text }}<br/>
     最后活跃时间: {{ room.last_at_text }}<br/>
     公频聊天状态: {{ room.chat_text }}<br/>
