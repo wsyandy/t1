@@ -1691,16 +1691,16 @@ class Rooms extends BaseModel
         unlock($lock);
     }
 
-    function getTypesName($type){
-        $types = \Rooms::$TYPES;
-        $type_arr = explode(',',$type);
-        $arr = [];
-        foreach($type_arr as $v){
-            $arr[] = $types[$v];
-        }
-        $this->types = implode(',',$arr);
-
-        return $this->types;
-    }
+//    function getTypesName($type){
+//        $types = \Rooms::$TYPES;
+//        $type_arr = explode(',',$type);
+//        $arr = [];
+//        foreach($type_arr as $v){
+//            $arr[] = $types[$v];
+//        }
+//        $this->types = implode(',',$arr);
+//
+//        return $this->types;
+//    }
 
 }
