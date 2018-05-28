@@ -63,8 +63,14 @@ class RoomsController extends BaseController
         $rooms = \Rooms::findPagination($cond, $page, $per_page, $total_entries);
 
         $types = \Rooms::$TYPES;
+        $type_arr = [];
         foreach ($rooms as $room) {
-            $room->types = $types[$room->types];
+            $type_arr = explode(',',$room->types);
+            $arr = [];
+            foreach($type_arr as $v){
+               $arr[] = $types[$v];
+            }
+            $room->types = implode(',',$arr);;
         }
         $this->view->rooms = $rooms;
         $this->view->hot = $hot;
@@ -267,6 +273,7 @@ class RoomsController extends BaseController
 
         $rooms = \Rooms::findByIds($room_ids);
         $types = \Rooms::$TYPES;
+        $type_arr = [];
 
         foreach ($rooms as $room) {
 
@@ -277,6 +284,13 @@ class RoomsController extends BaseController
             } else {
                 $room->auto_hot = 1;
             }
+
+            $type_arr = explode(',',$room->types);
+            $arr = [];
+            foreach($type_arr as $v){
+                $arr[] = $types[$v];
+            }
+            $room->types = implode(',',$arr);
         }
 
         $pagination = new \PaginationModel($rooms, $hot_cache->zcard($hot_room_list_key), $page, $per_page);
