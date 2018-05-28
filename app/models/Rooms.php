@@ -390,7 +390,7 @@ class Rooms extends BaseModel
         }
 
         // 房间活跃时间
-        if(time() - $this->last_at > 15){
+        if (time() - $this->last_at > 15) {
             $this->last_at = time();
             $this->update();
         }
@@ -915,7 +915,7 @@ class Rooms extends BaseModel
             Rooms::delay($delay_time)->enterSilentRoom($room->id, $user->id);
             $enter_num++;
 
-            if($enter_num >= $user_agreement_num){
+            if ($enter_num >= $user_agreement_num) {
                 break;
             }
         }
@@ -931,7 +931,7 @@ class Rooms extends BaseModel
         }
 
         $silent_users = $room->findSilentUsers();
-        if(!$delete_num){
+        if (!$delete_num) {
             $delete_num = count($silent_users);
         }
 
@@ -945,7 +945,7 @@ class Rooms extends BaseModel
 
             Rooms::delay($delay_time)->asyncExitSilentRoom($room->id, $user->id);
             $num++;
-            if($num >= $delete_num){
+            if ($num >= $delete_num) {
                 break;
             }
 
@@ -1005,7 +1005,6 @@ class Rooms extends BaseModel
 
         $hot_cache = Users::getHotWriteCache();
         $room_ids = $hot_cache->zrevrange($hot_room_list_key, 0, -1);
-
         $shield_room_ids = $user->getShieldRoomIds();
 
         if ($shield_room_ids) {
@@ -1016,8 +1015,11 @@ class Rooms extends BaseModel
             return Rooms::search($user, $page, $per_page, ['filter_ids' => $room_ids]);
         }
 
+        $total_entries = count($room_ids);
+        $offset = $per_page * ($page - 1);
+        $room_ids = array_slice($room_ids, $offset, $per_page);
         $rooms = Rooms::findByIds($room_ids);
-        $pagination = new PaginationModel($rooms, count($room_ids), $page, $per_page);
+        $pagination = new PaginationModel($rooms, $total_entries, $page, $per_page);
         $pagination->clazz = 'Rooms';
 
         return $pagination;

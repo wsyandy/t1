@@ -17,7 +17,7 @@
         <td>第三方登录标识: {{ user.third_unionid }}</td>
     </tr>
     <tr>
-        <td>主持认证：{{ user.id_card_auth_text }}</td>
+        <td>实名认证：{{ user.id_card_auth_text }}</td>
         {#<td>星座: {{ user.constellation_text }} 身高: {{ user.height }}</td>#}
         <td>粉丝人数: {{ user.followed_num }} 关注数: {{ user.follow_num }} 好友人数: {{ user.friend_num }}</td>
         <td>fr: {{ user.fr }}, 渠道:{{ user.partner_name }}</td>
