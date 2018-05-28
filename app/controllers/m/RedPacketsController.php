@@ -240,9 +240,11 @@ class RedPacketsController extends BaseController
     {
         $red_packet_id = $this->params('red_packet_id');
         $user = $this->currentUser();
+
         if ($user->id == $this->otherUser()->id) {
             return $this->renderJSON(ERROR_CODE_FAIL, '不能关注自己哦');
         }
+
         $red_packet = \RedPackets::findFirstById($red_packet_id);
 
         $user->follow($this->otherUser());
@@ -251,7 +253,8 @@ class RedPacketsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '您不在当前房间哦，请重进！');
         }
 
-        list($error_code, $get_diamond) = $red_packet->grabRedPacket($user, $user->current_room);
+        $get_diamond = $red_packet->grabRedPacket($user, $user->current_room);
+
         $error_reason = '手慢了，红包抢完了！';
         if ($get_diamond) {
             $user_nickname = $red_packet->user->nickname;
@@ -259,12 +262,9 @@ class RedPacketsController extends BaseController
                 $user_nickname = mb_substr($user_nickname, 0, 5) . '...';
             }
             $error_reason = '抢到' . $user_nickname . '发的钻石红包';
-            //在这里增加钻石
-            $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $this->currentUser()->mobile, 'target_id' => $red_packet_id];
-            \AccountHistories::changeBalance($this->currentUser(), ACCOUNT_TYPE_RED_PACKET_INCOME, $get_diamond, $opts);
         }
 
-        return $this->renderJSON($error_code, $error_reason, ['get_diamond' => $get_diamond]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, $error_reason, ['get_diamond' => $get_diamond]);
     }
 
 }
