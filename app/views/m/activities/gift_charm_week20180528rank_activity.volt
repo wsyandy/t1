@@ -64,7 +64,7 @@
                     <li>
                         <img src="/m/images/list_title01.png" alt="" class="list_icon"/>
                         <div class="list_info">
-                            <img src="" class="list_avatar" alt="">
+                            <img src="{{ last_week_charm_rank_list_user['avatar_url'] }}" class="list_avatar" alt="">
                             <p>{{ last_week_charm_rank_list_user['nickname'] }}</p>
                         </div>
                     </li>
