@@ -745,7 +745,7 @@ class ActivitiesController extends BaseController
 
 
             $users = \Couples::findCpRankListByKey($key, 1, 10);
-            $current_user_cp_info = $user->getCurrentWeekActivityCpInfo($activity->start_at);
+            $current_user_cp_info = $user->getCurrentWeekActivityCpInfo($activity->start_at, $opts);
             debug($key);
             info('当前用户信息', $current_user_cp_info);
 
