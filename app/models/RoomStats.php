@@ -364,7 +364,7 @@ trait RoomStats
 
                 // 爆礼物
                 $cache->zrem($boom_list_day_key, $room_id); //正在爆礼物房间的房间清除
-                $cache->expire($cur_income_day_key, $boom_expire);
+                $cache->setex($cur_income_day_key, $boom_expire, $total_value);
                 $cache->expire($record_key, $boom_expire); //爆礼物贡献清除
                 $cache->setex("room_boom_diamond_num_room_id_" . $room_id, $boom_expire, 0); //爆钻总额
                 $cache->setex('room_boom_user_room_id_' . $room_id, $boom_expire, $sender_id); //引爆者
