@@ -568,7 +568,7 @@ class UsersController extends BaseController
                 $hot_cache = \Users::getHotWriteCache();
                 $key = "blocked_nearby_user_list";
                 $hot_cache->zadd($key, time(), $user->id);
-                $user->delGeoHashRank();
+                //$user->delGeoHashRank();
             }
 
             return $this->response->redirect('/admin/users/blocked_nearby_user_list');

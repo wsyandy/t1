@@ -495,6 +495,7 @@ class Activities extends BaseModel
         $last_activity = fetch($last_opts, 'last_activity');
         $last_activity_start = fetch($last_opts, 'last_activity_start');
         $last_activity_end = fetch($last_opts, 'last_activity_end');
+        $type = fetch($last_opts, 'type');
 
         $last_activity_rank_list_users = [];
         foreach ($last_gifts as $last_gift) {
@@ -505,7 +506,7 @@ class Activities extends BaseModel
                 $key = $last_activity->getStatKey($last_gift->id);
             }
 
-            $users = \Users::findFieldRankListByKey($key, 'charm', 1, 1);
+            $users = \Users::findFieldRankListByKey($key, $type, 1, 1);
 
             if (isset($users[0])) {
                 $last_activity_rank_list_users[] = $users[0]->toRankListJson();
@@ -517,7 +518,8 @@ class Activities extends BaseModel
 
     static function getLastWeekCharmRankListUser($opts)
     {
-        $last_week_charm_rank_list_key = Users::generateFieldRankListKey('week', 'charm', $opts);
+        $field = fetch($opts, 'field', 'charm');
+        $last_week_charm_rank_list_key = Users::generateFieldRankListKey('week', $field, $opts);
         $users = Users::findFieldRankListByKey($last_week_charm_rank_list_key, 'charm', 1, 1);
 
         $last_week_charm_rank_list_user = [];

@@ -632,7 +632,12 @@ class ActivitiesController extends BaseController
 
         $last_activity_rank_list_users = \Activities::getLastActivityRankListUsers($last_opts);
 
-        $opts = ['start' => $last_activity_start, 'end' => $last_activity_end];
+        $field = 'charm';
+        if ($last_activity_id == 25) {
+            $field = 'wealth';
+        }
+
+        $opts = ['start' => $last_activity_start, 'end' => $last_activity_end, 'field' => $field];
         $last_week_charm_rank_list_user = \Activities::getLastWeekCharmRankListUser($opts);
 
 
