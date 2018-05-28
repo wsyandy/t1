@@ -2,7 +2,7 @@
 {{ theme_css('/m/css/cp_apple.css','/m/css/cp_certificate.css') }}
 {{ theme_js('/m/js/cp_resize.js','/m/js/html2canvas.min') }}
 {{ block_end() }}
-<div class="vueBox" id="app">
+<div class="vueBox" id="app" v-cloak>
     <div class="save_picture_box">
         <div class="cer_bg">
             <div class="cer_head">
