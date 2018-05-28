@@ -392,12 +392,6 @@ trait RoomStats
 
             $cache->expire($record_key, $expire); //爆礼物贡献清除
 
-            if (isDevelopmentEnv() && $cache->exists($cur_income_day_key) && $cache->ttl($cur_income_day_key) <= 1) {
-                $cache->del($cur_income_day_key);
-                unlock($lock);
-                return;
-            }
-
             $res = $cache->setex($cur_income_day_key, $expire, $current_value);
 
             if ($res && $current_value >= $start_value) {
