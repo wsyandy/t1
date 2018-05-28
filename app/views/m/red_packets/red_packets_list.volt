@@ -76,7 +76,7 @@
                             val.is_stay = true;
                             val.is_stay_show = false;
 
-                            distanceStartAt(val.distance_start_at,i)
+                            distanceStartAt(val.distance_start_at, i)
                         }
 
                         vm.red_packets_list.push(val);
