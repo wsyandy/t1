@@ -268,8 +268,6 @@ trait RoomStats
     //按天统计房间收益和送礼物人数,送礼物个数
     static function statDayIncome($room, $income, $sender_id, $gift_num, $opts = [])
     {
-        debug($income, $sender_id, $gift_num, $opts);
-
         if ($income > 0 && $room) {
 
             if (is_numeric($room)) {
@@ -318,31 +316,30 @@ trait RoomStats
     function statBoomIncome($sender_id, $income, $time)
     {
         $boom_config = BoomConfigs::getBoomConfig();
-        $interval_value = 50000;
 
         if (isBlank($boom_config)) {
             return;
         }
 
+        $interval_value = 50000;
         $cache = self::getHotWriteCache();
         $room_id = $this->id;
-
-
-        // 单位周期 房间当前流水值
+        $lock = tryLock("stat_boom_income_" . $this->id); //防止并发 跨天出问题
         $cur_income_day_key = self::generateBoomCurIncomeDayKey($room_id, $time);
         $cur_income = $cache->get($cur_income_day_key);
-
-        $lock = tryLock($cur_income_day_key);
-
         // 房间爆礼物结束倒计时
         $room_boon_gift_sign_key = Rooms::generateRoomBoomGiftSignKey($this->id);
 
         // 判断房间是否在进行爆礼物活动
         if ($cache->exists($room_boon_gift_sign_key)) {
-            ($cur_income != 0) && $cache->del($cur_income_day_key);
+
+            if ($cur_income > 0) {
+                $cache->del($cur_income_day_key);
+            }
+
         } else {
 
-            $expire = endOfDay() - $time;
+            $expire = endOfDay($time) - $time + 3600;
 
             if (isDevelopmentEnv()) {
                 $minutes = date("YmdHi", $time);
@@ -353,7 +350,7 @@ trait RoomStats
 
             $boom_list_day_key = 'boom_gifts_list_' . date("Ymd", $time);
 
-            $boom_num = $this->getBoomNum();
+            $boom_num = $this->getBoomNum($time);
             $total_value = $boom_config->total_value + $interval_value * $boom_num;
             $start_value = $boom_config->start_value;
             $svga_image_url = $boom_config->svga_image_url;
@@ -362,10 +359,10 @@ trait RoomStats
                 $total_value = 250000;
             }
 
-
             // 单位周期 截止目前房间总流水
             $current_value = $cur_income + $income;
             $record_key = Rooms::generateBoomRecordDayKey($room_id, $time);
+            $cache->zincrby($record_key, $income, $sender_id); //爆礼物贡献记录
 
             if ($current_value >= $total_value) {
 
@@ -374,18 +371,17 @@ trait RoomStats
                 // 爆礼物
                 $cache->del($cur_income_day_key);
                 $cache->zrem($boom_list_day_key, $room_id); //正在爆礼物房间的房间清除
-
                 $cache->expire($record_key, $boom_expire); //爆礼物贡献清除
                 $cache->setex($room_boon_gift_sign_key, $boom_expire, $time); //爆钻时间
-
                 $cache->setex("room_boom_diamond_num_room_id_" . $room_id, $boom_expire, 0); //爆钻总额
                 $cache->setex('room_boom_user_room_id_' . $room_id, $boom_expire, $sender_id); //引爆者
                 $boom_num_day_key = 'room_boom_num_room_id_' . $room_id . "_" . date("Ymd", $time);
                 $cache->incrby($boom_num_day_key, 1); //爆礼物次数
                 $cache->expire($boom_num_day_key, $expire);
 
+                $boom_num++;
                 $params = ['total_value' => $total_value, 'current_value' => $current_value, 'svga_image_url' => $svga_image_url,
-                    'boom_num' => $this->getBoomNum()];
+                    'boom_num' => $boom_num];
 
                 $this->pushBoomIncomeMessage($params);
 
@@ -399,7 +395,6 @@ trait RoomStats
                 return;
             }
 
-            $cache->zincrby($record_key, $income, $sender_id); //爆礼物贡献记录
             $cache->expire($record_key, $expire); //爆礼物贡献清除
 
             if (isDevelopmentEnv() && $cache->exists($cur_income_day_key) && $cache->ttl($cur_income_day_key) <= 1) {
@@ -417,6 +412,7 @@ trait RoomStats
                 }
 
                 $cache->expire($boom_list_day_key, $time);
+
                 $params = ['total_value' => $total_value, 'current_value' => $current_value,
                     'svga_image_url' => $svga_image_url, 'boom_num' => $boom_num];
 
