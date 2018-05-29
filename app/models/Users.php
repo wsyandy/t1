@@ -2214,7 +2214,13 @@ class Users extends BaseModel
             if($user->has_red_packet){
                 $user->has_red_packet = 0;
                 if($user->room_id && $user->room_id == $user->current_room_id){
-                    $red_packet = RedPackets::findLastNearby($user, $geo_distance * 1000);
+
+                    $distance = intval($geo_distance);
+                    if($user->distance && preg_match('/km/', $user->distance)){
+                        $distance = intval($geo_distance * 1000);
+                    }
+
+                    $red_packet = RedPackets::findLastNearby($user, $distance);
                     if($red_packet){
                         $user->has_red_packet = 1;
                     }
