@@ -135,33 +135,6 @@ class RedPacketsController extends BaseController
             return $this->response->redirect('app://back');
         }
 
-        if(41792 == $user->id){
-            $hot = \Users::getHotWriteCache();
-            $num = $hot->incr('test_red_'.$user->id);
-            if($num == 1){
-                return $this->renderJSON(ERROR_CODE_FAIL, '已经抢光啦');
-            }
-            if($num == 2){
-                return $this->renderJSON(ERROR_CODE_BLOCKED_ACCOUNT, '已抢过');
-            }
-            if($num == 3){
-                return $this->renderJSON(ERROR_CODE_FAIL, '不要心急，您还没在房间待满三分钟哦！');
-            }
-            if($num == 4){
-                return $this->renderJSON(ERROR_CODE_FAIL, '这个红包只有小哥哥才可以抢哦！');
-            }
-
-            $error_reason = '手慢了，红包抢完了！';
-            if($num == 5){
-                return $this->renderJSON(ERROR_CODE_SUCCESS, $error_reason, ['get_diamond' => null]);
-            }
-            if($num == 6){
-                return $this->renderJSON(ERROR_CODE_SUCCESS, $error_reason, ['get_diamond' => 0]);
-            }
-
-            return $this->renderJSON(ERROR_CODE_SUCCESS, $error_reason, ['get_diamond' => 10]);
-        }
-
         $sex = $red_packet->sex;
         $red_packet_type = $red_packet->red_packet_type;
         //用户进来的时间
@@ -172,6 +145,34 @@ class RedPacketsController extends BaseController
         $user_avatar_url = $red_packet->user->avatar_url;
 
         if ($this->request->isAjax()) {
+
+            if(41792 == $user->id){
+                $hot = \Users::getHotWriteCache();
+                $num = $hot->incr('test_red2_'.$user->id);
+                if($num == 1){
+                    return $this->renderJSON(ERROR_CODE_FAIL, '已经抢光啦');
+                }
+                if($num == 2){
+                    return $this->renderJSON(ERROR_CODE_BLOCKED_ACCOUNT, '已抢过');
+                }
+                if($num == 3){
+                    return $this->renderJSON(ERROR_CODE_FAIL, '不要心急，您还没在房间待满三分钟哦！');
+                }
+                if($num == 4){
+                    return $this->renderJSON(ERROR_CODE_FAIL, '这个红包只有小哥哥才可以抢哦！');
+                }
+
+                $error_reason = '手慢了，红包抢完了！';
+                if($num == 5){
+                    return $this->renderJSON(ERROR_CODE_SUCCESS, $error_reason, ['get_diamond' => null]);
+                }
+                if($num == 6){
+                    return $this->renderJSON(ERROR_CODE_SUCCESS, $error_reason, ['get_diamond' => 0]);
+                }
+
+                return $this->renderJSON(ERROR_CODE_SUCCESS, $error_reason, ['get_diamond' => 10]);
+            }
+
 
             if ($red_packet->status == STATUS_OFF) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '已经抢光啦');
