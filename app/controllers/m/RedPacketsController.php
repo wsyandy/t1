@@ -27,7 +27,7 @@ class RedPacketsController extends BaseController
         $user = $this->currentUser();
         $diamond = $this->params('diamond');
         $num = $this->params('num');
-        $sex = $this->params('sex');
+        $sex = $this->params('sex',USER_SEX_COMMON);
         $red_packet_type = $this->params('red_packet_type');
         $nearby_distance = $this->params('nearby_distance', 0);
 
@@ -112,7 +112,7 @@ class RedPacketsController extends BaseController
         if ($this->request->isAjax()) {
 
             $page = $this->params('page', 1);
-            $pre_page = $this->params('pre_page', 10);
+            $pre_page = $this->params('per_page', 10);
             //用户进来的时间
             $room = $user->current_room;
             if (!$room) {
