@@ -2221,7 +2221,7 @@ class Users extends BaseModel
                     }
 
                     $red_packet = RedPackets::findLastNearby($user, $distance);
-                    if($red_packet){
+                    if($red_packet && !$red_packet->isGrabbed($this)){
                         $user->has_red_packet = 1;
                     }
                 }
