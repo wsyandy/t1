@@ -173,6 +173,15 @@ class RedPacketsController extends BaseController
                     $sex_content = $sex == USER_SEX_MALE ? '小哥哥' : '小姐姐';
                     return $this->renderJSON(ERROR_CODE_FAIL, '这个红包只有' . $sex_content . '才可以抢哦！');
                 }
+
+                $red_users = [$red_packet->user];
+                $this->currentUser()->calDistance($red_users);
+                $distance = $red_users[0]->distance;
+                $distance = doubleval($distance) * 1000;
+                if ($red_packet->nearby_distance < $distance || isDevelopmentEnv()) {
+                    $geo_distance = sprintf("%0.2f", $red_packet->nearby_distance / 1000);
+                    return $this->renderJSON(ERROR_CODE_FAIL, '这个红包只有' . $geo_distance . 'km才可以抢哦！');
+                }
             }
 
             //是否关注房主
