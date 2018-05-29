@@ -45,7 +45,7 @@
                         <a @click="toDetail()" class="look_detail">查看领取详情 <i></i></a>
                     </div>
                     <div class="red_over" style="margin-top: 3rem" v-if="pity">
-                        <img src="/m/images/yihan.png" v-if="grabbed">
+                        <img src="/m/images/yihan.png">
                         <h3>${error_reason}</h3>
                         <a @click="toDetail()" class="look_detail">查看领取详情 <i></i></a>
                     </div>
@@ -83,8 +83,7 @@
             attentionUrl: "",
             error_reason: "",
             getDiamond: 0,
-            user_id: "{{ user_id }}",
-            grabbed:true,
+            user_id: "{{ user_id }}"
 
         },
         methods: {
