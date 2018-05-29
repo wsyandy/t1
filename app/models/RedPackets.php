@@ -50,7 +50,7 @@ class RedPackets extends BaseModel
         $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($this->room_id);
         $cache->zadd($underway_red_packet_list_key, time(), $this->id);
 
-        if ($this->diamond >= 1000) {
+        if ($this->diamond >= 10000) {
             $this->user->has_red_packet = STATUS_ON;
             $this->user->update();
 
@@ -72,7 +72,7 @@ class RedPackets extends BaseModel
             self::pushRedPacketMessageForUser($this->room, $this->user, 'bc');
 
 
-            if ($this->diamond >= 1000) {
+            if ($this->diamond >= 10000) {
                 $this->user->has_red_packet = STATUS_OFF;
                 $this->user->update();
                 if ($this->room) {
