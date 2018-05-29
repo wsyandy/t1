@@ -78,6 +78,10 @@ class RedPackets extends BaseModel
                     $this->room->update();
                 }
             }
+
+            //红包抢完公屏
+            $content = $this->user->nickname . '发的红包已抢完';
+            self::sendRedPacketMessageToUsers($this->user, $this->room, ['type' => 'finish', 'content' => $content]);
         }
     }
 
@@ -280,12 +284,6 @@ class RedPackets extends BaseModel
             ];
 
             self::sendRedPacketMessageToUsers($user, $this->room, $opts);
-        }
-
-        //红包抢完公屏
-        if ($red_racket->status == STATUS_OFF) {
-            $content = $this->user->nickname . '发的红包已抢完';
-            self::sendRedPacketMessageToUsers($user, $this->room, ['type' => 'finish', 'content' => $content]);
         }
 
         return $get_diamond;
