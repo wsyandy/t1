@@ -116,10 +116,10 @@
                     <span v-show="curIdx==3">情侣榜为情侣互相赠送的礼物周总值进行排名</span>
                 </div>
                 <div class="myself">
-                    <img class="myself_avatar" :src="current_user_info['avatar_url']" alt="" v-show="curIdx!=3">
+                    <img class="myself_avatar" src="{{ current_user['avatar_url'] }}" alt="">
                     <div class="myself_text">
-                        <div class="myself_name" v-show="curIdx!=3">
-                            <span v-text="current_user_info['nickname']"></span>
+                        <div class="myself_name">
+                            <span>{{ current_user['nickname'] }}</span>
                         </div>
                         <div class="myself_info" v-show="curIdx==0">
                             <p>贡献榜排名：<span class="highlight" v-text="current_user_info['current_rank']"></span>名</p>
