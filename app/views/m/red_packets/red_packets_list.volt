@@ -16,7 +16,7 @@
                 </div>
                 <div class="num red_list_style red_list_get_red" v-if="v.is_grabbed">已抢过</div>
 
-                <div class="num red_list_style" v-bind:class="v.class" v-if="!v.is_grabbed"
+                <div class="num red_list_style" v-bind:class="v.class" v-if="!v.is_grabbed && v.red_packet_type != 'stay_at_room'"
                      @click="toGrabRedPacket(v.id)">${v.text}
                 </div>
 
