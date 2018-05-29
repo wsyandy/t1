@@ -104,18 +104,9 @@
                         vm.getDiamond = resp.get_diamond;
                         vm.congratulation = true;
 
-                    } else if (resp.error_code == -400) {
-
-                        vm.attentionHost = true;
-                        vm.attentionUrl = resp.client_url;
-
-                    } else if (resp.error_code == -101) {
-                        vm.error_reason = resp.error_reason;
-                        vm.pity = true;
-                        vm.grabbed = false;
-
                     } else {
                         vm.error_reason = resp.error_reason;
+                        vm.getDiamond = 0;
                         vm.pity = true;
                     }
 
