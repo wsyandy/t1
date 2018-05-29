@@ -8,9 +8,134 @@
 
 class MeiTask extends \Phalcon\Cli\Task
 {
+    function test71Action()
+    {
+        $users = Users::find(['conditions' => 'ip = :ip:', 'bind' => ['ip' => '61.186.12.125']]);
+
+        foreach ($users as $user) {
+            echoLine($user->id, $user->pay_amount);
+        }
+        echoLine($users);
+    }
+
+    function test70Action()
+    {
+        $key = \Users::generateFieldRankListKey('total', 'wealth');
+        $per_page = 100;
+        $total_page = ceil(1000 / $per_page);
+        $titles = ['用户id', '用户UID', '用户昵称', 'FR名称', '注册时间', '最后活跃时间', '最后充值时间', '充值金额', '最后兑换HI币时间',
+            'HI币兑换总金额', '贡献值', '魅力值', '家族', '好友数', '关注数', '粉丝数'
+        ];
+
+        $datas = [];
+
+        for ($page = 1; $page <= $total_page; $page++) {
+            $users = \Users::findFieldRankListByKey($key, 'wealth', $page, $per_page, 1000);
+            foreach ($users as $user) {
+
+                $last_payment = Payments::findFirst(
+                    [
+                        'conditions' => 'user_id = :user_id: and pay_status = :pay_status:',
+                        'bind' => ['user_id' => $user->id, 'pay_status' => PAYMENT_PAY_STATUS_SUCCESS],
+                        'order' => 'id desc'
+                    ]);
+
+                $last_payment_at_text = '无充值';
+                if ($last_payment) {
+                    $last_payment_at_text = $last_payment->created_at_text;
+                }
+
+                $last_hi_coin_history = HiCoinHistories::findFirst(
+                    [
+                        'conditions' => 'user_id = :user_id: and fee_type = :fee_type:',
+                        'bind' => ['user_id' => $user->id, 'fee_type' => HI_COIN_FEE_TYPE_HI_COIN_EXCHANGE_DIAMOND],
+                        'order' => 'id desc'
+                    ]);
+
+                $last_hi_coin_history_at_text = '无兑换';
+                if ($last_hi_coin_history) {
+                    $last_hi_coin_history_at_text = $last_hi_coin_history->created_at_text;
+                }
+
+                $exchange_total_amount = HiCoinHistories::sum(
+                    [
+                        'conditions' => 'user_id = :user_id: and fee_type = :fee_type:',
+                        'bind' => ['user_id' => $user->id, 'fee_type' => HI_COIN_FEE_TYPE_HI_COIN_EXCHANGE_DIAMOND],
+                        'column' => 'hi_coins'
+                    ]);
+
+                $union_name = '无家族';
+                $union = $user->union;
+                if ($union) {
+                    $union_name = $union->name;
+                }
+
+                $union_name = preg_replace_callback(
+                    '/./u',
+                    function ($match) {
+                        return strlen($match[0]) >= 4 ? '*' : $match[0];
+                    },
+                    $union_name);
+
+                $user_nickname = preg_replace_callback(
+                    '/./u',
+                    function ($match) {
+                        return strlen($match[0]) >= 4 ? '*' : $match[0];
+                    },
+                    $user->nickname);
+
+
+                $data = [$user->id, $user->uid, $user_nickname, $user->partner->name, $user->register_at_text, $user->last_at_text,
+                    $last_payment_at_text, $user->pay_amount, $last_hi_coin_history_at_text, abs($exchange_total_amount), $user->wealth_value,
+                    $user->charm_value, $union_name, $user->friend_num, $user->follow_num, $user->followed_num
+                ];
+
+                $datas[] = $data;
+            }
+        }
+
+        echoLine($datas, $titles);
+        $file_name = 'export_user_data_' . date('YmdHis') . '.xls';
+        $uri = writeExcel($titles, $datas, $file_name, true);
+        echoLine($uri);
+    }
+
+    function test69Action()
+    {
+        $key = "test_expire";
+        $cache = Users::getHotWriteCache();
+        $cache->set($key, 1);
+        $cache->expire($key, 5);
+        echoLine($cache->get($key), $cache->ttl($key));
+        $i = 1;
+
+        while (true) {
+            $i++;
+
+            if (!$cache->get($key)) {
+                echoLine('break', $i);
+                break;
+            }
+
+            echoLine($i);
+        }
+    }
 
     function test68Action()
     {
+        $room = Rooms::findFirstById(1002596);
+        $user = Users::findFirstById(1455878);
+        echoLine($user->user_role);
+
+
+        if ($user->isManager($room)) {
+            echoLine("sssss");
+        }
+        $users = $room->findManagers();
+
+        foreach ($users as $user) {
+            echoLine($user);
+        }
         $cache = Users::getHotWriteCache();
         $boom_num_day_key = 'room_boom_num_room_id_' . 54 . "_" . date("Ymd");
         $room_boon_gift_sign_key = \Rooms::generateRoomBoomGiftSignKey(54);
