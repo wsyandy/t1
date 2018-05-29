@@ -1,0 +1,240 @@
+<!-- 头部 -->
+<view class='head'>
+  <view class="avatar_box">
+    <image class='logo_avatar' mode='scaleToFill' wx:if="{{avatarUrl}}" src='{{avatarUrl}}' catchtap="sliderUserInfo"></image>
+    <image class='logo_avatar' mode='scaleToFill' wx:if="{{!avatarUrl}}" src='{{logo}}' catchtap="bindGetUserInfo"></image>
+    <button class="avatar_btn" wx:if="{{canIUse}}" wx:if="{{!avatarUrl}}" open-type="getUserInfo" bindgetuserinfo="bindGetUserInfo">授权登录</button>
+  </view>
+  <text>房间</text>
+</view>
+<!--导航 -->
+<scroll-view class="scroll_tabs" scroll-x  scroll-with-animation scroll-into-view="{{toView}}">
+  <view catchtap='tabSelect' class="scroll_tabs_item" wx:for="{{topTabs}}" wx:key="{{index}}" id="tabs_{{index}}" data-idx="{{index}}">
+    <text class="{{curIdx==index?'scroll_tabs_cur':'scroll_tabs_text'}}">{{item}}</text>
+    <image hidden="{{curIdx!==index}}" class="tag_stars" src="{{stars}}" mode='aspectFit'></image>
+  </view>
+</scroll-view>
+<!-- swiper导航标签页 -->
+<view class='slider-wrapper'>
+  <swiper bindchange="tabSwiperChange"  current="{{curItem}}" style='height:{{scrollheight}}px'>
+    <!-- 热门 -->
+    <swiper-item>
+      <scroll-view scroll-y bindscrolltoupper="hotUpper" bindscrolltolower="hotLower" bindscroll="hotScroll" style='height:{{scrollheight}}px'>
+        <view class="hot_box">
+          <view class="hot_list" wx:for="{{hotList}}" wx:key="{{item.room_name}}">
+            <image class="room_cover" src="{{item.room_cover}}" mode='aspectFit'></image>
+            <view class="room_people">
+              <image class="ico_people" src="{{ico_people}}" mode='aspectFit'></image>
+              <text class="room_num">{{item.room_num}}</text>
+            </view>
+            <view class="room_name">
+              <view class='room_name_bg'>
+              </view>
+              <text class="room_name_txt"> {{item.room_name}} </text>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+
+    </swiper-item>
+    <!-- 最新 -->
+    <swiper-item>
+      <scroll-view scroll-y style='height:{{scrollheight}}px'>
+        <view class="new_list" wx:for="{{newList}}" wx:key="item{{index}}">
+          <view class="new_info" catchtap="navtoNewRoom">
+            <image class='new_homeowners' mode='scaleToFill' src='{{item.homeowners}}' catchtap="navtoNewHomeowners"></image>
+            <view class="new_text">
+              <view class="new_room">
+                <view class="new_name">
+                  <text>{{item.room_name}}</text>
+                  <image class="new_lock" wx:if="{{item.lock}}" src="{{lock}}"></image>
+                </view>
+                <text class="new_time">{{item.setup_time}}</text>
+              </view>
+              <view>
+                <text class="new_number">{{item.room_num}}人</text>
+                <text>在线</text>
+              </view>
+            </view>
+
+          </view>
+        </view>
+
+      </scroll-view>
+
+    </swiper-item>
+    <!-- 开黑 -->
+    <swiper-item>
+      <scroll-view scroll-y style='height:{{scrollheight}}px'>
+        <view class="game_list" wx:for="{{gameList}}" wx:key="game{{index}}">
+          <view class="game_info" catchtap="navtoGameRoom">
+            <view>
+              <image class='game_homeowners' mode='scaleToFill' src='{{item.homeowners}}' catchtap="navtoGameHomeowners"></image>
+              <view class="game_text">
+                <text class="game_name">{{item.room_name}}</text>
+                <view>
+                  <text class="game_tag" style="color:{{item.color}};border-color: {{item.color}}">{{item.room_tag}}</text>
+                </view>
+              </view>
+            </view>
+            <view class="game_number">
+              <text class="room_number">{{item.room_num}}</text>
+              <text>人</text>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+    </swiper-item>
+    <!-- 唱歌 -->
+    <swiper-item> 
+    <scroll-view scroll-y style='height:{{scrollheight}}px'>
+        <view class="game_list" wx:for="{{singList}}" wx:key="sing{{index}}">
+          <view class="game_info" catchtap="navtoGameRoom">
+            <view>
+              <image class='game_homeowners' mode='scaleToFill' src='{{item.homeowners}}' catchtap="navtoGameHomeowners"></image>
+              <view class="game_text">
+                <text class="game_name">{{item.room_name}}</text>
+                <view>
+                  <text class="game_tag" style="color:{{item.color}};border-color: {{item.color}}">{{item.room_tag}}</text>
+                </view>
+              </view>
+            </view>
+            <view class="game_number">
+              <text class="room_number">{{item.room_num}}</text>
+              <text>人</text>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+       </swiper-item>
+    <!-- 交友 -->
+    <swiper-item> 
+    <scroll-view scroll-y style='height:{{scrollheight}}px'>
+        <view class="game_list" wx:for="{{datingList}}" wx:key="dating{{index}}">
+          <view class="game_info" catchtap="navtoGameRoom">
+            <view>
+              <image class='game_homeowners' mode='scaleToFill' src='{{item.homeowners}}' catchtap="navtoGameHomeowners"></image>
+              <view class="game_text">
+                <text class="game_name">{{item.room_name}}</text>
+                <view>
+                  <text class="game_tag" style="color:{{item.color}};border-color: {{item.color}}">{{item.room_tag}}</text>
+                </view>
+              </view>
+            </view>
+            <view class="game_number">
+              <text class="room_number">{{item.room_num}}</text>
+              <text>人</text>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+     </swiper-item>
+    <!-- 电台 -->
+    <swiper-item> 
+    <scroll-view scroll-y style='height:{{scrollheight}}px'>
+        <view class="game_list" wx:for="{{radioList}}" wx:key="radio{{index}}">
+          <view class="game_info" catchtap="navtoGameRoom">
+            <view>
+              <image class='game_homeowners' mode='scaleToFill' src='{{item.homeowners}}' catchtap="navtoGameHomeowners"></image>
+              <view class="game_text">
+                <text class="game_name">{{item.room_name}}</text>
+                <view>
+                  <text class="game_tag" style="color:{{item.color}};border-color: {{item.color}}">{{item.room_tag}}</text>
+                </view>
+              </view>
+            </view>
+            <view class="game_number">
+              <text class="room_number">{{item.room_num}}</text>
+              <text>人</text>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+       </swiper-item>
+    <!-- 关注 -->
+    <swiper-item> 
+    <scroll-view scroll-y style='height:{{scrollheight}}px'>
+        <!-- 有关注  -->
+        <view wx:if="{{!nofocus}}" class="game_list" wx:for="{{focusList}}" wx:key="focus{{index}}">
+          <view class="game_info" catchtap="navtoGameRoom">
+            <view>
+              <image class='game_homeowners' mode='scaleToFill' src='{{item.homeowners}}' catchtap="navtoGameHomeowners"></image>
+              <view class="game_text">
+                <text class="game_name">{{item.room_name}}</text>
+                <view>
+                  <text class="game_tag" style="color:{{item.color}};border-color: {{item.color}}">{{item.room_tag}}</text>
+                </view>
+              </view>
+            </view>
+            <view class="game_number">
+              <text class="room_number">{{item.room_num}}</text>
+              <text>人</text>
+            </view>
+          </view>
+        </view>
+        <!-- 无关注  -->
+        <view wx:if="{{nofocus}}" class="nofocus">
+          <image class="icon_nofocus" src="{{icon_nofocus}}"></image> 
+          <text>还没有关注呦，快去关注一个吧～</text>
+        </view>
+      </scroll-view>
+     </swiper-item>
+    <!-- 附近 -->
+    <swiper-item> 
+    <scroll-view scroll-y style='height:{{scrollheight}}px'>
+        <view  class="nearby_list" wx:for="{{nearbyList}}" wx:key="nearby{{index}}">
+          <view class="nearby_info" catchtap="navtoNearbyRoom">
+              <image class='nearby_avatar' mode='scaleToFill' src='{{item.avatar}}'> </image>
+              <view class="nearby_text">
+              <view class="nearby_text_top">
+               <text class="nearby_name">{{item.nickname}}</text>
+              <view class="{{item.male?'nearby_male':'nearby_female'}}">
+               <image class='ico_sex' mode='scaleToFill' src='{{item.male?ico_male:ico_female}}'> </image>
+                <text class="nearby_age">{{item.age}}</text>
+              </view>
+              </view>
+               
+                <text class="nearby_signature ">{{item.signature}}</text>
+              </view>
+             <view class="nearby_right">
+                <image class='ico_room' wx:if="{{item.room}}" mode='scaleToFill' src='{{ico_room}}'> </image>
+                <text class="nearby_distance">{{item.distance}}</text>
+              </view>
+           
+          </view>
+        </view>
+        
+      </scroll-view>
+     </swiper-item> 
+
+  </swiper>
+</view>
+<!-- 左侧栏 个人中心 -->
+<view class="mask" hidden="{{hideMask}}" catchtap="hideUserInfo">
+  <view class="user_info_box  {{hideInfo?'slider_right':'slider_left'}}" catchtap="preventD">
+    <view class="info_head">
+      <image class='info_bg' mode='scaleToFill' src='{{info_bg}}'></image>
+      <view class="comeback">
+        <image class='comeback_icon' mode='scaleToFill' src='{{comeback_icon}}' catchtap="hideUserInfo"></image>
+        <text class="comeback_text">我的</text>
+      </view>
+      <view class="user_info">
+        <image class='user_avatar' mode='scaleToFill' src='{{userInfo.avatarUrl}}'></image>
+        <view class="info_detail">
+          <view class="info_nickname">
+            <text class="nickname">{{userInfo.nickname}}</text>
+            <image class='info_edit' mode='scaleToFill' src='{{info_edit}}'></image>
+          </view>
+          <view class="info_id">
+            <text>ID:{{userInfo.id}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="info_list" wx:for="{{infoList}}" wx:key="{{index}}" data-index="{{index}}" catchtap="navToInfo">
+      <image class='info_icon' mode='scaleToFill' src='{{item.icon}}'></image>
+      <text>{{item.text}}</text>
+      
+    </view>
+  </view>
+</view>
