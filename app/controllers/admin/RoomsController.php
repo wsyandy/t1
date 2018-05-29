@@ -115,6 +115,7 @@ class RoomsController extends BaseController
 
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $room);
         if ($room->update()) {
+            $room->getTypesName($room->types);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '编辑成功', ['room' => $room->toDetailJson()]);
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '编辑失败');
@@ -327,6 +328,8 @@ class RoomsController extends BaseController
 
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $room);
         if ($room->update()) {
+            $room->getTypesName($room->types);
+
             return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', ['room' => $room->toDetailJson()]);
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '配置失败');

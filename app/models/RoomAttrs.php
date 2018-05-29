@@ -432,7 +432,8 @@ trait RoomAttrs
             'theme_type' => $this->theme_type,
             'top_text' => $this->top_text,
             'user_uid' => $this->user_uid,
-            'total_score_by_cache' => $this->total_score_by_cache
+            'total_score_by_cache' => $this->total_score_by_cache,
+            'types'=>$this->types
         ];
 
         return array_merge($opts, $this->toJson());
