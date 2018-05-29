@@ -12,7 +12,8 @@ class PaymentChannels extends BaseModel
     static $PAYMENT_TYPE = [
         'weixin' => 'weixin', 'weixin_h5' => 'weixin_h5',
         'alipay_sdk' => 'alipay_sdk', 'alipay_h5' => 'alipay_h5',
-        'apple' => 'apple', 'weixin_js' => 'weixin_js', 'google' => 'google'
+        'apple' => 'apple', 'weixin_js' => 'weixin_js', 'google' => 'google',
+        'manual_recharge' => '人工充值'
     ];
 
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
@@ -146,4 +147,11 @@ class PaymentChannels extends BaseModel
         return $selected;
     }
 
+    static function getManualRechargeChannel()
+    {
+        $channel = PaymentChannels::findFirst(['conditions' => 'payment_type = :payment_type:',
+            'bind' => ['payment_type' => 'manual_recharge'], 'order' => 'id desc']);
+
+        return $channel;
+    }
 }

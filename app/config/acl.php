@@ -47,7 +47,7 @@ return [
         'activities' => '*', 'rooms' => ['index', 'auto_hot', 'detail', 'add_user_agreement', 'delete_user_agreement', 'edit', 'update',
             'types', 'update_types', 'hot_room_score', 'hot_room_amount_score', 'hot_room_num_score'], 'room_stats' => ['day_stat'],
         'room_themes' => '*', 'broadcasts' => '*', 'albums' => '*', 'account_histories' => ['index'], 'gold_histories' => ['index'],
-        'gift_orders' => ['detail'], 'user_gifts' => ['index'], 'voice_calls' => ['index'], 'union_histories' => ['basic'], 'hi_coin_histories' => ['basic'],
+        'gift_orders' => ['detail'], 'user_gifts' => ['index'], 'voice_calls' => ['index'], 'union_histories' => ['basic'], 'hi_coin_histories' => ['basic', 'index'],
         'withdraw_histories' => ['basic'], 'activity_histories' => ['basic'], 'withdraw_accounts' => ['index'],
         'payments' => ['index'], 'audios' => '*', 'audio_chapters' => '*', 'product_menus' => '*', 'room_tags' => '*', 'room_categories' => '*',
         'gift_stats' => ['days'], 'draw_histories' => ['day_stat', 'hour_stat', 'index']
