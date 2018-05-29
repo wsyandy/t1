@@ -65,12 +65,17 @@ class RoomsController extends BaseController
         $types = \Rooms::$TYPES;
         $type_arr = [];
         foreach ($rooms as $room) {
-            $type_arr = explode(',',$room->types);
+            $type_arr = explode(',', $room->types);
             $arr = [];
-            foreach($type_arr as $v){
-               $arr[] = $types[$v];
+
+            foreach ($type_arr as $v) {
+                if ($v)
+                    array_push($arr, $types[$v]);
+
             }
-            $room->types = implode(',',$arr);
+
+
+            $room->types = implode(',', $arr);
         }
         $this->view->rooms = $rooms;
         $this->view->hot = $hot;
@@ -89,6 +94,7 @@ class RoomsController extends BaseController
         $this->view->boom_config = \BoomConfigs::getBoomConfig();
         $this->view->online_room_num = \Rooms::count(['conditions' => 'online_status = ' . STATUS_ON]);
         $this->view->status_on_room_num = \Rooms::count(['conditions' => 'online_status = ' . STATUS_ON]);
+        $this->view->types = \Rooms::$TYPES;
     }
 
     function editAction()
@@ -228,9 +234,9 @@ class RoomsController extends BaseController
 
             $room->user_agreement_num = $user_agreement_num;
             if ($room->update()) {
-                if($user_num > 0){
+                if ($user_num > 0) {
                     \Rooms::delay()->addUserAgreement($room->id, $user_num);
-                }else{
+                } else {
                     \Rooms::delay()->deleteUserAgreement($room->id, abs($user_num));
                 }
 
@@ -284,12 +290,12 @@ class RoomsController extends BaseController
                 $room->auto_hot = 1;
             }
 
-            $type_arr = explode(',',$room->types);
+            $type_arr = explode(',', $room->types);
             $arr = [];
-            foreach($type_arr as $v){
+            foreach ($type_arr as $v) {
                 $arr[] = $types[$v];
             }
-            $room->types = implode(',',$arr);
+            $room->types = implode(',', $arr);
         }
 
         $pagination = new \PaginationModel($rooms, $hot_cache->zcard($hot_room_list_key), $page, $per_page);
