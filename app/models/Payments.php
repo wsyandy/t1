@@ -23,6 +23,11 @@ class Payments extends BaseModel
      */
     private $_payment_channel;
 
+    /**
+     * @type Operators
+     */
+    private $_operator;
+
     static $PAY_STATUS = [
         PAYMENT_PAY_STATUS_WAIT => '等待支付',
         PAYMENT_PAY_STATUS_SUCCESS => '支付成功',
@@ -147,7 +152,7 @@ class Payments extends BaseModel
 
 
             // 分销奖励
-            if($this->user->share_parent_id){
+            if ($this->user->share_parent_id) {
                 \SmsDistributeHistories::delay()->checkPay($this->user_id, $this->order->product->diamond);
             }
 
