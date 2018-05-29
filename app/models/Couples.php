@@ -15,7 +15,7 @@ class Couples extends BaseModel
 
         $cache->expire($key, 10 * 60);
         //同时起一个异步推送scoket
-        self::delay(10 * 60 - 5)->asyncFinishCp($user, $key);
+        self::delay(10 * 60 - 3)->asyncFinishCp($user, $key);
     }
 
     static function generateReadyCpInfoKey($room_id)
@@ -383,12 +383,13 @@ class Couples extends BaseModel
     static function asyncFinishCp($user, $key)
     {
         $cache = \Users::getHotWriteCache();
-        $sponsor_id = $cache->hget($key, 'sponsor_id');
-        if (!$sponsor_id) {
+        $pursuer_id = $cache->hget($key, 'pursuer_id');
+        if ($pursuer_id) {
             return;
         }
 
-        $body = ['action' => 'game_notice', 'type' => 'over', 'content' => 'cp结束',];
+        $cache->expire($key, 0);
+        $body = ['action' => 'game_notice', 'type' => 'over', 'content' => 'cp超时，自动关闭'];
         self::sendCpFinishMessage($user, $body);
     }
 }
