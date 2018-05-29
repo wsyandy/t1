@@ -352,7 +352,7 @@ trait RoomAttrs
     {
         $ids = self::getNotDrawRedPacketIds($user);
         if ($ids) {
-            info($this->id, $user->id, 'count', count($ids));
+            info($this->id, $user->id, 'count', count($ids), $ids);
             return count($ids);
         }
 

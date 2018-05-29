@@ -371,11 +371,11 @@ class RedPackets extends BaseModel
     }
 
     //红包个数
-    static function pushRedPacketNumToUser($user, $room, $notify_type)
+    static function pushRedPacketNumToUser($user, $room, $type)
     {
         $url = self::generateRedPacketUrl($room->id);
 
-        if ($notify_type == 'update') {
+        if ($type == 'update') {
             $underway_red_packet_num = $room->getNotDrawRedPacketNum($user);
             info($room->id, $user->id, $underway_red_packet_num);
             $room->pushRedPacketNumToUser($user, $underway_red_packet_num, $url);
