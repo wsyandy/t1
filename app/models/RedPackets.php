@@ -81,6 +81,9 @@ class RedPackets extends BaseModel
 
             //红包抢完公屏
             $content = $this->user->nickname . '发的红包已抢完';
+            if($this->balance_diamond){
+                $content = $this->user->nickname . '发的红包已过期';
+            }
             self::sendRedPacketMessageToUsers($this->user, $this->room, ['type' => 'finish', 'content' => $content]);
         }
     }
