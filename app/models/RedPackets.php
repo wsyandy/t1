@@ -157,12 +157,13 @@ class RedPackets extends BaseModel
     static function findLastNearby($user, $geo_distance)
     {
         $geo_distance = intval($geo_distance);
-        debug($user->id, $geo_distance);
-        
+
         $red_packet = self::findFirst(['conditions' => 'user_id=:user_id: and red_packet_type=:red_packet_type: and nearby_distance>=:nearby_distance: and (sex=:sex1: or sex=:sex:)',
             'bind' => ['user_id' => $user->id, 'red_packet_type' => RED_PACKET_TYPE_NEARBY, 'nearby_distance' => $geo_distance, 'sex1' => 2, 'sex' => $user->sex],
             'order' => 'id desc']);
 
+        debug($user->id, $geo_distance, 'sex', $user->sex, $red_packet);
+        
         return $red_packet;
     }
 
