@@ -48,7 +48,7 @@ class RedPacketsController extends BaseController
 
         } elseif (($red_packet_type == RED_PACKET_TYPE_FOLLOW || $red_packet_type == RED_PACKET_TYPE_STAY_AT_ROOM)
             && $diamond < 1000) {
-            
+
             return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不能小于1000钻');
         } else {
             if ($diamond < 100) {
