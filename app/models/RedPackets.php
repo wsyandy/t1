@@ -280,7 +280,6 @@ class RedPackets extends BaseModel
             $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $user->mobile, 'target_id' => $this->id];
             \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_RED_PACKET_INCOME, $get_diamond, $opts);
 
-
             $opts = [
                 'type' => 'update',
                 'content' => '恭喜' . $user->nickname . '抢到了' . $get_diamond . '个钻石'
@@ -384,7 +383,7 @@ class RedPackets extends BaseModel
             $users = $room->findTotalRealUsers();
             foreach ($users as $other_user) {
                 $underway_red_packet_num = $room->getNotDrawRedPacketNum($other_user);
-                info($room->id, $user->id, $underway_red_packet_num);
+                info($room->id, $other_user->id, $underway_red_packet_num);
                 $room->pushRedPacketNumToUser($other_user, $underway_red_packet_num, $url);
             }
         }
