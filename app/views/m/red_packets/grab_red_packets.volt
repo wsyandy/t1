@@ -45,7 +45,7 @@
                         <a @click="toDetail()" class="look_detail">查看领取详情 <i></i></a>
                     </div>
                     <div class="red_over" style="margin-top: 3rem" v-if="pity">
-                        <img src="/m/images/yihan.png">
+                        <img src="/m/images/yihan.png" v-if="grabbed">
                         <h3>${error_reason}</h3>
                         <a @click="toDetail()" class="look_detail">查看领取详情 <i></i></a>
                     </div>
@@ -83,7 +83,8 @@
             attentionUrl: "",
             error_reason: "",
             getDiamond: 0,
-            user_id: "{{ user_id }}"
+            user_id: "{{ user_id }}",
+            grabbed:true,
 
         },
         methods: {
@@ -102,6 +103,16 @@
                         vm.error_reason = resp.error_reason;
                         vm.getDiamond = resp.get_diamond;
                         vm.congratulation = true;
+
+                    } else if (resp.error_code == -400) {
+
+                        vm.attentionHost = true;
+                        vm.attentionUrl = resp.client_url;
+
+                    } else if (resp.error_code == -101) {
+                        vm.error_reason = resp.error_reason;
+                        vm.pity = true;
+                        vm.grabbed = false;
 
                     } else {
                         vm.error_reason = resp.error_reason;
