@@ -23,7 +23,7 @@
         </li>
         <li> <div class="list_num"></div>
             <div class="list_text">
-                <p class="list_info"><span>收款银行：</span><span class="copy_text">中国工商银行股份有限公司</span></p>
+                <p class="list_info"><span>收款银行：</span><span class="copy_text">中国工商银行股份有限公司上海市闵行支行</span></p>
                 <p class="copy_btn"></p>
             </div>
         </li>
