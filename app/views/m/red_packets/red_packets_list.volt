@@ -41,7 +41,8 @@
             per_page: 10,
             total_page: 1,
             red_packets_list: [],
-            room_id: "{{ room_id }}"
+            room_id: "{{ room_id }}",
+            submit: false
         },
         mounted: function () {
 
@@ -53,6 +54,11 @@
                     return;
                 }
 
+                if(vm.submit){
+                    return;
+                }
+
+                vm.submit = true;
                 var data = {
                     page: vm.page,
                     per_page: vm.per_page,
@@ -61,8 +67,10 @@
                     room_id: vm.room_id
                 };
 
+
                 $.authGet('/m/red_packets/red_packets_list', data, function (resp) {
 
+                    vm.submit = false;
                     vm.page++;
                     vm.total_page = resp.total_page;
 
