@@ -252,7 +252,7 @@ class RedPacketsController extends BaseController
         $red_packet_id = $this->params('red_packet_id');
         $red_packet = \RedPackets::findFirstById($red_packet_id);
         $room = $red_packet->room;
-        if(!$red_packet || $room){
+        if(!$red_packet || !$room){
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
