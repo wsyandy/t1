@@ -466,7 +466,7 @@ trait RoomStats
     {
         $interval_value = 50000;
         $boom_num = $this->getBoomNum();
-        $room_boon_gift_sign_key = \Rooms::generateRoomBoomGiftSignKey($this);
+        $room_boon_gift_sign_key = \Rooms::generateRoomBoomGiftSignKey($this->id);
         $cache = \Rooms::getHotReadCache();
 
         // 判断房间是否在进行爆礼物活动
