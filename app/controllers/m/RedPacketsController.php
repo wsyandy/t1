@@ -135,7 +135,7 @@ class RedPacketsController extends BaseController
             return $this->response->redirect('app://back');
         }
 
-        if(137039 == $user->id){
+        if(41792 == $user->id){
             $hot = \Users::getHotWriteCache();
             $num = $hot->incr('test_red_'.$user->id);
             if($num == 1){
