@@ -17,6 +17,11 @@ class ProductsController extends BaseController
 
         $selected_product = $products[0];
         $selected_payment_channel = $payment_channels[0];
+
+        $user = $this->currentUser();
+        $is_show_distribute = $user->isCompanyUser();
+
+        $this->view->is_show_distribute = $is_show_distribute;
         $this->view->selected_product = $selected_product;
         $this->view->selected_payment_channel = $selected_payment_channel;
         $this->view->products = $products;
