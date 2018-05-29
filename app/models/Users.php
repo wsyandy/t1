@@ -2209,7 +2209,7 @@ class Users extends BaseModel
 
                 debug('false', $this->id, $user->id, $user->distance, $this->latitude, $this->longitude, $user->latitude, $user->longitude);
             }
-            
+
             // 附近红包
             if($user->has_red_packet){
                 $user->has_red_packet = 0;
@@ -2220,7 +2220,7 @@ class Users extends BaseModel
                     }
                 }
 
-                debug('has_red_packet', $this->id, $user->id, $user->distance, $user->room_id, $user->current_room_id, 'has_red_packet', $user->has_red_packet);
+                debug('has_red_packet', $this->id, $user->id, $user->distance, $geo_distance, $user->room_id, $user->current_room_id, 'has_red_packet', $user->has_red_packet);
             }
         }
     }
