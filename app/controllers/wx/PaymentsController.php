@@ -145,4 +145,9 @@ class PaymentsController extends BaseController
     {
 
     }
+
+    function manualRechargeAction()
+    {
+        $this->view->title = '公司转账';
+    }
 }

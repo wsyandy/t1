@@ -358,6 +358,8 @@ trait RoomStats
             $record_key = Rooms::generateBoomRecordDayKey($room_id, $time);
             $cache->zincrby($record_key, $income, $sender_id); //爆礼物贡献记录
 
+            info('room_id', $this->id, 'sender_id', $sender_id, 'income', $income, 'total_value', $total_value, 'start_value', $start_value, 'current_value', $current_value, 'boom_num', $boom_num);
+
             if ($current_value >= $total_value) {
 
                 $boom_expire = 180;

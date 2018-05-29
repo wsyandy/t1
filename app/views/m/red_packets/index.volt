@@ -10,7 +10,7 @@
                 <div class="give_box">
                     <h3>红包个数</h3>
                     <div class="give_input">
-                        <input type="text" name="" placeholder="" v-model="number">
+                        <input type="number" name="" placeholder="" v-model="number">
                         <span>个</span>
                     </div>
                 </div>
@@ -20,7 +20,7 @@
                 <div class="give_box">
                     <h3>红包金额</h3>
                     <div class="give_input">
-                        <input type="text" name="" placeholder="" v-model="amount">
+                        <input type="number" name="" placeholder="" v-model="amount">
                         <i class="zuan"></i>
                     </div>
                 </div>
@@ -96,7 +96,7 @@
         <div class="zuan_less_box less_show">
             <i class="less_close" @click="cancel(3)"></i>
             <p v-text="error_reason"></p>
-            <a href="#" class="less_btn">取消</a>
+            <a href="#" class="less_btn" @click="cancel(3)">取消</a>
         </div>
     </div>
 
