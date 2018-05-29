@@ -42,6 +42,12 @@ function wxGetUserInfo() {
 function wxGetSystemInfo() {
   return wxPromisify(wx.getSystemInfo)
 }
+/**
+ * 获取网络状态
+ */
+function wxGetNetworkType() {
+  return wxPromisify(wx.getNetworkType)
+}
 
 module.exports = {
   wxPromisify: wxPromisify,
