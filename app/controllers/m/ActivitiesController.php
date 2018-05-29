@@ -603,6 +603,7 @@ class ActivitiesController extends BaseController
     {
         $current_user = $this->currentUser();
         $id = $this->params('id');
+        $current_user = $this->currentUser();
         $activity = \Activities::findFirstById($id);
 
         if (!$activity) {

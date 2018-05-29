@@ -1237,6 +1237,7 @@ trait UserAttrs
 
             $current_rank = $rank + 1;
         }
+
         $current_user_info['current_rank'] = $current_rank <= 100 ? $current_rank : '100+';
         $current_user_info['current_score'] = $current_score;
 
