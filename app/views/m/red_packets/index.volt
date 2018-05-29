@@ -176,6 +176,7 @@
                 }
             },
             sendRedPacket: function () {
+
                 var data = {
                     sid: this.sid,
                     code: this.code,
@@ -183,8 +184,9 @@
                     diamond: this.amount,
                     sex: this.sex,
                     red_packet_type: this.type,
-                    nearby_distance: parseInt(this.nearby_distance) * 1000,
-                }
+                    nearby_distance: parseInt(this.nearby_distance) * 1000
+                };
+
                 if (this.sex == "男女皆可") {
                     data.sex = 2;
                 }
@@ -193,8 +195,8 @@
                     vm.less_zuan_input = true;
                     return;
                 }
+
                 $.authPost('/m/red_packets/create', data, function (resp) {
-                    console.log(resp);
                     vm.error_reason = resp.error_reason;
                     vm.error_input = true;
                     if (!resp.error_code) {

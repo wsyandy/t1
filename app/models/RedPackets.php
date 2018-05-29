@@ -107,7 +107,7 @@ class RedPackets extends BaseModel
         ];
 
         if (isDevelopmentEnv()) {
-            $data['user_nickname'] = $this->user->nickname . '-' . $this->created_at_text;
+            $data['user_nickname'] = $this->user->nickname . '-id:' . $this->id;
         }
 
         return $data;
