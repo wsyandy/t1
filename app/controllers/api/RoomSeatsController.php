@@ -75,7 +75,8 @@ class RoomSeatsController extends BaseController
         unlock($room_seat_lock);
         unlock($room_seat_user_lock);
 
-        info($this->currentUser()->sid, $error_code, $error_reason);
+        info($this->currentUser()->sid, $error_code, $error_reason, $room_seat->toSimpleJson());
+        
         return $this->renderJSON($error_code, $error_reason, $room_seat->toSimpleJson());
     }
 

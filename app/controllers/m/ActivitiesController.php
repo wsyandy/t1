@@ -601,6 +601,7 @@ class ActivitiesController extends BaseController
 
     function giftCharmRankActivity()
     {
+        $current_user = $this->currentUser();
         $id = $this->params('id');
         $current_user = $this->currentUser();
         $activity = \Activities::findFirstById($id);
