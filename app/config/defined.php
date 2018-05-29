@@ -27,6 +27,9 @@ define('USER_PLATFORM_WEIXIN_IOS', 'weixin_ios');
 define('USER_PLATFORM_WEIXIN_ANDROID', 'weixin_android');
 define('USER_PLATFORM_TOUCH_IOS', 'touch_ios');
 define('USER_PLATFORM_TOUCH_ANDROID', 'touch_android');
+define('USER_PLATFORM_XCX_UNKNOW', 'xcx_unknow');
+define('USER_PLATFORM_XCX_IOS', 'xcx_ios');
+define('USER_PLATFORM_XCX_ANDROID', 'xcx_android');
 
 define('PARTNER_GROUP_TYPE_NO', 0);// 默认
 
