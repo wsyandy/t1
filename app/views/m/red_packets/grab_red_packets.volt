@@ -25,16 +25,7 @@
 
 
                 </div>
-                {#<h3>发了一个红包，关注房主可领取</h3>#}
-                {#<div class="qiang_red"></div>#}
 
-                {#<div class="red_get">#}
-                {#<img src="images/gongxi.png">#}
-                {#<h3>抢到橘子发的钻石红包</h3>#}
-                {#<div class="red_get_num"><i></i>100</div>#}
-                {#<p>已收到我的帐户，可用于送礼物</p>#}
-                {#<a href="javascript:;" class="look_detail">查看领取详情 <i></i></a>#}
-                {#</div>#}
                 <div v-if="getRed">
 
                     <div class="red_get" v-if="congratulation">

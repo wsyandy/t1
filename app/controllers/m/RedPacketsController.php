@@ -36,19 +36,25 @@ class RedPacketsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '您不在当前房间哦，请重进！');
         }
 
-        if ($red_packet_type == RED_PACKET_TYPE_NEARBY) {
-            if ($diamond < 1000 || $num < 10) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不得小于1000钻或者个数不得小于10个');
+        if($num < 5){
+            return $this->renderJSON(ERROR_CODE_FAIL, '红包个数不能少于5个');
+        }
+        if($num > 100){
+            return $this->renderJSON(ERROR_CODE_FAIL, '红包个数不能大于100个');
+        }
+
+        if ($red_packet_type == RED_PACKET_TYPE_NEARBY || $red_packet_type == RED_PACKET_TYPE_FOLLOW) {
+            if ($diamond < 1000) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不能小于1000钻');
             }
         } else {
-            if ($diamond < 100 || $num < 10) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不得小于100钻或者个数不得小于10个');
+            if ($diamond < 100) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不能小于100钻');
             }
         }
 
         if ($user->diamond < $diamond) {
-            $to_pay_url = '';
-            return $this->renderJSON(ERROR_CODE_FAIL, '您的钻石余额不足，请充值后再发红包', ['to_pay_url' => $to_pay_url]);
+            return $this->renderJSON(ERROR_CODE_FAIL, '您的钻石余额不足，请充值后再发红包');
         }
 
         $opts = [
