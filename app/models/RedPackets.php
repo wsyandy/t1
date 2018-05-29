@@ -310,7 +310,7 @@ class RedPackets extends BaseModel
             return $get_diamond;
         }
 
-        return null;
+        return 0;
 
     }
 

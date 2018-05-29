@@ -39,14 +39,14 @@
 
                     <div class="red_get" v-if="congratulation">
                         <img src="/m/images/gongxi.png">
-                        <h3>${res}</h3>
+                        <h3>${error_reason}</h3>
                         <div class="red_get_num"><i></i>${getDiamond}</div>
                         <p>已收到我的帐户，可用于送礼物</p>
                         <a @click="toDetail()" class="look_detail">查看领取详情 <i></i></a>
                     </div>
                     <div class="red_over" style="margin-top: 3rem" v-if="pity">
                         <img src="/m/images/yihan.png" v-if="grabbed">
-                        <h3>${res}</h3>
+                        <h3>${error_reason}</h3>
                         <a @click="toDetail()" class="look_detail">查看领取详情 <i></i></a>
                     </div>
 
@@ -81,8 +81,8 @@
             pity: false,
             attentionHost: false,
             attentionUrl: "",
-            res: "",
-            getDiamond: "",
+            error_reason: "",
+            getDiamond: 0,
             user_id: "{{ user_id }}",
             grabbed:true,
 
@@ -98,9 +98,9 @@
                 $.authGet('/m/red_packets/grab_red_packets', data, function (resp) {
 
                     vm.getRed = true;
-                    if (!resp.error_code) {
+                    if (resp.error_code == 0) {
 
-                        vm.res = resp.error_reason;
+                        vm.error_reason = resp.error_reason;
                         vm.getDiamond = resp.get_diamond;
                         vm.congratulation = true;
 
@@ -110,12 +110,12 @@
                         vm.attentionUrl = resp.client_url;
 
                     } else if (resp.error_code == -101) {
-                        vm.res = resp.error_reason;
+                        vm.error_reason = resp.error_reason;
                         vm.pity = true;
                         vm.grabbed = false;
 
                     } else {
-                        vm.res = resp.error_reason;
+                        vm.error_reason = resp.error_reason;
                         vm.pity = true;
                     }
 
@@ -135,19 +135,20 @@
                     red_packet_id: vm.red_packet_id,
                     user_id: vm.user_id
 
-                }
+                };
+
                 $.authGet(vm.attentionUrl, data, function (resp) {
-                    console.log(resp);
+
                     vm.getRed = true;
                     if (!resp.error_code) {
 
-                        vm.res = resp.error_reason;
+                        vm.error_reason = resp.error_reason;
                         vm.getDiamond = resp.get_diamond;
                         vm.congratulation = true;
 
                     } else {
 
-                        vm.res = resp.error_reason;
+                        vm.error_reason = resp.error_reason;
                         vm.pity = true;
 
                     }
