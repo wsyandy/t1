@@ -29,7 +29,7 @@ class RedPackets extends BaseModel
         'balance_num' => ['null' => '不能为空']
     ];
 
-    static $RED_PACKET_TYPE = [RED_PACKET_TYPE_ALL => '都可以领取', RED_PACKET_TYPE_FOLLOW => '关注房主才能领取', RED_PACKET_TYPE_STAY_AT_ROOM => '在房间满3分钟才能领取'];
+    static $RED_PACKET_TYPE = [RED_PACKET_TYPE_ALL => '都可以领取', RED_PACKET_TYPE_FOLLOW => '关注房主才能领取', RED_PACKET_TYPE_STAY_AT_ROOM => '在房间满3分钟才能领取', RED_PACKET_TYPE_NEARBY => '附近人才可领取'];
 
     static $STATUS = [STATUS_ON => '进行中', STATUS_OFF => '结束'];
 
@@ -224,7 +224,8 @@ class RedPackets extends BaseModel
         return new \PaginationModel($red_packets, $total, $page, $per_page);
     }
 
-    function isGrabbed($user){
+    function isGrabbed($user)
+    {
 
         $cache = \Users::getUserDb();
         $red_user_list_key = $this->generateRedPacketUserListKey();

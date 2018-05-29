@@ -225,6 +225,9 @@
                     {% if isAllowed('boom_histories','index') %}
                         <li><a href="/admin/boom_histories">爆礼物记录</a></li>
                     {% endif %}
+                    {% if isAllowed('red_packets','index') %}
+                        <li><a href="/admin/red_packets">红包记录</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}
