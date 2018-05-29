@@ -180,7 +180,8 @@ class RedPackets extends BaseModel
 
         $push_data = [
             'type' => 'create',
-            'content' => $user->nickname . '在房间内发红包，手快有，手慢无，赶紧去抢吧'
+            'content' => $user->nickname . '在房间内发红包，手快有，手慢无，赶紧去抢吧',
+            'red_packet_type' => RED_PACKET_TYPE_NEARBY
         ];
 
         self::sendRedPacketMessageToUsers($user, $room, $push_data);
@@ -193,7 +194,7 @@ class RedPackets extends BaseModel
 
         $red_packet = \RedPackets::findFirstById($red_packet_id);
         if (!$red_packet || $red_packet->status == STATUS_OFF) {
-            info('已领万', $red_packet_id);
+            info('已结束', $red_packet_id);
             return;
         }
 
@@ -352,6 +353,7 @@ class RedPackets extends BaseModel
 
         $type = fetch($opts, 'type');
         $content = fetch($opts, 'content');
+        $red_packet_type = fetch($opts, 'red_packet_type');
 
         //红包socket
         self::pushRedPacketNumToUser($user, $room, $type);
@@ -360,7 +362,7 @@ class RedPackets extends BaseModel
         self::pushRedPacketTopTopicMessage($room, $content);
 
         //首页下沉通知
-        if (isDevelopmentEnv() && $type == 'create') {
+        if (isDevelopmentEnv() && $type == 'create' && $red_packet_type == RED_PACKET_TYPE_NEARBY) {
             self:: pushRedPacketSinkMessage($room, $content);
         }
     }
