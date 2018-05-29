@@ -81,7 +81,7 @@ class RedPackets extends BaseModel
 
             //红包抢完公屏
             $content = $this->user->nickname . '发的红包已抢完';
-            if($this->balance_diamond){
+            if ($this->balance_diamond) {
                 $content = $this->user->nickname . '发的红包已过期';
             }
             self::sendRedPacketMessageToUsers($this->user, $this->room, ['type' => 'finish', 'content' => $content]);
@@ -154,6 +154,16 @@ class RedPackets extends BaseModel
         return 'url://m/red_packets/red_packets_list?room_id=' . $room_id;
     }
 
+    static function findLastNearby($user, $geo_distance)
+    {
+
+        $red_packet = self::findFirst(['conditions' => 'user_id=:user_id: and red_packet_type=:red_packet_type: and nearby_distance>=:nearby_distance:',
+            'bind' => ['user_id' => $user->id, 'red_packet_type' => RED_PACKET_TYPE_NEARBY, 'nearby_distance' => $geo_distance],
+            'order' => 'id desc']);
+
+        return $red_packet;
+    }
+
     static function createRedPacket($user, $room, $opts)
     {
 
@@ -219,8 +229,8 @@ class RedPackets extends BaseModel
         $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($room->id);
         $total = $cache_db->zcard($underway_red_packet_list_key);
         $offset = ($page - 1) * $per_page;
-        if($offset >= $total){
-          info('越界', $user->id, $room->id, $page, $per_page, $total, $offset);
+        if ($offset >= $total) {
+            info('越界', $user->id, $room->id, $page, $per_page, $total, $offset);
         }
 
         $red_packet_ids = $cache_db->zrevrange($underway_red_packet_list_key, $offset, $offset + $per_page - 1);
@@ -409,11 +419,11 @@ class RedPackets extends BaseModel
 
         foreach ($users as $user) {
 
-            if($user->current_room_id == $room->id){
+            if ($user->current_room_id == $room->id) {
                 continue;
             }
 
-            if($sex != USER_SEX_COMMON && $user->sex != $sex){
+            if ($sex != USER_SEX_COMMON && $user->sex != $sex) {
                 continue;
             }
 

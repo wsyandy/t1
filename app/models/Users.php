@@ -2209,6 +2209,19 @@ class Users extends BaseModel
 
                 debug('false', $this->id, $user->id, $user->distance, $this->latitude, $this->longitude, $user->latitude, $user->longitude);
             }
+            
+            // 附近红包
+            if($user->has_red_packet){
+                $user->has_red_packet = 0;
+                if($user->room_id && $user->room_id == $user->current_room_id){
+                    $red_packet = RedPackets::findLastNearby($user, $geo_distance * 1000);
+                    if($red_packet){
+                        $user->has_red_packet = 1;
+                    }
+                }
+
+                debug('has_red_packet', $this->id, $user->id, $user->distance, $user->room_id, $user->current_room_id, 'has_red_packet', $user->has_red_packet);
+            }
         }
     }
 
