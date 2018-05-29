@@ -10,7 +10,7 @@ class RedPacketsController extends BaseController
         $user = $this->currentUser();
         $red_packet_type = \RedPackets::$RED_PACKET_TYPE;
         if ($user->user_role != USER_ROLE_HOST_BROADCASTER) {
-            unset($red_packet_type['nearby']);
+            unset($red_packet_type[RED_PACKET_TYPE_NEARBY]);
         }
 
         info($user->id, $user->user_role_text, '类型', $red_packet_type);
@@ -196,7 +196,7 @@ class RedPacketsController extends BaseController
                 }
             }
 
-            $get_diamond = $red_packet->grabRedPacket($user, $room);
+            $get_diamond = $red_packet->grabRedPacket($user);
             $error_reason = '手慢了，红包抢完了！';
             if ($get_diamond) {
                 $error_reason = '抢到' . $user_nickname . '发的钻石红包';
@@ -209,7 +209,6 @@ class RedPacketsController extends BaseController
         $this->view->user_nickname = $user_nickname;
         $this->view->user_avatar_url = $user_avatar_url;
         $this->view->distance_start_at = $distance_start_at;
-        $this->view->user_id = $room->user_id;
     }
 
     function detailAction()
@@ -224,6 +223,9 @@ class RedPacketsController extends BaseController
 
         $red_packet_id = $this->params('red_packet_id');
         $red_packet = \RedPackets::findFirstById($red_packet_id);
+        if(!$red_packet){
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
 
         $cache = \Users::getUserDb();
         $user_list_key = $red_packet->generateRedPacketUserListKey();
@@ -248,21 +250,24 @@ class RedPacketsController extends BaseController
     function followersAction()
     {
         $red_packet_id = $this->params('red_packet_id');
-        $user = $this->currentUser();
-
-        if ($user->id == $this->otherUser()->id) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '不能关注自己哦');
+        $red_packet = \RedPackets::findFirstById($red_packet_id);
+        $room = $red_packet->room;
+        if(!$red_packet || $room){
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
-        $red_packet = \RedPackets::findFirstById($red_packet_id);
-
-        $user->follow($this->otherUser());
-
-        if (isBlank($user->current_room)) {
+        $user = $this->currentUser();
+        if ($user->current_room_id != $room->id) {
             return $this->renderJSON(ERROR_CODE_FAIL, '您不在当前房间哦，请重进！');
         }
 
-        $get_diamond = $red_packet->grabRedPacket($user, $user->current_room);
+        if ($user->id == $room->user_id) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '不能关注自己哦');
+        }
+
+        $user->follow($room->user);
+
+        $get_diamond = $red_packet->grabRedPacket($user);
 
         $error_reason = '手慢了，红包抢完了！';
         if ($get_diamond) {

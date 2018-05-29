@@ -74,7 +74,6 @@
             attentionUrl: "",
             error_reason: "",
             getDiamond: 0,
-            user_id: "{{ user_id }}",
             grabbed:true,
 
         },
@@ -99,6 +98,7 @@
 
                         vm.attentionHost = true;
                         vm.attentionUrl = resp.client_url;
+                        vm.pity = true;
 
                     } else if (resp.error_code == -101) {
                         vm.error_reason = resp.error_reason;
@@ -121,12 +121,11 @@
                 location.href = url;
             },
             toAttention: function () {
+
                 var data = {
                     sid: this.sid,
                     code: this.code,
-                    red_packet_id: vm.red_packet_id,
-                    user_id: vm.user_id
-
+                    red_packet_id: vm.red_packet_id
                 };
 
                 $.authGet(vm.attentionUrl, data, function (resp) {
@@ -137,13 +136,13 @@
                         vm.error_reason = resp.error_reason;
                         vm.getDiamond = resp.get_diamond;
                         vm.congratulation = true;
-
-                    } else {
-
-                        vm.error_reason = resp.error_reason;
                         vm.pity = true;
 
+                    } else {
+                        vm.error_reason = resp.error_reason;
+                        vm.pity = true;
                     }
+
                     vm.attentionHost = false;
                     hide_grab();
                 })

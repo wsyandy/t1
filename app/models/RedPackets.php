@@ -29,7 +29,8 @@ class RedPackets extends BaseModel
         'balance_num' => ['null' => '不能为空']
     ];
 
-    static $RED_PACKET_TYPE = [RED_PACKET_TYPE_ALL => '都可以领取', RED_PACKET_TYPE_FOLLOW => '关注房主才能领取', RED_PACKET_TYPE_STAY_AT_ROOM => '在房间满3分钟才能领取', RED_PACKET_TYPE_NEARBY => '附近人才可领取'];
+    static $RED_PACKET_TYPE = [RED_PACKET_TYPE_ALL => '都可领取', RED_PACKET_TYPE_FOLLOW => '关注房主可领取',
+        RED_PACKET_TYPE_STAY_AT_ROOM => '在房间待满3分钟可领取', RED_PACKET_TYPE_NEARBY => '附近人可领取'];
 
     static $STATUS = [STATUS_ON => '进行中', STATUS_OFF => '结束'];
 
@@ -251,7 +252,7 @@ class RedPackets extends BaseModel
         return $distance_start_at;
     }
 
-    function grabRedPacket($user, $room)
+    function grabRedPacket($user)
     {
 
         $lock_key = 'grab_red_packet_' . $this->id;
@@ -274,6 +275,8 @@ class RedPackets extends BaseModel
                 'type' => 'update', 'notify_type' => 'ptp',
                 'content' => '恭喜' . $user->nickname . '抢到了' . $get_diamond . '个钻石'
             ];
+
+            $room = $this->room;
 
             self::sendSocketForRedPacket($user, $room, $opts);
         }

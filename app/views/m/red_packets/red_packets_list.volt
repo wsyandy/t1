@@ -23,7 +23,7 @@
                 <div class="num red_list_style red_list_time " v-if="!v.is_grabbed && v.red_packet_type == 'stay_at_room'" :class="['daojishi'+i]"
                      @click="toGrabRedPacket(v.id)"></div>
 
-                <div class="num red_list_style red_list_qiang " :class="['daojishiJS'+i]" style="display: none;"
+                <div class="num red_list_style red_list_qiang" :class="['daojishiJS'+i]" style="display: none;"
                      v-if="!v.is_grabbed && v.red_packet_type == 'stay_at_room'" @click="toGrabRedPacket(v.id)">抢
                 </div>
 
@@ -74,13 +74,11 @@
                         }
 
                         if (val.red_packet_type == 'follow') {
-                            val.text = "关注可抢";
+                            val.text = "关注房主可领取";
                             val.class = "red_list_fangzhu";
                         }
 
                         if (val.red_packet_type == 'stay_at_room' && val.distance_start_at > 0) {
-                            val.is_stay = true;
-
                             distanceStartAt(val.distance_start_at, i)
                         }
 
