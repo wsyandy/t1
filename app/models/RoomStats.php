@@ -376,11 +376,7 @@ trait RoomStats
                 $cache->expire($boom_num_day_key, $expire);
                 $cache->setex($room_boon_gift_sign_key, $boom_expire, $time); //爆钻时间
 
-                $boom_num++;
-                $params = ['total_value' => $total_value, 'current_value' => $current_value, 'svga_image_url' => $svga_image_url,
-                    'boom_num' => $boom_num];
-
-                $this->pushBoomIncomeMessage($params);
+                $this->pushBoomIncomeMessage($boom_config);
 
                 //临时查询
                 $sender = Users::findFirstById($sender_id);
@@ -404,10 +400,7 @@ trait RoomStats
 
                 $cache->expire($boom_list_day_key, $time);
 
-                $params = ['total_value' => $total_value, 'current_value' => $current_value,
-                    'svga_image_url' => $svga_image_url, 'boom_num' => $boom_num];
-
-                $this->pushBoomIncomeMessage($params);
+                $this->pushBoomIncomeMessage($boom_config);
             }
         }
 
@@ -467,13 +460,16 @@ trait RoomStats
     function getBoomGiftData($boom_config)
     {
         $interval_value = 50000;
-        $boom_num = $this->getBoomNum();
         $room_boon_gift_sign_key = \Rooms::generateRoomBoomGiftSignKey($this->id);
         $cache = \Rooms::getHotReadCache();
 
         // 判断房间是否在进行爆礼物活动
         if ($cache->exists($room_boon_gift_sign_key)) {
+            //取爆礼物的时间点 跨天极端情况
+            $boom_num = $this->getBoomNum($cache->get($room_boon_gift_sign_key));
             $boom_num--;
+        } else {
+            $boom_num = $this->getBoomNum();
         }
 
         $total_value = $boom_config->total_value + $interval_value * $boom_num;
