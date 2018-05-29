@@ -9,6 +9,39 @@
 class MeiTask extends \Phalcon\Cli\Task
 {
 
+    function test67Action()
+    {
+        $dest_file_name = 'chance/soft_version/' . uniqid() . '.apk';
+        $res = StoreFile::upload(APP_ROOT . "temp/android_moniqi_01_20180529.apk", $dest_file_name);
+        $url = StoreFile::getUrl($res);
+        echoLine($url);
+
+        $soft_version = SoftVersions::findFirstById(9);
+        $url = 'http://mt-development.oss-cn-hangzhou.aliyuncs.com/chance/soft_version/5b0ce1b4ee51d.apk';
+        $file_name = APP_ROOT . "temp/" . uniqid() . ".apk";
+        httpSave($url, $file_name);
+        $dest_file_name = 'chance/soft_version/' . uniqid() . '.apk';
+        $res = StoreFile::upload($file_name, $dest_file_name);
+        $soft_version->file = $dest_file_name;
+        $soft_version->save();
+        $url = StoreFile::getUrl($res);
+        echoLine($url);
+    }
+
+    function test66Action()
+    {
+        $params = 'an=1.0&code=yuewan&dno=eea122922b7b4fcfac309a754c6918bc25&fr=market_appstore_01&gc=NTo4OkM4MDI4MDo4NDA4MEA%3D&h=799c57f6466320ac853fbd7a88ecd17a&if=799D0AA8-E282-41B2-8681-84339BA35B8E&lat=31.126898&lon=121.355774&man=apple&mod=iPhone%206%20Plus&pf=ios&pf_ver=10.3.3&ts=1527568306&ua=ios/10.3.3%20net/WIFI%20language/zh-Hans_TW%20timezone/0%20model/iPhone%206%20Plus%20yuewan/1.0%20api/1.0%20build/20180529123146%20env/development&ver=1.0&verc=1';
+        $params = explode('&', $params);
+
+        foreach ($params as $param) {
+
+        }
+
+        $device = Devices::findFirstById(1);
+        $device->ua = 'ios/10.3.3%20net/WIFI%20language/zh-Hans_TW%20timezone/0%20model/iPhone%206%20Plus%20yuewan/1.0%20api/1.0%20build/20180529123146%20env/development';
+        $device->save();
+    }
+
     function test65Action()
     {
 
