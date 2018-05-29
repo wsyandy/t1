@@ -1,0 +1,162 @@
+/* pages/room/room.wxss */
+
+.room_bg {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.room_page {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  flex-direction: column;
+}
+
+.room_header {
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  padding: 0rpx 30rpx 30rpx 30rpx;
+}
+
+.room_name {
+  font-size: 36rpx;
+  color: #f0f0f0;
+  padding-bottom: 5rpx;
+}
+
+.room_number {
+  font-size: 20rpx;
+  color: rgba(255, 255, 255, 0.50);
+  align-items: center;
+}
+
+.arrow_right {
+  width: 11rpx;
+  height: 16rpx;
+  margin-left: 10rpx;
+}
+
+.room_homeowners {
+  padding-top: 20rpx;
+}
+
+.homeowners_avatar {
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 50%;
+  border: 4rpx solid transparent;
+}
+
+.nickname {
+  font-size: 34rpx;
+  color: #fff;
+  padding: 10rpx;
+}
+
+.ico_speaker {
+  width: 24rpx;
+  height: 20rpx;
+  margin-right: 20rpx;
+}
+
+.homeowners_signature {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.50);
+  justify-content: center;
+  align-items: center;
+}
+
+/*座位列表*/
+
+.seat_box {
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.seat_list {
+  flex-direction: column;
+  align-items: center;
+  width: 25%;
+  margin-bottom: 20rpx;
+}
+
+.seat_img {
+  position: relative;
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  border: 4rpx solid transparent;
+}
+
+.seat_avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.34);
+}
+
+.seat_nickname {
+  font-size: 24rpx;
+  padding-top: 10rpx;
+  color: rgba(255, 255, 255, 0.50);
+}
+
+/*是否封座位*/
+
+.seat_seal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  font-size: 48rpx;
+  color: #130a37;
+  justify-content: center;
+  align-items: center;
+}
+
+/*是否禁言*/
+
+.ico_prohibit {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 30rpx;
+  height: 30rpx;
+}
+
+/*是否正在发言*/
+
+.phonate {
+  border: 4rpx solid rgba(244, 81, 137, 0.90);
+}
+
+/*底部操作栏*/
+.tabbar{
+  width: 100%;
+  height: 120rpx;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  flex-wrap: wrap; 
+}
+.tabbar_list{
+  width: 20%;
+  justify-content: center;
+  align-items: center;
+}
+.tabbar_icon{
+  width: 64rpx;
+  height: 64rpx;
+}
+.tabbar_list:nth-child(3) .tabbar_icon{
+  width: 68rpx;
+  height: 68rpx;
+}
