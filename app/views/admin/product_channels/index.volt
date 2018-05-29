@@ -37,6 +37,9 @@
     {% if isAllowed('product_channels','web_config') %}
         <a href="/admin/product_channels/web_config/{{ product_channel.id }}" class="modal_action">web配置</a><br/>
     {% endif %}
+    {% if isAllowed('product_channels','xcx_config') %}
+        <a href="/admin/product_channels/xcx_config/{{ product_channel.id }}" class="modal_action">小程序配置</a><br/>
+    {% endif %}
 {%- endmacro %}
 
 {% macro oper_link(product_channel) %}
@@ -131,6 +134,9 @@
             {% endif %}
             {% if isAllowed('product_channels','web_config') %}
                 <a href="/admin/product_channels/web_config/${product_channel.id}" class="modal_action">web配置</a><br/>
+            {% endif %}
+            {% if isAllowed('product_channels','xcx_config') %}
+                <a href="/admin/product_channels/xcx_config/${product_channel.id}" class="modal_action">小程序配置</a><br/>
             {% endif %}
         </td>
         <td>

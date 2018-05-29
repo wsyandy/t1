@@ -339,3 +339,9 @@ define('RED_PACKET_TYPE_FOLLOW', 'follow');    //关注房主才能领取
 define('RED_PACKET_TYPE_STAY_AT_ROOM', 'stay_at_room');    //在房间满3分钟才能领取
 define('RED_PACKET_TYPE_NEARBY', 'nearby');    //附近的人才能领取
 
+//小程序解密用户信息状态
+define('XCX_OK', 0);       //成功
+define('XCX_ILLEGAL_AES_KEY', -41001);    //encodingAesKey 非法
+define('XCX_ILLEGAL_IV', -41002);    //    iv非法
+define('XCX_ILLEGAL_BUFFER', -41003);    //aes 解密失败
+define('XCX_DECODE_BASE64_ERROR', -41004);    //解密后得到的buffer非法
