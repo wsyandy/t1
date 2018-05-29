@@ -178,7 +178,7 @@ class RedPacketsController extends BaseController
                 $this->currentUser()->calDistance($red_users);
                 $distance = $red_users[0]->distance;
                 $distance = doubleval($distance) * 1000;
-                if ($red_packet->nearby_distance < $distance || isDevelopmentEnv()) {
+                if ($red_packet->nearby_distance < $distance) {
                     $geo_distance = sprintf("%0.2f", $red_packet->nearby_distance / 1000);
                     return $this->renderJSON(ERROR_CODE_FAIL, '这个红包只有' . $geo_distance . 'km内才可以抢哦！');
                 }
