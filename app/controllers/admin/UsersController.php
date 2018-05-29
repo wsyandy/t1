@@ -433,13 +433,15 @@ class UsersController extends BaseController
     function dayRankListAction()
     {
         $page = $this->params('page', 1);
-        $per_page = $this->params('per_page', 100);
+        $per_page = $this->params('per_page', 30);
         $type = $this->params('type', 'wealth');
         $stat_at = $this->params('stat_at', date("Y-m-d"));
         $product_channel_id = $this->params('product_channel_id');
         $opts = ['date' => date("Ymd", strtotime($stat_at)), 'product_channel_id' => $product_channel_id];
 
-        $users = \Users::findFieldRankList('day', $type, $page, $per_page, $opts);
+        $key = \Users::generateFieldRankListKey('day', $type, $opts);
+        $users = \Users::findFieldRankListByKey($key, $type, $page, $per_page, 500);
+
         $this->view->users = $users;
         $this->view->stat_at = $stat_at;
         $this->view->types = ['charm' => '魅力榜', 'wealth' => '财富榜'];
@@ -451,7 +453,7 @@ class UsersController extends BaseController
     function weekRankListAction()
     {
         $page = $this->params('page', 1);
-        $per_page = $this->params('per_page', 100);
+        $per_page = $this->params('per_page', 30);
         $type = $this->params('type', 'wealth');
         $stat_at = $this->params('stat_at', date("Y-m-d", beginOfWeek()));
 
@@ -462,7 +464,9 @@ class UsersController extends BaseController
 
         $opts = ['start' => $start, 'end' => $end, 'product_channel_id' => $product_channel_id];
 
-        $users = \Users::findFieldRankList('week', $type, $page, $per_page, $opts);
+        $key = \Users::generateFieldRankListKey('week', $type, $opts);
+        $users = \Users::findFieldRankListByKey($key, $type, $page, $per_page, 500);
+
         $this->view->users = $users;
         $this->view->types = ['charm' => '魅力榜', 'wealth' => '财富榜'];
         $this->view->type = $type;
@@ -474,14 +478,16 @@ class UsersController extends BaseController
     function totalRankListAction()
     {
         $page = $this->params('page', 1);
-        $per_page = $this->params('per_page', 100);
+        $per_page = $this->params('per_page', 30);
         $type = $this->params('type', 'wealth');
 
         $product_channel_id = $this->params('product_channel_id');
 
         $opts = ['product_channel_id' => $product_channel_id];
 
-        $users = \Users::findFieldRankList('total', $type, $page, $per_page, $opts);
+        $key = \Users::generateFieldRankListKey('total', $type, $opts);
+        $users = \Users::findFieldRankListByKey($key, $type, $page, $per_page, 500);
+
         $this->view->users = $users;
         $this->view->types = ['charm' => '魅力榜', 'wealth' => '财富榜'];
         $this->view->type = $type;
