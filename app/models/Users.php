@@ -2220,7 +2220,7 @@ class Users extends BaseModel
                         $distance = intval($geo_distance * 1000);
                     }
 
-                    $red_packet = RedPackets::findLastNearby($user, $distance);
+                    $red_packet = RedPackets::findLastNearby($user, $distance, $this->sex);
                     if($red_packet && !$red_packet->isGrabbed($this)){
                         $user->has_red_packet = 1;
                     }
