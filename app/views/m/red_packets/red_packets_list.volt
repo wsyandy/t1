@@ -70,10 +70,6 @@
 
                 $.authGet('/m/red_packets/red_packets_list', data, function (resp) {
 
-                    vm.submit = false;
-                    vm.page++;
-                    vm.total_page = resp.total_page;
-
                     $.each(resp.red_packets, function (i, val) {
 
                         if (!val.is_grabbed) {
@@ -93,7 +89,9 @@
                         vm.red_packets_list.push(val);
                     });
 
-
+                    vm.submit = false;
+                    vm.page++;
+                    vm.total_page = resp.total_page;
                 });
 
             },
