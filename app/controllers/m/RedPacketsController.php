@@ -190,7 +190,7 @@ class RedPacketsController extends BaseController
                     return $this->renderJSON(ERROR_CODE_FAIL, '不能抢自己的红包哦');
                 }
 
-                if ($user->isFollow($room->user)) {
+                if (!$user->isFollow($room->user)) {
                     $client_url = '/m/red_packets/followers';
                     return $this->renderJSON(ERROR_CODE_FORM, '需要关注房主才可领取', ['client_url' => $client_url]);
                 }
