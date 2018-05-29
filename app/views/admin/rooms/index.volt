@@ -67,7 +67,7 @@
         音频ID:<a href="/admin/audios?audio[id_eq]={{ room.audio_id }}">{{ room.audio_id }}</a><br/>
     {% endif %}
     是否热门：{{ room.hot_text }}<br/>
-    房间类型：{{ room.types }}
+    房间类型：{{ room.types_text }}
 {% endmacro %}
 
 {% macro room_status_info(room, boom_config) %}
@@ -130,7 +130,7 @@
             音频ID:<a href="/admin/audios?audio[id_eq]=${ room.audio_id }">${ room.audio_id }</a><br/>
             {@/if}
             是否热门：${ room.hot_text }<br/>
-            房间类型：${ room.types }
+            房间类型：${ room.types_text }
         </td>
         <td>
             {% if isAllowed('users','index') %}

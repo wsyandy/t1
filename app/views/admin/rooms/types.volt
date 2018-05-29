@@ -1,5 +1,5 @@
 {{ js('/js/common.js') }}
-{% set f = simple_form(c('/admin/rooms/update_types?id='~id),[ 'method': 'post' , 'class': 'ajax_model_form','data-model':'types']) %}
+{% set f = simple_form(c('/admin/rooms/update_types?id='~id),[ 'method': 'post' , 'class': 'ajax_model_form','data-model':'room']) %}
 
 <a class="batch_select" data-select_option="all" data-target="select_partner">全选</a>
 <a class="batch_select" data-select_option="reverse" data-target="select_partner"> 反选</a>
