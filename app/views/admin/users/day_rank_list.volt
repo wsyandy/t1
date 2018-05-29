@@ -17,7 +17,7 @@
 </form>
 
 {% macro avatar_image(user) %}
-    <img src="{{ user.avatar_small_url }}" height="50"/>
+    <a href="/admin/users/detail?id={{ user.id }}"><img src="{{ user.avatar_small_url }}" height="50"/></a>
 {% endmacro %}
 
 {% macro user_info(user) %}
