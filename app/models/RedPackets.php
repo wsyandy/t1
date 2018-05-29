@@ -85,7 +85,8 @@ class RedPackets extends BaseModel
 
     function toSimpleJson()
     {
-        return [
+
+        $data = [
             'id' => $this->id,
             'user_id' => $this->user_id,
             'user_nickname' => $this->user->nickname,
@@ -99,6 +100,12 @@ class RedPackets extends BaseModel
             'distance_start_at' => $this->distance_start_at,
             'is_grabbed' => $this->is_grabbed
         ];
+
+        if(isDevelopmentEnv()){
+            $data['user_nickname'] = $this->user->nickname.'-'.$this->created_at_text;
+        }
+
+        return $data;
     }
 
     function toBasicJson()
@@ -204,6 +211,11 @@ class RedPackets extends BaseModel
         $red_packets = \RedPackets::findByIds($red_packet_ids);
 
         foreach ($red_packets as $red_packet) {
+
+            if(isDevelopmentEnv()){
+                self::delay(300)->asyncCheckRefund($red_packet->id);
+            }
+
             $distance_start_at = $red_packet->getDistanceStartTime($user);
             $red_packet->distance_start_at = $distance_start_at;
             $red_packet->is_grabbed = $red_packet->isGrabbed($user);
