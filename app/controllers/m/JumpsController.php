@@ -28,7 +28,7 @@ class JumpsController extends BaseController
                 if ($game_history->status == GAME_STATUS_WAIT) {
                     $root = $this->getRoot();
                     $image_url = $root . 'images/go_game.png';
-                    $body = ['action' => 'game_notice', 'type' => 'start', 'content' => $current_user->nickname . "发起了跳一跳游戏",
+                    $body = ['action' => 'game_notice', 'type' => 'start', 'content' => "房主发起了跳一跳游戏，上麦即玩！",
                         'image_url' => $image_url, 'client_url' => 'url://m/jumps/transfer_game_url?room_id=' . $room_id . '&game_history_id=' . $game_history_id];
 
                     $game_history->sendGameMessage($current_user, $body);

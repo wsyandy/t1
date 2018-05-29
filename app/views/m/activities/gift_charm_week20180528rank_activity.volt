@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-{{ theme_css('/m/css/gift_week_20180528_rank_activity1.css') }}
+{{ theme_css('/m/css/gift_week_20180528_rank_activity2.css') }}
 {{ theme_js('/m/js/resize.js') }}
 {{ block_end() }}
 <div class="vueBox" id="app">
@@ -116,10 +116,10 @@
                     <span v-show="curIdx==3">情侣榜为情侣互相赠送的礼物周总值进行排名</span>
                 </div>
                 <div class="myself">
-                    <img class="myself_avatar" :src="current_user_info['avatar_url']" alt="" v-show="curIdx!=3">
+                    <img class="myself_avatar" src="{{ current_user['avatar_url'] }}" alt="">
                     <div class="myself_text">
-                        <div class="myself_name" v-show="curIdx!=3">
-                            <span v-text="current_user_info['nickname']"></span>
+                        <div class="myself_name">
+                            <span>{{ current_user['nickname'] }}</span>
                         </div>
                         <div class="myself_info" v-show="curIdx==0">
                             <p>贡献榜排名：<span class="highlight" v-text="current_user_info['current_rank']"></span>名</p>
@@ -216,7 +216,7 @@
                 </li>
                 <li>
                     <span class="rule_num">5</span>
-                    <p>每个榜单的冠军奖励均为新礼物冠名权、【九尾妖狐】座驾7天、绝版礼物【豪华游艇】赠送权*1</p>
+                    <p>每个榜单的冠军奖励均为新礼物冠名权、【九尾妖狐】座驾7天、绝版礼物【豪华游艇】赠送权*1（情侣榜二人均可获得礼物及座驾）</p>
                 </li>
             </ul>
             <div class="rule_right">- 活动最终解释权归Hi语音官方团队 -</div>
