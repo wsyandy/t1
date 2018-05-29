@@ -33,6 +33,11 @@ class Orders extends BaseModel
      */
     private $_payment;
 
+    /**
+     * @type Operators
+     */
+    private $_operator;
+
     static $STATUS = [
         ORDER_STATUS_WAIT => '等待支付',
         ORDER_STATUS_SUCCESS => '支付成功',
