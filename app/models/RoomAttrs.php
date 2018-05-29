@@ -1091,11 +1091,11 @@ trait RoomAttrs
             $room_ids[] = $gift_order->room_id;
         }
 
-        $hot_rooms = Rooms::find(['conditions' => 'status = :status:', 'bind' => ['status' => STATUS_ON]]);
-
-        foreach ($hot_rooms as $hot_room) {
-            $room_ids[] = $hot_room->id;
-        }
+//        $hot_rooms = Rooms::find(['conditions' => 'status = :status:', 'bind' => ['status' => STATUS_ON]]);
+//
+//        foreach ($hot_rooms as $hot_room) {
+//            $room_ids[] = $hot_room->id;
+//        }
 
         $room_ids = array_unique($room_ids);
         return $room_ids;
