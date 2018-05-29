@@ -181,7 +181,8 @@ class RedPackets extends BaseModel
         $push_data = [
             'type' => 'create',
             'content' => $user->nickname . '在房间内发红包，手快有，手慢无，赶紧去抢吧',
-            'red_packet_type' => RED_PACKET_TYPE_NEARBY
+            'red_packet_type' => RED_PACKET_TYPE_NEARBY,
+            'sex' => $red_packet->sex
         ];
 
         self::sendRedPacketMessageToUsers($user, $room, $push_data);
@@ -363,7 +364,7 @@ class RedPackets extends BaseModel
 
         //首页下沉通知
         if (isDevelopmentEnv() && $type == 'create' && $red_packet_type == RED_PACKET_TYPE_NEARBY) {
-            self:: pushRedPacketSinkMessage($room, $content);
+            self:: pushRedPacketSinkMessage($user, $room, $opts);
         }
     }
 
@@ -397,21 +398,27 @@ class RedPackets extends BaseModel
     }
 
     //下沉式
-    static function pushRedPacketSinkMessage($room, $content)
+    static function pushRedPacketSinkMessage($current_user, $room, $opts)
     {
-        //这里还没有做是否符合附近人的条件
-        $cond = ['conditions' => 'user_status!=:user_status: and last_at>:last_at:',
-            'bind' => ['user_status' => USER_TYPE_SILENT, 'last_at' => time() - 30 * 60],
-            'order' => 'last_at desc'
-        ];
+
+        $content = fetch($opts, 'content');
+        $sex = fetch($opts, 'sex');
 
         $client_url = 'app://rooms/detail?id=' . $room->id;
-        $users = \Users::findPagination($cond, 1, 500);
+        $users = $current_user->nearby(1, 300);
 
         foreach ($users as $user) {
 
-            $body = ['action' => 'sink_notice', 'title' => '快来抢红包啦！！', 'content' => $content, 'client_url' => $client_url];
+            if($user->current_room_id == $room->id){
+                continue;
+            }
 
+            if($sex != USER_SEX_COMMON && $user->sex != $sex){
+                continue;
+            }
+
+
+            $body = ['action' => 'sink_notice', 'title' => '快来抢红包啦！！', 'content' => $content, 'client_url' => $client_url];
             $intranet_ip = $user->getIntranetIp();
             $receiver_fd = $user->getUserFd();
 
