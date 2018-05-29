@@ -150,12 +150,12 @@ class RedPacketsController extends BaseController
             if($num == 4){
                 return $this->renderJSON(ERROR_CODE_FAIL, '这个红包只有小哥哥才可以抢哦！');
             }
-            
+
             $error_reason = '手慢了，红包抢完了！';
             if($num == 5){
                 return $this->renderJSON(ERROR_CODE_SUCCESS, $error_reason, ['get_diamond' => null]);
             }
-            if($num == 4){
+            if($num == 6){
                 return $this->renderJSON(ERROR_CODE_SUCCESS, $error_reason, ['get_diamond' => 0]);
             }
 
