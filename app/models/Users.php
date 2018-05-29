@@ -2226,7 +2226,7 @@ class Users extends BaseModel
                     }
                 }
 
-                debug('has_red_packet', $this->id, $user->id, $user->distance, $geo_distance, $user->room_id, $user->current_room_id, 'has_red_packet', $user->has_red_packet);
+                debug('has_red_packet', $this->id, $user->id, $user->distance, $geo_distance, 'room_id', $user->room_id, $user->current_room_id, 'has_red_packet', $user->has_red_packet);
             }
         }
     }
