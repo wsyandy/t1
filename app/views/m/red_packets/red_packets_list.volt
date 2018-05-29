@@ -20,8 +20,8 @@
                      @click="toGrabRedPacket(v.id)">${v.text}
                 </div>
 
-               {# <div class="num red_list_style red_list_time " v-if="v.is_stay" :class="['daojishi'+i]"
-                     @click="toGrabRedPacket(v.id)"></div>#}
+                <div class="num red_list_style red_list_time " v-if="v.is_stay" :class="['daojishi'+i]"
+                     @click="toGrabRedPacket(v.id)"></div>
 
                 <div class="num red_list_style red_list_qiang " :class="['daojishiJS'+i]" style="display: none;"
                      v-if="!v.is_grabbed && v.red_packet_type == 'stay_at_room'" @click="toGrabRedPacket(v.id)">抢
