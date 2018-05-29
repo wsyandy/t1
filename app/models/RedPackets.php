@@ -427,7 +427,7 @@ class RedPackets extends BaseModel
             }
 
             $result = \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
-            info('推送结果=>', $result, '结构=>', $body);
+            info($user->id, $receiver_fd, '推送结果=>', $result, '结构=>', $body);
         }
     }
 
