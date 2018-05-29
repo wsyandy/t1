@@ -9,6 +9,15 @@
 class MeiTask extends \Phalcon\Cli\Task
 {
 
+    function test68Action()
+    {
+        $cache = Users::getHotWriteCache();
+        $boom_num_day_key = 'room_boom_num_room_id_' . 54 . "_" . date("Ymd");
+        $room_boon_gift_sign_key = \Rooms::generateRoomBoomGiftSignKey(54);
+        echoLine($cache->ttl($room_boon_gift_sign_key), date("Ymd H:i:s", $cache->get($room_boon_gift_sign_key)));
+        echoLine($cache->ttl($boom_num_day_key), $cache->get($boom_num_day_key));
+    }
+
     function test67Action()
     {
         $dest_file_name = 'chance/soft_version/' . uniqid() . '.apk';
