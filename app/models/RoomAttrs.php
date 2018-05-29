@@ -433,7 +433,7 @@ trait RoomAttrs
             'top_text' => $this->top_text,
             'user_uid' => $this->user_uid,
             'total_score_by_cache' => $this->total_score_by_cache,
-            'types_text'=>$this->types_text
+            'types_text' => $this->types_text
         ];
 
         return array_merge($opts, $this->toJson());
@@ -616,7 +616,7 @@ trait RoomAttrs
 
         return false;
     }
-
+    
     function isInShieldRoomList()
     {
         $hot_shield_room_list_key = Rooms::generateShieldHotRoomListKey();
@@ -662,19 +662,17 @@ trait RoomAttrs
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day':
-                {
-                    $date = fetch($opts, 'date', date("Ymd"));
-                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                    break;
-                }
-            case 'week':
-                {
-                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                    break;
-                }
+            case 'day': {
+                $date = fetch($opts, 'date', date("Ymd"));
+                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                break;
+            }
+            case 'week': {
+                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                break;
+            }
             default:
                 return '';
         }
@@ -1142,16 +1140,17 @@ trait RoomAttrs
         return ROOM_THEME_TYPE_BROADCAST == $this->theme_type || ROOM_THEME_TYPE_USER_BROADCAST == $this->theme_type;
     }
 
-    function getTypesText(){
+    function getTypesText()
+    {
         $types = \Rooms::$TYPES;
-        $type_arr = explode(',',$this->types);
+        $type_arr = explode(',', $this->types);
         $arr = [];
-        foreach($type_arr as $v){
+        foreach ($type_arr as $v) {
             if ($v) {
-                array_push($arr, fetch($types,$v));
+                array_push($arr, fetch($types, $v));
             }
         }
-        $types_text = implode(',',$arr);
+        $types_text = implode(',', $arr);
         return $types_text;
     }
 }
