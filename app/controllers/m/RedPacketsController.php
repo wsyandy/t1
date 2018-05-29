@@ -36,17 +36,20 @@ class RedPacketsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '您不在当前房间哦，请重进！');
         }
 
-        if($num < 5){
+        if ($num < 5) {
             return $this->renderJSON(ERROR_CODE_FAIL, '红包个数不能少于5个');
         }
-        if($num > 100){
+        if ($num > 100) {
             return $this->renderJSON(ERROR_CODE_FAIL, '红包个数不能大于100个');
         }
 
-        if ($red_packet_type == RED_PACKET_TYPE_NEARBY || $red_packet_type == RED_PACKET_TYPE_FOLLOW) {
-            if ($diamond < 1000) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不能小于1000钻');
-            }
+        if ($red_packet_type == RED_PACKET_TYPE_NEARBY && $diamond < 10000) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不能小于10000钻');
+
+        } elseif (($red_packet_type == RED_PACKET_TYPE_FOLLOW || $red_packet_type == RED_PACKET_TYPE_STAY_AT_ROOM)
+            && $diamond < 1000) {
+
+            return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不能小于1000钻');
         } else {
             if ($diamond < 100) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不能小于100钻');
@@ -151,7 +154,7 @@ class RedPacketsController extends BaseController
         $user_avatar_url = $red_packet->user->avatar_url;
 
         if ($this->request->isAjax()) {
-            
+
             if ($red_packet->status == STATUS_OFF) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '已经抢光啦');
             }

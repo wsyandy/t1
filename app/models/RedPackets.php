@@ -173,7 +173,8 @@ class RedPackets extends BaseModel
     {
 
         $red_packet = \RedPackets::findFirstById($red_packet_id);
-        if (!$red_packet || $red_packet->status == STATUS_ON) {
+        if (!$red_packet || $red_packet->status == STATUS_OFF) {
+            info('已领万', $red_packet_id);
             return;
         }
 
