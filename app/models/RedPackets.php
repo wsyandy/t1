@@ -70,9 +70,6 @@ class RedPackets extends BaseModel
 
             info('红包已经结束回收，删除对应进行中的红包id', $underway_red_packet_list_key, $this->id, $this->status);
 
-            self::pushRedPacketMessageForUser($this->room, $this->user, 'bc');
-
-
             if ($this->diamond >= 10000) {
                 $this->user->has_red_packet = STATUS_OFF;
                 $this->user->update();
@@ -102,8 +99,8 @@ class RedPackets extends BaseModel
             'is_grabbed' => $this->is_grabbed
         ];
 
-        if(isDevelopmentEnv()){
-            $data['user_nickname'] = $this->user->nickname.'-'.$this->created_at_text;
+        if (isDevelopmentEnv()) {
+            $data['user_nickname'] = $this->user->nickname . '-' . $this->created_at_text;
         }
 
         return $data;
@@ -174,6 +171,13 @@ class RedPackets extends BaseModel
         // 红包退款
         self::delay($time)->asyncCheckRefund($red_packet->id);
 
+        $push_data = [
+            'type' => 'create',
+            'content' => $user->nickname . '在房间内发红包，手快有，手慢无，赶紧去抢吧'
+        ];
+
+        self::sendRedPacketMessageToUsers($user, $room, $push_data);
+
         return $red_packet;
     }
 
@@ -194,8 +198,6 @@ class RedPackets extends BaseModel
 
         info('回收红包', $red_packet->id, $red_packet->user_id, $red_packet->room_id, $red_packet->balance_diamond);
 
-        $red_packet->balance_diamond = 0;
-        $red_packet->balance_num = 0;
         $red_packet->status = STATUS_OFF;
         $red_packet->update();
     }
@@ -213,7 +215,7 @@ class RedPackets extends BaseModel
 
         foreach ($red_packets as $red_packet) {
 
-            if(isDevelopmentEnv()){
+            if (isDevelopmentEnv()) {
                 self::delay(300)->asyncCheckRefund($red_packet->id);
             }
 
@@ -271,14 +273,19 @@ class RedPackets extends BaseModel
             $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $user->mobile, 'target_id' => $this->id];
             \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_RED_PACKET_INCOME, $get_diamond, $opts);
 
+
             $opts = [
-                'type' => 'update', 'notify_type' => 'ptp',
+                'type' => 'update',
                 'content' => '恭喜' . $user->nickname . '抢到了' . $get_diamond . '个钻石'
             ];
 
-            $room = $this->room;
+            self::sendRedPacketMessageToUsers($user, $this->room, $opts);
+        }
 
-            self::sendSocketForRedPacket($user, $room, $opts);
+        //红包抢完公屏
+        if ($red_racket->status == STATUS_OFF) {
+            $content = $this->user->nickname . '发的红包已抢完';
+            self::sendRedPacketMessageToUsers($user, $this->room, ['type' => 'finish', 'content' => $content]);
         }
 
         return $get_diamond;
@@ -309,16 +316,12 @@ class RedPackets extends BaseModel
 
             $this->balance_diamond = $balance_diamond - $get_diamond;
             $this->balance_num = $balance_num - 1;
-            $this->update();
 
             if ($this->balance_diamond <= 0) {
                 $this->status = STATUS_OFF;
-                $this->update();
-
-                //红包抢完公屏socket，红包过时回收的话只发送红包socket，所以两者放在afterUpdate统一处理
-                $content = $this->user->nickname . '发的红包已抢完';
-                self::pushRedPacketTopTopicMessage($this->room, $content);
             }
+
+            $this->save();
 
             $red_user_list_key = $this->generateRedPacketUserListKey();
             $cache->zadd($red_user_list_key, time(), $user_id);
@@ -340,25 +343,25 @@ class RedPackets extends BaseModel
         return $user_get_red_packet_ids;
     }
 
-    static function sendSocketForRedPacket($user, $room, $opts)
+    static function sendRedPacketMessageToUsers($user, $room, $opts)
     {
+
         $type = fetch($opts, 'type');
         $content = fetch($opts, 'content');
-        $notify_type = fetch($opts, 'notify_type');
 
         //红包socket
-        self::pushRedPacketMessageForUser($room, $user, $notify_type);
+        self::pushRedPacketNumToUser($user, $room, $type);
 
         //红包公屏socket
         self::pushRedPacketTopTopicMessage($room, $content);
 
         //首页下沉通知
         if (isDevelopmentEnv() && $type == 'create') {
-            self:: pushRedPacketSinkMessage($room->id, $content);
+            self:: pushRedPacketSinkMessage($room, $content);
         }
     }
 
-    //红包的公屏socket
+    //红包的公屏
     static function pushRedPacketTopTopicMessage($room, $content)
     {
         $content_type = 'red_packet';
@@ -366,24 +369,38 @@ class RedPackets extends BaseModel
         $room->pushTopTopicMessage($system_user, $content, $content_type);
     }
 
-    //红包socket
-    static function pushRedPacketMessageForUser($room, $user, $notify_type)
+    //红包个数
+    static function pushRedPacketNumToUser($user, $room, $notify_type)
     {
         $url = self::generateRedPacketUrl($room->id);
-        $underway_red_packet_num = $room->getNotDrawRedPacketNum($user);
-        $room->pushRedPacketMessage($user, $underway_red_packet_num, $url, $notify_type);
+
+        if ($notify_type == 'update') {
+            $underway_red_packet_num = $room->getNotDrawRedPacketNum($user);
+            info($room->id, $user->id, $underway_red_packet_num);
+            $room->pushRedPacketNumToUser($user, $underway_red_packet_num, $url);
+        } else {
+
+            $users = $room->findTotalRealUsers();
+            foreach ($users as $other_user) {
+                $underway_red_packet_num = $room->getNotDrawRedPacketNum($other_user);
+                info($room->id, $user->id, $underway_red_packet_num);
+                $room->pushRedPacketNumToUser($other_user, $underway_red_packet_num, $url);
+            }
+        }
+
     }
 
     //下沉式
-    static function pushRedPacketSinkMessage($room_id, $content)
+    static function pushRedPacketSinkMessage($room, $content)
     {
         //这里还没有做是否符合附近人的条件
         $cond = ['conditions' => 'user_status!=:user_status: and last_at>:last_at:',
-            'bind' => ['user_status' => USER_TYPE_SILENT, 'last_at' => time() - 30 * 60]
+            'bind' => ['user_status' => USER_TYPE_SILENT, 'last_at' => time() - 30 * 60],
+            'order' => 'last_at desc'
         ];
 
-        $client_url = 'app://rooms/detail?id=' . $room_id;
-        $users = \Users::find($cond);
+        $client_url = 'app://rooms/detail?id=' . $room->id;
+        $users = \Users::findPagination($cond, 1, 500);
 
         foreach ($users as $user) {
 

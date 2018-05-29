@@ -87,14 +87,6 @@ class RedPacketsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '余额不足');
         }
 
-        $opts = [
-            'type' => 'create',
-            'content' => $user->nickname . '在房间内发红包，手快有，手慢无，赶紧去抢吧',
-            'notify_type' => 'bc'
-        ];
-
-        \RedPackets::sendSocketForRedPacket($user, $room, $opts);
-
         return $this->renderJSON(ERROR_CODE_SUCCESS, '发布成功', ['send_red_packet_history' => $send_red_packet_history->toJson()]);
     }
 

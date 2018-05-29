@@ -239,10 +239,10 @@ trait RoomMessages
         $this->push($body);
     }
 
-    function pushRedPacketMessage($user, $num, $url, $notify_type = 'ptp')
+    function pushRedPacketNumToUser($user, $num, $url, $notify_type = 'ptp')
     {
         $body = ['action' => 'red_packet', 'notify_type' => $notify_type, 'red_packet' => ['num' => $num, 'client_url' => $url]];
-        info('推送红包信息', $body);
+
         if ($user->canReceiveBoomGiftMessage()) {
             $this->pushToUser($user, $body);
         }
