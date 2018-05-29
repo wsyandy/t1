@@ -112,7 +112,7 @@ class RedPacketsController extends BaseController
         if ($this->request->isAjax()) {
 
             $page = $this->params('page', 1);
-            $pre_page = $this->params('pre_page', 10);
+            $pre_page = $this->params('per_page', 10);
             //用户进来的时间
             $room = $user->current_room;
             if (!$room) {
