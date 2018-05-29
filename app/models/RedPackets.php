@@ -210,13 +210,17 @@ class RedPackets extends BaseModel
     }
 
     // 房间里的红包
-    static function findRedPacketList($user, $room, $page, $per_page = 20)
+    static function findRedPacketList($user, $room, $page, $per_page)
     {
 
         $cache_db = \Users::getUserDb();
         $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($room->id);
         $total = $cache_db->zcard($underway_red_packet_list_key);
         $offset = ($page - 1) * $per_page;
+        if($offset >= $total){
+          info('越界', $user->id, $room->id, $page, $per_page, $total, $offset);
+        }
+
         $red_packet_ids = $cache_db->zrevrange($underway_red_packet_list_key, $offset, $offset + $per_page - 1);
         $red_packets = \RedPackets::findByIds($red_packet_ids);
 

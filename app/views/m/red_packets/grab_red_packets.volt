@@ -50,9 +50,9 @@
         <div class="gz_fangzhu show">
             <i class="close" @click="closeAttention()"></i>
             <div class="pic">
-                <img src="{{ user_avatar_url }}">
+                <img src="{{ room_user_avatar_url }}">
             </div>
-            <h3>{{ user_nickname }}</h3>
+            <h3>{{ room_user_nickname }}</h3>
             <p>是否关注房主，领取红包</p>
             <div class="gz_btn" @click="toAttention()">关注并领取</div>
         </div>

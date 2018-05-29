@@ -104,14 +104,14 @@ class RedPacketsController extends BaseController
         if ($this->request->isAjax()) {
 
             $page = $this->params('page', 1);
-            $pre_page = $this->params('per_page', 10);
+            $per_page = $this->params('per_page', 10);
             //用户进来的时间
             $room = $user->current_room;
             if (!$room) {
                 $room = \Rooms::findFirstById($room_id);
             }
 
-            $red_packets = \RedPackets::findRedPacketList($user, $room, $page, $pre_page);
+            $red_packets = \RedPackets::findRedPacketList($user, $room, $page, $per_page);
             if ($red_packets) {
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '红包列表',
                     $red_packets->toJson('red_packets', 'toSimpleJson')
@@ -143,7 +143,7 @@ class RedPacketsController extends BaseController
         $distance_start_at = 0;
 
         $user_nickname = $red_packet->user->nickname;
-        $user_avatar_url = $red_packet->user->avatar_url;
+        $user_avatar_url = $red_packet->user->avatar_small_url;
 
         if ($this->request->isAjax()) {
 
@@ -200,6 +200,8 @@ class RedPacketsController extends BaseController
         $this->view->red_packet = $red_packet;
         $this->view->user_nickname = $user_nickname;
         $this->view->user_avatar_url = $user_avatar_url;
+        $this->view->room_user_nickname = $room->user->nickname;
+        $this->view->room_user_avatar_url = $room->user->avatar_small_url;
         $this->view->distance_start_at = $distance_start_at;
     }
 
