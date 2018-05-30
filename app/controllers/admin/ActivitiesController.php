@@ -12,7 +12,7 @@ class ActivitiesController extends BaseController
     function indexAction()
     {
         $cond = $this->getConditions('activity');
-        $cond['order'] = 'rank desc, id desc';
+        $cond['order'] = 'status desc, rank desc, id desc';
         $page = $this->params('page');
         $activities = \Activities::findPagination($cond, $page);
         $this->view->activities = $activities;

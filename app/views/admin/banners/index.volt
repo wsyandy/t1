@@ -45,4 +45,16 @@
             $("#search_form").submit();
         });
     });
+
+</script>
+<script type="text/javascript">
+    $(function () {
+        $('.selectpicker').selectpicker();
+
+        {% for banner in banners %}
+        {% if banner.status != 1 %}
+        $("#banner_{{ banner.id }}").css({"background-color": "grey"});
+        {% endif %}
+        {% endfor %}
+    })
 </script>
