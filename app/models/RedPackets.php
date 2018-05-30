@@ -394,7 +394,7 @@ class RedPackets extends BaseModel
         self::pushRedPacketTopTopicMessage($room, $content);
 
         //首页下沉通知
-        if (isDevelopmentEnv() && $type == 'create' && $red_packet_type == RED_PACKET_TYPE_NEARBY) {
+        if ($type == 'create' && $red_packet_type == RED_PACKET_TYPE_NEARBY) {
             self:: pushRedPacketSinkMessage($user, $room, $opts);
         }
     }
