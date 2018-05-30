@@ -296,12 +296,11 @@ class RoomsController extends BaseController
 
         // 发起pk
         $pk_history = $room->getPkHistory();
-
         if ($pk_history) {
             $res['pk_history'] = $pk_history->toSimpleJson();
         }
 
-        if (isInternalIp($this->remoteIp()) || isDevelopmentEnv()) {
+        if (isInternalIp($this->remoteIp()) || $this->currentUser()->isCompanyUser() || isDevelopmentEnv()) {
             // 房间红包
             $underway_red_packet_num = $room->getNotDrawRedPacketNum($this->currentUser());
             if ($underway_red_packet_num) {

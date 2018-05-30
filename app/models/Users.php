@@ -3672,42 +3672,51 @@ class Users extends BaseModel
         $cache->expire($current_day_company_user_send_diamond_to_personage_num, $past_at);
     }
 
-    function canSendToUser($receiver_ids, $gift_amount)
+    function canConsumeDiamondToUser($receiver_ids, $amount)
     {
-        if (!$this->isWhiteListUser()) {
 
-            if ($this->isCompanyUser()) {
-                $hot_cache = \Users::getHotWriteCache();
-                $key = 'current_day_company_user_' . date('Y-m-d', time());
-                $send_number = $hot_cache->zscore($key, $this->id);
-                $plan_number = $gift_amount + $send_number;
+        if ($this->isWhiteListUser()) {
+            return true;
+        }
 
-                if ($plan_number > 100) {
+        if (!$this->isCompanyUser()) {
+            return true;
+        }
 
-                    //内部账号使用
+        $hot_cache = \Users::getHotWriteCache();
+        $key = 'current_day_company_user_' . date('Y-m-d');
+        $send_number = $hot_cache->zscore($key, $this->id);
+        $plan_number = $amount + $send_number;
 
-                    $receivers = Users::findByIds($receiver_ids);
+        if ($plan_number <= 100) {
+            return true;
+        }
 
-                    foreach ($receivers as $receiver) {
+        if(!is_array($receiver_ids) && is_numeric($receiver_ids))
+        {
+            $receiver_ids = [intval($receiver_ids)];
+        }
 
-                        if (!$receiver->isCompanyUser()) {
-                            return false;
-                        }
-                    }
-                }
+        //内部账号使用
+        $receivers = Users::findByIds($receiver_ids);
+        foreach ($receivers as $receiver) {
+            if (!$receiver->isCompanyUser()) {
+                return false;
             }
         }
 
         return true;
     }
 
+    // 消费钻石的白名单
     function isWhiteListUser()
     {
-        $white_list = [100101, 100102, 100103, 1003380, 8888, 1009518, 1106650];
 
+        $white_list = [100101, 100102, 100103, 1003380, 8888, 1009518, 1106650];
         if (in_array($this->id, $white_list)) {
             return true;
         }
+
         return false;
     }
 
