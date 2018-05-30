@@ -232,8 +232,12 @@ class RedPackets extends BaseModel
 
         $user = $red_packet->user;
         if ($red_packet->balance_diamond > 0) {
-            $opts = ['remark' => '红包余额返还钻石' . $red_packet->balance_diamond, 'mobile' => $user->mobile, 'target_id' => $red_packet->id];
-            \AccountHistories::changeBalance($user, ACCOUNT_TYPE_RED_PACKET_RESTORATION, $red_packet->balance_diamond, $opts);
+
+            $amount = $red_packet->balance_diamond;
+            $opts = ['remark' => '红包余额返还钻石' .$amount , 'mobile' => $user->mobile, 'target_id' => $red_packet->id];
+            \AccountHistories::changeBalance($user, ACCOUNT_TYPE_RED_PACKET_RESTORATION, $amount, $opts);
+
+            \Chats::sendTextSystemMessage($user, "红包退款通知：红包超过24小时未被领取，" . $amount . "钻已返还到您的账户，请注意查收~");
         }
 
         info('回收红包', $red_packet->id, $red_packet->user_id, $red_packet->room_id, $red_packet->balance_diamond);

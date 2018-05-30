@@ -145,6 +145,7 @@ class Chats extends BaseModel
             $user = Users::findFirstById($user_id);
         } else {
             $user = $user_id;
+            $user_id = $user->id;
         }
 
         $content_type = CHAT_CONTENT_TYPE_TEXT;
