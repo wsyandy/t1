@@ -79,26 +79,26 @@ class OrdersController extends BaseController
 
             $user = \Users::findFirstById($user_id);
             if (isBlank($user)) {
-                return renderJSON(ERROR_CODE_FAIL, '用户不存在');
+                return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
             }
 
             list($error_code, $error_reason, $order) = \Orders::createOrder($user, null, ['amount' => $amount, 'operator_id' => $this->currentOperator()->id]);
 
             if ($error_code != ERROR_CODE_SUCCESS) {
-                return renderJSON(ERROR_CODE_FAIL, $error_reason);
+                return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
             }
 
             $payment_channel = \PaymentChannels::getManualRechargeChannel();
 
             if (isBlank($payment_channel)) {
-                return renderJSON(ERROR_CODE_FAIL, '无可用的人工支付渠道');
+                return $this->renderJSON(ERROR_CODE_FAIL, '无可用的人工支付渠道');
             }
 
             $payment = \Payments::createPayment($user, $order, $payment_channel, ['diamond' => $diamond,
                 'gold' => $gold, 'paid_amount' => $paid_amount]);
 
             if (isBlank($payment)) {
-                return renderJSON(ERROR_CODE_FAIL, '创建支付失败');
+                return $this->renderJSON(ERROR_CODE_FAIL, '创建支付失败');
             }
 
             //触发afterUpdate
