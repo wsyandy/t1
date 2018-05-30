@@ -333,7 +333,7 @@ class RedPackets extends BaseModel
     function getRedPacketDiamond($user_id)
     {
 
-        if($this->status == STATUS_OFF || $this->balance_diamond < 1){
+        if ($this->status == STATUS_OFF || $this->balance_diamond < 1) {
             return 0;
         }
 
@@ -348,10 +348,10 @@ class RedPackets extends BaseModel
         $min_diamond = 1;
         $max_diamond = ceil($this->diamond * 0.3);
 
-        if($this->red_packet_type == RED_PACKET_TYPE_NEARBY){
+        if ($this->red_packet_type == RED_PACKET_TYPE_NEARBY) {
             $min_diamond = 50;
         }
-        if($this->red_packet_type == RED_PACKET_TYPE_FOLLOW || $this->red_packet_type == RED_PACKET_TYPE_STAY_AT_ROOM){
+        if ($this->red_packet_type == RED_PACKET_TYPE_FOLLOW || $this->red_packet_type == RED_PACKET_TYPE_STAY_AT_ROOM) {
             $min_diamond = 5;
         }
 
@@ -362,19 +362,17 @@ class RedPackets extends BaseModel
         } else {
 
             $user_rate = mt_rand(1, 100);
-
-            if($user_rate < mt_rand(60, 80)){
-
-            }else{
-
-            }
-
-            $usable_balance_diamond = $balance_diamond - ($balance_num - 1);
-            if ($usable_balance_diamond > 0) {
-                if ($usable_balance_diamond > ceil($this->diamond * 0.5)) {
-                    $get_diamond = mt_rand(1, ceil($this->diamond * 0.4));
+            if ($user_rate < mt_rand(60, 80)) {
+                if ($avg_diamond - ceil($this->diamond * 0.1) < $min_diamond) {
+                    $get_diamond = mt_rand($min_diamond, $avg_diamond + ceil($this->diamond * 0.1));
                 } else {
-                    $get_diamond = mt_rand(1, $usable_balance_diamond);
+                    $get_diamond = mt_rand($avg_diamond - ceil($this->diamond * 0.1), $avg_diamond + ceil($this->diamond * 0.1));
+                }
+            } else {
+                if (mt_rand(1, 100) < 50) {
+                    $get_diamond = mt_rand($min_diamond, ceil($this->diamond * 0.1));
+                } else {
+                    $get_diamond = mt_rand(ceil($this->diamond * 0.2), $max_diamond);
                 }
             }
         }
