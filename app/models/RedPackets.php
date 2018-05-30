@@ -214,7 +214,7 @@ class RedPackets extends BaseModel
         $push_data = [
             'type' => 'create',
             'content' => $user->nickname . '在房间内发红包，手快有，手慢无，赶紧去抢吧',
-            'red_packet_type' => RED_PACKET_TYPE_NEARBY,
+            'red_packet_type' => $red_packet->red_packet_type,
             'sex' => $red_packet->sex
         ];
 
