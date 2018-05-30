@@ -331,11 +331,11 @@ trait RoomAttrs
         return $game_history;
     }
 
-    function getTimeForUserInRoom($user_id)
+    function getUserEnterRoomTime($user_id)
     {
         $hot_cache = self::getHotWriteCache();
-        $real_user_key = $this->getRealUserListKey();
-        $time = $hot_cache->zscore($real_user_key, $user_id);
+        $user_key = $this->getEnterRoomUserListKey();
+        $time = $hot_cache->zscore($user_key, $user_id);
         return $time;
     }
 
@@ -1112,6 +1112,11 @@ trait RoomAttrs
     function getRealUserListKey()
     {
         return 'room_real_user_list_' . $this->id;
+    }
+
+    function getEnterRoomUserListKey()
+    {
+        return 'room_enter_room_user_list_' . $this->id;
     }
 
     static function findRoomsByCategoryType($type, $page, $per_page)

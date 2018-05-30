@@ -290,7 +290,7 @@ class RedPackets extends BaseModel
         }
 
         //获取用户进房间的时间
-        $time = $this->room->getTimeForUserInRoom($user->id);
+        $time = $this->room->getUserEnterRoomTime($user->id);
         //如果用户进房间的时间小于红包的创建时间，则需要以红包创建时间为节点等待3分钟，否则以用户进房间的时间为节点等待3分钟
         $distance_start_at = $time + 3 * 60 - time() > 0 ? $time + 3 * 60 - time() : 0;
         if ($time <= $this->created_at) {
