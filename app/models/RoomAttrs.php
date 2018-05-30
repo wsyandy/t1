@@ -288,6 +288,14 @@ trait RoomAttrs
         return 'room_boom_gift' . $room_id;
     }
 
+    static function getBoomGiftTime($room_id)
+    {
+        $cache = self::getHotWriteCache();
+        $room_sign_key = self::generateRoomBoomGiftSignKey($room_id);
+        $time = $cache->get($room_sign_key);
+        return intval($time);
+    }
+
     //获取房间收益
     function getTotalAmount()
     {

@@ -308,4 +308,16 @@ class BoomHistories extends BaseModel
 
         return $target;
     }
+
+    /**
+     * 记录爆礼物抽中的奖品
+     * @param $user_id
+     * @param $room_id
+     * @return string
+     */
+    static public function generateBoomUserSignKey($user_id, $room_id)
+    {
+        return 'boom_target_room_' . $room_id . '_user_' . $user_id;
+    }
+
 }

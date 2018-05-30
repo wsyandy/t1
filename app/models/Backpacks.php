@@ -161,30 +161,6 @@ class Backpacks extends BaseModel
         return self::$GOLD_IMG;
     }
 
-
-    /**
-     * 记录爆礼物开始时间
-     * @param $room_id
-     * @return string
-     */
-    static function generateBoomRoomSignKey($room_id)
-    {
-        return 'boom_target_room_' . $room_id;
-    }
-
-
-    /**
-     * 记录爆礼物抽中的奖品
-     * @param $user_id
-     * @param $room_id
-     * @return string
-     */
-    static public function generateBoomUserSignKey($user_id, $room_id)
-    {
-        return 'boom_target_room_' . $room_id . '_user_' . $user_id;
-    }
-
-
     function isGift()
     {
         return BACKPACK_GIFT_TYPE == $this->type;

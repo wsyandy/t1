@@ -339,7 +339,7 @@ trait RoomStats
                 $minutes = date("YmdHi", $time);
                 $interval = intval(intval($minutes) % 10);
                 $minutes_end = $minutes + (10 - $interval);
-                $expire = strtotime($minutes_end . '59') - time();
+                $expire = strtotime($minutes_end . '59') - time() + 300;
             }
 
             $boom_list_day_key = 'boom_gifts_list_' . date("Ymd", $time);
@@ -347,7 +347,6 @@ trait RoomStats
             $boom_num = $this->getBoomNum($time);
             $total_value = $boom_config->total_value + $interval_value * $boom_num;
             $start_value = $boom_config->start_value;
-            $svga_image_url = $boom_config->svga_image_url;
 
             if ($total_value > 250000) {
                 $total_value = 250000;
@@ -371,7 +370,7 @@ trait RoomStats
                 $cache->setex("room_boom_diamond_num_room_id_" . $room_id, $boom_expire, 0); //爆钻总额
                 $cache->setex('room_boom_user_room_id_' . $room_id, $boom_expire, $sender_id); //引爆者
 
-                $boom_num_day_key = 'room_boom_num_room_id_' . $room_id . "_" . date("Ymd", $time);
+                $boom_num_day_key = self::generateBoomNumDayKey($room_id, $time);
                 $cache->incrby($boom_num_day_key, 1); //爆礼物次数
                 $cache->expire($boom_num_day_key, $expire);
                 $cache->setex($room_boon_gift_sign_key, $boom_expire, $time); //爆钻时间
@@ -421,7 +420,17 @@ trait RoomStats
             $time = time();
         }
 
-        return 'boom_target_value_room_' . $room_id . "_" . date("Ymd", $time);
+        $key = 'boom_target_value_room_' . $room_id . "_" . date("Ymd", $time);
+
+        if (isDevelopmentEnv()) {
+            $minutes = date("YmdHi", $time);
+            $interval = intval(intval($minutes) % 10);
+            $minutes_start = $minutes - $interval + 1;
+            $minutes_end = $minutes + (10 - $interval);
+            $key = 'boom_target_value_room_' . $room_id . "_" . $minutes_start . "_" . $minutes_end;
+        }
+
+        return $key;
     }
 
     static public function generateBoomRecordDayKey($room_id, $time = 0)
@@ -430,7 +439,36 @@ trait RoomStats
             $time = time();
         }
 
-        return 'boom_room_record_' . $room_id . "_" . date("Ymd", $time);
+        $key = 'boom_room_record_' . $room_id . "_" . date("Ymd", $time);
+
+        if (isDevelopmentEnv()) {
+            $minutes = date("YmdHi", $time);
+            $interval = intval(intval($minutes) % 10);
+            $minutes_start = $minutes - $interval + 1;
+            $minutes_end = $minutes + (10 - $interval);
+            $key = 'boom_room_record_' . $room_id . "_" . $minutes_start . "_" . $minutes_end;
+        }
+
+        return $key;
+    }
+
+    static public function generateBoomNumDayKey($room_id, $time = 0)
+    {
+        if (!$time) {
+            $time = time();
+        }
+
+        $key = 'room_boom_num_room_id_' . $room_id . "_" . date("Ymd", $time);
+
+        if (isDevelopmentEnv()) {
+            $minutes = date("YmdHi", $time);
+            $interval = intval(intval($minutes) % 10);
+            $minutes_start = $minutes - $interval + 1;
+            $minutes_end = $minutes + (10 - $interval);
+            $key = 'room_boom_num_room_id_' . $room_id . "_" . $minutes_start . "_" . $minutes_end;
+        }
+
+        return $key;
     }
 
     //房间收益列表
