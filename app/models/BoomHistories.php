@@ -100,7 +100,13 @@ class BoomHistories extends BaseModel
             }
         }
 
-        $boom_num = $room->getBoomNum();
+        $time = Rooms::getBoomGiftTime($room->id);
+
+        if (!$time) {
+            return null;
+        }
+
+        $boom_num = $room->getBoomNum($time);
         $num = $boom_num;
 
         if ($num > 3) {
@@ -148,7 +154,6 @@ class BoomHistories extends BaseModel
         $cache = self::getHotWriteCache();
         $gift_data = $gift_datas[array_rand($gift_datas)];
         $id = fetch($gift_data, 'id');
-        $boom_num = $room->getBoomNum();
 
         $key = "boom_gift_hit_num_room_id{$room->id}" . "_{$id}_boom_num_" . $boom_num;
         $cache->incrby($key, 1);

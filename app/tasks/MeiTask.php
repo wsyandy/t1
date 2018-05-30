@@ -8,6 +8,12 @@
 
 class MeiTask extends \Phalcon\Cli\Task
 {
+    function test72Action()
+    {
+        $room = Rooms::findFirstById(136678);
+        BoomHistories::randomBoomGiftIdByBoomNum($room);
+    }
+
     function test71Action()
     {
         $users = Users::find(['conditions' => 'ip = :ip:', 'bind' => ['ip' => '61.186.12.12']]);
