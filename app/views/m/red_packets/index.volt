@@ -132,7 +132,8 @@
             isSex: true,
             error_input: false,
             error_reason: '',
-            diamond_num_limit:'100'
+            diamond_num_limit:'100',
+            submit: false
         },
 
         methods: {
@@ -202,7 +203,14 @@
                     return;
                 }
 
+                if(this.submit){
+                    return;
+                }
+
+                this.submit = true;
+
                 $.authPost('/m/red_packets/create', data, function (resp) {
+                    vm.submit = false;
                     vm.error_reason = resp.error_reason;
                     vm.error_input = true;
                     if (!resp.error_code) {
