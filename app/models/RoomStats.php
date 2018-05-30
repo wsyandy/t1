@@ -315,13 +315,19 @@ trait RoomStats
     // 爆礼物流水值记录
     function statBoomIncome($sender_id, $income, $time)
     {
-        $boom_config = BoomConfigs::getBoomConfig();
+        $boom_config = BoomConfigs::getBoomConfig($this);
 
         if (isBlank($boom_config)) {
             return;
         }
 
         $interval_value = 50000;
+        $need_push = false;
+
+        if ($this->user->isCompanyUser()) {
+            $interval_value = 500;
+        }
+
         $cache = self::getHotWriteCache();
         $room_id = $this->id;
         $lock = tryLock("stat_boom_income_" . $this->id); //防止并发 跨天出问题
@@ -377,10 +383,12 @@ trait RoomStats
 
                 $this->pushBoomIncomeMessage($boom_config);
 
-                //临时查询
-                $sender = Users::findFirstById($sender_id);
-                $content = "恭喜【{$sender->nickname}】在【{$this->name}】内，成功引爆火箭，快来抢礼物吧！";
-                Rooms::delay()->asyncAllNoticePush($content, ['type' => 'top_topic_message', 'hot' => 1]);
+                if ($need_push) {
+                    //临时查询
+                    $sender = Users::findFirstById($sender_id);
+                    $content = "恭喜【{$sender->nickname}】在【{$this->name}】内，成功引爆火箭，快来抢礼物吧！";
+                    Rooms::delay()->asyncAllNoticePush($content, ['type' => 'top_topic_message', 'hot' => 1]);
+                }
 
                 unlock($lock);
 
@@ -546,6 +554,10 @@ trait RoomStats
     function getBoomGiftData($boom_config)
     {
         $interval_value = 50000;
+        if ($this->user->isCompanyUser()) {
+            $interval_value = 500;
+        }
+
         $room_boon_gift_sign_key = \Rooms::generateRoomBoomGiftSignKey($this->id);
         $cache = \Rooms::getHotReadCache();
 
