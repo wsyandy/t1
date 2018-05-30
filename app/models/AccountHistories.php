@@ -55,14 +55,15 @@ class AccountHistories extends BaseModel
         $user = $this->user;
         $user->diamond = $this->balance;
         $user->update();
+        $amount = abs($this->amount);
 
         if ($user->isCompanyUser() && $this->isCostDiamond()) {
-            info($user->id, $this->amount);
-            $user->addCompanyUserSendNumber($this->amount);
+            info($user->id, $amount);
+            $user->addCompanyUserSendNumber($amount);
         }
 
         $user_attrs = $user->getStatAttrs();
-        $user_attrs['add_value'] = abs($this->amount);
+        $user_attrs['add_value'] = $amount;
         $action = $this->getStatActon();
         \Stats::delay()->record('user', $action, $user_attrs);
 
@@ -133,13 +134,15 @@ class AccountHistories extends BaseModel
     {
         $change_amount = abs($this->amount);
         if ($this->isCostDiamond()) {
-            $change_amount = -$change_amount;
-            $this->amount = $change_amount;
             $user = $this->user;
             $can_consume_diamond = $user->canConsumeDiamond($change_amount);
+
             if (!$can_consume_diamond) {
                 return true;
             }
+
+            $change_amount = -$change_amount;
+            $this->amount = $change_amount;
         }
 
         $old_account_history = self::findFirst([
