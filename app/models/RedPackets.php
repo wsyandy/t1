@@ -445,7 +445,7 @@ class RedPackets extends BaseModel
         $sex = fetch($opts, 'sex');
 
         $client_url = 'app://rooms/detail?id=' . $room->id;
-        $users = $current_user->nearby(1, 300);
+        $users = $current_user->nearby(1, 200);
 
         foreach ($users as $user) {
 
@@ -456,8 +456,7 @@ class RedPackets extends BaseModel
             if ($sex != USER_SEX_COMMON && $user->sex != $sex) {
                 continue;
             }
-
-
+            
             $body = ['action' => 'sink_notice', 'title' => '快来抢红包啦！！', 'content' => $content, 'client_url' => $client_url];
             $intranet_ip = $user->getIntranetIp();
             $receiver_fd = $user->getUserFd();
