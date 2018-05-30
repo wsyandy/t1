@@ -346,7 +346,7 @@ class RedPackets extends BaseModel
 
         $avg_diamond = ceil($this->diamond / $this->num);
         $min_diamond = 1;
-        $max_diamond = ceil($this->diamond * 0.35);
+        $max_diamond = ceil($this->diamond * 0.30);
 
         if ($this->red_packet_type == RED_PACKET_TYPE_NEARBY) {
             $min_diamond = 50;
@@ -378,9 +378,13 @@ class RedPackets extends BaseModel
                 if (mt_rand(1, 100) < 80) {
                     $get_diamond = mt_rand($min_diamond, ceil($this->diamond * 0.05));
                 } else {
-                    $get_diamond = mt_rand(ceil($this->diamond * 0.2), $max_diamond);
+                    $get_diamond = mt_rand(ceil($this->diamond * 0.15), $max_diamond);
                 }
             }
+        }
+
+        if($get_diamond > $max_diamond){
+            $get_diamond = ceil($get_diamond * 0.5);
         }
 
         // 防止超出
