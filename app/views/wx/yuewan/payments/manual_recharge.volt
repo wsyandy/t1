@@ -67,6 +67,7 @@
             var text = $(this).siblings('.list_info').find('.copy_text').text();
             var oInput = document.createElement('input');
             oInput.value = text;
+            oInput.disabled = true;
             document.body.appendChild(oInput);
             oInput.select(); // 选择对象
             document.execCommand("Copy"); // 执行浏览器复制命令
