@@ -263,9 +263,9 @@
 
 
     /*播放*/
-    // $btnPlay.on('click', function () {
-    //     isPlay ? nplay() : iplay();
-    // });
+    $btnPlay.on('click', function () {
+        isPlay ? nplay() : iplay();
+    });
 
     /*播放状态*/
     function iplay() {
