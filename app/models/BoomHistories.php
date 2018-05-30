@@ -137,7 +137,7 @@ class BoomHistories extends BaseModel
 
         foreach ($data as $datum) {
 
-            $res = self::isLimit($room, $datum);
+            $res = self::isLimit($room, $boom_num, $datum);
 
             if ($res) {
                 info($datum);
@@ -161,12 +161,12 @@ class BoomHistories extends BaseModel
         return $gift_data;
     }
 
-    static function isLimit($room, $data)
+    static function isLimit($room, $boom_num, $data)
     {
         $cache = self::getHotWriteCache();
         $id = fetch($data, 'id');
         $total_number = fetch($data, 'total_number');
-        $num = $room->getBoomNum();
+        $num = $boom_num;
         $key = "boom_gift_hit_num_room_id{$room->id}" . "_{$id}_boom_num_" . $num;
         $hit_num = $cache->get($key);
         info($room->id, $key, $hit_num, $data);
