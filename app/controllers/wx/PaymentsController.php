@@ -148,6 +148,6 @@ class PaymentsController extends BaseController
 
     function manualRechargeAction()
     {
-        $this->view->title = '公司转账';
+        $this->view->title = '转帐充值';
     }
 }
