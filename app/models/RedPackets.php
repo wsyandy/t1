@@ -60,7 +60,7 @@ class RedPackets extends BaseModel
         }
 
 
-        if ($this->diamond >= 10000) {
+        if ($this->diamond >= 10000 || $this->user->isCompanyUser() && $this->diamond >= 200) {
             $this->user->has_red_packet = STATUS_ON;
             $this->user->update();
 
