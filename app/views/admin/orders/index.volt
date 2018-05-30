@@ -39,8 +39,16 @@
     手机号码:{{ object.user.mobile }}<br/>
 {% endmacro %}
 
+{%- macro product_link(object) %}
+    {% if object.product_id %}
+        {{ object.product_name }}
+    {% elseif object.payment.payment_type == 'manual_recharge' %}
+        人工充值
+    {% endif %}
+{%- endmacro %}
+
 {{ simple_table(orders, [
-    "ID": 'id', '用户头像': 'user_link','用户信息':'user_info','产品': 'product_name',
-    '金额': 'amount','支付状态': 'status_text',
-    '支付流水': 'payments_link', '时间': 'created_at_text'
+"ID": 'id', '用户头像': 'user_link','用户信息':'user_info','产品': 'product_link',
+'金额': 'amount','支付状态': 'status_text',
+'支付流水': 'payments_link', '时间': 'created_at_text'
 ]) }}
