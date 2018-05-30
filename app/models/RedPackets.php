@@ -393,7 +393,7 @@ class RedPackets extends BaseModel
 
         $this->save();
 
-        info($this->id, $this->user_id, 'get', $get_diamond, '总', $this->diamond, $this->num, $min_diamond, $max_diamond, $avg_diamond);
+        info($this->id, $this->user_id, 'get', $get_diamond, $usable_balance_diamond, '总', $this->diamond, $this->num, $min_diamond, $max_diamond, $avg_diamond);
 
         $red_user_list_key = $this->generateRedPacketUserListKey();
         $cache->zadd($red_user_list_key, time(), $user_id);
