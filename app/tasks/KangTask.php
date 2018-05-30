@@ -16,8 +16,9 @@ class KangTask extends \Phalcon\Cli\Task
         $red = RedPackets::findFirstById($red_id);
         $user = Users::findFirstById($user_id);
 
-        $red->getRedPacketDiamond($user->id);
-        
+        $amonut = $red->getRedPacketDiamond($user->id);
+        echoLine($amonut);
+
     }
 
     function xxAction(){
