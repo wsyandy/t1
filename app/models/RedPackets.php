@@ -78,7 +78,7 @@ class RedPackets extends BaseModel
             $cache = \Users::getUserDb();
             if ($this->sex == USER_SEX_COMMON) {
                 $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($this->room_id, 0);
-                $cache->zrem($underway_red_packet_list_key,$this->id);
+                $cache->zrem($underway_red_packet_list_key, $this->id);
                 $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($this->room_id, 1);
                 $cache->zrem($underway_red_packet_list_key, $this->id);
             } else {
@@ -102,7 +102,8 @@ class RedPackets extends BaseModel
             if ($this->balance_diamond) {
                 $content = $this->user->nickname . '发的红包已过期';
             }
-            self::sendRedPacketMessageToUsers($this->user, $this->room, ['type' => 'finish', 'content' => $content]);
+
+            self::delay()->asyncSendRedPacketMessageToUsers($this->user_id, $this->room_id, ['type' => 'finish', 'content' => $content]);
         }
     }
 
@@ -149,7 +150,7 @@ class RedPackets extends BaseModel
     //正在进行中的红包的key
     static function getUnderwayRedPacketListKey($current_room_id, $sex)
     {
-        return 'room_underway_red_packet_list_' . $current_room_id.'_sex'.$sex;
+        return 'room_underway_red_packet_list_' . $current_room_id . '_sex' . $sex;
     }
 
     function generateRedPacketUserListKey()
@@ -216,7 +217,7 @@ class RedPackets extends BaseModel
             'sex' => $red_packet->sex
         ];
 
-        self::sendRedPacketMessageToUsers($user, $room, $push_data);
+        self::delay()->asyncSendRedPacketMessageToUsers($user->id, $room->id, $push_data);
 
         return $red_packet;
     }
@@ -234,7 +235,7 @@ class RedPackets extends BaseModel
         if ($red_packet->balance_diamond > 0) {
 
             $amount = $red_packet->balance_diamond;
-            $opts = ['remark' => '红包余额返还钻石' .$amount , 'mobile' => $user->mobile, 'target_id' => $red_packet->id];
+            $opts = ['remark' => '红包余额返还钻石' . $amount, 'mobile' => $user->mobile, 'target_id' => $red_packet->id];
             \AccountHistories::changeBalance($user, ACCOUNT_TYPE_RED_PACKET_RESTORATION, $amount, $opts);
 
             \Chats::sendTextSystemMessage($user, "红包退款通知：红包超过24小时未被领取，" . $amount . "钻已返还到您的账户，请注意查收~");
@@ -322,7 +323,7 @@ class RedPackets extends BaseModel
                 'content' => '恭喜' . $user->nickname . '抢到了' . $get_diamond . '个钻石'
             ];
 
-            self::sendRedPacketMessageToUsers($user, $this->room, $opts);
+            self::delay()->asyncSendRedPacketMessageToUsers($user->id, $this->room_id, $opts);
         }
 
         return $get_diamond;
@@ -344,10 +345,10 @@ class RedPackets extends BaseModel
             if ($balance_num == 1) {
                 $get_diamond = $balance_diamond;
 
-            }else{
+            } else {
 
                 $usable_balance_diamond = $balance_diamond - ($balance_num - 1);
-                if($usable_balance_diamond > 0){
+                if ($usable_balance_diamond > 0) {
                     if ($usable_balance_diamond > ceil($this->diamond * 0.5)) {
                         $get_diamond = mt_rand(1, ceil($this->diamond * 0.4));
                     } else {
@@ -356,7 +357,7 @@ class RedPackets extends BaseModel
                 }
             }
 
-            if($balance_diamond < $get_diamond){
+            if ($balance_diamond < $get_diamond) {
                 $get_diamond = $balance_diamond;
             }
 
@@ -387,6 +388,15 @@ class RedPackets extends BaseModel
         $key = self::generateUserRoomRedPacketsKey($room_id, $user_id);
         $user_get_red_packet_ids = $cache->zrange($key, 0, -1);
         return $user_get_red_packet_ids;
+    }
+
+    static function asyncSendRedPacketMessageToUsers($user_id, $room_id, $opts)
+    {
+
+        $user = Users::findFirstById($user_id);
+        $room = Rooms::findFirstById($room_id);
+
+        self::sendRedPacketMessageToUsers($user, $room, $opts);
     }
 
     static function sendRedPacketMessageToUsers($user, $room, $opts)
@@ -456,7 +466,7 @@ class RedPackets extends BaseModel
             if ($sex != USER_SEX_COMMON && $user->sex != $sex) {
                 continue;
             }
-            
+
             $body = ['action' => 'sink_notice', 'title' => '快来抢红包啦！！', 'content' => $content, 'client_url' => $client_url];
             $intranet_ip = $user->getIntranetIp();
             $receiver_fd = $user->getUserFd();
