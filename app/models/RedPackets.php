@@ -88,7 +88,7 @@ class RedPackets extends BaseModel
 
             info('红包已经结束回收，删除对应进行中的红包id', $underway_red_packet_list_key, $this->id, $this->status);
 
-            if ($this->diamond >= 10000) {
+            if ($this->diamond >= 10000 || $this->user->isCompanyUser() && $this->diamond >= 100) {
                 $this->user->has_red_packet = STATUS_OFF;
                 $this->user->update();
                 if ($this->room) {
@@ -340,14 +340,23 @@ class RedPackets extends BaseModel
 
         if ($balance_diamond && $balance_num && $this->status == STATUS_ON) {
 
-            $usable_balance_diamond = $balance_diamond - ($balance_num - 1);
-            if ($usable_balance_diamond > ceil($this->diamond * 0.5)) {
-                $get_diamond = mt_rand(1, ceil($this->diamond * 0.4));
-            } else {
-                $get_diamond = mt_rand(1, $usable_balance_diamond);
+            $get_diamond = 0;
+            if ($balance_num == 1) {
+                $get_diamond = $balance_diamond;
+
+            }else{
+
+                $usable_balance_diamond = $balance_diamond - ($balance_num - 1);
+                if($usable_balance_diamond > 0){
+                    if ($usable_balance_diamond > ceil($this->diamond * 0.5)) {
+                        $get_diamond = mt_rand(1, ceil($this->diamond * 0.4));
+                    } else {
+                        $get_diamond = mt_rand(1, $usable_balance_diamond);
+                    }
+                }
             }
 
-            if ($balance_num == 1) {
+            if($balance_diamond < $get_diamond){
                 $get_diamond = $balance_diamond;
             }
 
