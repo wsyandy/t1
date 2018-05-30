@@ -170,6 +170,7 @@
     var vm = XVue(opts);
     $(function () {
         reurl();
+
         var $tel = $(".input_phone");
         var $verify = $(".input_verify");
         $tips = $("#pup_tips");
