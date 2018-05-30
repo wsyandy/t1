@@ -556,7 +556,7 @@ class Activities extends BaseModel
             'conditions' => 'status=:status: and created_at>=:start_at: and created_at <= :end_at: and sender_id=:sender_id: and user_id =:user_id:',
             'bind' => ['status' => GIFT_ORDER_STATUS_SUCCESS, 'start_at' => $gift_order->created_at - 60, 'end_at' => $gift_order->created_at, 'sender_id' => $gift_order->sender_id, 'user_id' => $gift_order->user_id],
             'order' => 'id asc',
-            'column' => 'gift_ids',
+            'column' => 'gift_id',
             'limit' => 4
         ];
         $gift_orders = \GiftOrders::find($cond);
