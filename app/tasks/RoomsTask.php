@@ -1162,6 +1162,7 @@ class RoomsTask extends \Phalcon\Cli\Task
         $per_page = 100;
         $offset = 0;
         $total_page = ceil($total / $per_page);
+        $boom_config = \BoomConfigs::getBoomConfig();
 
         for ($page = 1; $page <= $total_page; $page++) {
 
@@ -1173,7 +1174,6 @@ class RoomsTask extends \Phalcon\Cli\Task
             foreach ($rooms as $room) {
 
                 $cur_value = $room->getCurrentBoomGiftValue($time);
-                $boom_config = \BoomConfigs::getBoomConfig();
                 $interval_value = 50000;
                 $boom_num = $room->getBoomNum($time);
                 $total_value = $boom_config->total_value + $interval_value * $boom_num;
@@ -1183,7 +1183,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                 }
                 $cache->zrem($boom_list_key, $room->id);
                 info($boom_list_key, $room_ids->id, $total_value, $cur_value);
-                $room->pushBoomIncomeMessage($total_value, $cur_value, STATUS_OFF);
+                $room->pushBoomIncomeMessage($boom_config, ['status' => STATUS_OFF]);
             }
         }
     }

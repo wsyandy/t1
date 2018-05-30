@@ -551,7 +551,7 @@ trait RoomStats
         return $pagination;
     }
 
-    function getBoomGiftData($boom_config)
+    function getBoomGiftData($boom_config, $opts = [])
     {
         $interval_value = 50000;
         if ($this->user->isCompanyUser()) {
@@ -578,7 +578,7 @@ trait RoomStats
 
         $image_colors = [1 => 'blue', 2 => 'green', 3 => 'orange'];
         $image_color = fetch($image_colors, $boom_num + 1, 'orange');
-
+        $status = fetch($opts, 'status', STATUS_ON);
         $data = [
             'expire_at' => \Rooms::getBoomGiftExpireAt($this->id),
             'client_url' => 'url://m/boom_histories',
@@ -587,7 +587,7 @@ trait RoomStats
             'current_value' => $this->getCurrentBoomGiftValue(Rooms::getBoomGiftTime($this->id)),
             'show_rank' => 1000000,
             'render_type' => 'svga',
-            'status' => STATUS_ON,
+            'status' => $status,
             'image_color' => $image_color
         ];
 
