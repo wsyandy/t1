@@ -362,7 +362,7 @@ class RedPackets extends BaseModel
         } else {
 
             if ($balance_num * 2 > $this->num) {
-                $usable_balance_diamond = ceil($this->diamond * 0.5);
+                $usable_balance_diamond = ceil($this->diamond * 0.6);
             }else{
                 $usable_balance_diamond = $balance_diamond - ($balance_num - 1) * $min_diamond * 2;
             }
