@@ -361,6 +361,14 @@ class RedPackets extends BaseModel
 
         } else {
 
+            $user_rate = mt_rand(1, 100);
+
+            if($user_rate < mt_rand(60, 80)){
+
+            }else{
+
+            }
+
             $usable_balance_diamond = $balance_diamond - ($balance_num - 1);
             if ($usable_balance_diamond > 0) {
                 if ($usable_balance_diamond > ceil($this->diamond * 0.5)) {
