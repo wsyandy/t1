@@ -120,7 +120,7 @@
             sid: "{{ sid }}",
             code: "{{ code }}",
             myDiamond: {{ diamond }},
-            number: 10,
+            number: 5,
             amount: 100,
             nearby_distance: '5km',
             allSex: ['女生', '男生', '男女皆可'],
@@ -141,12 +141,18 @@
                 this.type = i;
                 if(this.type == "all"){
                     this.diamond_num_limit = "100";
+                    this.amount = 100;
+                    this.num = 5;
                 }
                 if(this.type == "follow" || this.type == "stay_at_room"){
                     this.diamond_num_limit = "1000";
+                    this.amount = 1000;
+                    this.num = 5;
                 }
                 if(this.type == "nearby"){
                     this.diamond_num_limit = "10000";
+                    this.amount = 10000;
+                    this.num = 5;
                 }
                 vm.isGiveStyle = false;
 
