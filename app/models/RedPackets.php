@@ -380,7 +380,7 @@ class RedPackets extends BaseModel
         }
 
         // 防止超出
-        if ($get_diamond > $usable_balance_diamond) {
+        if ($get_diamond >= $usable_balance_diamond) {
             $get_diamond = $min_diamond;
         }
 
