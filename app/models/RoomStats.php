@@ -339,7 +339,7 @@ trait RoomStats
                 $minutes = date("YmdHi", $time);
                 $interval = intval(intval($minutes) % 10);
                 $minutes_end = $minutes + (10 - $interval);
-                $expire = strtotime($minutes_end . '59') - time() + 300;
+                $expire = 3600;
             }
 
             $boom_list_day_key = self::generateBoomGiftListDayKey($time);
@@ -426,8 +426,15 @@ trait RoomStats
         if (isDevelopmentEnv()) {
             $minutes = date("YmdHi", $time);
             $interval = intval(intval($minutes) % 10);
-            $minutes_start = $minutes - $interval + 1;
-            $minutes_end = $minutes + (10 - $interval);
+
+            if ($interval == 0) {
+                $minutes_start = $minutes - 9;
+                $minutes_end = $minutes;
+            } else {
+                $minutes_start = $minutes - $interval + 1;
+                $minutes_end = $minutes + (10 - $interval);
+            }
+
             $key = 'boom_target_value_room_' . $room_id . "_" . $minutes_start . "_" . $minutes_end;
         }
 
@@ -445,8 +452,15 @@ trait RoomStats
         if (isDevelopmentEnv()) {
             $minutes = date("YmdHi", $time);
             $interval = intval(intval($minutes) % 10);
-            $minutes_start = $minutes - $interval + 1;
-            $minutes_end = $minutes + (10 - $interval);
+
+            if ($interval == 0) {
+                $minutes_start = $minutes - 9;
+                $minutes_end = $minutes;
+            } else {
+                $minutes_start = $minutes - $interval + 1;
+                $minutes_end = $minutes + (10 - $interval);
+            }
+
             $key = 'boom_room_record_' . $room_id . "_" . $minutes_start . "_" . $minutes_end;
         }
 
@@ -464,8 +478,15 @@ trait RoomStats
         if (isDevelopmentEnv()) {
             $minutes = date("YmdHi", $time);
             $interval = intval(intval($minutes) % 10);
-            $minutes_start = $minutes - $interval + 1;
-            $minutes_end = $minutes + (10 - $interval);
+
+            if ($interval == 0) {
+                $minutes_start = $minutes - 9;
+                $minutes_end = $minutes;
+            } else {
+                $minutes_start = $minutes - $interval + 1;
+                $minutes_end = $minutes + (10 - $interval);
+            }
+
             $key = 'room_boom_num_room_id_' . $room_id . "_" . $minutes_start . "_" . $minutes_end;
         }
 
@@ -484,8 +505,15 @@ trait RoomStats
         if (isDevelopmentEnv()) {
             $minutes = date("YmdHi", $time);
             $interval = intval(intval($minutes) % 10);
-            $minutes_start = $minutes - $interval + 1;
-            $minutes_end = $minutes + (10 - $interval);
+
+            if ($interval == 0) {
+                $minutes_start = $minutes - 9;
+                $minutes_end = $minutes;
+            } else {
+                $minutes_start = $minutes - $interval + 1;
+                $minutes_end = $minutes + (10 - $interval);
+            }
+
             $key = 'boom_gifts_list_' . $minutes_start . "_" . $minutes_end;
         }
 
