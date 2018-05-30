@@ -81,15 +81,15 @@ class PaymentsController extends BaseController
         $stats = [];
         $total_amount = 0;
         $payment_types = \PaymentChannels::$PAYMENT_TYPE;
-        foreach ($payment_types as $payment_type) {
+        foreach ($payment_types as $k => $v) {
             $amount = \Payments::sum([
                 'conditions' => 'pay_status = :pay_status: and payment_type = :payment_type: and created_at>=:start_at: and created_at<=:end_at:',
-                'bind' => ['pay_status' => PAYMENT_PAY_STATUS_SUCCESS, 'payment_type' => $payment_type, 'start_at' => $start_at, 'end_at' => $end_at],
+                'bind' => ['pay_status' => PAYMENT_PAY_STATUS_SUCCESS, 'payment_type' => $k, 'start_at' => $start_at, 'end_at' => $end_at],
                 'column' => 'amount'
             ]);
 
             if ($amount > 0) {
-                $stats[$payment_type] = $amount;
+                $stats[$v] = $amount;
                 $total_amount += $amount;
             }
         }
