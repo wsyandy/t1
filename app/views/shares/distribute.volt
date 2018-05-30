@@ -170,7 +170,6 @@
     var vm = XVue(opts);
     $(function () {
         reurl();
-        iplay();
         var $tel = $(".input_phone");
         var $verify = $(".input_verify");
         $tips = $("#pup_tips");
@@ -185,7 +184,7 @@
                 settime(isphone)
             }, 1000);
 
-        })
+        });
 
         function settime(isphone) {
             clearTimeout(timer);
@@ -217,7 +216,13 @@
             return validateReg.test(value);
         }
 
-    })
+        $btnPlay = $('.btn_play');
+        /*播放*/
+        $btnPlay.on('click', function () {
+            iplay();
+        });
+
+    });
 
     function getCaptchaImage() {
         $.get('/captcha', function (resp) {
@@ -261,9 +266,9 @@
 
 
     /*播放*/
-    $btnPlay.on('click', function () {
-        isPlay ? nplay() : iplay();
-    });
+    // $btnPlay.on('click', function () {
+    //     isPlay ? nplay() : iplay();
+    // });
 
     /*播放状态*/
     function iplay() {
