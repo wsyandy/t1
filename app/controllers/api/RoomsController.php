@@ -309,7 +309,8 @@ class RoomsController extends BaseController
             }
         }
 
-        $boom_config = \BoomConfigs::getBoomConfig();
+        $boom_config = \BoomConfigs::getBoomConfig($room);
+
         if ($boom_config && $room->hasBoomGift()) {
             $res['boom_gift'] = $room->getBoomGiftData($boom_config);
         }
