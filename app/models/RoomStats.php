@@ -254,7 +254,7 @@ trait RoomStats
         //爆钻次数
         $cache = self::getHotReadCache();
         $key = $cache->get(Rooms::generateBoomNumDayKey($this->id, $time));
-        echoLine($key);
+        debug($key);
         return intval($key); //爆礼物次数
     }
 
