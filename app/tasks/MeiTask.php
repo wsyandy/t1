@@ -12,7 +12,7 @@ class MeiTask extends \Phalcon\Cli\Task
     {
         $room = Rooms::findFirstById(136678);
 
-        for ($i = 1; $i <= 1000; $i++) {
+        for ($i = 1; $i <= 100000; $i++) {
             BoomHistories::randomBoomGiftIdByBoomNum($room);
         }
     }
