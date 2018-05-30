@@ -1045,7 +1045,11 @@ class RoomsController extends BaseController
             if (!$room->checkFilterUser($current_user_id)) {
 
                 if ($room->lock && $room->user_id != $current_user_id && $room->password != $password) {
-                    return $this->renderJSON(ERROR_CODE_FORM, '密码错误');
+                    if (isBlank($password)) {
+                        return $this->renderJSON(ERROR_CODE_FORM);
+                    } else {
+                        return $this->renderJSON(ERROR_CODE_FORM, '密码错误');
+                    }
                 }
             }
 
