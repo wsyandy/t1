@@ -1,6 +1,7 @@
 共{{ account_histories.total_entries }}条记录
 <br/>
 <a href="/admin/account_histories/give_diamond?user_id={{ user_id }}" class="modal_action">赠送钻石</a>
+<a href="/admin/orders/manual_recharge?user_id={{ user_id }}" class="modal_action">人工充值</a>
 
 
 {%- macro user_link(object) %}
