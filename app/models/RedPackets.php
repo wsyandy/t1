@@ -333,6 +333,10 @@ class RedPackets extends BaseModel
     function getRedPacketDiamond($user_id)
     {
 
+        if($this->status == STATUS_OFF || $this->balance_diamond < 1){
+            return 0;
+        }
+
         $cache = \Users::getUserDb();
         $user_room_key = self::generateUserRoomRedPacketsKey($this->room_id, $user_id);
         $user_red_key = self::generateUserRedPacketsKey($user_id);
@@ -340,47 +344,52 @@ class RedPackets extends BaseModel
         $balance_diamond = $this->balance_diamond;
         $balance_num = $this->balance_num;
 
-        if ($balance_diamond && $balance_num && $this->status == STATUS_ON) {
+        $avg_diamond = ceil($this->diamond / $this->num);
+        $min_diamond = 1;
+        $max_diamond = ceil($this->diamond * 0.3);
 
-            $get_diamond = 0;
-            if ($balance_num == 1) {
-                $get_diamond = $balance_diamond;
-
-            } else {
-
-                $usable_balance_diamond = $balance_diamond - ($balance_num - 1);
-                if ($usable_balance_diamond > 0) {
-                    if ($usable_balance_diamond > ceil($this->diamond * 0.5)) {
-                        $get_diamond = mt_rand(1, ceil($this->diamond * 0.4));
-                    } else {
-                        $get_diamond = mt_rand(1, $usable_balance_diamond);
-                    }
-                }
-            }
-
-            if ($balance_diamond < $get_diamond) {
-                $get_diamond = $balance_diamond;
-            }
-
-            $this->balance_diamond = $balance_diamond - $get_diamond;
-            $this->balance_num = $balance_num - 1;
-
-            if ($this->balance_diamond <= 0) {
-                $this->status = STATUS_OFF;
-            }
-
-            $this->save();
-
-            $red_user_list_key = $this->generateRedPacketUserListKey();
-            $cache->zadd($red_user_list_key, time(), $user_id);
-            $cache->zadd($user_room_key, $get_diamond, $this->id);
-            $cache->zadd($user_red_key, time(), $this->id);
-
-            return $get_diamond;
+        if($this->red_packet_type == RED_PACKET_TYPE_NEARBY){
+            $min_diamond = 50;
+        }
+        if($this->red_packet_type == RED_PACKET_TYPE_FOLLOW || $this->red_packet_type == RED_PACKET_TYPE_STAY_AT_ROOM){
+            $min_diamond = 5;
         }
 
-        return 0;
+        $get_diamond = 0;
+        if ($balance_num == 1) {
+            $get_diamond = $balance_diamond;
 
+        } else {
+
+            $usable_balance_diamond = $balance_diamond - ($balance_num - 1);
+            if ($usable_balance_diamond > 0) {
+                if ($usable_balance_diamond > ceil($this->diamond * 0.5)) {
+                    $get_diamond = mt_rand(1, ceil($this->diamond * 0.4));
+                } else {
+                    $get_diamond = mt_rand(1, $usable_balance_diamond);
+                }
+            }
+        }
+
+        if ($balance_diamond < $get_diamond) {
+            $get_diamond = $balance_diamond;
+        }
+
+        $this->balance_diamond = $balance_diamond - $get_diamond;
+        $this->balance_num = $balance_num - 1;
+
+        if ($this->balance_diamond <= 0) {
+            $this->status = STATUS_OFF;
+        }
+
+        $this->save();
+
+        $red_user_list_key = $this->generateRedPacketUserListKey();
+        $cache->zadd($red_user_list_key, time(), $user_id);
+        $cache->zadd($user_room_key, $get_diamond, $this->id);
+        $cache->zadd($user_red_key, time(), $this->id);
+
+        return $get_diamond;
     }
 
     static function UserGetRedPacketIds($room_id, $user_id)
