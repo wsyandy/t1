@@ -1157,7 +1157,7 @@ class RoomsTask extends \Phalcon\Cli\Task
         $boom_list_key = Rooms::generateBoomGiftListDayKey($time);
         $cache = Rooms::getHotWriteCache();
         $total_room_ids = $cache->zrange($boom_list_key, 0, -1);
-        echoLine($total_room_ids);
+        info($total_room_ids);
         $total = count($total_room_ids);
         $per_page = 100;
         $offset = 0;
@@ -1175,7 +1175,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                 $cur_value = $room->getCurrentBoomGiftValue($time);
                 $boom_config = \BoomConfigs::getBoomConfig();
                 $interval_value = 50000;
-                $boom_num = $this->getBoomNum($time);
+                $boom_num = $room->getBoomNum($time);
                 $total_value = $boom_config->total_value + $interval_value * $boom_num;
 
                 if ($total_value > 250000) {
