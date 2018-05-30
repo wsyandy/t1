@@ -251,11 +251,9 @@ trait RoomStats
             $time = time();
         }
 
-        $date = date("Ymd", $time);
-
         //爆钻次数
         $cache = self::getHotReadCache();
-        return intval($cache->get('room_boom_num_room_id_' . $this->id . "_" . $date)); //爆礼物次数
+        return intval($cache->get(Rooms::generateBoomNumDayKey($this->id, $time))); //爆礼物次数
     }
 
     //引爆火箭者用户id
