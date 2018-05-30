@@ -409,9 +409,11 @@ class Rooms extends BaseModel
         $hot_cache = self::getHotWriteCache();
         $key = $this->getUserListKey();
         $real_user_key = $this->getRealUserListKey();
+        $enter_key = $this->getEnterRoomUserListKey();
 
         if (!$user->isSilent()) {
             $hot_cache->zadd($real_user_key, time(), $user->id);
+            $hot_cache->zadd($enter_key, time(), $user->id);
         }
 
         if ($this->user_id == $user->id) {
@@ -435,9 +437,11 @@ class Rooms extends BaseModel
         $hot_cache = self::getHotWriteCache();
         $key = $this->getUserListKey();
         $real_user_key = $this->getRealUserListKey();
+        $enter_key = $this->getEnterRoomUserListKey();
 
         if (!$user->isSilent()) {
             $hot_cache->zrem($real_user_key, $user->id);
+            $hot_cache->zrem($enter_key, $user->id);
         }
 
         $hot_cache->zrem($key, $user->id);
