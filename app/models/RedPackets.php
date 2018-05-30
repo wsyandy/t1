@@ -204,7 +204,7 @@ class RedPackets extends BaseModel
         }
 
         $time = 24 * 60 * 60;
-        if (isDevelopmentEnv() || $user->isCompanyUser()) {
+        if (isDevelopmentEnv()) {
             $time = 5 * 60;
         }
 
