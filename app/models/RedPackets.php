@@ -364,7 +364,7 @@ class RedPackets extends BaseModel
             if ($balance_num * 2 > $this->num) {
                 $usable_balance_diamond = ceil($this->diamond * mt_rand(40, 60) / 100);
             } else {
-                $usable_balance_diamond = $balance_diamond - ($balance_num - 1) * $min_diamond * mt_rand(1, 2);
+                $usable_balance_diamond = $balance_diamond - ($balance_num - 1) * $min_diamond * 2;
             }
 
             $user_rate = mt_rand(1, 100);
