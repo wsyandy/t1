@@ -217,8 +217,6 @@
             return validateReg.test(value);
         }
 
-        $('.btn_play').click();
-
     });
 
     function getCaptchaImage() {
