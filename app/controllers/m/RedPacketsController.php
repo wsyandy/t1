@@ -61,7 +61,14 @@ class RedPacketsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '您的钻石余额不足，请充值后再发红包');
         }
 
-        $opts = [
+
+        $opts = ['remark' => '发送红包扣除' . $diamond, 'mobile' => $user->mobile];
+        $account_history = \AccountHistories::changeBalance($user, ACCOUNT_TYPE_RED_PACKET_EXPENSES, $diamond, $opts);
+        if (!$account_history) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '余额不足');
+        }
+
+        $data = [
             'diamond' => $diamond,
             'num' => $num,
             'balance_diamond' => $diamond,
@@ -75,17 +82,9 @@ class RedPacketsController extends BaseController
         ];
 
         //创建红包
-        $send_red_packet_history = \RedPackets::createRedPacket($user, $room, $opts);
+        $send_red_packet_history = \RedPackets::createRedPacket($user, $room, $data);
         if (!$send_red_packet_history) {
             return $this->renderJSON(ERROR_CODE_FAIL, '系统错误');
-        }
-
-        $opts = ['remark' => '发送红包扣除' . $diamond, 'mobile' => $user->mobile, 'target_id' => $send_red_packet_history->id];
-        $account_history = \AccountHistories::changeBalance($user, ACCOUNT_TYPE_RED_PACKET_EXPENSES, $diamond, $opts);
-        if (!$account_history) {
-            $send_red_packet_history->status = STATUS_OFF;
-            $send_red_packet_history->save();
-            return $this->renderJSON(ERROR_CODE_FAIL, '余额不足');
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '发布成功', ['send_red_packet_history' => $send_red_packet_history->toJson()]);
