@@ -106,8 +106,9 @@ trait RoomMessages
 
     function pushBoomIncomeMessage($boom_config)
     {
-        $body = $this->getBoomGiftData($boom_config);
-        info($this->id, $body);
+        $data = $this->getBoomGiftData($boom_config);
+        info($this->id, $data);
+        $body = ['action' => 'boom_gift', 'boom_gift' => $data];
         $this->push($body, true);
     }
 
