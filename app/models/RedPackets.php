@@ -159,6 +159,11 @@ class RedPackets extends BaseModel
         return 'red_packet_user_list_' . $this->id;
     }
 
+    function generateRedPacketUserDiamondKey()
+    {
+        return 'red_packet_user_diamond_' . $this->id;
+    }
+
     static function generateUserRoomRedPacketsKey($room_id, $user_id)
     {
         return 'red_packet_list_room_' . $room_id . '_user_' . $user_id;
@@ -407,6 +412,8 @@ class RedPackets extends BaseModel
         info($this->id, $this->user_id, 'get', $get_diamond, $usable_balance_diamond, '总', $this->balance_diamond, $this->balance_num, $min_diamond, $max_diamond, $avg_diamond);
 
         $red_user_list_key = $this->generateRedPacketUserListKey();
+        $user_diamond_key = $this->generateRedPacketUserDiamondKey();
+        $cache->zadd($user_diamond_key, $get_diamond, $user_id);
         $cache->zadd($red_user_list_key, time(), $user_id);
         $cache->zadd($user_room_key, $get_diamond, $this->id);
         $cache->zadd($user_red_key, time(), $this->id);
