@@ -217,11 +217,7 @@
             return validateReg.test(value);
         }
 
-        $btnPlay = $('.btn_play');
-        /*播放*/
-        $btnPlay.on('click', function () {
-            iplay();
-        });
+        $('.btn_play').click();
 
     });
 
