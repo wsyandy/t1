@@ -371,7 +371,7 @@ class RedPackets extends BaseModel
                     $get_diamond = mt_rand($avg_diamond - ceil($this->diamond * 0.05), $avg_diamond + ceil($this->diamond * 0.1));
                 }
             } else {
-                if (mt_rand(1, 100) < 50) {
+                if (mt_rand(1, 100) < 80) {
                     $get_diamond = mt_rand($min_diamond, ceil($this->diamond * 0.05));
                 } else {
                     $get_diamond = mt_rand(ceil($this->diamond * 0.2), $max_diamond);
