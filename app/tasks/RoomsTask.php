@@ -1172,7 +1172,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             foreach ($rooms as $room) {
 
-                $cur_income = $room->getCurrentBoomGiftValue($time);
+                $cur_value = $room->getCurrentBoomGiftValue($time);
                 $boom_config = \BoomConfigs::getBoomConfig();
                 $interval_value = 50000;
                 $boom_num = $this->getBoomNum($time);
@@ -1182,7 +1182,8 @@ class RoomsTask extends \Phalcon\Cli\Task
                     $total_value = 250000;
                 }
                 $cache->zrem($boom_list_key, $room->id);
-                $room->pushBoomIncomeMessage($total_value, $cur_income, STATUS_OFF);
+                info($boom_list_key, $room_ids->id, $total_value, $cur_value);
+                $room->pushBoomIncomeMessage($total_value, $cur_value, STATUS_OFF);
             }
         }
     }
