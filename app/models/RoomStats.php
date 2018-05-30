@@ -391,6 +391,7 @@ trait RoomStats
 
             $res = $cache->setex($cur_income_day_key, $expire, $current_value);
 
+            debug($cur_income_day_key, $record_key, $expire, $current_value,);
             if ($res && $current_value >= $start_value) {
 
                 if (!$cache->zscore($boom_list_day_key, $room_id)) {
