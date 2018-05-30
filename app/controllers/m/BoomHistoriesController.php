@@ -49,8 +49,8 @@ class BoomHistoriesController extends BaseController
         $expire = $expire > 180 ? 180 : ($expire < 0 ? 1 : $expire);
 
         // 爆出的礼物从缓存拿到
-        $cache = \Backpacks::getHotWriteCache();
-        $user_sign_key = \Backpacks::generateBoomUserSignKey($user->id, $room_id);
+        $cache = \BoomHistories::getHotWriteCache();
+        $user_sign_key = \BoomHistories::generateBoomUserSignKey($user->id, $room_id);
         $user_sign = $cache->get($user_sign_key);
 
         // 领取后缓存值为1
@@ -58,9 +58,9 @@ class BoomHistoriesController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '已领取！', $boom_histories);
         }
 
-        $target_id = 0;
+        $boom_gift_time = \Rooms::getBoomGiftTime($room_id);
         //用户贡献值 控制概率
-        $record_key = \Rooms::generateBoomRecordDayKey($room_id);
+        $record_key = \Rooms::generateBoomRecordDayKey($room_id, $boom_gift_time);
         $amount = $cache->zscore($record_key, $user->id);
         $boom_user_id = $room->getBoomUserId();
         $type = BOOM_HISTORY_GIFT_TYPE;
