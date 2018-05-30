@@ -338,6 +338,11 @@ class Activities extends BaseModel
 
                 debug($key, $activity->activity_type);
 
+                if ($activity->isSpecialEffectGiftActivity()) {
+                    //配置特效礼物
+                    $activity->specialEffectActivityGiftForUser($gift_order);
+                }
+
                 if ($activity->isGiftMinuteList()) {
                     self::activityGiftListStat($gift_order, $opts);
                     continue;
@@ -347,11 +352,17 @@ class Activities extends BaseModel
                     self::giftWeekRankListStat($activity, $gift_order, $opts);
                     continue;
                 }
+
             }
 
         } else {
             debug($gift_order->id, $cond, $opts);
         }
+    }
+
+    function isSpecialEffectGiftActivity()
+    {
+        return isPresent($this->special_effect_gift_id);
     }
 
     function isGiftCharmDayList()
@@ -530,5 +541,57 @@ class Activities extends BaseModel
 
         return $last_week_charm_rank_list_user;
 
+    }
+
+    function specialEffectActivityGiftForUser($gift_order)
+    {
+        $gift_ids = explode(',', trim($this->gift_ids, ','));
+        $trigger_gift_id = end($gift_ids);
+        info('触发点', $trigger_gift_id, $gift_order->gift_id, $this->special_effect_gift_id);
+        if ($trigger_gift_id != $gift_order->gift_id) {
+            return;
+        }
+
+        $cond = [
+            'conditions' => 'status=:status: and created_at>=:start_at: and created_at <= :end_at: and sender_id=:sender_id: and user_id =:user_id:',
+            'bind' => ['status' => GIFT_ORDER_STATUS_SUCCESS, 'start_at' => $gift_order->created_at - 60, 'end_at' => $gift_order->created_at, 'sender_id' => $gift_order->sender_id, 'user_id' => $gift_order->user_id],
+            'order' => 'id asc',
+            'limit' => 4
+        ];
+        $gift_orders = \GiftOrders::find($cond);
+        $ids = [];
+        foreach ($gift_orders as $gift_order) {
+            $ids[] = $gift_order->gift_id;
+        }
+        $ids = implode(',', $ids);
+        info('触发后的包括当前订单的四个订单的礼物ID:', $ids, '特效活动礼物ID', trim($this->gift_ids, ','));
+
+        if ($ids == trim($this->gift_ids, ',')) {
+            //如果一致，触发彩蛋赠送者自动赠送给被增送者额外一个彩蛋礼物
+            $user = \Users::findFirstById($gift_order->sender_id);
+            $receiver = \Users::findFirstById($gift_order->user_id);
+            $gift = \Gifts::findFirstById($this->special_effect_gift_id);
+            $room = $gift_order->room;
+
+            if (!$room || !$user || !$receiver) {
+                info('参数错误', $gift_order->room_id, $gift_order->user_id, $gift_order->sender_id);
+                return;
+            }
+
+            if (!$user->isInRoom($room) || !$receiver->isInRoom($room)) {
+                return;
+            }
+
+            $give_result = true;
+
+            if ($receiver->isActive()) {
+                $give_result = GiftOrders::asyncCreateGiftOrder($user->id, [$receiver->id], $gift->id, ['gift_num' => 1]);
+            }
+
+            if ($give_result) {
+                info('订单创建成功，推送礼物socket', $gift->id, $user->id, $receiver->id);
+                $room->pushGiftMessage($user, $receiver, $gift, 1);
+            }
+        }
     }
 }

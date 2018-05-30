@@ -23,7 +23,7 @@
                 <!--暂停/播放按钮-->
                 <div class="btn_play btn_pause"></div>
             </div>
-            <audio id="music" autoplay src="/shares/distribute_register.mp3">
+            <audio id="music" src="/shares/distribute_register.mp3">
                 Your browser does not support HTML5 audio.
             </audio>
         </div>
@@ -171,13 +171,17 @@
     var vm = XVue(opts);
 
     $(function () {
-        reurl();
+        //安卓
+        iplay();
+        //浏览器
+        $('html').one('touchstart', function () {
+            iplay()
+        });
+        //微信
+        document.addEventListener("WeixinJSBridgeReady", function () {
+            iplay()
+        }, false);
 
-        nplay();
-        $('.btn_play').click();
-        nplay();
-        $('.btn_play').click();
-        
         var $tel = $(".input_phone");
         var $verify = $(".input_verify");
         $tips = $("#pup_tips");
@@ -232,16 +236,6 @@
             captcha.src = resp.image_data;
             vm.image_token = resp.image_token;
         });
-    }
-
-    function reurl() {
-        url = location.href; //把当前页面的地址赋给变量 url
-        var times = url.split("&"); //分切变量 url 分隔符号为 "?"
-        var length = times.length;
-        if (times[length-1] != 'tt=1') { //如果?后的值不等于1表示没有刷新
-            url += "&tt=1"; //把变量 url 的值加入 ?1
-            self.location.replace(url); //刷新页面
-        }
     }
 
     getCaptchaImage();

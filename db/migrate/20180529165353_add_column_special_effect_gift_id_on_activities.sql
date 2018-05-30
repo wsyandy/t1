@@ -1,0 +1,1 @@
+ALTER TABLE activities ADD COLUMN special_effect_gift_id INTEGER ;
