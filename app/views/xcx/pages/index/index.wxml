@@ -10,7 +10,7 @@
 <!--导航 -->
 <scroll-view class="scroll_tabs" scroll-x  scroll-with-animation scroll-into-view="{{toView}}">
   <view catchtap='tabSelect' class="scroll_tabs_item" wx:for="{{topTabs}}" wx:key="{{index}}" id="tabs_{{index}}" data-idx="{{index}}">
-    <text class="{{curIdx==index?'scroll_tabs_cur':'scroll_tabs_text'}}">{{item}}</text>
+    <text class="{{curIdx==index?(isIos?'scroll_tabs_ios':'scroll_tabs_cur'):'scroll_tabs_text'}}">{{item}}</text>
     <image hidden="{{curIdx!==index}}" class="tag_stars" src="{{stars}}" mode='aspectFit'></image>
   </view>
 </scroll-view>

@@ -1,6 +1,8 @@
 const app = getApp()
 Page({
   data: {
+    isIos:false, /*设备是否为IOS*/
+    isIpx: false,/*设备是否为iPhone X*/
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
     logo: '/images/logo_hi.png',
     avatarUrl: '',
@@ -452,15 +454,21 @@ Page({
 
     wx.getSystemInfo({
       success: (res) => {
+        /*判断是否为ipad 或者 iphone*/
+        let isios = /ipad|iphone/i.test(res.model)
+        /*判断是否为iPhone X*/
+        let iphonex = res.model.substring(0, res.model.indexOf("X")) + "X";
         // 解决 swiper 自适应高度问题 200为顶部head和tabs高度
-        var scrollheight = res.windowHeight - (res.windowWidth / 750 * 200);
+        let scrollheight = res.windowHeight - (res.windowWidth / 750 * 200);
         this.setData({
+          isIos: isios ? true : false,
+          isIpx: iphonex == 'iPhone X' ,
           scrollheight: scrollheight
         });
       }
     });
 
-    /*
+    /* 生成随机色
       let gameList = this.data.gameList
       gameList.forEach((item)=>{
         let color = randomColor();

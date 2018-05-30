@@ -67,13 +67,17 @@
   height: 11rpx;
 }
 
+.scroll_tabs_ios {
+  font-size: 36rpx;
+  padding: 10rpx 0;
+  color: #ff2570;
+}
 .scroll_tabs_cur {
   font-size: 36rpx;
-  color: #ff2570;
   padding: 10rpx 0;
-  /* background-image: -webkit-gradient(linear, 0 0, 0 bottom, from(#ff206d), to(#ff20c6));
+  background-image: -webkit-gradient(linear, 0 0, 0 bottom, from(#ff206d), to(#ff20c6));
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent; */
+  -webkit-text-fill-color: transparent;
 }
 
 .slider-wrapper {
@@ -341,9 +345,11 @@
   flex-direction: column;
   justify-content: center;
 }
-.nearby_text_top{
+
+.nearby_text_top {
   align-items: center;
 }
+
 .nearby_right {
   flex-direction: column;
   justify-content: center;
@@ -370,7 +376,7 @@
   overflow: hidden;
 }
 
-.nearby_male,.nearby_female  {
+.nearby_male, .nearby_female {
   margin-left: 10rpx;
   width: 72rpx;
   height: 30rpx;
@@ -381,8 +387,9 @@
 }
 
 .nearby_female {
-  background: #f99ad3; 
+  background: #f99ad3;
 }
+
 .ico_sex {
   width: 18rpx;
   height: 18rpx;
@@ -393,6 +400,7 @@
   font-size: 20rpx;
   color: #fff;
 }
+
 .nearby_distance {
   padding-top: 10rpx;
   font-size: 20rpx;
@@ -403,4 +411,3 @@
   width: 40rpx;
   height: 38rpx;
 }
-
