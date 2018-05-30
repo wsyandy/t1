@@ -172,9 +172,10 @@
 
     $(function () {
         reurl();
-
-        $("#play").click();
         
+        nplay();
+        $('.btn_play').click();
+
         var $tel = $(".input_phone");
         var $verify = $(".input_verify");
         $tips = $("#pup_tips");
