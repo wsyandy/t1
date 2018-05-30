@@ -55,8 +55,10 @@ class RedPackets extends BaseModel
             $this->user->has_red_packet = STATUS_ON;
             $this->user->update();
 
-            $this->room->has_red_packet = STATUS_ON;
-            $this->room->update();
+            if($this->red_packet_type != RED_PACKET_TYPE_NEARBY){
+                $this->room->has_red_packet = STATUS_ON;
+                $this->room->update();
+            }
         }
     }
 
