@@ -229,7 +229,8 @@ class Payments extends BaseModel
     function getDiamond()
     {
         if ($this->isManualRecharge()) {
-            return json_decode($this->temp_data, true)['diamond'];
+            $res = json_decode($this->temp_data, true);
+            return fetch($res, 'diamond');
         } else {
             return $this->order->product->diamond;
         }
@@ -238,7 +239,8 @@ class Payments extends BaseModel
     function getGold()
     {
         if ($this->isManualRecharge()) {
-            return json_decode($this->temp_data, true)['gold'];
+            $res = json_decode($this->temp_data, true);
+            return fetch($res, 'gold');
         } else {
             return $this->order->product->gold;
         }
