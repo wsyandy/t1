@@ -72,6 +72,11 @@ class OrdersController extends BaseController
     {
         $user_id = intval($this->params('user_id'));
         if ($this->request->isPost()) {
+
+            if (!$this->currentOperator()->isSuperOperator()) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '你无此权限');
+            }
+
             $amount = $this->params('amount');
             $paid_amount = $this->params('paid_amount');
             $diamond = $this->params('diamond');
