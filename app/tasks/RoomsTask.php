@@ -1123,29 +1123,37 @@ class RoomsTask extends \Phalcon\Cli\Task
         Rooms::updateHotRoomList($room_ids);
     }
 
-
-    function boomTargetAction()
+    function kickingRealUserAction()
     {
-        $line = BoomHistories::getBoomStartLine();
-        $total = BoomHistories::getBoomTotalValue();
+        $room = Rooms::findFirstById(1010149);
 
-        $rooms = Rooms::dayStatRooms();
-        $cache = Rooms::getHotWriteCache();
+        $users = $room->findTotalRealUsers();
 
-        foreach ($rooms as $room) {
-            $cur_income_cache_name = Rooms::generateBoomCurIncomeKey($room->id);
-            $cur_income = $cache->get($cur_income_cache_name);
+        foreach ($users as $user) {
 
-            if ($cur_income >= $line) {
-                $room->pushBoomIncomeMessage($total, $cur_income);
+            if (!$user->current_room_seat_id && !$user->isRoomHost($room)) {
+
+                $room_seat_user_lock_key = "room_seat_user_lock{$user->id}";
+
+                $room->kickingRoom($user, 30);
+                ////$room->pushExitRoomMessage($user, $user->current_room_seat_id);
+
+                unlock($room_seat_user_lock_key);
             }
         }
+
     }
 
-
-    function disappearBoomGiftRocketAction()
+    //结束爆礼物
+    function overBoomGiftAction()
     {
-        $time = time() - 300;
+        $expire = 3600;
+
+        if (isDevelopmentEnv()) {
+            $expire = 300;
+        }
+
+        $time = time() - $expire;
         $boom_list_key = Rooms::generateBoomGiftListDayKey($time);
         $cache = Rooms::getHotWriteCache();
         $total_room_ids = $cache->zrange($boom_list_key, 0, -1);
@@ -1177,49 +1185,5 @@ class RoomsTask extends \Phalcon\Cli\Task
                 $room->pushBoomIncomeMessage($total_value, $cur_income, STATUS_OFF);
             }
         }
-    }
-
-    function kickingAction()
-    {
-        $room = Rooms::findFirstById(1010149);
-
-        $users = $room->findTotalRealUsers();
-
-        foreach ($users as $user) {
-
-            if (!$user->current_room_seat_id && !$user->isRoomHost($room)) {
-
-                $room_seat_user_lock_key = "room_seat_user_lock{$user->id}";
-
-                $room->kickingRoom($user, 30);
-                ////$room->pushExitRoomMessage($user, $user->current_room_seat_id);
-
-                unlock($room_seat_user_lock_key);
-            }
-        }
-
-    }
-
-    function kicking1Action()
-    {
-        $users = Users::findByIp('61.158.148.7');
-        echoLine(count($users));
-        $room = Rooms::findFirstById(1010149);
-
-        $users = $room->findTotalRealUsers();
-
-        foreach ($users as $user) {
-
-            if ($user->current_room_seat_id && !$user->isRoomHost($room)) {
-
-                $room_seat_user_lock_key = "room_seat_user_lock{$user->id}";
-
-                $room->kickingRoom($user, 30);
-                ////$room->pushExitRoomMessage($user, $user->current_room_seat_id);
-
-                unlock($room_seat_user_lock_key);
-            }
-        }
-
     }
 }
