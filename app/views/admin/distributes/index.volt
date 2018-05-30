@@ -30,7 +30,7 @@
                 <th>{{ data['share_distribute_user_num'] }}</th>
                 <th>{{ data['per_capita_share_num'] }}</th>
                 <th>{{ data['invited_user_num'] }}</th>
-                <th>{{ data['share_register_bonus'] }}</th>
+                <th>{{ data['register_distribute_bonus'] }}</th>
                 <th>{{ data['first_distribute_bonus'] }}</th>
                 <th>{{ data['second_distribute_bonus'] }}</th>
                 <th>{{ data['distribute_total_amount'] }}</th>
