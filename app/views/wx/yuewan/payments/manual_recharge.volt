@@ -37,7 +37,7 @@
             <span class="contact_title">请联系客服电话或者QQ进行充值</span>
             <div class="contact_tel">
                 <span>客服电话：400-018-7755</span>
-                <span>客服QQ：327041263</span>
+                <span>客服QQ：327041264</span>
             </div>
         </div>
     </div>
