@@ -152,11 +152,6 @@ class GiftOrders extends BaseModel
         if ($gift->isDiamondPayType()) {
             $remark = '送礼物消费' . $total_amount . '钻石,礼物总个数' . $total_gift_num . ",礼物id" . $gift->id . ",接收礼物人数" . $receiver_num;
             $opts['remark'] = $remark;
-
-            if ($sender->isCompanyUser()) {
-                $sender->addCompanyUserSendNumber($total_amount);
-            }
-
             $target = \AccountHistories::changeBalance($sender, ACCOUNT_TYPE_BUY_GIFT, $total_amount, $opts);
         } else {
             $remark = '送礼物消费' . $total_amount . '金币,礼物总个数' . $total_gift_num . ",礼物id" . $gift->id . ",接收礼物人数" . $receiver_num;

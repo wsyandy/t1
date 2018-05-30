@@ -1309,7 +1309,7 @@ class Users extends BaseModel
         info($this->id, date('YmdHis', $this->register_at), date('YmdHis', $this->last_at));
         \Stats::delay()->record('user', 'register', $this->getStatAttrs());
 
-        if(isDevelopmentEnv()){
+        if (isDevelopmentEnv()) {
             $attrs = $this->getStatAttrs();
             $attrs['mobile'] = $this->mobile;
             $attrs['third_unionid'] = $this->third_unionid;
@@ -2211,17 +2211,17 @@ class Users extends BaseModel
             }
 
             // 附近红包
-            if($user->has_red_packet){
+            if ($user->has_red_packet) {
                 $user->has_red_packet = 0;
-                if($user->room_id && $user->room_id == $user->current_room_id){
+                if ($user->room_id && $user->room_id == $user->current_room_id) {
 
                     $distance = intval($geo_distance);
-                    if($user->distance && preg_match('/km/', $user->distance)){
+                    if ($user->distance && preg_match('/km/', $user->distance)) {
                         $distance = intval($geo_distance * 1000);
                     }
 
                     $red_packet = RedPackets::findLastNearby($user, $distance, $this->sex);
-                    if($red_packet && !$red_packet->isGrabbed($this)){
+                    if ($red_packet && !$red_packet->isGrabbed($this)) {
                         $user->has_red_packet = 1;
                     }
                 }
@@ -3672,9 +3672,8 @@ class Users extends BaseModel
         $cache->expire($current_day_company_user_send_diamond_to_personage_num, $past_at);
     }
 
-    function canConsumeDiamondToUser($receiver_ids, $amount)
+    function canConsumeDiamond($amount)
     {
-
         if ($this->isWhiteListUser()) {
             return true;
         }
@@ -3688,24 +3687,12 @@ class Users extends BaseModel
         $send_number = $hot_cache->zscore($key, $this->id);
         $plan_number = $amount + $send_number;
 
-        if ($plan_number <= 100) {
+        if ($plan_number <= 200) {
             return true;
         }
 
-        if(!is_array($receiver_ids) && is_numeric($receiver_ids))
-        {
-            $receiver_ids = [intval($receiver_ids)];
-        }
-
-        //内部账号使用
-        $receivers = Users::findByIds($receiver_ids);
-        foreach ($receivers as $receiver) {
-            if (!$receiver->isCompanyUser()) {
-                return false;
-            }
-        }
-
-        return true;
+        info($this->id, $plan_number, $amount, $send_number);
+        return false;
     }
 
     // 消费钻石的白名单

@@ -54,11 +54,12 @@ class AccountHistories extends BaseModel
     {
         $user = $this->user;
         $user->diamond = $this->balance;
-        // 系统赠送
-//        if ($this->fee_type == ACCOUNT_TYPE_GIVE && $user->organisation != USER_ORGANISATION_COMPANY) {
-//            $user->organisation = USER_ORGANISATION_COMPANY;
-//        }
         $user->update();
+
+        if ($user->isCompanyUser() && $this->isCostDiamond()) {
+            info($user->id, $this->amount);
+            $user->addCompanyUserSendNumber($this->amount);
+        }
 
         $user_attrs = $user->getStatAttrs();
         $user_attrs['add_value'] = abs($this->amount);
@@ -134,6 +135,11 @@ class AccountHistories extends BaseModel
         if ($this->isCostDiamond()) {
             $change_amount = -$change_amount;
             $this->amount = $change_amount;
+            $user = $this->user;
+            $can_consume_diamond = $user->canConsumeDiamond($change_amount);
+            if (!$can_consume_diamond) {
+                return true;
+            }
         }
 
         $old_account_history = self::findFirst([
