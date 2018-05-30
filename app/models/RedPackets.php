@@ -48,14 +48,23 @@ class RedPackets extends BaseModel
 
         $cache = \Users::getUserDb();
         //当前正在进行中的红包id集合
-        $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($this->room_id);
-        $cache->zadd($underway_red_packet_list_key, time(), $this->id);
+
+        if ($this->sex == USER_SEX_COMMON) {
+            $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($this->room_id, 0);
+            $cache->zadd($underway_red_packet_list_key, time(), $this->id);
+            $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($this->room_id, 1);
+            $cache->zadd($underway_red_packet_list_key, time(), $this->id);
+        } else {
+            $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($this->room_id, $this->sex);
+            $cache->zadd($underway_red_packet_list_key, time(), $this->id);
+        }
+
 
         if ($this->diamond >= 10000) {
             $this->user->has_red_packet = STATUS_ON;
             $this->user->update();
 
-            if($this->red_packet_type != RED_PACKET_TYPE_NEARBY){
+            if ($this->red_packet_type != RED_PACKET_TYPE_NEARBY) {
                 $this->room->has_red_packet = STATUS_ON;
                 $this->room->update();
             }
@@ -67,8 +76,15 @@ class RedPackets extends BaseModel
         if ($this->hasChanged('status') && $this->status == STATUS_OFF) {
 
             $cache = \Users::getUserDb();
-            $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($this->room_id);
-            $cache->zrem($underway_red_packet_list_key, $this->id);
+            if ($this->sex == USER_SEX_COMMON) {
+                $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($this->room_id, 0);
+                $cache->zrem($underway_red_packet_list_key,$this->id);
+                $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($this->room_id, 1);
+                $cache->zrem($underway_red_packet_list_key, $this->id);
+            } else {
+                $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($this->room_id, $this->sex);
+                $cache->zrem($underway_red_packet_list_key, $this->id);
+            }
 
             info('红包已经结束回收，删除对应进行中的红包id', $underway_red_packet_list_key, $this->id, $this->status);
 
@@ -131,9 +147,9 @@ class RedPackets extends BaseModel
     }
 
     //正在进行中的红包的key
-    static function getUnderwayRedPacketListKey($current_room_id)
+    static function getUnderwayRedPacketListKey($current_room_id, $sex)
     {
-        return 'room_underway_red_packet_list_' . $current_room_id;
+        return 'room_underway_red_packet_list_' . $current_room_id.'_sex'.$sex;
     }
 
     function generateRedPacketUserListKey()
@@ -231,7 +247,7 @@ class RedPackets extends BaseModel
     {
 
         $cache_db = \Users::getUserDb();
-        $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($room->id);
+        $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($room->id, $user->sex);
         $total = $cache_db->zcard($underway_red_packet_list_key);
         $offset = ($page - 1) * $per_page;
         if ($offset >= $total) {

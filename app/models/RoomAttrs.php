@@ -335,7 +335,7 @@ trait RoomAttrs
     {
         $cache = \Users::getUserDb();
         //当前房间所有还在进行中的红包ids
-        $underway_red_packet_list_key = \RedPackets::getUnderwayRedPacketListKey($this->id);
+        $underway_red_packet_list_key = \RedPackets::getUnderwayRedPacketListKey($this->id, $user->sex);
         $underway_ids = $cache->zrange($underway_red_packet_list_key, 0, -1);
 
         //当前用户领取过的红包ids
