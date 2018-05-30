@@ -1,8 +1,8 @@
 const app = getApp()
 Page({
   data: {
-    isIos:false, /*设备是否为IOS*/
-    isIpx: false,/*设备是否为iPhone X*/
+    isIos: app.globalData.isIos, /*设备是否为IOS*/
+    isIpx: app.globalData.isIpx,/*设备是否为iPhone X*/
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
     logo: '/images/logo_hi.png',
     avatarUrl: '',
@@ -116,7 +116,7 @@ Page({
         room_name: '处CP，唱歌，开黑',
         room_num: '3',
         room_tag: '处CP',
-        color:'#f79c52'
+        color: '#f79c52'
       },
       {
         homeowners: '/images/room_cover_2.jpg',
@@ -264,7 +264,7 @@ Page({
         color: '#F79C52'
       },
     ],
-    nofocus:false,
+    nofocus: false,
     icon_nofocus: '/images/icon_nofocus.png',
 
     /* 附近 */
@@ -279,7 +279,7 @@ Page({
         room: 0,
         distance: '附近',
         male: 1,
-        age:21,
+        age: 21,
       },
       {
         nickname: '小龙女',
@@ -309,7 +309,7 @@ Page({
         age: 24,
       },
 
-       
+
     ],
     /*个人中心左侧栏*/
     hideMask: true,
@@ -422,11 +422,11 @@ Page({
   },
   /* 路由事件 */
   navtoNewRoom: function () { },
-  navtoNewHomeowners:function(){},
+  navtoNewHomeowners: function () { },
   navtoGameHomeowners: function () { },
   navtoGameRoom: function () { },
 
- 
+
 
   preventD: function (e) {
     // 无效的事件，阻止冒泡
@@ -452,20 +452,9 @@ Page({
   },
   onLoad: function (options) {
 
-    wx.getSystemInfo({
-      success: (res) => {
-        /*判断是否为ipad 或者 iphone*/
-        let isios = /ipad|iphone/i.test(res.model)
-        /*判断是否为iPhone X*/
-        let iphonex = res.model.substring(0, res.model.indexOf("X")) + "X";
-        // 解决 swiper 自适应高度问题 200为顶部head和tabs高度
-        let scrollheight = res.windowHeight - (res.windowWidth / 750 * 200);
-        this.setData({
-          isIos: isios ? true : false,
-          isIpx: iphonex == 'iPhone X' ,
-          scrollheight: scrollheight
-        });
-      }
+    // 解决 swiper 自适应高度问题 200为顶部head和tabs高度
+    this.setData({
+      scrollheight: app.globalData.windowHeight - (app.globalData.windowWidth / 750 * 200)
     });
 
     /* 生成随机色
@@ -520,4 +509,3 @@ function randomColor() {
   return strColor
 }
 
- 

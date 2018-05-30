@@ -113,7 +113,29 @@ App({
     // .finally(function (res) {})
   },
 
+
+  /* 获取系统信息 */
+  onLaunch: function (options) {
+    wx.getSystemInfo({
+      success: (res) => {
+        /*判断是否为ipad 或者 iphone*/
+        let isios = /ipad|iphone/i.test(res.model)
+        this.globalData.isIos = isios ;
+        /*判断是否为iPhone X*/
+        let iphonex = res.model.substring(0, res.model.indexOf("X")) + "X";
+        this.globalData.isIpx = iphonex == 'iPhone X'  
+        /* 获取设备可使用窗口宽高*/
+        this.globalData.windowWidth = res.windowWidth
+        this.globalData.windowHeight = res.windowHeight 
+      }
+    });
+  },
+
   globalData: {
+    isIos: false, /*设备是否为IOS*/
+    isIpx: false,/*设备是否为iPhone X*/
+    windowWidth: 0, /*可使用窗口宽度*/
+    windowHeight: 0,/*可使用窗口高度*/
     userInfo: wx.getStorageSync('userInfo') ? wx.getStorageSync('userInfo') : null,
     sid: wx.getStorageSync('sid') ? wx.getStorageSync('sid') : null,
   }
