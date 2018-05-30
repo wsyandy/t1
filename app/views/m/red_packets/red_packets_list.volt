@@ -16,11 +16,11 @@
                 </div>
                 <div class="num red_list_style red_list_get_red" v-if="v.is_grabbed">已抢过</div>
 
-                <div class="num red_list_style" v-bind:class="v.class" v-if="!v.is_grabbed && v.red_packet_type != 'stay_at_room'"
+                <div class="num red_list_style" v-bind:class="v.class" v-if="!v.is_grabbed && v.distance_start_at < 1"
                      @click="toGrabRedPacket(v.id)">${v.text}
                 </div>
 
-                <div class="num red_list_style red_list_time " v-if="!v.is_grabbed && v.red_packet_type == 'stay_at_room' and v.distance_start_at>0" :class="['daojishi'+i]"
+                <div class="num red_list_style red_list_time " v-if="!v.is_grabbed && v.red_packet_type == 'stay_at_room' && v.distance_start_at > 0" :class="['daojishi'+i]"
                      @click="toGrabRedPacket(v.id)"></div>
 
                 <div class="num red_list_style red_list_qiang" :class="['daojishiJS'+i]" style="display: none;"
