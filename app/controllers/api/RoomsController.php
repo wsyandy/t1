@@ -569,7 +569,7 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '管理员已满');
         }
 
-        $room->addManager($user_id, $duration);
+        $room->addManager($this->otherUser(), $duration);
 
         $res['user_id'] = $user_id;
         $res['deadline'] = $room->calculateUserDeadline($user_id);

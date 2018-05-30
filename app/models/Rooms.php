@@ -500,8 +500,9 @@ class Rooms extends BaseModel
         $hot_cache->setex($key, $time, 1);
     }
 
-    function addManager($user_id, $duration)
+    function addManager($user, $duration)
     {
+        $user_id = $user->id;
         $db = Users::getUserDb();
         $manager_list_key = $this->generateManagerListKey();
         $total_manager_key = self::generateTotalManagerKey();
@@ -533,6 +534,12 @@ class Rooms extends BaseModel
 
         $db->hset($room_manager_cache_key, $user_id, json_encode(['user_id' => $user_id, 'is_permanent' => $is_permanent,
             'deadline' => $this->calculateUserDeadline($user_id)], JSON_UNESCAPED_UNICODE));
+
+        if ($user && $user->isInRoom($this)) {
+            $user_role = USER_ROLE_MANAGER;
+            $user->user_role = $user_role;
+            $user->update();
+        }
     }
 
     function deleteManager($user_id)
