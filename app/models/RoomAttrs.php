@@ -543,11 +543,8 @@ trait RoomAttrs
 
         if ($user->canReceiveBoomGiftMessage()) {
 
-            if (in_array($this->id, \Rooms::getGameWhiteList()) || isInternalIp($user->ip) || isDevelopmentEnv()) {
-
-                $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet',
-                    'url' => 'url://m/red_packets?room_id=' . $this->id, 'icon' => $root_host . 'images/red_packet.png'];
-            }
+            $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet',
+                'url' => 'url://m/red_packets?room_id=' . $this->id, 'icon' => $root_host . 'images/red_packet.png'];
 
             if ($is_host) {
                 $menu_config[] = ['show' => true, 'url' => 'app://users/pk', 'title' => 'PK', 'type' => 'pk', 'icon' => $root_host . 'images/pk.png'];
