@@ -42,7 +42,7 @@
 {%- macro product_link(object) %}
     {% if object.product_id %}
         {{ object.product_name }}
-    {% elseif object.payment.payment_type == 'manual_recharge' %}
+    {% elseif object.payment and object.payment.payment_type == 'manual_recharge' %}
         人工充值
     {% endif %}
 {%- endmacro %}
