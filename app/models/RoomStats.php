@@ -342,7 +342,7 @@ trait RoomStats
                 $expire = strtotime($minutes_end . '59') - time() + 300;
             }
 
-            $boom_list_day_key = 'boom_gifts_list_' . date("Ymd", $time);
+            $boom_list_day_key = self::generateBoomGiftListDayKey($time);
 
             $boom_num = $this->getBoomNum($time);
             $total_value = $boom_config->total_value + $interval_value * $boom_num;
@@ -472,6 +472,26 @@ trait RoomStats
         return $key;
     }
 
+    //爆礼物中的队列
+    static public function generateBoomGiftListDayKey($time = 0)
+    {
+        if (!$time) {
+            $time = time();
+        }
+
+        $key = 'boom_gifts_list_' . date("Ymd", $time);
+
+        if (isDevelopmentEnv()) {
+            $minutes = date("YmdHi", $time);
+            $interval = intval(intval($minutes) % 10);
+            $minutes_start = $minutes - $interval + 1;
+            $minutes_end = $minutes + (10 - $interval);
+            $key = 'boom_gifts_list_' . $minutes_start . "_" . $minutes_end;
+        }
+
+        return $key;
+    }
+
     //房间收益列表
     static function roomIncomeList($page, $per_page, $cond)
     {
@@ -483,7 +503,6 @@ trait RoomStats
         $room_ids = implode(',', $room_ids);
 
         if (isPresent($cond)) {
-            debug($cond);
             $rooms = self::find($cond);
         } else {
             $rooms = self::findByIds($room_ids);

@@ -696,8 +696,7 @@ trait RoomAttrs
     {
         $cache = \Rooms::getHotWriteCache();
         $room_boom_gift_sign_key = Rooms::generateRoomBoomGiftSignKey($this->id);
-
-        $boom_list_day_key = 'boom_gifts_list_' . date("Ymd", time());
+        $boom_list_day_key = Rooms::generateBoomGiftListDayKey();
 
         if ($cache->exists($room_boom_gift_sign_key) || ($cache->zscore($boom_list_day_key, $this->id) && $this->getCurrentBoomGiftValue() > 0)) {
             return true;
@@ -715,10 +714,6 @@ trait RoomAttrs
     function canToHot($least_user_num)
     {
         $user = $this->user;
-
-//        if (!$this->isBroadcast() && !$user->isIdCardAuth() && $user->pay_amount < 1) {
-//            return false;
-//        }
 
         if (!$this->checkRoomSeat()) {
             return false;
