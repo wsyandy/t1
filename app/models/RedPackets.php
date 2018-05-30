@@ -384,7 +384,7 @@ class RedPackets extends BaseModel
         }
 
         if($get_diamond > $max_diamond){
-            $get_diamond = ceil($get_diamond * 0.5);
+            $get_diamond = ceil($balance_diamond * 0.1);
         }
 
         // 防止超出
