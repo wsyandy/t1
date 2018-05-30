@@ -123,7 +123,13 @@ class SmsDistributeHistories extends BaseModel
 
             $amount = 10;
             $opts = ['remark' => '分销注册奖励钻石' . $amount, 'mobile' => $share_user->mobile, 'target_id' => $current_user->id];
-            \AccountHistories::changeBalance($share_user, ACCOUNT_TYPE_DISTRIBUTE_REGISTER, $amount, $opts);
+            $result = \AccountHistories::changeBalance($share_user, ACCOUNT_TYPE_DISTRIBUTE_REGISTER, $amount, $opts);
+
+            $stat_db = \Stats::getStatDb();
+            $distribute_bonus_key = self::generateDistributeBonusKey();
+            if ($result) {
+                $stat_db->hincrby($distribute_bonus_key, 'register_distribute_bonus', $amount);
+            }
         }
 
         return [ERROR_CODE_SUCCESS, '成功'];
