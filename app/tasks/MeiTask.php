@@ -10,7 +10,7 @@ class MeiTask extends \Phalcon\Cli\Task
 {
     function test71Action()
     {
-        $users = Users::find(['conditions' => 'ip = :ip:', 'bind' => ['ip' => '61.186.12.125']]);
+        $users = Users::find(['conditions' => 'ip = :ip:', 'bind' => ['ip' => '61.186.12.12']]);
 
         foreach ($users as $user) {
             echoLine($user->id, $user->pay_amount);
