@@ -202,7 +202,7 @@ class RedPackets extends BaseModel
         }
 
         $time = 24 * 60 * 60;
-        if (isDevelopmentEnv()) {
+        if (isDevelopmentEnv() || $user->isCompanyUser()) {
             $time = 5 * 60;
         }
 
@@ -262,10 +262,6 @@ class RedPackets extends BaseModel
         $red_packets = \RedPackets::findByIds($red_packet_ids);
 
         foreach ($red_packets as $red_packet) {
-
-            if (isDevelopmentEnv()) {
-                self::delay(300)->asyncCheckRefund($red_packet->id);
-            }
 
             $distance_start_at = $red_packet->getDistanceStartTime($user);
             $red_packet->distance_start_at = $distance_start_at;
