@@ -137,7 +137,7 @@ class AccountHistories extends BaseModel
             $user = $this->user;
             $can_consume_diamond = $user->canConsumeDiamond($change_amount);
 
-            if (!$can_consume_diamond) {
+            if (!$can_consume_diamond && isProduction()) {
                 info('Exce', 'uset_id', $this->user_id, 'fee_type', $this->fee_type_text, 'amount', $change_amount);
                 return true;
             }
