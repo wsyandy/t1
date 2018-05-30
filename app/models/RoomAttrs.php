@@ -336,6 +336,11 @@ trait RoomAttrs
         $hot_cache = self::getHotWriteCache();
         $user_key = $this->getEnterRoomUserListKey();
         $time = $hot_cache->zscore($user_key, $user_id);
+        if($time < 1){
+            $real_user_key = $this->getRealUserListKey();
+            $time = $hot_cache->zscore($real_user_key, $user_id);
+        }
+        
         return $time;
     }
 
