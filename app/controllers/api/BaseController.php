@@ -220,7 +220,8 @@ class BaseController extends ApplicationController
         }
 
         // 为啥要限制
-        if (in_array($this->remoteIp(), ['112.1.160.168', '61.158.148.7', '61.158.149.145'])) {
+        if (in_array($this->remoteIp(), ['112.1.160.168', '61.158.148.7', '61.158.149.145', '113.221.228.165', '61.186.12.125',
+            '61.186.12.12'])) {
             info("ip_illegal", $this->context(), $this->params());
 
             $sid = '';
@@ -304,7 +305,7 @@ class BaseController extends ApplicationController
         ) {
             return $this->renderJSON(ERROR_CODE_FAIL, '对方用户不存在');
         }
-        
+
         if (!$this->authorize()) {
             info('请登录 authorize', $this->params());
 

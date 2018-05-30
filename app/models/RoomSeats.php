@@ -265,11 +265,6 @@ class RoomSeats extends BaseModel
     function canUp($user, $other_user = null)
     {
         if ($this->user_id) {
-
-            if (isDevelopmentEnv()) {
-                return [ERROR_CODE_SUCCESS, ''];
-            }
-
             return [ERROR_CODE_FAIL, '麦位已存在用户'];
         }
 

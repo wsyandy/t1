@@ -317,4 +317,42 @@ class ProductChannelsController extends BaseController
         $product_channel = \ProductChannels::findFirstById($this->params('id'));
         $this->view->product_channel = $product_channel;
     }
+
+    //小程序配置
+    function xcxConfigAction()
+    {
+        $product_channel_id = $this->params('id');
+        $product_channel = \ProductChannels::findFirstById($product_channel_id);
+        $this->view->product_channel = $product_channel;
+    }
+
+    //更新小程序配置
+    function updateXcxConfigAction()
+    {
+        $product_channel_id = $this->params('id');
+        $product_channel = \ProductChannels::findFirstById($product_channel_id);
+        $this->assign($product_channel, 'product_channel');
+
+        $xcx_domain = $product_channel->xcx_domain;
+        $old_product_channel = \ProductChannels::findFirstByXcxDomain($xcx_domain);
+        if ($xcx_domain && $old_product_channel && $product_channel->id != $old_product_channel->id) {
+            $this->renderJSON(ERROR_CODE_FAIL, '域名已被' . $old_product_channel->name . '使用');
+            return;
+        }
+
+        if ($product_channel->xcx_appid) {
+            $old_product_channel = \ProductChannels::findFirstByXcxAppid($product_channel->xcx_appid);
+            if ($old_product_channel && $product_channel->id != $old_product_channel->id) {
+                $this->renderJSON(ERROR_CODE_FAIL, '微信账户已被' . $old_product_channel->name . '使用');
+                return;
+            }
+        }
+
+        \OperatingRecords::logBeforeUpdate($this->currentOperator(), $product_channel);
+        if ($product_channel->update()) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '操作成功', array('product_channel' => $product_channel->toJson()));
+        } else {
+            return $this->renderJSON(ERROR_CODE_FAIL);
+        }
+    }
 }

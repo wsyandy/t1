@@ -57,21 +57,21 @@ class BoomHistories extends BaseModel
         $can_get_gift = false;
 
         switch ($rank) {
-            case 0:
+            case 1:
                 $rate = mt_rand(1, 100);
 
                 if ($rate > 0 && $rate <= 50) {
                     $can_get_gift = true;
                 }
                 break;
-            case 1;
+            case 2;
                 $rate = mt_rand(1, 100);
 
                 if ($rate > 0 && $rate <= 30) {
                     $can_get_gift = true;
                 }
                 break;
-            case 2:
+            case 3:
                 $rate = mt_rand(1, 100);
 
                 if ($rate > 0 && $rate <= 10) {
@@ -80,6 +80,7 @@ class BoomHistories extends BaseModel
                 break;
         }
 
+        info($rank, $can_get_gift);
         if ($can_get_gift) {
             $gift_id = $gift_ids[array_rand($gift_ids)];
             return $gift_id;
@@ -100,7 +101,13 @@ class BoomHistories extends BaseModel
             }
         }
 
-        $boom_num = $room->getBoomNum();
+        $time = Rooms::getBoomGiftTime($room->id);
+
+        if (!$time) {
+            return null;
+        }
+
+        $boom_num = $room->getBoomNum($time);
         $num = $boom_num;
 
         if ($num > 3) {
@@ -131,7 +138,7 @@ class BoomHistories extends BaseModel
 
         foreach ($data as $datum) {
 
-            $res = self::isLimit($room, $datum);
+            $res = self::isLimit($room, $boom_num, $datum);
 
             if ($res) {
                 info($datum);
@@ -148,7 +155,6 @@ class BoomHistories extends BaseModel
         $cache = self::getHotWriteCache();
         $gift_data = $gift_datas[array_rand($gift_datas)];
         $id = fetch($gift_data, 'id');
-        $boom_num = $room->getBoomNum();
 
         $key = "boom_gift_hit_num_room_id{$room->id}" . "_{$id}_boom_num_" . $boom_num;
         $cache->incrby($key, 1);
@@ -156,12 +162,12 @@ class BoomHistories extends BaseModel
         return $gift_data;
     }
 
-    static function isLimit($room, $data)
+    static function isLimit($room, $boom_num, $data)
     {
         $cache = self::getHotWriteCache();
         $id = fetch($data, 'id');
         $total_number = fetch($data, 'total_number');
-        $num = $room->getBoomNum();
+        $num = $boom_num;
         $key = "boom_gift_hit_num_room_id{$room->id}" . "_{$id}_boom_num_" . $num;
         $hit_num = $cache->get($key);
         info($room->id, $key, $hit_num, $data);
@@ -308,4 +314,16 @@ class BoomHistories extends BaseModel
 
         return $target;
     }
+
+    /**
+     * 记录爆礼物抽中的奖品
+     * @param $user_id
+     * @param $room_id
+     * @return string
+     */
+    static public function generateBoomUserSignKey($user_id, $room_id)
+    {
+        return 'boom_target_room_' . $room_id . '_user_' . $user_id;
+    }
+
 }

@@ -259,11 +259,11 @@ class RoomsTask extends \Phalcon\Cli\Task
         $hot_cache = Rooms::getHotReadCache();
         $cache_key = Rooms::generateAbnormalExitRoomListKey();
 
-        while(true) {
+        while (true) {
 
             $end_at = time() - 60;
             $target_ids = $hot_cache->zrangebyscore($cache_key, '-inf', $end_at, array('limit' => array(0, 1)));
-            if(count($target_ids) < 1){
+            if (count($target_ids) < 1) {
                 return;
             }
 
@@ -1145,10 +1145,11 @@ class RoomsTask extends \Phalcon\Cli\Task
 
     function disappearBoomGiftRocketAction()
     {
-        $boom_list_key = 'boom_gifts_list';
-
+        $time = time() - 300;
+        $boom_list_key = Rooms::generateBoomGiftListDayKey($time);
         $cache = Rooms::getHotWriteCache();
         $total_room_ids = $cache->zrange($boom_list_key, 0, -1);
+        echoLine($total_room_ids);
         $total = count($total_room_ids);
         $per_page = 100;
         $offset = 0;
@@ -1163,14 +1164,17 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             foreach ($rooms as $room) {
 
-                $cur_income = $room->getCurrentBoomGiftValue();
-                $boom_config = \BoomConfigs::getBoomConfigByCache($room->boom_config_id);
-                $total_income = \BoomConfigs::getBoomTotalValue($boom_config);
+                $cur_income = $room->getCurrentBoomGiftValue($time);
+                $boom_config = \BoomConfigs::getBoomConfig();
+                $interval_value = 50000;
+                $boom_num = $this->getBoomNum($time);
+                $total_value = $boom_config->total_value + $interval_value * $boom_num;
 
-                if (!$cur_income) {
-                    $cache->zrem($boom_list_key, $room->id);
-                    $room->pushBoomIncomeMessage($total_income, $cur_income, STATUS_OFF);
+                if ($total_value > 250000) {
+                    $total_value = 250000;
                 }
+                $cache->zrem($boom_list_key, $room->id);
+                $room->pushBoomIncomeMessage($total_value, $cur_income, STATUS_OFF);
             }
         }
     }

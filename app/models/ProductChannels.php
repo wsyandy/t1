@@ -448,4 +448,22 @@ class ProductChannels extends BaseModel
             'official_website' => $this->official_website
         ];
     }
+
+    static function findFirstByXcxDomain($domain)
+    {
+        $read_cache = self::getHotReadCache();
+
+        $id = $read_cache->get('product_channel_xcx_domain_' . $domain);
+        if (!$id) {
+            $product_channel = self::findFirstBy(['xcx_domain' => $domain]);
+            if ($product_channel) {
+                $write_cache = self::getHotWriteCache();
+                $write_cache->setex('product_channel_xcx_domain_' . $domain, 60 * 60 - 1, $product_channel->id);
+            }
+        } else {
+            $product_channel = self::findFirstById($id);
+        }
+
+        return $product_channel;
+    }
 }

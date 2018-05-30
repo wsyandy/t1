@@ -25,28 +25,19 @@
 
 
                 </div>
-                {#<h3>发了一个红包，关注房主可领取</h3>#}
-                {#<div class="qiang_red"></div>#}
 
-                {#<div class="red_get">#}
-                {#<img src="images/gongxi.png">#}
-                {#<h3>抢到橘子发的钻石红包</h3>#}
-                {#<div class="red_get_num"><i></i>100</div>#}
-                {#<p>已收到我的帐户，可用于送礼物</p>#}
-                {#<a href="javascript:;" class="look_detail">查看领取详情 <i></i></a>#}
-                {#</div>#}
                 <div v-if="getRed">
 
                     <div class="red_get" v-if="congratulation">
                         <img src="/m/images/gongxi.png">
-                        <h3>${res}</h3>
+                        <h3>${error_reason}</h3>
                         <div class="red_get_num"><i></i>${getDiamond}</div>
                         <p>已收到我的帐户，可用于送礼物</p>
                         <a @click="toDetail()" class="look_detail">查看领取详情 <i></i></a>
                     </div>
                     <div class="red_over" style="margin-top: 3rem" v-if="pity">
                         <img src="/m/images/yihan.png" v-if="grabbed">
-                        <h3>${res}</h3>
+                        <h3>${error_reason}</h3>
                         <a @click="toDetail()" class="look_detail">查看领取详情 <i></i></a>
                     </div>
 
@@ -59,9 +50,9 @@
         <div class="gz_fangzhu show">
             <i class="close" @click="closeAttention()"></i>
             <div class="pic">
-                <img src="{{ user_avatar_url }}">
+                <img src="{{ room_user_avatar_url }}">
             </div>
-            <h3>{{ user_nickname }}</h3>
+            <h3>{{ room_user_nickname }}</h3>
             <p>是否关注房主，领取红包</p>
             <div class="gz_btn" @click="toAttention()">关注并领取</div>
         </div>
@@ -81,9 +72,8 @@
             pity: false,
             attentionHost: false,
             attentionUrl: "",
-            res: "",
-            getDiamond: "",
-            user_id: "{{ user_id }}",
+            error_reason: "",
+            getDiamond: 0,
             grabbed:true,
 
         },
@@ -98,9 +88,9 @@
                 $.authGet('/m/red_packets/grab_red_packets', data, function (resp) {
 
                     vm.getRed = true;
-                    if (!resp.error_code) {
+                    if (resp.error_code == 0) {
 
-                        vm.res = resp.error_reason;
+                        vm.error_reason = resp.error_reason;
                         vm.getDiamond = resp.get_diamond;
                         vm.congratulation = true;
 
@@ -108,14 +98,16 @@
 
                         vm.attentionHost = true;
                         vm.attentionUrl = resp.client_url;
+                        vm.pity = true;
 
                     } else if (resp.error_code == -101) {
-                        vm.res = resp.error_reason;
+                        vm.error_reason = resp.error_reason;
                         vm.pity = true;
                         vm.grabbed = false;
 
                     } else {
-                        vm.res = resp.error_reason;
+                        vm.error_reason = resp.error_reason;
+                        vm.getDiamond = 0;
                         vm.pity = true;
                     }
 
@@ -129,28 +121,28 @@
                 location.href = url;
             },
             toAttention: function () {
+
                 var data = {
                     sid: this.sid,
                     code: this.code,
-                    red_packet_id: vm.red_packet_id,
-                    user_id: vm.user_id
+                    red_packet_id: vm.red_packet_id
+                };
 
-                }
                 $.authGet(vm.attentionUrl, data, function (resp) {
-                    console.log(resp);
+
                     vm.getRed = true;
                     if (!resp.error_code) {
 
-                        vm.res = resp.error_reason;
+                        vm.error_reason = resp.error_reason;
                         vm.getDiamond = resp.get_diamond;
                         vm.congratulation = true;
-
-                    } else {
-
-                        vm.res = resp.error_reason;
                         vm.pity = true;
 
+                    } else {
+                        vm.error_reason = resp.error_reason;
+                        vm.pity = true;
                     }
+
                     vm.attentionHost = false;
                     hide_grab();
                 })

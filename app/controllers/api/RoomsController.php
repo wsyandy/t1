@@ -569,7 +569,7 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '管理员已满');
         }
 
-        $room->addManager($user_id, $duration);
+        $room->addManager($this->otherUser(), $duration);
 
         $res['user_id'] = $user_id;
         $res['deadline'] = $room->calculateUserDeadline($user_id);
@@ -1045,7 +1045,11 @@ class RoomsController extends BaseController
             if (!$room->checkFilterUser($current_user_id)) {
 
                 if ($room->lock && $room->user_id != $current_user_id && $room->password != $password) {
-                    return $this->renderJSON(ERROR_CODE_FORM, '密码错误');
+                    if (isBlank($password)) {
+                        return $this->renderJSON(ERROR_CODE_FORM);
+                    } else {
+                        return $this->renderJSON(ERROR_CODE_FORM, '密码错误');
+                    }
                 }
             }
 

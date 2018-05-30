@@ -252,7 +252,7 @@ class DrawHistories extends BaseModel
 
     static function isWhiteList($user)
     {
-        return false;
+        return in_array($user->id, [1152242]);
     }
 
     static function calPayAmountRate($user, $datum, $opts)
@@ -439,6 +439,11 @@ class DrawHistories extends BaseModel
 
     static function isBlockUser($user)
     {
+
+        if(self::isWhiteList($user)){
+            return false;
+        }
+
         $user_db = Users::getUserDb();
         $score = $user_db->zscore('draw_histories_block_user_ids', $user->id);
 

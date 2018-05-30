@@ -29,7 +29,8 @@ class RedPackets extends BaseModel
         'balance_num' => ['null' => '不能为空']
     ];
 
-    static $RED_PACKET_TYPE = [RED_PACKET_TYPE_ALL => '都可以领取', RED_PACKET_TYPE_FOLLOW => '关注房主才能领取', RED_PACKET_TYPE_STAY_AT_ROOM => '在房间满3分钟才能领取'];
+    static $RED_PACKET_TYPE = [RED_PACKET_TYPE_ALL => '都可领取', RED_PACKET_TYPE_FOLLOW => '关注房主可领取',
+        RED_PACKET_TYPE_STAY_AT_ROOM => '在房间待满3分钟可领取', RED_PACKET_TYPE_NEARBY => '附近人可领取'];
 
     static $STATUS = [STATUS_ON => '进行中', STATUS_OFF => '结束'];
 
@@ -47,15 +48,26 @@ class RedPackets extends BaseModel
 
         $cache = \Users::getUserDb();
         //当前正在进行中的红包id集合
-        $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($this->room_id);
-        $cache->zadd($underway_red_packet_list_key, time(), $this->id);
 
-        if ($this->diamond >= 1000) {
+        if ($this->sex == USER_SEX_COMMON) {
+            $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($this->room_id, 0);
+            $cache->zadd($underway_red_packet_list_key, time(), $this->id);
+            $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($this->room_id, 1);
+            $cache->zadd($underway_red_packet_list_key, time(), $this->id);
+        } else {
+            $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($this->room_id, $this->sex);
+            $cache->zadd($underway_red_packet_list_key, time(), $this->id);
+        }
+
+
+        if ($this->diamond >= 10000) {
             $this->user->has_red_packet = STATUS_ON;
             $this->user->update();
 
-            $this->room->has_red_packet = STATUS_ON;
-            $this->room->update();
+            if ($this->red_packet_type != RED_PACKET_TYPE_NEARBY) {
+                $this->room->has_red_packet = STATUS_ON;
+                $this->room->update();
+            }
         }
     }
 
@@ -64,15 +76,19 @@ class RedPackets extends BaseModel
         if ($this->hasChanged('status') && $this->status == STATUS_OFF) {
 
             $cache = \Users::getUserDb();
-            $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($this->room_id);
-            $cache->zrem($underway_red_packet_list_key, $this->id);
+            if ($this->sex == USER_SEX_COMMON) {
+                $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($this->room_id, 0);
+                $cache->zrem($underway_red_packet_list_key,$this->id);
+                $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($this->room_id, 1);
+                $cache->zrem($underway_red_packet_list_key, $this->id);
+            } else {
+                $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($this->room_id, $this->sex);
+                $cache->zrem($underway_red_packet_list_key, $this->id);
+            }
 
             info('红包已经结束回收，删除对应进行中的红包id', $underway_red_packet_list_key, $this->id, $this->status);
 
-            self::pushRedPacketMessageForUser($this->room, $this->user, 'bc');
-
-
-            if ($this->diamond >= 1000) {
+            if ($this->diamond >= 10000) {
                 $this->user->has_red_packet = STATUS_OFF;
                 $this->user->update();
                 if ($this->room) {
@@ -80,12 +96,20 @@ class RedPackets extends BaseModel
                     $this->room->update();
                 }
             }
+
+            //红包抢完公屏
+            $content = $this->user->nickname . '发的红包已抢完';
+            if ($this->balance_diamond) {
+                $content = $this->user->nickname . '发的红包已过期';
+            }
+            self::sendRedPacketMessageToUsers($this->user, $this->room, ['type' => 'finish', 'content' => $content]);
         }
     }
 
     function toSimpleJson()
     {
-        return [
+
+        $data = [
             'id' => $this->id,
             'user_id' => $this->user_id,
             'user_nickname' => $this->user->nickname,
@@ -99,6 +123,12 @@ class RedPackets extends BaseModel
             'distance_start_at' => $this->distance_start_at,
             'is_grabbed' => $this->is_grabbed
         ];
+
+        if (isDevelopmentEnv()) {
+            $data['user_nickname'] = $this->user->nickname . '-id:' . $this->id;
+        }
+
+        return $data;
     }
 
     function toBasicJson()
@@ -117,9 +147,9 @@ class RedPackets extends BaseModel
     }
 
     //正在进行中的红包的key
-    static function getUnderwayRedPacketListKey($current_room_id)
+    static function getUnderwayRedPacketListKey($current_room_id, $sex)
     {
-        return 'room_underway_red_packet_list_' . $current_room_id;
+        return 'room_underway_red_packet_list_' . $current_room_id.'_sex'.$sex;
     }
 
     function generateRedPacketUserListKey()
@@ -140,6 +170,19 @@ class RedPackets extends BaseModel
     static function generateRedPacketUrl($room_id)
     {
         return 'url://m/red_packets/red_packets_list?room_id=' . $room_id;
+    }
+
+    static function findLastNearby($user, $geo_distance, $sex)
+    {
+        $geo_distance = intval($geo_distance);
+
+        $red_packet = self::findFirst(['conditions' => 'status=:status: and user_id=:user_id: and red_packet_type=:red_packet_type: and nearby_distance>=:nearby_distance: and (sex=:sex1: or sex=:sex:)',
+            'bind' => ['status' => STATUS_ON, 'user_id' => $user->id, 'red_packet_type' => RED_PACKET_TYPE_NEARBY, 'nearby_distance' => $geo_distance, 'sex1' => 2, 'sex' => $sex],
+            'order' => 'id desc']);
+
+        debug($user->id, $geo_distance, 'sex', $user->sex, $red_packet);
+
+        return $red_packet;
     }
 
     static function createRedPacket($user, $room, $opts)
@@ -166,6 +209,15 @@ class RedPackets extends BaseModel
         // 红包退款
         self::delay($time)->asyncCheckRefund($red_packet->id);
 
+        $push_data = [
+            'type' => 'create',
+            'content' => $user->nickname . '在房间内发红包，手快有，手慢无，赶紧去抢吧',
+            'red_packet_type' => RED_PACKET_TYPE_NEARBY,
+            'sex' => $red_packet->sex
+        ];
+
+        self::sendRedPacketMessageToUsers($user, $room, $push_data);
+
         return $red_packet;
     }
 
@@ -173,7 +225,8 @@ class RedPackets extends BaseModel
     {
 
         $red_packet = \RedPackets::findFirstById($red_packet_id);
-        if (!$red_packet || $red_packet->status == STATUS_ON) {
+        if (!$red_packet || $red_packet->status == STATUS_OFF) {
+            info('已结束', $red_packet_id);
             return;
         }
 
@@ -185,24 +238,31 @@ class RedPackets extends BaseModel
 
         info('回收红包', $red_packet->id, $red_packet->user_id, $red_packet->room_id, $red_packet->balance_diamond);
 
-        $red_packet->balance_diamond = 0;
-        $red_packet->balance_num = 0;
         $red_packet->status = STATUS_OFF;
         $red_packet->update();
     }
 
     // 房间里的红包
-    static function findRedPacketList($user, $room, $page, $per_page = 20)
+    static function findRedPacketList($user, $room, $page, $per_page)
     {
 
         $cache_db = \Users::getUserDb();
-        $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($room->id);
+        $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($room->id, $user->sex);
         $total = $cache_db->zcard($underway_red_packet_list_key);
         $offset = ($page - 1) * $per_page;
+        if ($offset >= $total) {
+            info('越界', $user->id, $room->id, $page, $per_page, $total, $offset);
+        }
+
         $red_packet_ids = $cache_db->zrevrange($underway_red_packet_list_key, $offset, $offset + $per_page - 1);
         $red_packets = \RedPackets::findByIds($red_packet_ids);
 
         foreach ($red_packets as $red_packet) {
+
+            if (isDevelopmentEnv()) {
+                self::delay(300)->asyncCheckRefund($red_packet->id);
+            }
+
             $distance_start_at = $red_packet->getDistanceStartTime($user);
             $red_packet->distance_start_at = $distance_start_at;
             $red_packet->is_grabbed = $red_packet->isGrabbed($user);
@@ -211,7 +271,8 @@ class RedPackets extends BaseModel
         return new \PaginationModel($red_packets, $total, $page, $per_page);
     }
 
-    function isGrabbed($user){
+    function isGrabbed($user)
+    {
 
         $cache = \Users::getUserDb();
         $red_user_list_key = $this->generateRedPacketUserListKey();
@@ -237,7 +298,7 @@ class RedPackets extends BaseModel
         return $distance_start_at;
     }
 
-    function grabRedPacket($user, $room)
+    function grabRedPacket($user)
     {
 
         $lock_key = 'grab_red_packet_' . $this->id;
@@ -257,11 +318,11 @@ class RedPackets extends BaseModel
             \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_RED_PACKET_INCOME, $get_diamond, $opts);
 
             $opts = [
-                'type' => 'update', 'notify_type' => 'ptp',
+                'type' => 'update',
                 'content' => '恭喜' . $user->nickname . '抢到了' . $get_diamond . '个钻石'
             ];
 
-            self::sendSocketForRedPacket($user, $room, $opts);
+            self::sendRedPacketMessageToUsers($user, $this->room, $opts);
         }
 
         return $get_diamond;
@@ -292,15 +353,12 @@ class RedPackets extends BaseModel
 
             $this->balance_diamond = $balance_diamond - $get_diamond;
             $this->balance_num = $balance_num - 1;
-            $this->update();
-            if ($this->balance_num <= 0) {
-                $this->status = STATUS_OFF;
-                $this->update();
 
-                //红包抢完公屏socket，红包过时回收的话只发送红包socket，所以两者放在afterUpdate统一处理
-                $content = $this->user->nickname . '发的红包已抢完';
-                self::pushRedPacketTopTopicMessage($this->room, $content);
+            if ($this->balance_diamond <= 0) {
+                $this->status = STATUS_OFF;
             }
+
+            $this->save();
 
             $red_user_list_key = $this->generateRedPacketUserListKey();
             $cache->zadd($red_user_list_key, time(), $user_id);
@@ -310,7 +368,7 @@ class RedPackets extends BaseModel
             return $get_diamond;
         }
 
-        return null;
+        return 0;
 
     }
 
@@ -322,25 +380,26 @@ class RedPackets extends BaseModel
         return $user_get_red_packet_ids;
     }
 
-    static function sendSocketForRedPacket($user, $room, $opts)
+    static function sendRedPacketMessageToUsers($user, $room, $opts)
     {
+
         $type = fetch($opts, 'type');
         $content = fetch($opts, 'content');
-        $notify_type = fetch($opts, 'notify_type');
+        $red_packet_type = fetch($opts, 'red_packet_type');
 
         //红包socket
-        self::pushRedPacketMessageForUser($room, $user, $notify_type);
+        self::pushRedPacketNumToUser($user, $room, $type);
 
         //红包公屏socket
         self::pushRedPacketTopTopicMessage($room, $content);
 
         //首页下沉通知
-        if (isDevelopmentEnv() && $type == 'create') {
-            self:: pushRedPacketSinkMessage($room->id, $content);
+        if ($type == 'create' && $red_packet_type == RED_PACKET_TYPE_NEARBY) {
+            self:: pushRedPacketSinkMessage($user, $room, $opts);
         }
     }
 
-    //红包的公屏socket
+    //红包的公屏
     static function pushRedPacketTopTopicMessage($room, $content)
     {
         $content_type = 'red_packet';
@@ -348,29 +407,49 @@ class RedPackets extends BaseModel
         $room->pushTopTopicMessage($system_user, $content, $content_type);
     }
 
-    //红包socket
-    static function pushRedPacketMessageForUser($room, $user, $notify_type)
+    //红包个数
+    static function pushRedPacketNumToUser($user, $room, $type)
     {
         $url = self::generateRedPacketUrl($room->id);
-        $underway_red_packet_num = $room->getNotDrawRedPacketNum($user);
-        $room->pushRedPacketMessage($user, $underway_red_packet_num, $url, $notify_type);
+
+        if ($type == 'update') {
+            $underway_red_packet_num = $room->getNotDrawRedPacketNum($user);
+            info($room->id, $user->id, $underway_red_packet_num);
+            $room->pushRedPacketNumToUser($user, $underway_red_packet_num, $url);
+        } else {
+
+            $users = $room->findTotalRealUsers();
+            foreach ($users as $other_user) {
+                $underway_red_packet_num = $room->getNotDrawRedPacketNum($other_user);
+                info($room->id, $other_user->id, $underway_red_packet_num);
+                $room->pushRedPacketNumToUser($other_user, $underway_red_packet_num, $url);
+            }
+        }
+
     }
 
     //下沉式
-    static function pushRedPacketSinkMessage($room_id, $content)
+    static function pushRedPacketSinkMessage($current_user, $room, $opts)
     {
-        //这里还没有做是否符合附近人的条件
-        $cond = ['conditions' => 'user_status!=:user_status: and last_at>:last_at:',
-            'bind' => ['user_status' => USER_TYPE_SILENT, 'last_at' => time() - 30 * 60]
-        ];
 
-        $client_url = 'app://rooms/detail?id=' . $room_id;
-        $users = \Users::find($cond);
+        $content = fetch($opts, 'content');
+        $sex = fetch($opts, 'sex');
+
+        $client_url = 'app://rooms/detail?id=' . $room->id;
+        $users = $current_user->nearby(1, 300);
 
         foreach ($users as $user) {
 
-            $body = ['action' => 'sink_notice', 'title' => '快来抢红包啦！！', 'content' => $content, 'client_url' => $client_url];
+            if ($user->current_room_id == $room->id) {
+                continue;
+            }
 
+            if ($sex != USER_SEX_COMMON && $user->sex != $sex) {
+                continue;
+            }
+
+
+            $body = ['action' => 'sink_notice', 'title' => '快来抢红包啦！！', 'content' => $content, 'client_url' => $client_url];
             $intranet_ip = $user->getIntranetIp();
             $receiver_fd = $user->getUserFd();
 
@@ -379,7 +458,7 @@ class RedPackets extends BaseModel
             }
 
             $result = \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
-            info('推送结果=>', $result, '结构=>', $body);
+            info($user->id, $receiver_fd, '推送结果=>', $result, '结构=>', $body);
         }
     }
 

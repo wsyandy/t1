@@ -67,9 +67,9 @@ class CouplesController extends BaseController
         }
 
         if ($sponsor_id) {
-            $room_host_user = \Users::findFirstById($sponsor_id)->toChatJson();
+            $room_host_user = \Users::findFirstById($sponsor_id)->toCpJson();
         } else {
-            $room_host_user = $user->toChatJson();
+            $room_host_user = $user->toCpJson();
         }
 
         unlock($lock);

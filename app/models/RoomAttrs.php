@@ -288,6 +288,14 @@ trait RoomAttrs
         return 'room_boom_gift' . $room_id;
     }
 
+    static function getBoomGiftTime($room_id)
+    {
+        $cache = self::getHotWriteCache();
+        $room_sign_key = self::generateRoomBoomGiftSignKey($room_id);
+        $time = $cache->get($room_sign_key);
+        return intval($time);
+    }
+
     //获取房间收益
     function getTotalAmount()
     {
@@ -335,7 +343,7 @@ trait RoomAttrs
     {
         $cache = \Users::getUserDb();
         //当前房间所有还在进行中的红包ids
-        $underway_red_packet_list_key = \RedPackets::getUnderwayRedPacketListKey($this->id);
+        $underway_red_packet_list_key = \RedPackets::getUnderwayRedPacketListKey($this->id, $user->sex);
         $underway_ids = $cache->zrange($underway_red_packet_list_key, 0, -1);
 
         //当前用户领取过的红包ids
@@ -352,7 +360,7 @@ trait RoomAttrs
     {
         $ids = self::getNotDrawRedPacketIds($user);
         if ($ids) {
-            info($this->id, $user->id, 'count', count($ids));
+            info($this->id, $user->id, 'count', count($ids), $ids);
             return count($ids);
         }
 
@@ -686,8 +694,7 @@ trait RoomAttrs
     {
         $cache = \Rooms::getHotWriteCache();
         $room_boom_gift_sign_key = Rooms::generateRoomBoomGiftSignKey($this->id);
-
-        $boom_list_day_key = 'boom_gifts_list_' . date("Ymd", time());
+        $boom_list_day_key = Rooms::generateBoomGiftListDayKey();
 
         if ($cache->exists($room_boom_gift_sign_key) || ($cache->zscore($boom_list_day_key, $this->id) && $this->getCurrentBoomGiftValue() > 0)) {
             return true;
@@ -705,10 +712,6 @@ trait RoomAttrs
     function canToHot($least_user_num)
     {
         $user = $this->user;
-
-//        if (!$this->isBroadcast() && !$user->isIdCardAuth() && $user->pay_amount < 1) {
-//            return false;
-//        }
 
         if (!$this->checkRoomSeat()) {
             return false;
@@ -1090,11 +1093,11 @@ trait RoomAttrs
             $room_ids[] = $gift_order->room_id;
         }
 
-        $hot_rooms = Rooms::find(['conditions' => 'status = :status:', 'bind' => ['status' => STATUS_ON]]);
-
-        foreach ($hot_rooms as $hot_room) {
-            $room_ids[] = $hot_room->id;
-        }
+//        $hot_rooms = Rooms::find(['conditions' => 'status = :status:', 'bind' => ['status' => STATUS_ON]]);
+//
+//        foreach ($hot_rooms as $hot_room) {
+//            $room_ids[] = $hot_room->id;
+//        }
 
         $room_ids = array_unique($room_ids);
         return $room_ids;

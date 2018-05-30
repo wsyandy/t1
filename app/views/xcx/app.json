@@ -1,0 +1,12 @@
+{
+  "pages": [
+    "pages/index/index", 
+    "pages/room/room"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "HI语音",
+    "navigationBarTextStyle": "black"
+  }
+}

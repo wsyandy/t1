@@ -1,0 +1,45 @@
+<!--pages/room/room.wxml-->
+<image class="room_bg" src="{{roomBg}}"></image>
+<view class="room_page">
+  <view class="room_header">
+    <text class="room_name">{{roomInfo.room_name}}</text>
+    <view class="room_number">
+      <text>{{roomInfo.room_number}}  人同时在线</text>
+      <image class="arrow_right" src="{{arrowRight}}"></image>
+    </view>
+
+    <view class="room_homeowners">
+      <image class="homeowners_avatar phonate" src="{{roomInfo.homeowners}}"></image>
+    </view>
+    <text class="nickname">{{roomInfo.nickname}}</text>
+    <view class="homeowners_signature">
+      <image class="ico_speaker" src="{{icoSpeaker}}"></image>
+      <text>{{roomInfo.signature}}</text>
+    </view>
+  </view>
+  <view class="seat_box">
+    <view class="seat_list" wx:for="{{seatList}}" wx:key="seat{{index}}">
+      <view class="seat_img">
+        
+        <image class="seat_avatar {{item.phonate?'phonate':''}}"  src="{{item.vacancy?icoSofa:item.avatar}}"></image>
+      
+        <view class="seat_seal" wx:if="{{item.seal}}">
+          <text>封</text>
+        </view>
+          <image class="ico_prohibit" wx:if="{{item.prohibit}}" src="{{icoProhibit}}"></image>
+
+      </view>
+      <text class="seat_nickname" wx:if="{{!item.vacancy}}">{{item.nickname}}</text>
+    </view>
+  </view>
+
+
+
+<view class="tabbar">
+  <view class="tabbar_list" data-index="{{index}}"
+   wx:for="{{tabbar}}" wx:key="tabbar{{index}}" >
+    <image class="tabbar_icon"  src="{{item.icon}}"></image>
+  </view>
+
+</view>
+</view>

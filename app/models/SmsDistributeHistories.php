@@ -89,7 +89,9 @@ class SmsDistributeHistories extends BaseModel
             return [ERROR_CODE_FAIL, '密码错误'];
         }
 
-        if (isProduction()) {
+
+        if(!$current_user->isCompanyUser() && isProduction()){
+
             $stat_db = \Stats::getStatDb();
             if ($stat_db->zscore('sms_distribute_history_register_device_ids', $current_user->device_id)) {
                 info('false sms_distribute_history_register_device_ids', $current_user->id, $mobile, $current_user->device_id, $ip);
@@ -121,7 +123,13 @@ class SmsDistributeHistories extends BaseModel
 
             $amount = 10;
             $opts = ['remark' => '分销注册奖励钻石' . $amount, 'mobile' => $share_user->mobile, 'target_id' => $current_user->id];
-            \AccountHistories::changeBalance($share_user, ACCOUNT_TYPE_DISTRIBUTE_REGISTER, $amount, $opts);
+            $result = \AccountHistories::changeBalance($share_user, ACCOUNT_TYPE_DISTRIBUTE_REGISTER, $amount, $opts);
+
+            $stat_db = \Stats::getStatDb();
+            $distribute_bonus_key = self::generateDistributeBonusKey();
+            if ($result) {
+                $stat_db->hincrby($distribute_bonus_key, 'register_distribute_bonus', $amount);
+            }
         }
 
         return [ERROR_CODE_SUCCESS, '成功'];
@@ -200,7 +208,7 @@ class SmsDistributeHistories extends BaseModel
             $time = time();
         }
 
-        return 'distribute_bonus_' . date('Ymd', beginOfDay($time));
+        return 'distribute_bonus_' . date('Ymd', $time);
     }
 
     static function generateDistributeNumKey($time = '')
@@ -208,7 +216,7 @@ class SmsDistributeHistories extends BaseModel
         if (!$time) {
             $time = time();
         }
-        return 'distribute_share_num_' . date('Ymd', beginOfDay($time));
+        return 'distribute_share_num_' . date('Ymd', $time);
     }
 
     static function generateShareDistributeUserListKey($time = '')
@@ -216,7 +224,7 @@ class SmsDistributeHistories extends BaseModel
         if (!$time) {
             $time = time();
         }
-        return 'share_distribute_user_list' . date('Ymd', beginOfDay($time));
+        return 'share_distribute_user_list' . date('Ymd', $time);
     }
 
     //统计分销分享次数

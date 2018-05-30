@@ -15,7 +15,7 @@ class Couples extends BaseModel
 
         $cache->expire($key, 10 * 60);
         //同时起一个异步推送scoket
-        self::delay(10 * 60 - 5)->asyncFinishCp($user, $key);
+        self::delay(10 * 60 - 3)->asyncFinishCp($user, $key);
     }
 
     static function generateReadyCpInfoKey($room_id)
@@ -333,6 +333,20 @@ class Couples extends BaseModel
     //清空双方cp信息
     static function clearCoupleInfo($sponsor_id, $pursuer_id)
     {
+        //清除对应用户户中各自的cp信息
+        self::clearCoupleInfoForUser($sponsor_id, $pursuer_id);
+        //清除双方结为cp的时间
+        self::clearCpMarriageTime($sponsor_id, $pursuer_id);
+
+        //删除总榜情侣值
+        self::clearTotalCoupleInfo($sponsor_id, $pursuer_id);
+
+        //删除当前周情侣榜,双方周情侣值，只清除当前周
+        self::clearWeekCoupleInfo($sponsor_id, $pursuer_id);
+    }
+
+    static function clearCoupleInfoForUser($sponsor_id, $pursuer_id)
+    {
         $user_db = \Users::getUserDb();
         //在自己的后宫集合中删除对方
         $sponsor_seraglio_key = \Couples::generateSeraglioKey($sponsor_id);
@@ -341,54 +355,86 @@ class Couples extends BaseModel
         $user_db->zrem($sponsor_seraglio_key, $pursuer_id);
         $user_db->zrem($pursuer_seraglio_key, $sponsor_id);
 
-        //清除双方结为cp的时间
+        //删除各自保存的情侣值
+        $sponsor_key = \Couples::generateCpInfoForUserKey($sponsor_id);
+        if ($user_db->zscore($sponsor_key, $pursuer_id) > 0) {
+            $user_db->zrem($sponsor_key, $pursuer_id);
+        }
+
+        $pursuer_key = \Couples::generateCpInfoForUserKey($pursuer_id);
+        if ($user_db->zscore($pursuer_key, $sponsor_id) > 0) {
+            $user_db->zrem($pursuer_key, $sponsor_id);
+        }
+    }
+
+    //清除双方结为cp的时间
+    static function clearCpMarriageTime($sponsor_id, $pursuer_id)
+    {
+        $user_db = \Users::getUserDb();
         $cp_marriage_time_key = \Couples::generateCpMarriageTimeKey();
         if ($user_db->zscore($cp_marriage_time_key, $sponsor_id . '_' . $pursuer_id) > 0) {
             $user_db->zrem($cp_marriage_time_key, $sponsor_id . '_' . $pursuer_id);
         }
+    }
 
-
-        //删除总榜情侣值
+    //删除总榜情侣值
+    static function clearTotalCoupleInfo($sponsor_id, $pursuer_id)
+    {
+        $user_db = \Users::getUserDb();
         $cp_info_key = \Couples::generateCpInfoKey();
         if ($user_db->zscore($cp_info_key, $sponsor_id . '_' . $pursuer_id) > 0) {
             $user_db->zrem($cp_info_key, $sponsor_id . '_' . $pursuer_id);
         }
+    }
 
-        //删除各自保存的情侣值
-        $sender_key = \Couples::generateCpInfoForUserKey($sponsor_id);
-        if ($user_db->zscore($sender_key, $pursuer_id) > 0) {
-            $user_db->zrem($sender_key, $pursuer_id);
+    //删除当前周情侣榜,双方周情侣值，只清除当前周
+    static function clearWeekCoupleInfo($sponsor_id, $pursuer_id)
+    {
+        $user_db = \Users::getUserDb();
+        $cp_week_charm_key = \Users::generateFieldRankListKey('week', 'cp');
+        if ($user_db->zscore($cp_week_charm_key, $sponsor_id . '_' . $pursuer_id)) {
+            $user_db->zrem($cp_week_charm_key, $sponsor_id . '_' . $pursuer_id);
         }
 
-        $sender_key = \Couples::generateCpInfoForUserKey($pursuer_id);
-        if ($user_db->zscore($sender_key, $sponsor_id) > 0) {
-            $user_db->zrem($sender_key, $sponsor_id);
+        //删除双方周情侣值，只清除当前周
+        $sponsor_cp_week_key = self::generateCoupleWeekValueKey($sponsor_id);
+        if ($user_db->zscore($sponsor_cp_week_key, $pursuer_id)) {
+            $user_db->zrem($sponsor_cp_week_key, $pursuer_id);
+        }
+
+        $pursuer_cp_week_key = self::generateCoupleWeekValueKey($pursuer_id);
+        if ($user_db->zscore($pursuer_cp_week_key, $sponsor_id)) {
+            $user_db->zrem($pursuer_cp_week_key, $sponsor_id);
         }
     }
 
     //解除cp，推送个推给另外一方
     static function pushClearCoupleMessage($current_user_id, $sponsor_id, $pursuer_id)
     {
-        $relieved_user_id = $current_user_id == $sponsor_id ? $sponsor_id : $pursuer_id;
-        $accord_relieved_user_id = $current_user_id == $sponsor_id ? $pursuer_id : $sponsor_id;
+        //当前用户为解除者，判断谁为被解除这
+        //自愿解除
+        $accord_relieved_user_id = $current_user_id == $sponsor_id ? $sponsor_id : $pursuer_id;
+        //被解除
+        $relieved_user_id = $current_user_id == $sponsor_id ? $pursuer_id : $sponsor_id;
         $accord_relieved_user = \Users::findFirstById($accord_relieved_user_id);
         $relieved_user = \Users::findFirstById($relieved_user_id);
         if ($relieved_user) {
             $push_data = ['title' => '很可惜', 'body' => '您与' . $accord_relieved_user->nickname . '的情侣关系已被对方解除，情侣值已被清空，并从排行榜中移除。'];
             info($relieved_user->getPushContext(), $relieved_user->getPushReceiverContext());
-            \Pushers::push($relieved_user->getPushContext(), $relieved_user->getPushReceiverContext(), $push_data);
+            \Pushers::delay()->push($relieved_user->getPushContext(), $relieved_user->getPushReceiverContext(), $push_data);
         }
     }
 
     static function asyncFinishCp($user, $key)
     {
         $cache = \Users::getHotWriteCache();
-        $sponsor_id = $cache->hget($key, 'sponsor_id');
-        if (!$sponsor_id) {
+        $pursuer_id = $cache->hget($key, 'pursuer_id');
+        if ($pursuer_id) {
             return;
         }
 
-        $body = ['action' => 'game_notice', 'type' => 'over', 'content' => 'cp结束',];
+        $cache->expire($key, 0);
+        $body = ['action' => 'game_notice', 'type' => 'over', 'content' => 'cp超时，自动关闭'];
         self::sendCpFinishMessage($user, $body);
     }
 }

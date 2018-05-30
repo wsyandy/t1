@@ -26,7 +26,7 @@ class UsersController extends BaseController
         $user = $this->currentUser();
         $is_show_distribute = $user->isCompanyUser();
 
-        $this->view->is_show_distribute = $is_show_distribute;
+        $this->view->is_show_distribute = true;
         $this->view->selected_product = $selected_product;
         $this->view->selected_payment_channel = $selected_payment_channel;
         $this->view->products = $products;

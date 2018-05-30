@@ -10,7 +10,7 @@
                 <div class="give_box">
                     <h3>红包个数</h3>
                     <div class="give_input">
-                        <input type="text" name="" placeholder="" v-model="number">
+                        <input type="number" name="" placeholder="" v-model="number">
                         <span>个</span>
                     </div>
                 </div>
@@ -20,7 +20,7 @@
                 <div class="give_box">
                     <h3>红包金额</h3>
                     <div class="give_input">
-                        <input type="text" name="" placeholder="" v-model="amount">
+                        <input type="number" name="" placeholder="" v-model="amount">
                         <i class="zuan"></i>
                     </div>
                 </div>
@@ -96,7 +96,7 @@
         <div class="zuan_less_box less_show">
             <i class="less_close" @click="cancel(3)"></i>
             <p v-text="error_reason"></p>
-            <a href="#" class="less_btn">取消</a>
+            <a href="#" class="less_btn" @click="cancel(3)">取消</a>
         </div>
     </div>
 
@@ -176,6 +176,7 @@
                 }
             },
             sendRedPacket: function () {
+
                 var data = {
                     sid: this.sid,
                     code: this.code,
@@ -183,8 +184,9 @@
                     diamond: this.amount,
                     sex: this.sex,
                     red_packet_type: this.type,
-                    nearby_distance: parseInt(this.nearby_distance) * 1000,
-                }
+                    nearby_distance: parseInt(this.nearby_distance) * 1000
+                };
+
                 if (this.sex == "男女皆可") {
                     data.sex = 2;
                 }
@@ -193,8 +195,8 @@
                     vm.less_zuan_input = true;
                     return;
                 }
+
                 $.authPost('/m/red_packets/create', data, function (resp) {
-                    console.log(resp);
                     vm.error_reason = resp.error_reason;
                     vm.error_input = true;
                     if (!resp.error_code) {

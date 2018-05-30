@@ -251,11 +251,11 @@ trait RoomStats
             $time = time();
         }
 
-        $date = date("Ymd", $time);
-
         //爆钻次数
         $cache = self::getHotReadCache();
-        return intval($cache->get('room_boom_num_room_id_' . $this->id . "_" . $date)); //爆礼物次数
+        $key = $cache->get(Rooms::generateBoomNumDayKey($this->id, $time));
+        debug($key);
+        return intval($key); //爆礼物次数
     }
 
     //引爆火箭者用户id
@@ -339,15 +339,14 @@ trait RoomStats
                 $minutes = date("YmdHi", $time);
                 $interval = intval(intval($minutes) % 10);
                 $minutes_end = $minutes + (10 - $interval);
-                $expire = strtotime($minutes_end . '59') - time();
+                $expire = 3600;
             }
 
-            $boom_list_day_key = 'boom_gifts_list_' . date("Ymd", $time);
+            $boom_list_day_key = self::generateBoomGiftListDayKey($time);
 
             $boom_num = $this->getBoomNum($time);
             $total_value = $boom_config->total_value + $interval_value * $boom_num;
             $start_value = $boom_config->start_value;
-            $svga_image_url = $boom_config->svga_image_url;
 
             if ($total_value > 250000) {
                 $total_value = 250000;
@@ -357,6 +356,8 @@ trait RoomStats
             $current_value = $cur_income + $income;
             $record_key = Rooms::generateBoomRecordDayKey($room_id, $time);
             $cache->zincrby($record_key, $income, $sender_id); //爆礼物贡献记录
+
+            info('room_id', $this->id, 'sender_id', $sender_id, 'income', $income, 'total_value', $total_value, 'start_value', $start_value, 'current_value', $current_value, 'boom_num', $boom_num);
 
             if ($current_value >= $total_value) {
 
@@ -369,16 +370,12 @@ trait RoomStats
                 $cache->setex("room_boom_diamond_num_room_id_" . $room_id, $boom_expire, 0); //爆钻总额
                 $cache->setex('room_boom_user_room_id_' . $room_id, $boom_expire, $sender_id); //引爆者
 
-                $boom_num_day_key = 'room_boom_num_room_id_' . $room_id . "_" . date("Ymd", $time);
+                $boom_num_day_key = self::generateBoomNumDayKey($room_id, $time);
                 $cache->incrby($boom_num_day_key, 1); //爆礼物次数
                 $cache->expire($boom_num_day_key, $expire);
                 $cache->setex($room_boon_gift_sign_key, $boom_expire, $time); //爆钻时间
 
-                $boom_num++;
-                $params = ['total_value' => $total_value, 'current_value' => $current_value, 'svga_image_url' => $svga_image_url,
-                    'boom_num' => $boom_num];
-
-                $this->pushBoomIncomeMessage($params);
+                $this->pushBoomIncomeMessage($boom_config);
 
                 //临时查询
                 $sender = Users::findFirstById($sender_id);
@@ -394,6 +391,7 @@ trait RoomStats
 
             $res = $cache->setex($cur_income_day_key, $expire, $current_value);
 
+            debug($cur_income_day_key, $record_key, $expire, $current_value);
             if ($res && $current_value >= $start_value) {
 
                 if (!$cache->zscore($boom_list_day_key, $room_id)) {
@@ -402,10 +400,7 @@ trait RoomStats
 
                 $cache->expire($boom_list_day_key, $time);
 
-                $params = ['total_value' => $total_value, 'current_value' => $current_value,
-                    'svga_image_url' => $svga_image_url, 'boom_num' => $boom_num];
-
-                $this->pushBoomIncomeMessage($params);
+                $this->pushBoomIncomeMessage($boom_config);
             }
         }
 
@@ -426,7 +421,24 @@ trait RoomStats
             $time = time();
         }
 
-        return 'boom_target_value_room_' . $room_id . "_" . date("Ymd", $time);
+        $key = 'boom_target_value_room_' . $room_id . "_" . date("Ymd", $time);
+
+        if (isDevelopmentEnv()) {
+            $minutes = date("YmdHi", $time);
+            $interval = intval(intval($minutes) % 10);
+
+            if ($interval == 0) {
+                $minutes_start = $minutes - 9;
+                $minutes_end = $minutes;
+            } else {
+                $minutes_start = $minutes - $interval + 1;
+                $minutes_end = $minutes + (10 - $interval);
+            }
+
+            $key = 'boom_target_value_room_' . $room_id . "_" . $minutes_start . "_" . $minutes_end;
+        }
+
+        return $key;
     }
 
     static public function generateBoomRecordDayKey($room_id, $time = 0)
@@ -435,7 +447,77 @@ trait RoomStats
             $time = time();
         }
 
-        return 'boom_room_record_' . $room_id . "_" . date("Ymd", $time);
+        $key = 'boom_room_record_' . $room_id . "_" . date("Ymd", $time);
+
+        if (isDevelopmentEnv()) {
+            $minutes = date("YmdHi", $time);
+            $interval = intval(intval($minutes) % 10);
+
+            if ($interval == 0) {
+                $minutes_start = $minutes - 9;
+                $minutes_end = $minutes;
+            } else {
+                $minutes_start = $minutes - $interval + 1;
+                $minutes_end = $minutes + (10 - $interval);
+            }
+
+            $key = 'boom_room_record_' . $room_id . "_" . $minutes_start . "_" . $minutes_end;
+        }
+
+        return $key;
+    }
+
+    static public function generateBoomNumDayKey($room_id, $time = 0)
+    {
+        if (!$time) {
+            $time = time();
+        }
+
+        $key = 'room_boom_num_room_id_' . $room_id . "_" . date("Ymd", $time);
+
+        if (isDevelopmentEnv()) {
+            $minutes = date("YmdHi", $time);
+            $interval = intval(intval($minutes) % 10);
+
+            if ($interval == 0) {
+                $minutes_start = $minutes - 9;
+                $minutes_end = $minutes;
+            } else {
+                $minutes_start = $minutes - $interval + 1;
+                $minutes_end = $minutes + (10 - $interval);
+            }
+
+            $key = 'room_boom_num_room_id_' . $room_id . "_" . $minutes_start . "_" . $minutes_end;
+        }
+
+        return $key;
+    }
+
+    //爆礼物中的队列
+    static public function generateBoomGiftListDayKey($time = 0)
+    {
+        if (!$time) {
+            $time = time();
+        }
+
+        $key = 'boom_gifts_list_' . date("Ymd", $time);
+
+        if (isDevelopmentEnv()) {
+            $minutes = date("YmdHi", $time);
+            $interval = intval(intval($minutes) % 10);
+
+            if ($interval == 0) {
+                $minutes_start = $minutes - 9;
+                $minutes_end = $minutes;
+            } else {
+                $minutes_start = $minutes - $interval + 1;
+                $minutes_end = $minutes + (10 - $interval);
+            }
+
+            $key = 'boom_gifts_list_' . $minutes_start . "_" . $minutes_end;
+        }
+
+        return $key;
     }
 
     //房间收益列表
@@ -449,7 +531,6 @@ trait RoomStats
         $room_ids = implode(',', $room_ids);
 
         if (isPresent($cond)) {
-            debug($cond);
             $rooms = self::find($cond);
         } else {
             $rooms = self::findByIds($room_ids);
@@ -465,13 +546,16 @@ trait RoomStats
     function getBoomGiftData($boom_config)
     {
         $interval_value = 50000;
-        $boom_num = $this->getBoomNum();
-        $room_boon_gift_sign_key = \Rooms::generateRoomBoomGiftSignKey($this);
+        $room_boon_gift_sign_key = \Rooms::generateRoomBoomGiftSignKey($this->id);
         $cache = \Rooms::getHotReadCache();
 
         // 判断房间是否在进行爆礼物活动
         if ($cache->exists($room_boon_gift_sign_key)) {
+            //取爆礼物的时间点 跨天极端情况
+            $boom_num = $this->getBoomNum($cache->get($room_boon_gift_sign_key));
             $boom_num--;
+        } else {
+            $boom_num = $this->getBoomNum();
         }
 
         $total_value = $boom_config->total_value + $interval_value * $boom_num;
@@ -488,7 +572,7 @@ trait RoomStats
             'client_url' => 'url://m/boom_histories',
             'svga_image_url' => $boom_config->getSvgaImageUrl(),
             'total_value' => intval($total_value),
-            'current_value' => $this->getCurrentBoomGiftValue(),
+            'current_value' => $this->getCurrentBoomGiftValue(Rooms::getBoomGiftTime($this->id)),
             'show_rank' => 1000000,
             'render_type' => 'svga',
             'status' => STATUS_ON,

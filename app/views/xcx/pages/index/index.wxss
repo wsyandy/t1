@@ -1,0 +1,413 @@
+/* 头像logo */
+
+.head {
+  position: relative;
+  width: 100%;
+  height: 100rpx;
+  padding: 30rpx;
+  background-color: #fff;
+  font-size: 36rpx;
+  color: #2d2d2d;
+  justify-content: center;
+  align-items: center;
+}
+
+.avatar_box {
+  width: 68rpx;
+  height: 68rpx;
+  position: absolute;
+  left: 30rpx;
+  top: 50%;
+  margin-top: -34rpx;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.logo_avatar, .avatar_btn {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+}
+
+.avatar_btn {
+  opacity: 0;
+}
+
+/*滚动导航栏 */
+
+.scroll_tabs {
+  /* position: fixed;
+  top: 100rpx; */
+  width: 100%;
+  white-space: nowrap;
+  background-color: #fff;
+  padding-left: 5px;
+  padding-bottom: 10rpx;
+}
+
+.scroll_tabs_item {
+  position: relative;
+  padding: 10rpx 20rpx;
+  display: inline-block;
+}
+
+.scroll_tabs_text {
+  font-size: 32rpx;
+  color: #666;
+  padding: 10rpx 0;
+}
+
+.tag_stars {
+  position: absolute;
+  top: 18rpx;
+  right: 12rpx;
+  width: 13rpx;
+  height: 11rpx;
+}
+
+.scroll_tabs_ios {
+  font-size: 36rpx;
+  padding: 10rpx 0;
+  color: #ff2570;
+}
+.scroll_tabs_cur {
+  font-size: 36rpx;
+  padding: 10rpx 0;
+  background-image: -webkit-gradient(linear, 0 0, 0 bottom, from(#ff206d), to(#ff20c6));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.slider-wrapper {
+  /* margin-top: 200rpx; */
+  position: relative;
+  display: block;
+  background-color: #fff;
+}
+
+.swiper {
+  height: 1000rpx;
+}
+
+/*热门*/
+
+.hot_box {
+  flex-wrap: wrap;
+  padding-left: 30rpx;
+}
+
+.hot_list {
+  position: relative;
+  width: 330rpx;
+  height: 330rpx;
+  margin-right: 30rpx;
+  margin-bottom: 30rpx;
+  border-radius: 20rpx;
+  overflow: hidden;
+}
+
+.room_cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.room_people {
+  position: absolute;
+  top: 14rpx;
+  right: 14rpx;
+  /* width: 104rpx; */
+  padding: 0 20rpx;
+  height: 40rpx;
+  background: rgba(0, 0, 0, 0.34);
+  border: 2rpx solid rgba(251, 251, 251, 0.70);
+  border-radius: 100rpx;
+  justify-content: center;
+  align-items: center;
+}
+
+.ico_people {
+  position: absolute;
+  left: 20rpx;
+  top: 50%;
+  margin-top: -13rpx;
+  width: 20rpx;
+  height: 26rpx;
+}
+
+.room_num {
+  font-size: 24rpx;
+  color: #fff;
+  padding-left: 30rpx;
+}
+
+.room_name {
+  width: 100%;
+  height: 67rpx;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  align-items: center;
+  padding: 20rpx;
+}
+
+.room_name_bg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(-180deg, rgba(0, 0, 0, 0.00) 4%, rgba(0, 0, 0, 0.79) 54%, #000 100%);
+  opacity: 0.5;
+}
+
+.room_name_txt {
+  position: relative;
+  font-size: 28rpx;
+  color: #fff;
+}
+
+/*最新*/
+
+.new_list {
+  position: relative;
+  width: 100%;
+  padding-left: 30rpx;
+}
+
+.new_list:hover {
+  background-color: #f6f6f6;
+}
+
+.new_info {
+  position: relative;
+  width: 100%;
+  height: 150rpx;
+  padding-right: 30rpx;
+  align-items: center;
+  border-bottom: 1px solid #f3f3f3;
+}
+
+.new_homeowners {
+  width: 110rpx;
+  height: 110rpx;
+  border-radius: 50%;
+}
+
+.new_text {
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 20rpx;
+  font-size: 26rpx;
+  color: #85858a;
+}
+
+.new_room {
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10rpx;
+}
+
+.new_name {
+  align-items: center;
+}
+
+.new_name {
+  font-size: 30rpx;
+  color: #2d2d2d;
+}
+
+.new_lock {
+  margin-left: 10rpx;
+  width: 22rpx;
+  height: 27rpx;
+}
+
+.new_number {
+  color: #f45189;
+}
+
+.new_time {
+  font-size: 22rpx;
+  color: #999;
+}
+
+/* 开黑 */
+
+.game_list {
+  position: relative;
+  width: 100%;
+  padding-left: 30rpx;
+}
+
+.game_list:hover {
+  background-color: #f6f6f6;
+}
+
+.game_info {
+  position: relative;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 150rpx;
+  padding-right: 30rpx;
+  border-bottom: 1px solid #f3f3f3;
+}
+
+.game_homeowners {
+  width: 110rpx;
+  height: 110rpx;
+  border-radius: 50%;
+}
+
+.game_text {
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 20rpx;
+}
+
+.game_name {
+  font-size: 30rpx;
+  color: #2d2d2d;
+  padding-bottom: 10rpx;
+}
+
+.game_tag {
+  font-size: 22rpx;
+  color: #f79c52;
+  border: 1px solid #f79c52;
+  border-radius: 4rpx;
+  padding: 2rpx 8rpx;
+}
+
+.game_number {
+  height: 36rpx;
+  font-size: 20rpx;
+  color: #b8b8b8;
+  align-items: center;
+}
+
+.room_number {
+  font-size: 36rpx;
+  color: #2d2d2d;
+  padding: 0 5rpx;
+}
+
+.nofocus {
+  width: 100%;
+  height: 600rpx;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 26rpx;
+  color: #666;
+}
+
+.icon_nofocus {
+  width: 307rpx;
+  height: 192rpx;
+  margin-bottom: 40rpx;
+}
+
+.nearby_list {
+  position: relative;
+  width: 100%;
+  padding-left: 30rpx;
+}
+
+.nearby_list:hover {
+  background-color: #f6f6f6;
+}
+
+.nearby_info {
+  position: relative;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 150rpx;
+  padding-right: 30rpx;
+  border-bottom: 1px solid #f3f3f3;
+}
+
+.nearby_avatar {
+  width: 110rpx;
+  height: 110rpx;
+  border-radius: 50%;
+}
+
+.nearby_text {
+  width: 60%;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.nearby_text_top {
+  align-items: center;
+}
+
+.nearby_right {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.nearby_name {
+  max-width: 80%;
+  font-size: 30rpx;
+  color: #2d2d2d;
+  display: block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.nearby_signature {
+  padding-top: 10rpx;
+  font-size: 24rpx;
+  color: #969696;
+  display: block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.nearby_male, .nearby_female {
+  margin-left: 10rpx;
+  width: 72rpx;
+  height: 30rpx;
+  justify-content: center;
+  align-items: center;
+  background: #9accf9;
+  border-radius: 100rpx;
+}
+
+.nearby_female {
+  background: #f99ad3;
+}
+
+.ico_sex {
+  width: 18rpx;
+  height: 18rpx;
+  margin-right: 5rpx;
+}
+
+.nearby_age {
+  font-size: 20rpx;
+  color: #fff;
+}
+
+.nearby_distance {
+  padding-top: 10rpx;
+  font-size: 20rpx;
+  color: #969696;
+}
+
+.ico_room {
+  width: 40rpx;
+  height: 38rpx;
+}

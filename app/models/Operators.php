@@ -125,6 +125,19 @@ class Operators extends BaseModel
             return true;
         }
 
+        if (in_array($this->id, [11])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    function canGiveDiamond()
+    {
+        if (isDevelopmentEnv()) {
+            return true;
+        }
+
         if (in_array($this->id, [11, 46])) {
             return true;
         }

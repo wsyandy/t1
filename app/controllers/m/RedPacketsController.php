@@ -10,7 +10,7 @@ class RedPacketsController extends BaseController
         $user = $this->currentUser();
         $red_packet_type = \RedPackets::$RED_PACKET_TYPE;
         if ($user->user_role != USER_ROLE_HOST_BROADCASTER) {
-            unset($red_packet_type['nearby']);
+            unset($red_packet_type[RED_PACKET_TYPE_NEARBY]);
         }
 
         info($user->id, $user->user_role_text, '类型', $red_packet_type);
@@ -27,7 +27,7 @@ class RedPacketsController extends BaseController
         $user = $this->currentUser();
         $diamond = $this->params('diamond');
         $num = $this->params('num');
-        $sex = $this->params('sex');
+        $sex = $this->params('sex',USER_SEX_COMMON);
         $red_packet_type = $this->params('red_packet_type');
         $nearby_distance = $this->params('nearby_distance', 0);
 
@@ -36,19 +36,28 @@ class RedPacketsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '您不在当前房间哦，请重进！');
         }
 
-        if ($red_packet_type == RED_PACKET_TYPE_NEARBY) {
-            if ($diamond < 1000 || $num < 10) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不得小于1000钻或者个数不得小于10个');
-            }
+        if ($num < 5) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '红包个数不能少于5个');
+        }
+        if ($num > 100) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '红包个数不能大于100个');
+        }
+
+        if ($red_packet_type == RED_PACKET_TYPE_NEARBY && $diamond < 10000) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不能小于10000钻');
+
+        } elseif (($red_packet_type == RED_PACKET_TYPE_FOLLOW || $red_packet_type == RED_PACKET_TYPE_STAY_AT_ROOM)
+            && $diamond < 1000) {
+
+            return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不能小于1000钻');
         } else {
-            if ($diamond < 100 || $num < 10) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不得小于100钻或者个数不得小于10个');
+            if ($diamond < 100) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不能小于100钻');
             }
         }
 
         if ($user->diamond < $diamond) {
-            $to_pay_url = '';
-            return $this->renderJSON(ERROR_CODE_FAIL, '您的钻石余额不足，请充值后再发红包', ['to_pay_url' => $to_pay_url]);
+            return $this->renderJSON(ERROR_CODE_FAIL, '您的钻石余额不足，请充值后再发红包');
         }
 
         $opts = [
@@ -78,14 +87,6 @@ class RedPacketsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '余额不足');
         }
 
-        $opts = [
-            'type' => 'create',
-            'content' => $user->nickname . '在房间内发红包，手快有，手慢无，赶紧去抢吧',
-            'notify_type' => 'bc'
-        ];
-
-        \RedPackets::sendSocketForRedPacket($user, $room, $opts);
-
         return $this->renderJSON(ERROR_CODE_SUCCESS, '发布成功', ['send_red_packet_history' => $send_red_packet_history->toJson()]);
     }
 
@@ -103,14 +104,14 @@ class RedPacketsController extends BaseController
         if ($this->request->isAjax()) {
 
             $page = $this->params('page', 1);
-            $pre_page = $this->params('pre_page', 10);
+            $per_page = $this->params('per_page', 10);
             //用户进来的时间
             $room = $user->current_room;
             if (!$room) {
                 $room = \Rooms::findFirstById($room_id);
             }
 
-            $red_packets = \RedPackets::findRedPacketList($user, $room, $page, $pre_page);
+            $red_packets = \RedPackets::findRedPacketList($user, $room, $page, $per_page);
             if ($red_packets) {
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '红包列表',
                     $red_packets->toJson('red_packets', 'toSimpleJson')
@@ -142,7 +143,7 @@ class RedPacketsController extends BaseController
         $distance_start_at = 0;
 
         $user_nickname = $red_packet->user->nickname;
-        $user_avatar_url = $red_packet->user->avatar_url;
+        $user_avatar_url = $red_packet->user->avatar_small_url;
 
         if ($this->request->isAjax()) {
 
@@ -172,6 +173,15 @@ class RedPacketsController extends BaseController
                     $sex_content = $sex == USER_SEX_MALE ? '小哥哥' : '小姐姐';
                     return $this->renderJSON(ERROR_CODE_FAIL, '这个红包只有' . $sex_content . '才可以抢哦！');
                 }
+
+                $red_users = [$red_packet->user];
+                $this->currentUser()->calDistance($red_users);
+                $distance = $red_users[0]->distance;
+                $distance = doubleval($distance) * 1000;
+                if ($red_packet->nearby_distance < $distance) {
+                    $geo_distance = sprintf("%0.2f", $red_packet->nearby_distance / 1000);
+                    return $this->renderJSON(ERROR_CODE_FAIL, '这个红包只有' . $geo_distance . 'km内才可以抢哦！');
+                }
             }
 
             //是否关注房主
@@ -181,13 +191,13 @@ class RedPacketsController extends BaseController
                     return $this->renderJSON(ERROR_CODE_FAIL, '不能抢自己的红包哦');
                 }
 
-                if ($user->isFollow($room->user)) {
+                if (!$user->isFollow($room->user)) {
                     $client_url = '/m/red_packets/followers';
                     return $this->renderJSON(ERROR_CODE_FORM, '需要关注房主才可领取', ['client_url' => $client_url]);
                 }
             }
 
-            $get_diamond = $red_packet->grabRedPacket($user, $room);
+            $get_diamond = $red_packet->grabRedPacket($user);
             $error_reason = '手慢了，红包抢完了！';
             if ($get_diamond) {
                 $error_reason = '抢到' . $user_nickname . '发的钻石红包';
@@ -199,8 +209,9 @@ class RedPacketsController extends BaseController
         $this->view->red_packet = $red_packet;
         $this->view->user_nickname = $user_nickname;
         $this->view->user_avatar_url = $user_avatar_url;
+        $this->view->room_user_nickname = $room->user->nickname;
+        $this->view->room_user_avatar_url = $room->user->avatar_small_url;
         $this->view->distance_start_at = $distance_start_at;
-        $this->view->user_id = $room->user_id;
     }
 
     function detailAction()
@@ -215,6 +226,9 @@ class RedPacketsController extends BaseController
 
         $red_packet_id = $this->params('red_packet_id');
         $red_packet = \RedPackets::findFirstById($red_packet_id);
+        if(!$red_packet){
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
 
         $cache = \Users::getUserDb();
         $user_list_key = $red_packet->generateRedPacketUserListKey();
@@ -239,21 +253,24 @@ class RedPacketsController extends BaseController
     function followersAction()
     {
         $red_packet_id = $this->params('red_packet_id');
-        $user = $this->currentUser();
-
-        if ($user->id == $this->otherUser()->id) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '不能关注自己哦');
+        $red_packet = \RedPackets::findFirstById($red_packet_id);
+        $room = $red_packet->room;
+        if(!$red_packet || !$room){
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
-        $red_packet = \RedPackets::findFirstById($red_packet_id);
-
-        $user->follow($this->otherUser());
-
-        if (isBlank($user->current_room)) {
+        $user = $this->currentUser();
+        if ($user->current_room_id != $room->id) {
             return $this->renderJSON(ERROR_CODE_FAIL, '您不在当前房间哦，请重进！');
         }
 
-        $get_diamond = $red_packet->grabRedPacket($user, $user->current_room);
+        if ($user->id == $room->user_id) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '不能关注自己哦');
+        }
+
+        $user->follow($room->user);
+
+        $get_diamond = $red_packet->grabRedPacket($user);
 
         $error_reason = '手慢了，红包抢完了！';
         if ($get_diamond) {
