@@ -149,8 +149,8 @@ class PaymentChannels extends BaseModel
 
     static function getManualRechargeChannel()
     {
-        $channel = PaymentChannels::findFirst(['conditions' => 'payment_type = :payment_type: and status = :status:',
-            'bind' => ['payment_type' => 'manual_recharge','status'=>STATUS_ON], 'order' => 'id desc']);
+        $channel = PaymentChannels::findFirst(['conditions' => 'payment_type = :payment_type:',
+            'bind' => ['payment_type' => 'manual_recharge'], 'order' => 'id desc']);
 
         return $channel;
     }
