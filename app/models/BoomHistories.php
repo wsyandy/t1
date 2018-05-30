@@ -80,6 +80,7 @@ class BoomHistories extends BaseModel
                 break;
         }
 
+        info($rank, $can_get_gift);
         if ($can_get_gift) {
             $gift_id = $gift_ids[array_rand($gift_ids)];
             return $gift_id;
