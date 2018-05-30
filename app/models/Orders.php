@@ -76,19 +76,17 @@ class Orders extends BaseModel
         if (isPresent($product)) {
 
             $order->product_id = $product->id;
-            $order->amount = $product->amount;
-
+            $amount = $product->amount;
         } else if (isPresent($opts)) {
 
             $amount = fetch($opts, 'amount');
             $operator_id = fetch($opts, 'operator_id');
-
             $order->operator_id = $operator_id;
-            $order->amount = $amount;
         } else {
             return [ERROR_CODE_FAIL, '参数错误，创建订单失败', null];
         }
 
+        $order->amount = $amount;
         $order->status = ORDER_STATUS_WAIT;
         $order->product_channel_id = $user->product_channel_id;
         $order->partner_id = $user->partner_id;

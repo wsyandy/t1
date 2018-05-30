@@ -572,7 +572,7 @@ trait RoomStats
             'client_url' => 'url://m/boom_histories',
             'svga_image_url' => $boom_config->getSvgaImageUrl(),
             'total_value' => intval($total_value),
-            'current_value' => $this->getCurrentBoomGiftValue(),
+            'current_value' => $this->getCurrentBoomGiftValue(Rooms::getBoomGiftTime($this->id)),
             'show_rank' => 1000000,
             'render_type' => 'svga',
             'status' => STATUS_ON,

@@ -76,11 +76,11 @@ class BoomHistoriesController extends BaseController
 
         } elseif ($amount > 0) {
 
-            $rank = $cache->zrank($record_key, $user->id);
+            $rank = $cache->zrank($record_key, $user->id) + 1;
             $gift_id = 0;
             $data = [];
 
-            if ($rank && $rank >= 0 && $rank < 3) {
+            if ($rank && $rank > 0 && $rank <= 3) {
 
                 $gift_id = \BoomHistories::randomContributionUserGiftIdByRank($rank);
 

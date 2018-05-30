@@ -34,7 +34,7 @@ class GoldHistoriesController extends BaseController
 
         if ($this->request->isPost()) {
 
-            if (!$this->currentOperator()->isSuperOperator()) {
+            if (!$this->currentOperator()->canGiveDiamond()) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
             }
 

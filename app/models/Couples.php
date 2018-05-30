@@ -411,14 +411,17 @@ class Couples extends BaseModel
     //解除cp，推送个推给另外一方
     static function pushClearCoupleMessage($current_user_id, $sponsor_id, $pursuer_id)
     {
-        $relieved_user_id = $current_user_id == $sponsor_id ? $sponsor_id : $pursuer_id;
-        $accord_relieved_user_id = $current_user_id == $sponsor_id ? $pursuer_id : $sponsor_id;
+        //当前用户为解除者，判断谁为被解除这
+        //自愿解除
+        $accord_relieved_user_id = $current_user_id == $sponsor_id ? $sponsor_id : $pursuer_id;
+        //被解除
+        $relieved_user_id = $current_user_id == $sponsor_id ? $pursuer_id : $sponsor_id;
         $accord_relieved_user = \Users::findFirstById($accord_relieved_user_id);
         $relieved_user = \Users::findFirstById($relieved_user_id);
         if ($relieved_user) {
             $push_data = ['title' => '很可惜', 'body' => '您与' . $accord_relieved_user->nickname . '的情侣关系已被对方解除，情侣值已被清空，并从排行榜中移除。'];
             info($relieved_user->getPushContext(), $relieved_user->getPushReceiverContext());
-            \Pushers::push($relieved_user->getPushContext(), $relieved_user->getPushReceiverContext(), $push_data);
+            \Pushers::delay()->push($relieved_user->getPushContext(), $relieved_user->getPushReceiverContext(), $push_data);
         }
     }
 

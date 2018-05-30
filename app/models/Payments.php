@@ -34,6 +34,51 @@ class Payments extends BaseModel
         PAYMENT_PAY_STATUS_FAIL => '支付失败'
     ];
 
+    function beforeUpdate()
+    {
+        if ($this->hasChanged('pay_status') && $this->isPaid()) {
+            if (!$this->isManualRecharge()) {
+                $fee = 1 - (double)($this->payment_channel->fee);
+                $this->paid_amount = sprintf("%0.2f", ($this->amount * $fee));
+            }
+        }
+    }
+
+    function afterUpdate()
+    {
+        if ($this->hasChanged('pay_status') && $this->isPaid()) {
+            $lock_key = 'order_update_lock_' . $this->order_id;
+            $hot_cache = self::getHotWriteCache();
+            if (!$hot_cache->set($lock_key, 1, ['NX', 'EX' => 1])) {
+                info('payment_id', $this->id, '支付重复通知，获取锁失败', 'payment_type', $this->payment_type);
+                return;
+            }
+
+            if (!$this->paySuccess()) {
+                return;
+            }
+
+            if ($this->isApple()) {
+                $this->statDayPayAmount();
+            }
+
+            $attrs = $this->user->getStatAttrs();
+            $attrs['add_value'] = round($this->paid_amount);
+            info('stat', $this->id, $this->payment_type, $this->amount, $this->paid_amount, round($this->paid_amount));
+            \Stats::delay()->record("user", "payment_success", $attrs);
+
+
+            // 分销奖励
+            if ($this->user->share_parent_id) {
+                \SmsDistributeHistories::delay()->checkPay($this->user_id, $this->order->product->diamond);
+            }
+
+            //当支付成功后，推送消息
+            \DataCollection::syncData('payment', 'pay_success', ['payment' => $this->toPushDataJson()]);
+            return;
+        }
+    }
+
     function toPushDataJson()
     {
         return array_merge(['product_diamond_number' => $this->diamond], $this->toJson());
@@ -123,56 +168,6 @@ class Payments extends BaseModel
         return $result;
     }
 
-    function beforeUpdate()
-    {
-        if ($this->hasChanged('pay_status') && $this->isPaid()) {
-            if (!$this->isManualRecharge()) {
-                $fee = 1 - (double)($this->payment_channel->fee);
-                $this->paid_amount = sprintf("%0.2f", ($this->amount * $fee));
-            }
-        }
-    }
-
-    function afterUpdate()
-    {
-        if ($this->hasChanged('pay_status') && $this->isPaid()) {
-            $lock_key = 'order_update_lock_' . $this->order_id;
-            $hot_cache = self::getHotWriteCache();
-            if (!$hot_cache->set($lock_key, 1, ['NX', 'EX' => 1])) {
-                info('payment_id', $this->id, '支付重复通知，获取锁失败', 'payment_type', $this->payment_type);
-                return;
-            }
-
-            if (!$this->paySuccess()) {
-                return;
-            }
-
-            if ($this->isApple()) {
-                $this->statDayPayAmount();
-            }
-
-            //支付998 2888 5888 参与抽奖活动
-//            if (in_array($this->amount, [998, 2888, 5888])) {
-//                Activities::delay()->addLuckyDrawActivity($this->user_id, ['amount' => $this->amount]);
-//            }
-
-            $attrs = $this->user->getStatAttrs();
-            $attrs['add_value'] = round($this->paid_amount);
-            info('stat', $this->id, $this->payment_type, $this->amount, $this->paid_amount, round($this->paid_amount));
-            \Stats::delay()->record("user", "payment_success", $attrs);
-
-
-            // 分销奖励
-            if ($this->user->share_parent_id) {
-                \SmsDistributeHistories::delay()->checkPay($this->user_id, $this->order->product->diamond);
-            }
-
-            //当支付成功后，推送消息
-            \DataCollection::syncData('payment', 'pay_success', ['payment' => $this->toPushDataJson()]);
-            return;
-        }
-    }
-
     function statDayPayAmount()
     {
         if ($this->user->device) {
@@ -192,7 +187,6 @@ class Payments extends BaseModel
 
     function paySuccess()
     {
-
         $order = Orders::findFirstById($this->order_id);
         if ($order->status == ORDER_STATUS_SUCCESS) {
             info('payment_id', $this->id, '支付重复通知！', 'payment_type', $this->payment_type);
@@ -206,15 +200,18 @@ class Payments extends BaseModel
         }
 
         $opts = ['target_id' => $order->id, 'mobile' => $order->mobile];
+
         if ($this->isManualRecharge()) {
             $opts['remark'] = "人工充值";
+            $diamond = $this->diamond;
+            $gold = $this->gold;
         } else {
             $product = $order->product;
             $opts['remark'] = '购买' . $product->full_name;
+            $diamond = $product->diamond;
+            $gold = $product->gold;
         }
 
-        $diamond = $this->diamond;
-        $gold = $this->gold;
         if ($diamond) {
             AccountHistories::changeBalance($this->user_id, ACCOUNT_TYPE_BUY_DIAMOND, $diamond, $opts);
         }
@@ -231,9 +228,9 @@ class Payments extends BaseModel
         if ($this->isManualRecharge()) {
             $res = json_decode($this->temp_data, true);
             return fetch($res, 'diamond');
-        } else {
-            return $this->order->product->diamond;
         }
+
+        return 0;
     }
 
     function getGold()
@@ -241,9 +238,9 @@ class Payments extends BaseModel
         if ($this->isManualRecharge()) {
             $res = json_decode($this->temp_data, true);
             return fetch($res, 'gold');
-        } else {
-            return $this->order->product->gold;
         }
+
+        return 0;
     }
 
     function getCnyAmount()

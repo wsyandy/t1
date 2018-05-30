@@ -583,18 +583,12 @@ class Activities extends BaseModel
                 return;
             }
 
-            $give_result = true;
 
-            if ($receiver->isActive()) {
+            $opts = ['sender_current_room_id' => $user->current_room_id, 'receiver_current_room_id' => $receiver->current_room_id];
+            GiftOrders::asyncCreateGiftOrder($user->id, [$receiver->id], $gift->id, $opts);
+            
+            $room->pushGiftMessage($user, $receiver, $gift, 1);
 
-                $opts = ['sender_current_room_id' => $user->current_room_id,'receiver_current_room_id' => $receiver->current_room_id];
-                $give_result = GiftOrders::asyncCreateGiftOrder($user->id, [$receiver->id], $gift->id, $opts);
-            }
-
-            if ($give_result) {
-                info('订单创建成功，推送礼物socket', $gift->id, $user->id, $receiver->id);
-                $room->pushGiftMessage($user, $receiver, $gift, 1);
-            }
         }
     }
 }
