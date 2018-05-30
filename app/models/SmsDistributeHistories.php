@@ -208,7 +208,7 @@ class SmsDistributeHistories extends BaseModel
             $time = time();
         }
 
-        return 'distribute_bonus_' . date('Ymd', beginOfDay($time));
+        return 'distribute_bonus_' . date('Ymd', $time);
     }
 
     static function generateDistributeNumKey($time = '')
@@ -216,7 +216,7 @@ class SmsDistributeHistories extends BaseModel
         if (!$time) {
             $time = time();
         }
-        return 'distribute_share_num_' . date('Ymd', beginOfDay($time));
+        return 'distribute_share_num_' . date('Ymd', $time);
     }
 
     static function generateShareDistributeUserListKey($time = '')
@@ -224,7 +224,7 @@ class SmsDistributeHistories extends BaseModel
         if (!$time) {
             $time = time();
         }
-        return 'share_distribute_user_list' . date('Ymd', beginOfDay($time));
+        return 'share_distribute_user_list' . date('Ymd', $time);
     }
 
     //统计分销分享次数
