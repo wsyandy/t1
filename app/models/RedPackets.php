@@ -346,7 +346,7 @@ class RedPackets extends BaseModel
 
         $avg_diamond = ceil($this->diamond / $this->num);
         $min_diamond = 1;
-        $max_diamond = ceil($this->diamond * 0.3);
+        $max_diamond = ceil($this->diamond * 0.35);
 
         if ($this->red_packet_type == RED_PACKET_TYPE_NEARBY) {
             $min_diamond = 50;
@@ -358,27 +358,30 @@ class RedPackets extends BaseModel
         $get_diamond = 0;
         if ($balance_num == 1) {
             $get_diamond = $balance_diamond;
-
+            $usable_balance_diamond = $balance_diamond;
         } else {
+
+            $usable_balance_diamond = $balance_diamond - ($balance_num - 1) * $min_diamond;
 
             $user_rate = mt_rand(1, 100);
             if ($user_rate < mt_rand(60, 80)) {
                 if ($avg_diamond - ceil($this->diamond * 0.1) < $min_diamond) {
                     $get_diamond = mt_rand($min_diamond, $avg_diamond + ceil($this->diamond * 0.1));
                 } else {
-                    $get_diamond = mt_rand($avg_diamond - ceil($this->diamond * 0.1), $avg_diamond + ceil($this->diamond * 0.1));
+                    $get_diamond = mt_rand($avg_diamond - ceil($this->diamond * 0.05), $avg_diamond + ceil($this->diamond * 0.1));
                 }
             } else {
                 if (mt_rand(1, 100) < 50) {
-                    $get_diamond = mt_rand($min_diamond, ceil($this->diamond * 0.1));
+                    $get_diamond = mt_rand($min_diamond, ceil($this->diamond * 0.05));
                 } else {
                     $get_diamond = mt_rand(ceil($this->diamond * 0.2), $max_diamond);
                 }
             }
         }
 
-        if ($balance_diamond < $get_diamond) {
-            $get_diamond = $balance_diamond;
+        // 防止超出
+        if ($get_diamond > $usable_balance_diamond) {
+            $get_diamond = $min_diamond;
         }
 
         $this->balance_diamond = $balance_diamond - $get_diamond;
@@ -389,6 +392,8 @@ class RedPackets extends BaseModel
         }
 
         $this->save();
+
+        info($this->id, $this->user_id, 'get', $get_diamond, '总', $this->diamond, $this->num, $min_diamond, $max_diamond, $avg_diamond);
 
         $red_user_list_key = $this->generateRedPacketUserListKey();
         $cache->zadd($red_user_list_key, time(), $user_id);
