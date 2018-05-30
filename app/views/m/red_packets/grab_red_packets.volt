@@ -75,7 +75,7 @@
             error_reason: "",
             getDiamond: 0,
             grabbed:true,
-
+            submit: false
         },
         methods: {
             getRedPacket: function () {
@@ -85,8 +85,15 @@
                     red_packet_id: vm.red_packet_id
                 };
 
+                if(this.submit){
+                    return;
+                }
+
+                this.submit = true;
+
                 $.authGet('/m/red_packets/grab_red_packets', data, function (resp) {
 
+                    vm.submit = false;
                     vm.getRed = true;
                     if (resp.error_code == 0) {
 
