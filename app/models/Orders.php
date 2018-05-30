@@ -43,6 +43,7 @@ class Orders extends BaseModel
         ORDER_STATUS_SUCCESS => '支付成功',
         ORDER_STATUS_FAIL => '支付失败'
     ];
+
     function afterUpdate()
     {
         if ($this->hasChanged('status') && $this->isPaid()) {
@@ -57,7 +58,7 @@ class Orders extends BaseModel
         $user->update();
     }
 
-    static function createOrder($user, $product)
+    static function createOrder($user, $product = null, $opts = [])
     {
         $lock_key = 'order_create_lock_' . $user->id;
         $hot_cache = self::getHotWriteCache();
@@ -71,9 +72,24 @@ class Orders extends BaseModel
 
         $order = new \Orders();
         $order->user_id = $user->id;
-        $order->product_id = $product->id;
+
+        if (isPresent($product)) {
+
+            $order->product_id = $product->id;
+            $order->amount = $product->amount;
+
+        } else if (isPresent($opts)) {
+
+            $amount = fetch($opts, 'amount');
+            $operator_id = fetch($opts, 'operator_id');
+
+            $order->operator_id = $operator_id;
+            $order->amount = $amount;
+        } else {
+            return [ERROR_CODE_FAIL, '参数错误，创建订单失败', null];
+        }
+
         $order->status = ORDER_STATUS_WAIT;
-        $order->amount = $product->amount;
         $order->product_channel_id = $user->product_channel_id;
         $order->partner_id = $user->partner_id;
         $order->platform = $user->platform;

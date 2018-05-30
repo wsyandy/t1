@@ -36,7 +36,7 @@ class Payments extends BaseModel
 
     function toPushDataJson()
     {
-        return array_merge(['product_diamond_number' => $this->order->product->diamond], $this->toJson());
+        return array_merge(['product_diamond_number' => $this->diamond], $this->toJson());
     }
 
     function toJson()
@@ -55,7 +55,7 @@ class Payments extends BaseModel
         ];
     }
 
-    static function createPayment($user, $order, $payment_channel)
+    static function createPayment($user, $order, $payment_channel, $opts = [])
     {
         $payment = new \Payments();
         $payment->user_id = $user->id;
@@ -65,6 +65,16 @@ class Payments extends BaseModel
         $payment->payment_type = $payment_channel->payment_type;
         $payment->payment_no = $payment->generatePaymentNo();
         $payment->pay_status = PAYMENT_PAY_STATUS_WAIT;
+
+        if ($payment->isManualRecharge()) {
+            $diamond = fetch($opts, 'diamond');
+            $gold = fetch($opts, 'gold');
+            $paid_amount = fetch($opts, 'paid_amount');
+
+            $payment->operator_id = $order->operator_id;
+            $payment->paid_amount = $paid_amount;
+            $payment->temp_data = json_encode(['diamond' => $diamond, 'gold' => $gold], JSON_UNESCAPED_UNICODE);
+        }
 
         if ($payment->create()) {
 
@@ -116,15 +126,16 @@ class Payments extends BaseModel
     function beforeUpdate()
     {
         if ($this->hasChanged('pay_status') && $this->isPaid()) {
-            $fee = 1 - (double)($this->payment_channel->fee);
-            $this->paid_amount = sprintf("%0.2f", ($this->amount * $fee));
+            if (!$this->isManualRecharge()) {
+                $fee = 1 - (double)($this->payment_channel->fee);
+                $this->paid_amount = sprintf("%0.2f", ($this->amount * $fee));
+            }
         }
     }
 
     function afterUpdate()
     {
         if ($this->hasChanged('pay_status') && $this->isPaid()) {
-
             $lock_key = 'order_update_lock_' . $this->order_id;
             $hot_cache = self::getHotWriteCache();
             if (!$hot_cache->set($lock_key, 1, ['NX', 'EX' => 1])) {
@@ -194,19 +205,43 @@ class Payments extends BaseModel
             return false;
         }
 
-        $product = $order->product;
         $opts = ['target_id' => $order->id, 'mobile' => $order->mobile];
-        if ($product->diamond) {
+        if ($this->isManualRecharge()) {
+            $opts['remark'] = "人工充值";
+        } else {
+            $product = $order->product;
             $opts['remark'] = '购买' . $product->full_name;
-            AccountHistories::changeBalance($this->user_id, ACCOUNT_TYPE_BUY_DIAMOND, $product->diamond, $opts);
         }
 
-        if ($product->gold) {
-            $opts['remark'] = '购买金币';
-            GoldHistories::changeBalance($this->user_id, GOLD_TYPE_BUY_GOLD, $product->gold, $opts);
+        $diamond = $this->diamond;
+        $gold = $this->gold;
+        if ($diamond) {
+            AccountHistories::changeBalance($this->user_id, ACCOUNT_TYPE_BUY_DIAMOND, $diamond, $opts);
+        }
+
+        if ($gold) {
+            GoldHistories::changeBalance($this->user_id, GOLD_TYPE_BUY_GOLD, $gold, $opts);
         }
 
         return true;
+    }
+
+    function getDiamond()
+    {
+        if ($this->isManualRecharge()) {
+            return json_decode($this->temp_data, true)['diamond'];
+        } else {
+            return $this->order->product->diamond;
+        }
+    }
+
+    function getGold()
+    {
+        if ($this->isManualRecharge()) {
+            return json_decode($this->temp_data, true)['gold'];
+        } else {
+            return $this->order->product->gold;
+        }
     }
 
     function getCnyAmount()
@@ -217,5 +252,11 @@ class Payments extends BaseModel
     function isApple()
     {
         return 'apple' == $this->payment_type;
+    }
+
+    //人工充值
+    function isManualRecharge()
+    {
+        return 'manual_recharge' == $this->payment_type;
     }
 }
