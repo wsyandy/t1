@@ -28,7 +28,7 @@ class BoomHistoriesController extends BaseController
         $user = $this->currentUser();
         $room_id = $user->current_room_id;
         // 前三排行
-        $boom_histories = \BoomHistories::historiesTopList($user->id, 3);
+        $boom_histories = \BoomHistories::findHistoriesByUser($user, 3);
         $boom_histories = $boom_histories->toJson('boom_histories', 'toSimpleJson');
 
         if (!$room_id) {
@@ -93,7 +93,7 @@ class BoomHistoriesController extends BaseController
             }
 
             if (!$data && !$gift_id) {
-                $gift_id = 28;
+                $gift_id = 64;
 
                 if (isDevelopmentEnv()) {
                     $gift_id = 54;
@@ -110,7 +110,7 @@ class BoomHistoriesController extends BaseController
                 $target_id = fetch($data, 'target_id');
                 $number = fetch($data, 'number');
             } else {
-                $gift_id = 28;
+                $gift_id = 64;
 
                 if (isDevelopmentEnv()) {
                     $gift_id = 54;
@@ -121,13 +121,13 @@ class BoomHistoriesController extends BaseController
                 $number = 1;
             }
 
-            info("contribution_user", $user->id, $target_id, $boom_user_id, $type, $number);
+            info("contribution_user", $user->id, $rank, $target_id, $boom_user_id, $type, $number);
 
         } else {
             $data = \BoomHistories::randomBoomGiftIdByBoomNum($room, 60);
 
             if (!$data) {
-                $gift_id = 28;
+                $gift_id = 64;
 
                 if (isDevelopmentEnv()) {
                     $gift_id = 54;
@@ -145,7 +145,7 @@ class BoomHistoriesController extends BaseController
             info("random_boom_gift", $user->id, $target_id, $type, $number);
         }
 
-        info("boom_record", "用户id:", $this->currentUser()->id, "贡献值:", $amount, "房间id:", $room_id, "个数", $number);
+        info("boom_record", "用户id:", $this->currentUser()->id, "贡献值:", $amount, "房间id:", $room_id, "个数", $number, 'type', $type);
 
         $res = \BoomHistories::createBoomHistory($user, ['target_id' => $target_id, 'type' => $type, 'number' => $number, 'room_id' => $room_id]);
 
@@ -167,7 +167,12 @@ class BoomHistoriesController extends BaseController
      */
     function historyAction()
     {
-        $boom_histories = \BoomHistories::historiesTopList();
+        $room = $this->currentUser()->current_room;
+
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['boom_histories' => '']);
+        }
+        $boom_histories = \BoomHistories::findHistoriesByRoom($room);
         $boom_histories = $boom_histories->toJson('boom_histories', 'toSimpleJson');
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $boom_histories);
     }
