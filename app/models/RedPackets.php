@@ -320,7 +320,7 @@ class RedPackets extends BaseModel
             return 0;
         }
 
-        return $diamond;
+        return intval($diamond);
     }
 
     function subPackets()
@@ -482,7 +482,7 @@ class RedPackets extends BaseModel
         $cache->zadd($user_room_key, $get_diamond, $this->id);
         $cache->zadd($user_red_key, time(), $this->id);
 
-        return $get_diamond;
+        return intval($get_diamond);
     }
 
     function getRedPacketDiamond2()
