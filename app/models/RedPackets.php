@@ -454,7 +454,7 @@ class RedPackets extends BaseModel
         }
 
         $get_diamond = $this->getSubPacketDiamond();
-        if ($get_diamond) {
+        if (!$get_diamond) {
             return 0;
         }
 
