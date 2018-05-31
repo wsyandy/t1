@@ -1624,7 +1624,7 @@ class Rooms extends BaseModel
                     $score = $score + $max_score;
                 }
                 debug($max_score, $score);
-                $hot_cache->zadd($new_user_hot_rooms_list_key, $score + $max_score, $room_id);
+                $hot_cache->zadd($new_user_hot_rooms_list_key, $score, $room_id);
             }
 
             $hot_cache->zadd($total_new_hot_room_list_key, $score, $room_id);
