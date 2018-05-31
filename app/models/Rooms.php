@@ -1623,9 +1623,9 @@ class Rooms extends BaseModel
             if (!in_array($room_id, $shield_room_ids)) {
                 $hot_cache->zadd($hot_room_list_key, $score, $room_id);
                 if (in_array($room_id, $new_user_room_ids)) {
-                    $hot_cache->zadd($new_user_hot_rooms_list_key, $score + $max_score, $room_id);
+                    $score = $score + $max_score;
                 }
-
+                $hot_cache->zadd($new_user_hot_rooms_list_key, $score + $max_score, $room_id);
             }
 
             $hot_cache->zadd($total_new_hot_room_list_key, $score, $room_id);
