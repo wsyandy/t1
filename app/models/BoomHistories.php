@@ -194,19 +194,25 @@ class BoomHistories extends BaseModel
      * @param int $per_page
      * @return PaginationModel
      */
-    static public function historiesTopList($user_id = null, $per_page = 10)
+    static public function findHistoriesByRoom($room, $per_page = 10)
     {
         $conditions = [
-            'order' => 'id desc',
+            'conditions' => 'room_id = :room_id: and created_at >= :start: and created_at <= :end:',
+            'bind' => ['room_id' => $room->id, 'start' => time() - 600, 'end' => time()],
+            'order' => 'id asc'
         ];
 
-        if (isPresent($user_id)) {
-            $conditions = [
-                'conditions' => ' user_id = :user_id: and (type != :type: or (type = :type1: and target_id != 28))',
-                'bind' => ['user_id' => $user_id, 'type' => BOOM_HISTORY_GOLD_TYPE, 'type1' => BOOM_HISTORY_GIFT_TYPE],
-                'order' => 'id desc'
-            ];
-        }
+        $list = BoomHistories::findPagination($conditions, 1, $per_page);
+        return $list;
+    }
+
+    static public function findHistoriesByUser($user, $per_page = 10)
+    {
+        $conditions = [
+            'conditions' => 'user_id = :user_id:',
+            'bind' => ['user_id' => $user->id],
+            'order' => 'id desc'
+        ];
 
         $list = BoomHistories::findPagination($conditions, 1, $per_page);
         return $list;

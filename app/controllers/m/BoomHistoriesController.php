@@ -28,7 +28,7 @@ class BoomHistoriesController extends BaseController
         $user = $this->currentUser();
         $room_id = $user->current_room_id;
         // 前三排行
-        $boom_histories = \BoomHistories::historiesTopList($user->id, 3);
+        $boom_histories = \BoomHistories::findHistoriesByUser($user, 3);
         $boom_histories = $boom_histories->toJson('boom_histories', 'toSimpleJson');
 
         if (!$room_id) {
@@ -167,7 +167,12 @@ class BoomHistoriesController extends BaseController
      */
     function historyAction()
     {
-        $boom_histories = \BoomHistories::historiesTopList();
+        $room = $this->currentUser()->current_room;
+
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['boom_histories' => '']);
+        }
+        $boom_histories = \BoomHistories::findHistoriesByRoom($room);
         $boom_histories = $boom_histories->toJson('boom_histories', 'toSimpleJson');
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $boom_histories);
     }
