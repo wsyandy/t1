@@ -1,0 +1,220 @@
+/* pages/my_profile/my_profile.wxss */
+
+page {
+  background-color: #fff;
+}
+
+.profile_head {
+  flex-direction: column;
+  align-items: center;
+  padding: 30rpx;
+}
+
+.profile_avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+}
+
+.profile_id {
+  font-size: 34rpx;
+  color: #2d2d2d;
+  padding: 14rpx;
+}
+
+.profile_box {
+  width: 100%;
+  padding-left: 24rpx;
+  flex-direction: column;
+}
+
+.profile_list {
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 105rpx;
+  padding-right: 24rpx;
+  border-bottom: 1px solid #ebebeb;
+  font-size: 32rpx;
+  color: #2d2d2d;
+}
+
+.profile_info {
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.profile_arrow {
+  width: 15rpx;
+  height: 27rpx;
+  margin-left: 20rpx;
+}
+
+/* 修改昵称 */
+
+.edit_nick {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 640rpx;
+  height: 480rpx;
+  margin-left: -320rpx;
+  margin-top: -240rpx;
+  padding: 0 40rpx;
+  background-color: #fff;
+  border-radius: 16rpx;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transform: translateY(0);
+  transition: 1s;
+}
+
+.edit_input {
+  border: 1px solid #ddd;
+  border-radius: 8rpx;
+   width: 100%;
+  height: 88rpx;
+  padding: 0 30rpx;
+  font-size: 32rpx;
+}
+.edit_tips{
+  width: 100%;
+  font-size: 24rpx;
+  color: #666666;
+  padding: 20rpx 0;
+}
+.edit_btn {
+  margin-top: 50rpx;
+   width: 100%;
+  height: 88rpx;
+  background: #ff4686;
+  border-radius: 88rpx;
+  font-size: 32rpx;
+  color: #fff;
+  justify-content: center;
+  align-items: center;
+}
+
+.ico_close {
+  position: absolute;
+  bottom: -100rpx;
+  left: 50%;
+  width: 72rpx;
+  height: 72rpx;
+  margin-left: -36rpx;
+}
+/* 修改性别 */
+.edit_sex{
+  position: absolute;
+  bottom: 0;
+  width: 100%; 
+  padding: 24rpx; 
+  flex-direction: column;
+}
+.sex_option{
+  width: 100%;
+  height: 98rpx;
+  justify-content: center;
+  align-items: center;
+  background: #FFFFFF;
+  border-radius: 8rpx;
+  margin-bottom: 2rpx;
+  font-size: 36rpx;
+  color: #FF2570;
+}
+.sex_option:first-child{ 
+  color: #2572FF;
+}
+.sex_option:last-child{
+  margin-top: 20rpx;
+  color: #2D2D2D;
+}
+/*底部弹窗动画*/
+.slider_up {
+  animation: sliderUp 0.5s ease-out;
+}
+
+@keyframes sliderUp {
+  0% {
+    transform: translateY(100%);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+/*
+.slider_down {
+  transform: translateY(200%);
+  animation: sliderDown 0.5s ease-in; 
+}
+
+@keyframes sliderDown {
+  0% {
+    transform: translateY(0%);
+  }
+
+  100% {
+    transform: translateY(200%);
+  }
+}
+*/
+
+
+/*城市选择器*/
+.citypicker {
+  width: 100%;
+  height: 500rpx;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  background-color: #fff
+}
+
+.cityheader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 0 30rpx;
+  height: 100rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #dfdfdf;
+  border-bottom: 1px solid #eee;
+  background-color: #f3f3f3;
+  z-index: 999;
+}
+
+.city-cancel, .city-true {
+  text-align: center;
+  color: #999;
+  font-size: 32rpx;
+}
+
+.city-true {
+  color: #F45189;
+}
+
+.citybody {
+  position: absolute;
+  top: 100rpx;
+  left: 0;
+  width: 100%;
+  height: 400rpx;
+}
+
+.citycurrent {
+  height: 100rpx;
+  line-height: 100rpx;
+}
+
+.citylist {
+  height: 100rpx;
+  line-height: 100rpx;
+  padding-left: 30rpx;
+  font-size: 32rpx;
+}
+
