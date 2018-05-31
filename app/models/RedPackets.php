@@ -403,6 +403,11 @@ class RedPackets extends BaseModel
         $this->balance_diamond = $balance_diamond - $get_diamond;
         $this->balance_num = $balance_num - 1;
 
+        if ($this->balance_diamond < 0) {
+            $get_diamond = 0;
+            $this->balance_diamond = 0;
+        }
+
         if ($this->balance_diamond <= 0) {
             $this->status = STATUS_OFF;
         }
