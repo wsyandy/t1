@@ -93,7 +93,7 @@ class BoomHistoriesController extends BaseController
             }
 
             if (!$data && !$gift_id) {
-                $gift_id = 28;
+                $gift_id = 64;
 
                 if (isDevelopmentEnv()) {
                     $gift_id = 54;
@@ -110,7 +110,7 @@ class BoomHistoriesController extends BaseController
                 $target_id = fetch($data, 'target_id');
                 $number = fetch($data, 'number');
             } else {
-                $gift_id = 28;
+                $gift_id = 64;
 
                 if (isDevelopmentEnv()) {
                     $gift_id = 54;
@@ -127,7 +127,7 @@ class BoomHistoriesController extends BaseController
             $data = \BoomHistories::randomBoomGiftIdByBoomNum($room, 60);
 
             if (!$data) {
-                $gift_id = 28;
+                $gift_id = 64;
 
                 if (isDevelopmentEnv()) {
                     $gift_id = 54;
