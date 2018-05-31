@@ -224,7 +224,8 @@ class RedPackets extends BaseModel
             'type' => 'create',
             'content' => $user->nickname . '在房间内发红包，手快有，手慢无，赶紧去抢吧',
             'red_packet_type' => $red_packet->red_packet_type,
-            'sex' => $red_packet->sex
+            'sex' => $red_packet->sex,
+            'diamond' => $red_packet->diamond
         ];
 
         self::delay()->asyncSendRedPacketMessageToUsers($user->id, $room->id, $push_data);
@@ -576,7 +577,7 @@ class RedPackets extends BaseModel
         self::pushRedPacketTopTopicMessage($room, $content);
 
         //首页下沉通知
-        if ($type == 'create' && $red_packet_type == RED_PACKET_TYPE_NEARBY && isDevelopmentEnv()) {
+        if ($type == 'create' && $red_packet_type == RED_PACKET_TYPE_NEARBY && fetch($opts, 'diamond' >= 10000)) {
             self:: pushRedPacketSinkMessage($user, $room, $opts);
         }
     }
