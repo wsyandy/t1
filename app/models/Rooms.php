@@ -1614,6 +1614,8 @@ class Rooms extends BaseModel
 
 
         $max_score = max($room_ids);
+        debug($new_user_room_ids);
+
         foreach ($room_ids as $room_id => $score) {
 
             $hot_cache->zadd($total_new_hot_room_list_key, $score, $room_id);
