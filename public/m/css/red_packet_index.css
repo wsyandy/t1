@@ -51,7 +51,7 @@ ol, ul, li {
 /*红包详情*/
 .detail_red_top {
     width: 100%;
-    height: 2.24rem;
+    height: 2.64rem;
     margin: 0 auto;
     background: url(../images/detail_bg.png) no-repeat;
     background-size: 100%;
@@ -86,7 +86,7 @@ ol, ul, li {
 .top_person p {
     font-size: 0.346667rem;
     color: #767676;
-    margin-top: 0.133333rem;
+    margin-top: 0.13333rem;
     padding-bottom: 0.4rem;
 }
 
@@ -294,7 +294,7 @@ ol, ul, li {
 }
 
 .red_get a {
-    margin-top: 1.333333rem;
+    margin-top: 0.7rem;
 }
 
 .wait_red {
@@ -355,7 +355,7 @@ ol, ul, li {
 }
 
 .wait_red_guanzhu h3 {
-    font-size: 0.48rem;
+    font-size: 0.4rem;
 }
 
 .qiang_red {
@@ -364,7 +364,7 @@ ol, ul, li {
     margin: 0 auto;
     background: url(../images/qiang.png) no-repeat;
     background-size: 100%;
-    margin-top: 1.6rem;
+    margin-top: 0.6rem;
 }
 
 .guanzhu_qiang_box {
@@ -383,7 +383,6 @@ ol, ul, li {
     -ms-flex-pack: center;
     justify-content: center;
     background: rgba(0, 0, 0, .50);
-    display: none;
 }
 
 .guanzhu_qiang_box .gz_fangzhu {
@@ -494,7 +493,6 @@ ol, ul, li {
 
 .give_red_box {
     padding: 0 0.466667rem;
-    margin: 0 auto;
 }
 
 .give_red_box .give_box {
@@ -509,9 +507,8 @@ ol, ul, li {
     -webkit-box-pack: justify;
     -ms-flex-pack: justify;
     justify-content: space-between;
-    width: 90%;
+    width: 9.066667rem;
     height: 1.173333rem;
-    margin: 0 auto;
 }
 
 .give_red_box .give_box h3 {
@@ -561,8 +558,6 @@ ol, ul, li {
     font-size: 0.32rem;
     color: rgba(255, 255, 255, 0.80);
     padding: 0.133333rem 0 0 0.266667rem;
-    width: 90%;
-    margin: 0 auto;
 }
 
 .give_red_box .give_box .give_input .get_font {
@@ -671,7 +666,6 @@ ol, ul, li {
     align-items: center;
     justify-content: center;
     background: rgba(0, 0, 0, .50);
-    display: none;
 }
 
 .get_style_bg .get_style_box {
@@ -911,10 +905,10 @@ ol, ul, li {
     display: none !important;
 }
 
-
-.is_stay_hide{
-    display:none;
+.is_stay_hide {
+    display: none;
 }
+
 
 
 
