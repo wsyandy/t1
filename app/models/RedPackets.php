@@ -352,7 +352,7 @@ class RedPackets extends BaseModel
         $min_avg = $avg_diamond - ceil(($avg_diamond - $min_diamond) / 2);
         $max_avg = $avg_diamond + ceil(($max_diamond - $avg_diamond) / 2);
 
-        info('5个分包点', $min_diamond, $min_avg, $avg_diamond, $max_avg, $max_diamond);
+        info($this->id, '5个分包点', $min_diamond, $min_avg, $avg_diamond, $max_avg, $max_diamond);
 
         $total_get_diamond = 0;
         $get_diamonds = [];
@@ -399,7 +399,8 @@ class RedPackets extends BaseModel
         }
 
         shuffle($get_diamonds);
-        info($get_diamonds);
+        
+        info($this->id, $get_diamonds);
 
         foreach ($get_diamonds as $diamond) {
             $cache->rpush("red_packets_shuffle_diamond_" . $this->id, $diamond);
