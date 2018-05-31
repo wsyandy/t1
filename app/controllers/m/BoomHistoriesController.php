@@ -145,7 +145,7 @@ class BoomHistoriesController extends BaseController
             info("random_boom_gift", $user->id, $target_id, $type, $number);
         }
 
-        info("boom_record", "用户id:", $this->currentUser()->id, "贡献值:", $amount, "房间id:", $room_id, "个数", $number);
+        info("boom_record", "用户id:", $this->currentUser()->id, "贡献值:", $amount, "房间id:", $room_id, "个数", $number, 'type', $type);
 
         $res = \BoomHistories::createBoomHistory($user, ['target_id' => $target_id, 'type' => $type, 'number' => $number, 'room_id' => $room_id]);
 
