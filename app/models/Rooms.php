@@ -1527,9 +1527,7 @@ class Rooms extends BaseModel
 
     static function updateHotRoomList($all_room_ids, $opts = [])
     {
-
         $hot_cache = Rooms::getHotWriteCache();
-
         $hot_room_list_key = Rooms::getHotRoomListKey(); //正常房间
         $new_user_hot_rooms_list_key = Rooms::getNewUserHotRoomListKey(); //新用户房间
         $old_user_pay_hot_rooms_list_key = Rooms::getOldUserPayHotRoomListKey(); //充值老用户队列
@@ -1625,6 +1623,7 @@ class Rooms extends BaseModel
                 if (in_array($room_id, $new_user_room_ids)) {
                     $score = $score + $max_score;
                 }
+                debug($max_score, $score);
                 $hot_cache->zadd($new_user_hot_rooms_list_key, $score + $max_score, $room_id);
             }
 
