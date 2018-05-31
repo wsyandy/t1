@@ -27,3 +27,15 @@
         <td><a href="/admin/boom_configs/edit/${boom_config.id}" class="modal_action">编辑</a></td>
     </tr>
 </script>
+
+<script type="text/javascript">
+    $(function () {
+        $('.selectpicker').selectpicker();
+
+        {% for boom_config in boom_configs %}
+        {% if boom_config.status != 1 %}
+        $("#boom_config_{{ boom_config.id }}").css({"background-color": "grey"});
+        {% endif %}
+        {% endfor %}
+    })
+</script>

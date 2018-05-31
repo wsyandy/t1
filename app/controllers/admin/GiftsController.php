@@ -59,10 +59,6 @@ class GiftsController extends BaseController
         $gift = new \Gifts();
         $this->assign($gift, 'gift');
 
-        if ($gift->amount < 1) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '金额不能为空');
-        }
-
         if ($gift->save()) {
             \OperatingRecords::logAfterCreate($this->currentOperator(), $gift);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', array('gift' => $gift->toJson()));
@@ -90,10 +86,6 @@ class GiftsController extends BaseController
         }
 
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $gift);
-
-        if ($gift->amount < 1) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '金额不能为空');
-        }
 
         if ($gift->update()) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', array('gift' => $gift->toJson()));

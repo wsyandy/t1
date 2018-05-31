@@ -45,9 +45,9 @@ class BoomConfigs extends BaseModel
 
     static function getBoomConfig($room = null)
     {
-        if ($room && $room->user->isCompanyUser()) {
-            return self::getTestBoomConfig();
-        }
+//        if ($room && $room->user->isCompanyUser()) {
+//            return self::getTestBoomConfig();
+//        }
 
         $boom_config = BoomConfigs::findFirst(
             [

@@ -34,3 +34,15 @@
         <td><a href="/admin/games/edit/${game.id}" class="modal_action">编辑</a></td>
     </tr>
 </script>
+
+<script type="text/javascript">
+    $(function () {
+        $('.selectpicker').selectpicker();
+
+        {% for game in games %}
+        {% if game.status != 1 %}
+        $("#game_{{ game.id }}").css({"background-color": "grey"});
+        {% endif %}
+        {% endfor %}
+    })
+</script>

@@ -1,8 +1,7 @@
 const app = getApp()
 Page({
   data: {
-    isIos: app.globalData.isIos, /*设备是否为IOS*/
-    isIpx: app.globalData.isIpx,/*设备是否为iPhone X*/
+    isIos: app.globalData.isIos, /*设备是否为IOS*/ 
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
     logo: '/images/logo_hi.png',
     avatarUrl: '',
@@ -378,11 +377,24 @@ Page({
   },
 
   /*用户授权*/
-  bindGetUserInfo: function (e) {
-    // console.log(e.detail.userInfo)
-    this.setData({
-      avatarUrl: e.detail.userInfo.avatarUrl,
+  getUserInfo: function (e) {
+
+    let _this = this
+    app.getUserInfo(e, function (res) {
+      Utils.log(`data:${JSON.stringify(res)}`)
+      if (res) {
+        _this.setData({
+          userInfo: res,
+          hasUserInfo: true
+        })
+      }
     })
+
+
+    // this.setData({
+    //   avatarUrl: e.detail.userInfo.avatarUrl,
+    // })
+    
   },
   /*滑入用户信息*/
   sliderUserInfo: function (e) {
@@ -496,6 +508,7 @@ Page({
       wx.stopPullDownRefresh() //停止下拉刷新
     }, 1500);
   },
+
 })
 
 

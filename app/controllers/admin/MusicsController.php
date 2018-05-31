@@ -15,7 +15,7 @@ class MusicsController extends BaseController
         $page = $this->params('page');
         $per_page = 25;
         $cond = $this->getConditions('music');
-        $cond['order'] = 'id desc';
+        $cond['order'] = 'status desc,id desc';
         $musics = \Musics::findPagination($cond, $page, $per_page);
         $this->view->musics = $musics;
     }

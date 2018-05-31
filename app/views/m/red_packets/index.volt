@@ -2,7 +2,7 @@
 {{ theme_css('/m/css/red_packet_address.css','/m/css/red_packet_index.css','/m/css/red_packet_sex_select.css','/m/css/picker.css') }}
 {{ theme_js('/m/js/picker.min.js','/m/js/font_rem.js') }}
 {{ block_end() }}
-<div id="app">
+<div id="app" class="grab" style="background: #ff4848;" v-cloak>
     <div class="give_red_bg">
         <div class="bottom_bg"></div>
         <div class="give_red_box">

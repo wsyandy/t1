@@ -3,7 +3,7 @@
   <view class="avatar_box">
     <image class='logo_avatar' mode='scaleToFill' wx:if="{{avatarUrl}}" src='{{avatarUrl}}' catchtap="sliderUserInfo"></image>
     <image class='logo_avatar' mode='scaleToFill' wx:if="{{!avatarUrl}}" src='{{logo}}' catchtap="bindGetUserInfo"></image>
-    <button class="avatar_btn" wx:if="{{canIUse}}" wx:if="{{!avatarUrl}}" open-type="getUserInfo" bindgetuserinfo="bindGetUserInfo">授权登录</button>
+    <button class="avatar_btn" wx:if="{{canIUse}}" wx:if="{{!avatarUrl}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo">授权登录</button>
   </view>
   <text>房间</text>
 </view>

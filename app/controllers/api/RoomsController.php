@@ -860,15 +860,7 @@ class RoomsController extends BaseController
         }
 
         if (STATUS_ON == $hot) {
-
             $hot_rooms = \Rooms::newSearchHotRooms($this->currentUser(), 1, 9);
-
-//            if (isInternalIp($this->remoteIp()) || $this->currentUser()->isCompanyUser()) {
-//                $hot_rooms = \Rooms::newSearchHotRooms($this->currentUser(), 1, 9);
-//            } else {
-//                $hot_rooms = \Rooms::searchHotRooms($this->currentUser(), 1, 9);
-//            }
-
             \Users::findBatch($hot_rooms);
             $hot_rooms_json = $hot_rooms->toJson('hot_rooms', 'toSimpleJson');
         }

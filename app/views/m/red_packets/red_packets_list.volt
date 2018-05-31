@@ -3,7 +3,7 @@
 {{ theme_js('/m/js/address.js','/m/js/font_rem.js') }}
 {{ block_end() }}
 
-<div class="detail_list red_list" id="app">
+<div class="detail_list red_list" id="app" v-cloak>
     <ul>
         <li v-for="v,i in red_packets_list">
             <div class="pic">
