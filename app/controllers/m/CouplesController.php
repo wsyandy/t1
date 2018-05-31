@@ -280,7 +280,7 @@ class CouplesController extends BaseController
         }
 
         \Couples::clearCoupleInfo($sponsor_id, $pursuer_id);
-        \Couples::pushClearCoupleMessage($current_user_id, $sponsor_id, $pursuer_id);
+        \Couples::sendRelieveCpSysTemMessage($current_user_id, $sponsor_id, $pursuer_id);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功解除CP！');
     }

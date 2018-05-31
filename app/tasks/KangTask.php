@@ -9,15 +9,21 @@
 class KangTask extends \Phalcon\Cli\Task
 {
 
-    function redAction($params){
-        $red_id = $params[0];
-        $user_id = $params[1];
+    function redAction(){
 
-        $red = RedPackets::findFirstById($red_id);
-        $user = Users::findFirstById($user_id);
+        $red = new RedPackets();
+        $red->id = 1;
+        $red->user_id = 2;
+        $red->room_id = 3;
+        $red->diamond = 1000;
+        $red->num = 100;
+        $red->balance_diamond = $red->diamond;
+        $red->balance_num = $red->num;
+        $red->status = STATUS_ON;
+        $red->sex = 2;
+        $red->red_packet_type = '';
 
-        $amonut = $red->getRedPacketDiamond($user->id);
-        echoLine($amonut);
+        $red->subPackets();
 
     }
 

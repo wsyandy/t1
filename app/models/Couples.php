@@ -9,13 +9,18 @@ class Couples extends BaseModel
         $cache = \Users::getHotWriteCache();
         $key = self::generateReadyCpInfoKey($user->room_id);
         //初始化
-        $body = ['sponsor_id' => $user->id, $user->id => 1];
+        $time = date('YmdHis');
+        $body = ['sponsor_id' => $user->id, $user->id => 1, 'start_at' => $time];
         $cache->hmset($key, $body);
         info('初始化', $cache->hgetall($key));
 
-        $cache->expire($key, 10 * 60);
-        //同时起一个异步推送scoket
-        self::delay(10 * 60 - 3)->asyncFinishCp($user, $key);
+        $expire_time = 10 * 60;
+        if (isDevelopmentEnv()) {
+            $expire_time = 2 * 60;
+        }
+        $cache->expire($key, $expire_time);
+        //同时起一个异步推送socket
+        self::delay($expire_time - 3)->asyncFinishCp($user, $key, $time);
     }
 
     static function generateReadyCpInfoKey($room_id)
@@ -408,8 +413,8 @@ class Couples extends BaseModel
         }
     }
 
-    //解除cp，推送个推给另外一方
-    static function pushClearCoupleMessage($current_user_id, $sponsor_id, $pursuer_id)
+    //解除cp，推送系统给另外一方
+    static function sendRelieveCpSysTemMessage($current_user_id, $sponsor_id, $pursuer_id)
     {
         //当前用户为解除者，判断谁为被解除这
         //自愿解除
@@ -419,17 +424,18 @@ class Couples extends BaseModel
         $accord_relieved_user = \Users::findFirstById($accord_relieved_user_id);
         $relieved_user = \Users::findFirstById($relieved_user_id);
         if ($relieved_user) {
-            $push_data = ['title' => '很可惜', 'body' => '您与' . $accord_relieved_user->nickname . '的情侣关系已被对方解除，情侣值已被清空，并从排行榜中移除。'];
-            info($relieved_user->getPushContext(), $relieved_user->getPushReceiverContext());
-            \Pushers::delay()->push($relieved_user->getPushContext(), $relieved_user->getPushReceiverContext(), $push_data);
+            $content = '您与' . $accord_relieved_user->nickname . '的情侣关系已被对方解除，情侣值已被清空，并从排行榜中移除。';
+            $result = \Chats::sendSystemMessage($relieved_user, CHAT_CONTENT_TYPE_TEXT, $content);
+            info($result);
         }
     }
 
-    static function asyncFinishCp($user, $key)
+    static function asyncFinishCp($user, $key, $time)
     {
         $cache = \Users::getHotWriteCache();
         $pursuer_id = $cache->hget($key, 'pursuer_id');
-        if ($pursuer_id) {
+        $start_at = $cache->hget($key, 'start_at');
+        if ($pursuer_id || $start_at != $time) {
             return;
         }
 

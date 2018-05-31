@@ -1,7 +1,8 @@
 {
   "pages": [
-    "pages/index/index", 
-    "pages/room/room"
+    "pages/index/index",
+    "pages/room/room",
+    "pages/my_profile/my_profile"
   ],
   "window": {
     "backgroundTextStyle": "light",

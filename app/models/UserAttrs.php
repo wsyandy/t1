@@ -95,6 +95,7 @@ trait UserAttrs
             'id' => $this->id,
             'uid' => $this->uid,
             'sex' => $this->sex,
+            'birthday' => $this->birthday_text,
             'avatar_url' => $this->avatar_url,
             'avatar_big_url' => $this->avatar_big_url,
             'avatar_small_url' => $this->avatar_small_url,
