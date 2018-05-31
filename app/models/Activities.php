@@ -555,7 +555,7 @@ class Activities extends BaseModel
         $cond = [
             'conditions' => 'status=:status: and created_at>=:start_at: and created_at <= :end_at: and sender_id=:sender_id: and user_id =:user_id:',
             'bind' => ['status' => GIFT_ORDER_STATUS_SUCCESS, 'start_at' => $gift_order->created_at - 60, 'end_at' => $gift_order->created_at, 'sender_id' => $gift_order->sender_id, 'user_id' => $gift_order->user_id],
-            'order' => 'id asc',
+            'order' => 'id desc',
             'column' => 'gift_id',
             'limit' => 4
         ];
@@ -564,31 +564,36 @@ class Activities extends BaseModel
         foreach ($gift_orders as $gift_order) {
             $ids[] = $gift_order->gift_id;
         }
+        $ids = array_reverse($ids);
         $ids = implode(',', $ids);
+
         info('触发后的包括当前订单的四个订单的礼物ID:', $ids, '特效活动礼物ID', trim($this->gift_ids, ','));
 
-        if ($ids == trim($this->gift_ids, ',')) {
-            //如果一致，触发彩蛋赠送者自动赠送给被增送者额外一个彩蛋礼物
-            $user = \Users::findFirstById($gift_order->sender_id);
-            $receiver = \Users::findFirstById($gift_order->user_id);
-            $gift = \Gifts::findFirstById($this->special_effect_gift_id);
-            $room = $gift_order->room;
-
-            if (!$room || !$user || !$receiver) {
-                info('参数错误', $gift_order->room_id, $gift_order->user_id, $gift_order->sender_id);
-                return;
-            }
-
-            if (!$user->isInRoom($room) || !$receiver->isInRoom($room)) {
-                return;
-            }
-
-
-            $opts = ['sender_current_room_id' => $user->current_room_id, 'receiver_current_room_id' => $receiver->current_room_id];
-            GiftOrders::asyncCreateGiftOrder($user->id, [$receiver->id], $gift->id, $opts);
-            
-            $room->pushGiftMessage($user, $receiver, $gift, 1);
-
+        if ($ids != trim($this->gift_ids, ',')) {
+            return;
         }
+        //如果一致，触发彩蛋赠送者自动赠送给被增送者额外一个彩蛋礼物
+        $sender = $gift_order->sender;
+        $receiver = $gift_order->user;
+
+        $gift = \Gifts::findFirstById($this->special_effect_gift_id);
+        $room = $gift_order->room;
+
+        if (!$room || !$sender || !$receiver) {
+            info('参数错误', $gift_order->room_id, $gift_order->user_id, $gift_order->sender_id);
+            return;
+        }
+
+        if (!$sender->isInRoom($room) || !$receiver->isInRoom($room)) {
+            return;
+        }
+
+
+        $opts = ['sender_current_room_id' => $sender->current_room_id, 'receiver_current_room_id' => $receiver->current_room_id];
+        GiftOrders::asyncCreateGiftOrder($sender->id, [$receiver->id], $gift->id, $opts);
+
+        $room->pushGiftMessage($sender, $receiver, $gift, 1);
+
+
     }
 }
