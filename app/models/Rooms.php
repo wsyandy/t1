@@ -987,7 +987,6 @@ class Rooms extends BaseModel
     {
         $register_time = time() - $user->register_at;
         $time = 60 * 15;
-
         if (isProduction()) {
             $time = 86400;
         }
@@ -999,10 +998,7 @@ class Rooms extends BaseModel
 
             $hot_room_list_key = Rooms::getTotalRoomListKey(); //新的用户总的队列
             if ($register_time <= $time) {
-                $hot_cache = Users::getHotWriteCache();
-                $new_user_hot_rooms_list_key = Rooms::getTotalRoomListKey(); //新用户房间
-                $hot_room_list_key = $new_user_hot_rooms_list_key;
-                echoLine($hot_cache->zrange($new_user_hot_rooms_list_key, 0, -1));
+                $hot_room_list_key = Rooms::getNewUserHotRoomListKey(); //新用户房间
             }
         }
 
