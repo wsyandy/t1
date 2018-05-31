@@ -309,7 +309,7 @@ class RedPackets extends BaseModel
     {
 
         $lock_key = 'grab_red_packet_' . $this->id;
-        $lock = tryLock($lock_key);
+        $lock = tryLock($lock_key, 2000);
         if (!$lock) {
             return 0;
         }
@@ -403,9 +403,12 @@ class RedPackets extends BaseModel
         $this->balance_diamond = $balance_diamond - $get_diamond;
         $this->balance_num = $balance_num - 1;
 
-        if ($this->balance_diamond < 0) {
+        if ($this->balance_diamond < 0 || $this->balance_num < 0) {
+            info('Exce', $this->id, $this->user_id, 'get', $get_diamond, $usable_balance_diamond, '总', $this->balance_diamond, $this->balance_num, $min_diamond, $max_diamond, $avg_diamond);
+
             $get_diamond = 0;
             $this->balance_diamond = 0;
+            $this->balance_num = 0;
         }
 
         if ($this->balance_diamond <= 0) {
