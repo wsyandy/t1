@@ -493,6 +493,7 @@ ol, ul, li {
 
 .give_red_box {
     padding: 0 0.466667rem;
+    margin: 0 auto;
 }
 
 .give_red_box .give_box {
