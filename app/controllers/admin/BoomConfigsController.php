@@ -13,7 +13,7 @@ class BoomConfigsController extends BaseController
     function indexAction()
     {
         $conds = $this->getConditions('boom_configs');
-        $conds['order'] = 'id desc';
+        $conds['order'] = 'status desc, id desc';
         $page = $this->params('page');
         $per_page = $this->params('per_page');
         $boom_configs = \BoomConfigs::findPagination($conds, $page, $per_page);

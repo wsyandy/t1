@@ -30,3 +30,15 @@
         });
     });
 </script>
+
+<script type="text/javascript">
+    $(function () {
+        $('.selectpicker').selectpicker();
+
+        {% for draw_config in draw_configs %}
+        {% if draw_config.status != 1 %}
+        $("#draw_config_{{ draw_config.id }}").css({"background-color": "grey"});
+        {% endif %}
+        {% endfor %}
+    })
+</script>

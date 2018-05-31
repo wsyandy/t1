@@ -628,7 +628,7 @@ trait RoomAttrs
 
         return false;
     }
-
+    
     function isInShieldRoomList()
     {
         $hot_shield_room_list_key = Rooms::generateShieldHotRoomListKey();
@@ -674,19 +674,17 @@ trait RoomAttrs
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day':
-                {
-                    $date = fetch($opts, 'date', date("Ymd"));
-                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                    break;
-                }
-            case 'week':
-                {
-                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                    break;
-                }
+            case 'day': {
+                $date = fetch($opts, 'date', date("Ymd"));
+                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                break;
+            }
+            case 'week': {
+                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                break;
+            }
             default:
                 return '';
         }

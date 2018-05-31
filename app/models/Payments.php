@@ -70,7 +70,7 @@ class Payments extends BaseModel
 
             // 分销奖励
             if ($this->user->share_parent_id) {
-                \SmsDistributeHistories::delay()->checkPay($this->user_id, $this->order->product->diamond);
+                \SmsDistributeHistories::delay()->checkPay($this->user_id, $this->order->product->diamond, $this->order->amount);
             }
 
             //当支付成功后，推送消息

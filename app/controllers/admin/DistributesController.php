@@ -21,7 +21,7 @@ class DistributesController extends BaseController
             //分享次数
             $distribute_num_key = \SmsDistributeHistories::generateDistributeNumKey($start_at);
             $share_num = $stat_db->get($distribute_num_key);
-            $result['share_num'] = $share_num;
+            $result['share_num'] = $share_num ? $share_num : 0;
 
             //分享人数
             $share_distribute_user_key = \SmsDistributeHistories::generateShareDistributeUserListKey($start_at);
@@ -44,6 +44,21 @@ class DistributesController extends BaseController
             $result['second_distribute_bonus'] = fetch($distribute_bonus_datas, 'second_distribute_bonus', 0);
 
             $result['distribute_total_amount'] = $result['register_distribute_bonus'] + $result['first_distribute_bonus'] + $result['second_distribute_bonus'];
+
+            //充值人数
+            $share_user_pay_num_key = \SmsDistributeHistories::generateShareDistributePayUserNumKey($start_at);
+            $share_user_pay_num = $stat_db->zcard($share_user_pay_num_key);
+            $result['share_user_pay_num'] = $share_user_pay_num ? $share_user_pay_num : 0;
+
+            //充值金额
+            $share_user_amount_key = \SmsDistributeHistories::generateShareDistributePayAmountKey($start_at);
+            $share_user_amount = $stat_db->get($share_user_amount_key);
+            $result['share_user_amount'] = $share_user_amount ? $share_user_amount : 0;
+
+            //充值钻石数
+            $share_user_diamond_key = \SmsDistributeHistories::generateShareDistributePayDiamondKey($start_at);
+            $share_user_diamond = $stat_db->get($share_user_diamond_key);
+            $result['share_user_diamond'] = $share_user_diamond ? $share_user_diamond : 0;
 
             //已邀请人数
             $invited_user_num = \SmsDistributeHistories::count(['conditions' => 'status=:status: and user_id is not null and created_at >=:start_at: and created_at <=:end_at:',

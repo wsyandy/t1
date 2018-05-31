@@ -263,8 +263,8 @@ class HiCoinHistories extends BaseModel
                 AccountHistories::changeBalance($user, ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND, $diamond, $opts);
 
                 // 分销奖励
-                if($user->share_parent_id){
-                    SmsDistributeHistories::delay()->checkPay($user->id, $diamond, 'exchange');
+                if ($user->share_parent_id) {
+                    SmsDistributeHistories::delay()->checkPay($user->id, $diamond, $hi_coins, 'exchange');
                 }
             }
         }

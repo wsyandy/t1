@@ -11,7 +11,7 @@ class BannersController extends BaseController
     function indexAction()
     {
         $conds = $this->getConditions('banner');
-        $conds['order'] = 'id desc';
+        $conds['order'] = 'status desc, id desc';
         $page = $this->params('page');
         $banners = \Banners::findPagination($conds, $page);
         $this->view->banners = $banners;

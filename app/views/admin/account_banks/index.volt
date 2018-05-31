@@ -15,3 +15,15 @@
         <td><a href="/admin/account_banks/edit/${account_bank.id}" class="modal_action">编辑</a></td>
     </tr>
 </script>
+
+<script type="text/javascript">
+    $(function () {
+        $('.selectpicker').selectpicker();
+
+        {% for account_bank in account_banks %}
+        {% if account_bank.status != 1 %}
+        $("#account_bank_{{ account_bank.id }}").css({"background-color": "grey"});
+        {% endif %}
+        {% endfor %}
+    })
+</script>

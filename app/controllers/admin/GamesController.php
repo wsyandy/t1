@@ -8,7 +8,7 @@ class GamesController extends BaseController
         $page = $this->params('page');
         $per_page = $this->params('per_page', 8);
         $cond = $this->getConditions('game');
-        $cond['order'] = 'rank desc, id desc';
+        $cond['order'] = 'status desc, rank desc, id desc';
 
         $games  = \Games::findPagination($cond, $page, $per_page);
         $this->view->games = $games;
