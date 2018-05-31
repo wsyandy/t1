@@ -80,6 +80,7 @@ App({
               let data = {
                 sid: res.data.sid
               }
+
               _this.globalData.sid = res.data.sid
               wx.setStorageSync('sid', res.data.sid)
               return request.postRequest('users/detail', data)
@@ -94,11 +95,10 @@ App({
                 })
                 return;
               }
-              _this.globalData.userInfo = res.data.user
-              // _this.globalData.sid = res.data.user.sid
-              // wx.setStorageSync('sid', res.data.user.sid)
-              wx.setStorageSync('userInfo', res.data.user)
-              callback(res.data.user)
+
+              _this.globalData.userInfo = res.data
+              wx.setStorageSync('userInfo', res.data)
+              callback(res.data)
             })
         } else {
           //用户拒绝授权
@@ -122,13 +122,13 @@ App({
       success: (res) => {
         /*判断是否为ipad 或者 iphone*/
         let isios = /ipad|iphone/i.test(res.model)
-        this.globalData.isIos = isios ;
+        this.globalData.isIos = isios;
         /*判断是否为iPhone X*/
         let iphonex = res.model.substring(0, res.model.indexOf("X")) + "X";
-        this.globalData.isIpx = iphonex == 'iPhone X'  
+        this.globalData.isIpx = iphonex == 'iPhone X'
         /* 获取设备可使用窗口宽高*/
         this.globalData.windowWidth = res.windowWidth
-        this.globalData.windowHeight = res.windowHeight 
+        this.globalData.windowHeight = res.windowHeight
       }
     });
   },
