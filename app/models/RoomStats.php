@@ -382,6 +382,7 @@ trait RoomStats
                 $sender = Users::findFirstById($sender_id);
                 $content = "恭喜【{$sender->nickname}】在【{$this->name}】内，成功引爆火箭，快来抢礼物吧！";
                 Rooms::delay()->asyncAllNoticePush($content, ['type' => 'top_topic_message', 'hot' => 1]);
+                Rooms::delay()->asyncAllNoticePush($content, ['hot' => 1, 'room_id' => $this->id]);
                 unlock($lock);
 
                 return;
