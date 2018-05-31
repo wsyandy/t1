@@ -356,7 +356,7 @@ class RedPackets extends BaseModel
 
         $avg_diamond = ceil($this->diamond / $this->num);
         $min_diamond = 1;
-        $max_diamond = ceil($this->diamond * 0.30);
+        $max_diamond = ceil($this->diamond * 0.3);
 
         if ($this->red_packet_type == RED_PACKET_TYPE_NEARBY) {
             $min_diamond = 50;
@@ -372,21 +372,21 @@ class RedPackets extends BaseModel
         } else {
 
             if ($balance_num * 2 > $this->num) {
-                $usable_balance_diamond = ceil($this->diamond * mt_rand(40, 60) / 100);
+                $usable_balance_diamond = ceil($this->balance_diamond * mt_rand(40, 60) / 100);
             } else {
                 $usable_balance_diamond = $balance_diamond - ($balance_num - 1) * $min_diamond * 2;
             }
 
             $user_rate = mt_rand(1, 100);
             if ($user_rate < mt_rand(60, 80)) {
-                if ($avg_diamond - ceil($this->diamond * 0.1) < $min_diamond) {
+                if ($avg_diamond - ceil($this->diamond * 0.05) < $min_diamond) {
                     $get_diamond = mt_rand($min_diamond, $avg_diamond + ceil($this->diamond * 0.1));
                 } else {
                     $get_diamond = mt_rand($avg_diamond - ceil($this->diamond * 0.05), $avg_diamond + ceil($this->diamond * 0.1));
                 }
             } else {
                 if (mt_rand(1, 100) < 80) {
-                    $get_diamond = mt_rand($min_diamond, ceil($this->diamond * 0.05));
+                    $get_diamond = mt_rand($min_diamond, ceil($this->diamond * 0.1));
                 } else {
                     $get_diamond = mt_rand(ceil($this->diamond * 0.15), $max_diamond);
                 }
