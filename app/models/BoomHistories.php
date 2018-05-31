@@ -202,8 +202,8 @@ class BoomHistories extends BaseModel
 
         if (isPresent($user_id)) {
             $conditions = [
-                'conditions' => ' user_id = :user_id:',
-                'bind' => ['user_id' => $user_id],
+                'conditions' => ' user_id = :user_id: and (type != :type: or (type = :type1: and target_id != 28))',
+                'bind' => ['user_id' => $user_id, 'type' => BOOM_HISTORY_GOLD_TYPE, 'type1' => BOOM_HISTORY_GIFT_TYPE],
                 'order' => 'id desc'
             ];
         }
