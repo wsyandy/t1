@@ -1,4 +1,3 @@
-<!--pages/my_profile/my_profile.wxml-->
 <view class="profile_head">
   <image class='profile_avatar' mode='scaleToFill' src='{{userInfo.avatar_small_url}}'></image>
   <text class="profile_id">ID:{{userInfo.id}}</text>
@@ -21,7 +20,6 @@
   <view class="profile_list" catchtap="open">
     <text class="profile_title">地区</text>
     <view class="profile_info">
-      <!-- <text> {{userInfo.province}}-{{userInfo.city}} </text> -->
       <text class="input"> {{userInfo.province_name ? userInfo.province_name : '未知'}}-{{userInfo.city_name ? userInfo.city_name : '未知'}} </text>
       <image class='profile_arrow' mode='scaleToFill' src='{{profile_arrow}}'></image>
     </view>
@@ -29,7 +27,7 @@
   <view class="profile_list">
     <text class="profile_title">生日</text>
     <view class="profile_info">
-      <picker mode="date" value="{{date}}" start="1960-09-01" end="2019-09-01" bindchange="bindDateChange">
+      <picker mode="date" value="{{date}}" start="1960-09-01" end="2018-00-00" bindchange="bindDateChange">
         <view class="picker">
           {{userInfo.birthday ? userInfo.birthday : '未设置'}}
         </view>
@@ -63,8 +61,8 @@
 <!-- 修改地区 -->
 <view hidden="{{!condition}}" class="citypicker {{condition?'slider_up':''}}">
   <view class="cityheader">
-    <view catchtap="open" data-bool="1" class="city-cancel">取消</view>
-    <view catchtap="open" data-bool="0" class="city-true">确定</view>
+    <view catchtap="open" data-bool="0" class="city-cancel">取消</view>
+    <view catchtap="open" data-bool="1" class="city-true">确定</view>
   </view>
   <picker-view value="{{value}}" bindchange="bindChange" class="citybody" indicator-class="citycurrent">
     <picker-view-column>

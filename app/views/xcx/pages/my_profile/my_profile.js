@@ -13,20 +13,11 @@ Page({
   data: {
     profile_arrow: '/images/profile_arrow.png',
     icoClose: '/images/ico_close.png',
-    // userInfo: {
-    //   avatar: '/images/room_cover_1.jpg',
-    //   id: "189069",
-    //   nickname: "秦王",
-    //   sex: '女',
-    //   province: '上海',
-    //   city: '上海',
-    //   birthday: '1995-11-11'
-    // },
     hideMask: true, /*遮罩层*/
     hideNick: true,  /*修改昵称*/
     nicknameVal: '',
     hideSex: true,  /*修改性别*/
-    sexOpt:["男","女","取消"],
+    sexOpt: ["女", "男", "取消"],
     /*城市选择*/
     provinces: [],
     citys: [],
@@ -35,7 +26,6 @@ Page({
     value: [0, 0, 0],
     values: [0, 0, 0],
     condition: false,
-    birthday:'1995-11-11',
   },
   /*打开昵称编辑弹窗*/
   editNickname: function () {
@@ -56,10 +46,10 @@ Page({
     let userInfo = wx.getStorageSync('userInfo')
     let nickname = wx.getStorageSync('userInfo').nickname
     let nicknameVal = this.data.nicknameVal;
-    if(nickname != nicknameVal){
+    if (nickname != nicknameVal) {
       userInfo.nickname = nicknameVal ? nicknameVal : userInfo.nickname
       _this.userUpdate({ nickname: nicknameVal })
-      
+
     }
 
     this.setData({
@@ -68,22 +58,7 @@ Page({
     })
 
   },
-  userUpdate:function(data){
-    var _this = this
-    request.postRequest('users/update', data).then(res => {
-      console.log(res)
-      if (res.statusCode == 200){
-        console.log('SUCCESS')
-        wx.setStorageSync('userInfo', res.data)
-      }
-    })
-      .finally(function (res) { 
-        console.log('SUCCESS2')
-        _this.setData({
-          userInfo:wx.getStorageSync('userInfo')
-        })
-      })
-  },
+
   /*关闭昵称编辑弹窗*/
   closeMask: function () {
     this.setData({
@@ -93,7 +68,7 @@ Page({
   },
 
   /*打开性别选择弹窗*/
-  editSex: function () { 
+  editSex: function () {
     this.setData({
       hideMask: false,
       hideSex: false,
@@ -101,36 +76,22 @@ Page({
   },
   sexSelect: function (e) {
     let index = e.currentTarget.dataset.index;
-    let userInfo = this.data.userInfo; 
-  
-    if(index<2){
-      userInfo.sex = this.data.sexOpt[index];
-      this.setData({ 
-        userInfo: userInfo
-      })
-    } 
+    if (index < 2) {
+      this.userUpdate({ sex: index })
+    }
     this.setData({
       hideMask: true,
       hideSex: true,
     })
-   
+
   },
   /*打开地区   选择弹窗*/
   open: function (e) {
     var bool = Number(e.currentTarget.dataset.bool);
-    console.log(bool)
-    // console.log(oldprovince, oldcity)
     if (bool) {
-      this.setData({
-        province: oldprovince,
-        city: oldcity,
-       
-      })
-      province = oldprovince
-      city = oldcity
-    } else {
-      oldprovince = this.data.province;
-      oldcity = this.data.city
+      if (this.data.city && this.data.city != wx.getStorageSync('userInfo').city_name) {
+        this.userUpdate({ province_name: this.data.province, city_name: this.data.city })
+      }
     }
 
     this.setData({
@@ -174,12 +135,11 @@ Page({
     }
 
   },
-/*生日*/
+  /*生日*/
   bindDateChange: function (e) {
-    console.log('picker发送选择改变，携带值为', e.detail.value)
-    this.setData({
-      birthday: e.detail.value
-    })
+
+    if (e.detail.value && e.detail.value != wx.getStorageSync('userInfo').birthday)
+      this.userUpdate({ birthday: e.detail.value })
   },
 
   /**
@@ -187,7 +147,7 @@ Page({
    */
   onLoad: function (options) {
     let userInfo = wx.getStorageSync('userInfo')
-    if(!userInfo){
+    if (!userInfo) {
       wx.showToast({
         title: '请先登录',
         icon: "none",
@@ -198,7 +158,7 @@ Page({
     // 初始化城市
     var _this = this;
     tcity.init(_this);
-    var cityData = _this.data.cityData; 
+    var cityData = _this.data.cityData;
     const provinces = [];
     const citys = [];
 
@@ -211,15 +171,33 @@ Page({
     _this.setData({
       'provinces': provinces,
       'citys': citys,
-      'province': userInfo.province_name,
-      'city': userInfo.city_name,
-      'userInfo':userInfo
+      'userInfo': userInfo
     })
-    console.log('初始化完成');
-    
 
   },
 
+  /**
+   * 修改用户资料信息
+   */
+  userUpdate: function (data) {
+    var _this = this
+    request.postRequest('users/update', data).then(res => {
+      if (res.data.error_code == 0) {
+        wx.setStorageSync('userInfo', res.data)
+      } else {
+        wx.showToast({
+          title: '修改失败',
+          icon: "none",
+          duration: 1000
+        })
+      }
+    })
+      .finally(function (res) {
+        _this.setData({
+          userInfo: wx.getStorageSync('userInfo')
+        })
+      })
+  },
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
