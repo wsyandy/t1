@@ -346,7 +346,7 @@ class RedPackets extends BaseModel
         }
 
         if ($max_diamond > $avg_diamond * 3) {
-            $max_diamond = ceil($this->diamond * 0.2);
+            $max_diamond = $avg_diamond * 3;
         }
 
         $min_avg = $avg_diamond - ceil(($avg_diamond - $min_diamond) / 2);
