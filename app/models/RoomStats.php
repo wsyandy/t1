@@ -322,7 +322,7 @@ trait RoomStats
         }
 
         $interval_value = 50000;
-        $need_push = false;
+        $need_push = true;
 
         if ($this->user->isCompanyUser()) {
             $interval_value = 500;
@@ -377,16 +377,11 @@ trait RoomStats
                 $cache->incrby($boom_num_day_key, 1); //爆礼物次数
                 $cache->expire($boom_num_day_key, $expire);
                 $cache->setex($room_boon_gift_sign_key, $boom_expire, $time); //爆钻时间
-
                 $this->pushBoomIncomeMessage($boom_config);
-
-                if ($need_push) {
-                    //临时查询
-                    $sender = Users::findFirstById($sender_id);
-                    $content = "恭喜【{$sender->nickname}】在【{$this->name}】内，成功引爆火箭，快来抢礼物吧！";
-                    Rooms::delay()->asyncAllNoticePush($content, ['type' => 'top_topic_message', 'hot' => 1]);
-                }
-
+                //临时查询
+                $sender = Users::findFirstById($sender_id);
+                $content = "恭喜【{$sender->nickname}】在【{$this->name}】内，成功引爆火箭，快来抢礼物吧！";
+                Rooms::delay()->asyncAllNoticePush($content, ['type' => 'top_topic_message', 'hot' => 1]);
                 unlock($lock);
 
                 return;
