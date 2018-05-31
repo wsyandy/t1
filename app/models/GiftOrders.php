@@ -233,6 +233,9 @@ class GiftOrders extends BaseModel
 
             $gift_order = new GiftOrders();
             $gift_order->sender_id = $sender_id;
+            $gift_order->sender = $sender;
+            $gift->user = $receiver;
+            $gift->gift = $gift;
             $gift_order->user_id = $receiver_id;
             $gift_order->gift_id = $gift->id;
             $gift_order->amount = $gift_amount * $gift_num;
