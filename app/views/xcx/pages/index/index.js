@@ -378,11 +378,24 @@ Page({
   },
 
   /*用户授权*/
-  bindGetUserInfo: function (e) {
-    // console.log(e.detail.userInfo)
-    this.setData({
-      avatarUrl: e.detail.userInfo.avatarUrl,
+  getUserInfo: function (e) {
+
+    let _this = this
+    app.getUserInfo(e, function (res) {
+      Utils.log(`data:${JSON.stringify(res)}`)
+      if (res) {
+        _this.setData({
+          userInfo: res,
+          hasUserInfo: true
+        })
+      }
     })
+
+
+    // this.setData({
+    //   avatarUrl: e.detail.userInfo.avatarUrl,
+    // })
+    
   },
   /*滑入用户信息*/
   sliderUserInfo: function (e) {
@@ -496,6 +509,7 @@ Page({
       wx.stopPullDownRefresh() //停止下拉刷新
     }, 1500);
   },
+
 })
 
 

@@ -3898,4 +3898,96 @@ class Users extends BaseModel
             $this->update();
         }
     }
+
+    //微信小程序
+    static function findFirstByXcxOpenid($product_channel_id, $xcx_openid)
+    {
+        $cond['conditions'] = 'xcx_openid=:xcx_openid: and product_channel_id=:product_channel_id: and user_status !=:user_status:';
+        $cond['bind'] = ['xcx_openid' => $xcx_openid, 'product_channel_id' => $product_channel_id, 'user_status' => USER_STATUS_OFF];
+        $cond['order'] = 'id desc';
+        $user = Users::findFirst($cond);
+        return $user;
+    }
+
+    static function registerByOpenidXcx($product_channel, $data)
+    {
+        $code = fetch($data, 'code');
+        $system = fetch($data, 'system');
+
+        $xcx = new \XcxBaseEvents($product_channel);
+        $xcx_openid = $xcx->getOpenid($code);
+        info('openid', $xcx_openid, $data);
+        if (!$xcx_openid) {
+            return null;
+        }
+        $user = \Users::findFirstByXcxOpenid($product_channel->id, $xcx_openid);
+        if ($user) {
+            return $user;
+        }
+
+        list($user_info, $error_code) = $xcx->getUserInfo($code, $data);
+        info('解密用户信息', $user_info, $error_code);
+
+//        $login_name = $xcx_openid . 'xcx';
+        $user_info = json_decode($user_info, true);
+
+//        $fr = fetch($user_info, 'fr');
+//        if (!$fr) {
+//            $fr = $product_channel->xcx_fr;
+//        }
+
+//        $partner = \Partners::findFirstByFrHotCache($fr);
+        $user = new \Users();
+//        if ($partner) {
+//            $user->partner_id = $partner->id;
+//        }
+
+//        $user->nickname = substr(md5($login_name), 0, 10);
+        if ($user_info) {
+            $user->sex = fetch($user_info, 'sex', 1);
+            $user->nickname = fetch($user_info, 'nickName', 1);
+        }
+
+        $user->ip = fetch($data, 'ip');
+//        $user->fr = $fr;
+        $user->xcx_openid = $xcx_openid;
+        $user->product_channel_id = $product_channel->id;
+//        $user->login_name = $login_name;
+        $user->user_type = USER_TYPE_ACTIVE;
+        $user->user_status = USER_STATUS_ON;
+
+        if (stristr($system, 'ios')) {
+            $user->platform = USER_PLATFORM_XCX_IOS;
+        } elseif (stristr($system, 'android')) {
+            $user->platform = USER_PLATFORM_XCX_ANDROID;
+        } else {
+            $user->platform = USER_PLATFORM_XCX_UNKNOW;
+        }
+
+        if ($system) {
+            $user->platform_version = explode(" ", $system)['1'];
+        }
+
+        $user->register_at = time();
+        $user->last_at = time();
+
+        $user->save();
+
+        $user->sid = $user->generateSid('s');
+        $user->update();
+
+        $url = fetch($user_info, 'avatarUrl', 1);
+        $temp = APP_ROOT . 'temp/' . uniqid() . ".jpg";
+        httpSave($url, $temp);
+        $user->updateAvatar($temp);
+
+        unlink($temp);
+
+        $user->session_key = $xcx->getSessionKey($code);
+
+        # 小程序注册统计
+        \Stats::delay()->record('user', 'xcx_active', $user->getStatAttrs());
+
+        return $user;
+    }
 }

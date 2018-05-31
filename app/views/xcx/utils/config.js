@@ -1,4 +1,4 @@
-var debug = 1;   //0：线上  1：线下  2：本地
+var debug = 2;   //0：线上  1：线下  2：本地
 var config = {
   code: '',
   model: ''
@@ -16,9 +16,9 @@ switch (debug) {
     config.image_url = "http://test.xianjinchaoren.com/xcx/images/"
     break;
   case 2:
-    config.server_domain = "http://money.com/xcx/"
+    config.server_domain = "http://chance.com/xcx/"
     config.websocket_domain = "ws://127.0.0.1:9501"
-    config.image_url = "http://money.com/xcx/images/"
+    config.image_url = "http://chance.com/xcx/images/"
     break;
 }
 
