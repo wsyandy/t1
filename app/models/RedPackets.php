@@ -371,10 +371,12 @@ class RedPackets extends BaseModel
             $usable_balance_diamond = $balance_diamond;
         } else {
 
+            $usable_balance_diamond = $balance_diamond - ($balance_num - 1) * $min_diamond * 2;
             if ($balance_num * 2 > $this->num) {
-                $usable_balance_diamond = ceil($this->balance_diamond * mt_rand(40, 60) / 100);
-            } else {
-                $usable_balance_diamond = $balance_diamond - ($balance_num - 1) * $min_diamond * 2;
+                $usable_balance_diamond2 = ceil($balance_diamond * mt_rand(40, 60) / 100);
+                if($usable_balance_diamond2 < $usable_balance_diamond){
+                    $usable_balance_diamond = $usable_balance_diamond2;
+                }
             }
 
             $user_rate = mt_rand(1, 100);
