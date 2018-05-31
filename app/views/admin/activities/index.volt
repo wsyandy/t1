@@ -48,3 +48,14 @@
         <td><a href="/admin/activities/edit/${activity.id}" class="modal_action">编辑</a></td>
     </tr>
 </script>
+<script type="text/javascript">
+    $(function () {
+        $('.selectpicker').selectpicker();
+
+        {% for activity in activities %}
+        {% if activity.status != 1 %}
+        $("#activity_{{ activity.id }}").css({"background-color": "grey"});
+        {% endif %}
+        {% endfor %}
+    })
+</script>

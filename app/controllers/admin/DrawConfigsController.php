@@ -11,7 +11,7 @@ class DrawConfigsController extends BaseController
     function indexAction()
     {
         $conds = $this->getConditions('draw_configs');
-        $conds['order'] = 'rank desc,id desc';
+        $conds['order'] = 'status desc,rank desc,id desc';
         $page = $this->params('page');
         $draw_configs = \DrawConfigs::findPagination($conds, $page);
         $this->view->draw_configs = $draw_configs;

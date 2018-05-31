@@ -52,3 +52,15 @@
         <td><a href="/admin/room_themes/edit/${room_theme.id}" class="modal_action">编辑</a></td>
     </tr>
 </script>
+
+<script type="text/javascript">
+    $(function () {
+        $('.selectpicker').selectpicker();
+
+        {% for room_theme in room_themes %}
+        {% if room_theme.status != 1 %}
+        $("#room_theme_{{ room_theme.id }}").css({"background-color": "grey"});
+        {% endif %}
+        {% endfor %}
+    })
+</script>

@@ -283,6 +283,7 @@ class RoomsController extends BaseController
         $this->view->total_entries = $rooms->total_entries;
         $this->view->hot = 1;
         $this->view->boom_config = \BoomConfigs::getBoomConfig();
+        $this->view->types = \Rooms::$TYPES;
     }
 
     function typesAction()

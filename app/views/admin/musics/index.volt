@@ -46,3 +46,15 @@
         <td><a href="/admin/musics/edit/${music.id}" class="modal_action">编辑</a></td>
     </tr>
 </script>
+
+<script type="text/javascript">
+    $(function () {
+        $('.selectpicker').selectpicker();
+
+        {% for music in musics %}
+        {% if music.status != 1 %}
+        $("#music_{{ music.id }}").css({"background-color": "grey"});
+        {% endif %}
+        {% endfor %}
+    })
+</script>

@@ -12,7 +12,7 @@ class AccountBanksController extends BaseController
     function indexAction()
     {
         $conds = $this->getConditions('account_bank');
-        $conds['order'] = 'rank desc,id asc';
+        $conds['order'] = 'status desc,rank desc,id asc';
         $page = $this->params('page');
         $account_banks = \AccountBanks::findPagination($conds, $page, 30);
         $this->view->account_banks = $account_banks;
