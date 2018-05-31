@@ -378,22 +378,20 @@ Page({
 
   /*用户授权*/
   getUserInfo: function (e) {
-
-    let _this = this
-    app.getUserInfo(e, function (res) {
-      Utils.log(`data:${JSON.stringify(res)}`)
-      if (res) {
-        _this.setData({
-          userInfo: res,
-          hasUserInfo: true
-        })
-      }
-    })
-
-
-    // this.setData({
-    //   avatarUrl: e.detail.userInfo.avatarUrl,
+  
+    // app.getUserInfo(e,  (res)=> {
+    //   Utils.log(`data:${JSON.stringify(res)}`)
+    //   if (res) {
+    //     this.setData({
+    //       userInfo: res,
+    //       hasUserInfo: true
+    //     })
+    //   }
     // })
+
+    this.setData({
+      avatarUrl: e.detail.userInfo.avatarUrl,
+    })
     
   },
   /*滑入用户信息*/
@@ -433,6 +431,11 @@ Page({
     }
   },
   /* 路由事件 */
+  navToMyProfile: function () { 
+    wx.navigateTo({
+      url: '/pages/my_profile/my_profile'
+    })
+  },
   navtoNewRoom: function () { },
   navtoNewHomeowners: function () { },
   navtoGameHomeowners: function () { },

@@ -220,7 +220,7 @@
       </view>
       <view class="user_info">
         <image class='user_avatar' mode='scaleToFill' src='{{userInfo.avatarUrl}}'></image>
-        <view class="info_detail">
+        <view class="info_detail" catchtap="navToMyProfile">
           <view class="info_nickname">
             <text class="nickname">{{userInfo.nickname}}</text>
             <image class='info_edit' mode='scaleToFill' src='{{info_edit}}'></image>

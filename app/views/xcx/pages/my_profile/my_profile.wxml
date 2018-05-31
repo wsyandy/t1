@@ -1,0 +1,78 @@
+<!--pages/my_profile/my_profile.wxml-->
+<view class="profile_head">
+  <image class='profile_avatar' mode='scaleToFill' src='{{userInfo.avatar}}'></image>
+  <text class="profile_id">ID:{{ userInfo.id}}</text>
+</view>
+<view class="profile_box">
+  <view class="profile_list" catchtap="editNickname">
+    <text class="profile_title">昵称</text>
+    <view class="profile_info">
+      <text>{{userInfo.nickname}}</text>
+      <image class='profile_arrow' mode='scaleToFill' src='{{profile_arrow}}'></image>
+    </view>
+  </view>
+  <view class="profile_list" catchtap="editSex">
+    <text class="profile_title">性别</text>
+    <view class="profile_info">
+      <text>{{userInfo.sex}}</text>
+      <image class='profile_arrow' mode='scaleToFill' src='{{profile_arrow}}'></image>
+    </view>
+  </view>
+  <view class="profile_list" catchtap="open">
+    <text class="profile_title">地区</text>
+    <view class="profile_info">
+      <!-- <text> {{userInfo.province}}-{{userInfo.city}} </text> -->
+      <text class="input"> {{province}}-{{city}} </text>
+      <image class='profile_arrow' mode='scaleToFill' src='{{profile_arrow}}'></image>
+    </view>
+  </view>
+  <view class="profile_list">
+    <text class="profile_title">生日</text>
+    <view class="profile_info">
+      <picker mode="date" value="{{date}}" start="2015-09-01" end="2027-09-01" bindchange="bindDateChange">
+        <view class="picker">
+          {{birthday}}
+        </view>
+      </picker>
+      <image class='profile_arrow' mode='scaleToFill' src='{{profile_arrow}}'></image>
+
+    </view>
+  </view>
+</view>
+
+<!-- 遮罩层 -->
+<view class="mask" hidden="{{hideMask}}"></view>
+<!-- 修改昵称 -->
+<view class="edit_nick {{hideNick?'':'slider_up'}}" hidden="{{hideNick}}">
+  <input class="edit_input" placeholder-class="placeholder" type="text" maxlength="11" placeholder="请输入昵称" value="{{nicknameVal}}" bindinput="bindNicknameInput" />
+  <view class="edit_tips">
+    <text>* 字数不能超过十字</text>
+  </view>
+  <view class="edit_btn" catchtap="saveNickname">
+    <text>保存</text>
+  </view>
+  <image class="ico_close" src="{{icoClose}}" catchtap="closeMask"></image>
+</view>
+
+<!-- 修改性别 -->
+<view class="edit_sex" hidden="{{hideSex}}">
+  <view class="sex_option" wx:for="{{sexOpt}}" data-index="{{index}}" wx:key="sex{{index}}" catchtap="sexSelect">
+    <text>{{item}}</text>
+  </view>
+</view>
+<!-- 修改地区 -->
+<view hidden="{{!condition}}" class="citypicker {{condition?'slider_up':''}}">
+  <view class="cityheader">
+    <view catchtap="open" data-bool="1" class="city-cancel">取消</view>
+    <view catchtap="open" data-bool="0" class="city-true">确定</view>
+  </view>
+  <picker-view value="{{value}}" bindchange="bindChange" class="citybody" indicator-class="citycurrent">
+    <picker-view-column>
+      <view class="citylist" wx:for="{{provinces}}" wx:key="item">{{item}}</view>
+    </picker-view-column>
+    <picker-view-column>
+      <view class="citylist" wx:for="{{citys}}" wx:key="item">{{item}}</view>
+    </picker-view-column>
+
+  </picker-view>
+</view>
