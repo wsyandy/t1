@@ -225,7 +225,12 @@ class Backpacks extends BaseModel
                 ]
             );
 
-            $gift_amount = count($receiver_ids) * $gift->amount;
+            if (!$gift->isNormal()) {
+                $gift_amount = 0;
+            } else {
+                $gift_amount = count($receiver_ids) * $gift->amount;
+            }
+
             $res = array_merge($notify_data, ['diamond' => $sender->diamond, 'gold' => $sender->gold, 'total_amount' => $gift_amount, 'pay_type' => $gift->pay_type]);
 
             $error_reason = "赠送成功";
