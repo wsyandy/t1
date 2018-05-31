@@ -8,6 +8,56 @@
 
 class MeiTask extends \Phalcon\Cli\Task
 {
+
+    function test73Action()
+    {
+        $orders = Orders::find(['conditions' => 'status = :status:',
+            'bind' => ['status' => ORDER_STATUS_SUCCESS],
+            'columns' => 'distinct user_id'
+        ]);
+
+        $total_user_ids = [];
+        $idfas = [];
+        $imeis = [];
+        $ios_temp_file = APP_ROOT . "temp/ios_order_idfa_file.txt";
+        $android_temp_file = APP_ROOT . "temp/android_order_imei_file.txt";
+        foreach ($orders as $order) {
+            $total_user_ids[] = $order->user_id;
+        }
+
+        $total = count($total_user_ids);
+        $per_pgae = 100;
+        $total_page = ceil($total / $per_pgae);
+
+        for ($page = 1; $page <= $total_page; $page++) {
+            $offset = $per_pgae * ($page - 1);
+            $user_ids = array_slice($total_user_ids, $offset, $per_pgae);
+            $users = Users::findByIds($user_ids);
+
+            foreach ($users as $user) {
+                $device = $user->device;
+
+                if (!$device) {
+                    continue;
+                }
+
+                if ($user->isIos()) {
+                    $idfa = $device->idfa;
+                    if ($idfa) {
+                        $val = Partners::generateMuid(['idfa' => $idfa]);
+                        file_put_contents($ios_temp_file, $val . PHP_EOL, FILE_APPEND);
+                    }
+                } else {
+                    $imei = $device->imei;
+                    if ($imei) {
+                        $val = Partners::generateMuid(['imei' => $imei]);
+                        file_put_contents($android_temp_file, $val . PHP_EOL, FILE_APPEND);
+                    }
+                }
+            }
+        }
+    }
+
     function test72Action()
     {
         $room = Rooms::findFirstById(136678);
@@ -33,7 +83,7 @@ class MeiTask extends \Phalcon\Cli\Task
         $per_page = 100;
         $total_page = ceil(1000 / $per_page);
         $titles = ['用户id', '用户UID', '用户昵称', 'FR名称', '注册时间', '最后活跃时间', '最后充值时间', '充值金额', '最后兑换HI币时间',
-            'HI币兑换总金额', '贡献值', '魅力值', '家族', '好友数', '关注数', '粉丝数'
+            'HI币兑换总金额', '提现金额', '贡献值', '魅力值', '家族', '好友数', '关注数', '粉丝数'
         ];
 
         $datas = [];
@@ -73,6 +123,14 @@ class MeiTask extends \Phalcon\Cli\Task
                         'column' => 'hi_coins'
                     ]);
 
+
+                $withdraw_total_amount = WithdrawHistories::sum(
+                    [
+                        'conditions' => 'user_id = :user_id: and status = :status:',
+                        'bind' => ['user_id' => $user->id, 'status' => WITHDRAW_STATUS_SUCCESS],
+                        'column' => 'amount'
+                    ]);
+
                 $union_name = '无家族';
                 $union = $user->union;
                 if ($union) {
@@ -95,8 +153,8 @@ class MeiTask extends \Phalcon\Cli\Task
 
 
                 $data = [$user->id, $user->uid, $user_nickname, $user->partner->name, $user->register_at_text, $user->last_at_text,
-                    $last_payment_at_text, $user->pay_amount, $last_hi_coin_history_at_text, abs($exchange_total_amount), $user->wealth_value,
-                    $user->charm_value, $union_name, $user->friend_num, $user->follow_num, $user->followed_num
+                    $last_payment_at_text, $user->pay_amount, $last_hi_coin_history_at_text, abs($exchange_total_amount), $withdraw_total_amount,
+                    $user->wealth_value, $user->charm_value, $union_name, $user->friend_num, $user->follow_num, $user->followed_num
                 ];
 
                 $datas[] = $data;

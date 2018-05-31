@@ -43,8 +43,12 @@ class BoomConfigs extends BaseModel
         return StoreFile::getUrl($this->svga_image);
     }
 
-    static function getBoomConfig()
+    static function getBoomConfig($room = null)
     {
+//        if ($room && $room->user->isCompanyUser()) {
+//            return self::getTestBoomConfig();
+//        }
+
         $boom_config = BoomConfigs::findFirst(
             [
                 'conditions' => 'status = :status:',

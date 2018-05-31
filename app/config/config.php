@@ -20,6 +20,7 @@ return new \Phalcon\Config([
     'user_db_endpoints' => env('user_db_endpoints', 'ssdb://127.0.0.1:8888/' . APP_NAME),
     'stat_db' => env('stat_db', 'ssdb://127.0.0.1:8888/' . APP_NAME),
     'room_db' => env('room_db', 'ssdb://127.0.0.1:8888/' . APP_NAME),
+    'msg_db' => env('msg_db', 'ssdb://127.0.0.1:8888/' . APP_NAME),
     'redlock_endpoints' => env('redlock_endpoints', 'redis://127.0.0.1:6379/' . APP_NAME),
 
     'search_endpoints' => env('search_endpoints', 'http://127.0.0.1:9200/'),

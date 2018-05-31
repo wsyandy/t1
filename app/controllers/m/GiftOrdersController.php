@@ -16,7 +16,8 @@ class GiftOrdersController extends BaseController
     {
         if ($this->request->isAjax()) {
 
-            $conds = ['conditions' => 'user_id = ' . $this->currentUserId() . ' and status=' . GIFT_ORDER_STATUS_SUCCESS . ' and gift_type = ' . GIFT_TYPE_COMMON
+            $conds = ['conditions' => 'user_id = ' . $this->currentUserId() . ' and status=' . GIFT_ORDER_STATUS_SUCCESS .
+                ' and gift_type = ' . GIFT_TYPE_COMMON
                 , 'order' => 'created_at desc'];
             $page = $this->params('page', 1);
             $per_page = $this->params('per_page', 20);

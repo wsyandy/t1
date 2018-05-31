@@ -37,7 +37,7 @@
             <span class="contact_title">请联系客服电话或者QQ进行充值</span>
             <div class="contact_tel">
                 <span>客服电话：400-018-7755</span>
-                <span>客服QQ：327041263</span>
+                <span>客服QQ：327041264</span>
             </div>
         </div>
     </div>
@@ -67,6 +67,7 @@
             var text = $(this).siblings('.list_info').find('.copy_text').text();
             var oInput = document.createElement('input');
             oInput.value = text;
+            oInput.disabled = true;
             document.body.appendChild(oInput);
             oInput.select(); // 选择对象
             document.execCommand("Copy"); // 执行浏览器复制命令

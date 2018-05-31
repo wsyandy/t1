@@ -121,7 +121,7 @@ class BoomHistories extends BaseModel
                 3 => ['id' => 3, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 10, 'number' => 100],
             ],
             2 => [
-                1 => ['id' => 4, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 20, 'target_id' => 94, 'number' => 1],
+                1 => ['id' => 4, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 20, 'target_id' => 98, 'number' => 1],
                 2 => ['id' => 5, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 20, 'number' => 100],
                 3 => ['id' => 6, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 10, 'number' => 200],
             ],

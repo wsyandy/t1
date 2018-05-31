@@ -59,7 +59,7 @@ class RedPackets extends BaseModel
             $cache->zadd($underway_red_packet_list_key, time(), $this->id);
         }
 
-
+        // || $this->user->isCompanyUser() && $this->diamond >= 100
         if ($this->diamond >= 10000) {
             $this->user->has_red_packet = STATUS_ON;
             $this->user->update();
@@ -78,7 +78,7 @@ class RedPackets extends BaseModel
             $cache = \Users::getUserDb();
             if ($this->sex == USER_SEX_COMMON) {
                 $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($this->room_id, 0);
-                $cache->zrem($underway_red_packet_list_key,$this->id);
+                $cache->zrem($underway_red_packet_list_key, $this->id);
                 $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($this->room_id, 1);
                 $cache->zrem($underway_red_packet_list_key, $this->id);
             } else {
@@ -88,6 +88,7 @@ class RedPackets extends BaseModel
 
             info('红包已经结束回收，删除对应进行中的红包id', $underway_red_packet_list_key, $this->id, $this->status);
 
+            //|| $this->user->isCompanyUser() && $this->diamond >= 100
             if ($this->diamond >= 10000) {
                 $this->user->has_red_packet = STATUS_OFF;
                 $this->user->update();
@@ -102,7 +103,8 @@ class RedPackets extends BaseModel
             if ($this->balance_diamond) {
                 $content = $this->user->nickname . '发的红包已过期';
             }
-            self::sendRedPacketMessageToUsers($this->user, $this->room, ['type' => 'finish', 'content' => $content]);
+
+            self::delay()->asyncSendRedPacketMessageToUsers($this->user_id, $this->room_id, ['type' => 'finish', 'content' => $content]);
         }
     }
 
@@ -149,12 +151,17 @@ class RedPackets extends BaseModel
     //正在进行中的红包的key
     static function getUnderwayRedPacketListKey($current_room_id, $sex)
     {
-        return 'room_underway_red_packet_list_' . $current_room_id.'_sex'.$sex;
+        return 'room_underway_red_packet_list_' . $current_room_id . '_sex' . $sex;
     }
 
     function generateRedPacketUserListKey()
     {
         return 'red_packet_user_list_' . $this->id;
+    }
+
+    function generateRedPacketUserDiamondKey()
+    {
+        return 'red_packet_user_diamond_' . $this->id;
     }
 
     static function generateUserRoomRedPacketsKey($room_id, $user_id)
@@ -212,11 +219,11 @@ class RedPackets extends BaseModel
         $push_data = [
             'type' => 'create',
             'content' => $user->nickname . '在房间内发红包，手快有，手慢无，赶紧去抢吧',
-            'red_packet_type' => RED_PACKET_TYPE_NEARBY,
+            'red_packet_type' => $red_packet->red_packet_type,
             'sex' => $red_packet->sex
         ];
 
-        self::sendRedPacketMessageToUsers($user, $room, $push_data);
+        self::delay()->asyncSendRedPacketMessageToUsers($user->id, $room->id, $push_data);
 
         return $red_packet;
     }
@@ -232,8 +239,12 @@ class RedPackets extends BaseModel
 
         $user = $red_packet->user;
         if ($red_packet->balance_diamond > 0) {
-            $opts = ['remark' => '红包余额返还钻石' . $red_packet->balance_diamond, 'mobile' => $user->mobile, 'target_id' => $red_packet->id];
-            \AccountHistories::changeBalance($user, ACCOUNT_TYPE_RED_PACKET_RESTORATION, $red_packet->balance_diamond, $opts);
+
+            $amount = $red_packet->balance_diamond;
+            $opts = ['remark' => '红包余额返还钻石' . $amount, 'mobile' => $user->mobile, 'target_id' => $red_packet->id];
+            \AccountHistories::changeBalance($user, ACCOUNT_TYPE_RED_PACKET_RESTORATION, $amount, $opts);
+
+            \Chats::sendTextSystemMessage($user, "红包退款通知：红包超过24小时未被领取，" . $amount . "钻已返还到您的账户，请注意查收~");
         }
 
         info('回收红包', $red_packet->id, $red_packet->user_id, $red_packet->room_id, $red_packet->balance_diamond);
@@ -258,10 +269,6 @@ class RedPackets extends BaseModel
         $red_packets = \RedPackets::findByIds($red_packet_ids);
 
         foreach ($red_packets as $red_packet) {
-
-            if (isDevelopmentEnv()) {
-                self::delay(300)->asyncCheckRefund($red_packet->id);
-            }
 
             $distance_start_at = $red_packet->getDistanceStartTime($user);
             $red_packet->distance_start_at = $distance_start_at;
@@ -288,7 +295,7 @@ class RedPackets extends BaseModel
         }
 
         //获取用户进房间的时间
-        $time = $this->room->getTimeForUserInRoom($user->id);
+        $time = $this->room->getUserEnterRoomTime($user->id);
         //如果用户进房间的时间小于红包的创建时间，则需要以红包创建时间为节点等待3分钟，否则以用户进房间的时间为节点等待3分钟
         $distance_start_at = $time + 3 * 60 - time() > 0 ? $time + 3 * 60 - time() : 0;
         if ($time <= $this->created_at) {
@@ -302,7 +309,7 @@ class RedPackets extends BaseModel
     {
 
         $lock_key = 'grab_red_packet_' . $this->id;
-        $lock = tryLock($lock_key);
+        $lock = tryLock($lock_key, 2000);
         if (!$lock) {
             return 0;
         }
@@ -322,7 +329,7 @@ class RedPackets extends BaseModel
                 'content' => '恭喜' . $user->nickname . '抢到了' . $get_diamond . '个钻石'
             ];
 
-            self::sendRedPacketMessageToUsers($user, $this->room, $opts);
+            self::delay()->asyncSendRedPacketMessageToUsers($user->id, $this->room_id, $opts);
         }
 
         return $get_diamond;
@@ -331,45 +338,102 @@ class RedPackets extends BaseModel
     function getRedPacketDiamond($user_id)
     {
 
+        if ($this->status == STATUS_OFF || $this->balance_diamond < 1) {
+            return 0;
+        }
+
         $cache = \Users::getUserDb();
         $user_room_key = self::generateUserRoomRedPacketsKey($this->room_id, $user_id);
         $user_red_key = self::generateUserRedPacketsKey($user_id);
+        $user_diamond_key = $this->generateRedPacketUserDiamondKey();
 
         $balance_diamond = $this->balance_diamond;
         $balance_num = $this->balance_num;
-
-        if ($balance_diamond && $balance_num && $this->status == STATUS_ON) {
-
-            $usable_balance_diamond = $balance_diamond - ($balance_num - 1);
-            if ($usable_balance_diamond > ceil($this->diamond * 0.5)) {
-                $get_diamond = mt_rand(1, ceil($this->diamond * 0.4));
-            } else {
-                $get_diamond = mt_rand(1, $usable_balance_diamond);
-            }
-
-            if ($balance_num == 1) {
-                $get_diamond = $balance_diamond;
-            }
-
-            $this->balance_diamond = $balance_diamond - $get_diamond;
-            $this->balance_num = $balance_num - 1;
-
-            if ($this->balance_diamond <= 0) {
-                $this->status = STATUS_OFF;
-            }
-
-            $this->save();
-
-            $red_user_list_key = $this->generateRedPacketUserListKey();
-            $cache->zadd($red_user_list_key, time(), $user_id);
-            $cache->zadd($user_room_key, $get_diamond, $this->id);
-            $cache->zadd($user_red_key, time(), $this->id);
-
-            return $get_diamond;
+        $user_num = $cache->zcard($user_diamond_key);
+        if ($user_num >= $this->num || $this->balance_diamond <= 0) {
+            return 0;
         }
 
-        return 0;
+        $avg_diamond = ceil($this->diamond / $this->num);
+        $min_diamond = 1;
+        $max_diamond = ceil($this->diamond * 0.3);
 
+        if ($this->red_packet_type == RED_PACKET_TYPE_NEARBY) {
+            $min_diamond = 50;
+        }
+        if ($this->red_packet_type == RED_PACKET_TYPE_FOLLOW || $this->red_packet_type == RED_PACKET_TYPE_STAY_AT_ROOM) {
+            $min_diamond = 5;
+        }
+
+        $get_diamond = 0;
+        if ($balance_num == 1) {
+            $get_diamond = $balance_diamond;
+            $usable_balance_diamond = $balance_diamond;
+        } else {
+
+            $usable_balance_diamond = $balance_diamond - ($balance_num - 1) * $min_diamond * 2;
+            if ($balance_num * 2 > $this->num) {
+                $usable_balance_diamond2 = ceil($balance_diamond * mt_rand(40, 60) / 100);
+                if($usable_balance_diamond2 < $usable_balance_diamond){
+                    $usable_balance_diamond = $usable_balance_diamond2;
+                }
+            }
+
+            $user_rate = mt_rand(1, 100);
+            if ($user_rate < mt_rand(60, 80)) {
+                if ($avg_diamond - ceil($this->diamond * 0.05) < $min_diamond) {
+                    $get_diamond = mt_rand($min_diamond, $avg_diamond + ceil($this->diamond * 0.1));
+                } else {
+                    $get_diamond = mt_rand($avg_diamond - ceil($this->diamond * 0.05), $avg_diamond + ceil($this->diamond * 0.1));
+                }
+            } else {
+                if (mt_rand(1, 100) < 80) {
+                    $get_diamond = mt_rand($min_diamond, ceil($this->diamond * 0.1));
+                } else {
+                    $get_diamond = mt_rand(ceil($this->diamond * 0.15), $max_diamond);
+                }
+            }
+        }
+
+        if ($get_diamond > $max_diamond) {
+            $get_diamond = ceil($usable_balance_diamond * 0.1);
+        }
+
+        // 防止超出
+        if ($get_diamond >= $usable_balance_diamond && $balance_num > 1) {
+            $get_diamond = $min_diamond;
+            if ($balance_num <= 3) {
+                $get_diamond = ceil($usable_balance_diamond * 0.25);
+            }
+        }
+
+        $this->balance_diamond = $balance_diamond - $get_diamond;
+        $this->balance_num = $balance_num - 1;
+
+        if ($this->balance_diamond < 0 || $this->balance_num <= 0) {
+            info('Exce', $this->id, $this->user_id, 'get', $get_diamond, $usable_balance_diamond, '总', $this->balance_diamond, $this->balance_num, $min_diamond, $max_diamond, $avg_diamond);
+
+            $get_diamond = $balance_diamond;
+            $this->balance_diamond = 0;
+            $this->balance_num = 0;
+        }
+
+        if ($this->balance_diamond <= 0) {
+            $this->status = STATUS_OFF;
+        }
+
+        $this->save();
+
+        info($this->id, $this->user_id, 'get', $get_diamond, $usable_balance_diamond, '总', $this->balance_diamond, $this->balance_num, $min_diamond, $max_diamond, $avg_diamond);
+
+        $red_user_list_key = $this->generateRedPacketUserListKey();
+        $user_diamond_key = $this->generateRedPacketUserDiamondKey();
+        $cache->zadd($user_diamond_key, $get_diamond, $user_id);
+        $cache->zadd($red_user_list_key, time(), $user_id);
+        $cache->zadd($user_room_key, $get_diamond, $this->id);
+        $cache->zadd($user_red_key, time(), $this->id);
+
+        return $get_diamond;
     }
 
     static function UserGetRedPacketIds($room_id, $user_id)
@@ -378,6 +442,15 @@ class RedPackets extends BaseModel
         $key = self::generateUserRoomRedPacketsKey($room_id, $user_id);
         $user_get_red_packet_ids = $cache->zrange($key, 0, -1);
         return $user_get_red_packet_ids;
+    }
+
+    static function asyncSendRedPacketMessageToUsers($user_id, $room_id, $opts)
+    {
+
+        $user = Users::findFirstById($user_id);
+        $room = Rooms::findFirstById($room_id);
+
+        self::sendRedPacketMessageToUsers($user, $room, $opts);
     }
 
     static function sendRedPacketMessageToUsers($user, $room, $opts)
@@ -394,7 +467,7 @@ class RedPackets extends BaseModel
         self::pushRedPacketTopTopicMessage($room, $content);
 
         //首页下沉通知
-        if ($type == 'create' && $red_packet_type == RED_PACKET_TYPE_NEARBY) {
+        if ($type == 'create' && $red_packet_type == RED_PACKET_TYPE_NEARBY && isDevelopmentEnv()) {
             self:: pushRedPacketSinkMessage($user, $room, $opts);
         }
     }
@@ -436,7 +509,7 @@ class RedPackets extends BaseModel
         $sex = fetch($opts, 'sex');
 
         $client_url = 'app://rooms/detail?id=' . $room->id;
-        $users = $current_user->nearby(1, 300);
+        $users = $current_user->nearby(1, 200);
 
         foreach ($users as $user) {
 
@@ -447,7 +520,6 @@ class RedPackets extends BaseModel
             if ($sex != USER_SEX_COMMON && $user->sex != $sex) {
                 continue;
             }
-
 
             $body = ['action' => 'sink_notice', 'title' => '快来抢红包啦！！', 'content' => $content, 'client_url' => $client_url];
             $intranet_ip = $user->getIntranetIp();

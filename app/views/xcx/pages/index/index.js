@@ -1,8 +1,10 @@
 const app = getApp()
+const request = require('../../utils/wxRequest.js');
+const Utils = require('../../utils/util.js');
 Page({
   data: {
-    isIos: app.globalData.isIos, /*设备是否为IOS*/
-    isIpx: app.globalData.isIpx,/*设备是否为iPhone X*/
+    hasUserInfo: false,
+    isIos: app.globalData.isIos, /*设备是否为IOS*/ 
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
     logo: '/images/logo_hi.png',
     avatarUrl: '',
@@ -317,11 +319,7 @@ Page({
     info_bg: '/images/info_bg.png',
     comeback_icon: '/images/left_arrow.png',
     info_edit: '/images/info_edit.png',
-    userInfo: {
-      nickname: '小胖子..浪烧饼🍅',
-      avatarUrl: '/images/logo_hi.png',
-      id: '55667788'
-    },
+    userInfo: {},
     infoList: [
       {
         icon: '/images/info_room.png',
@@ -378,11 +376,23 @@ Page({
   },
 
   /*用户授权*/
-  bindGetUserInfo: function (e) {
-    // console.log(e.detail.userInfo)
+  getUserInfo: function (e) {
+  
+    // app.getUserInfo(e,  (res)=> {
+    //   Utils.log(`data:${JSON.stringify(res)}`)
+    //   if (res) {
+    //     this.setData({
+    //       userInfo: res,
+    //       hasUserInfo: true
+    //     })
+    //   }
+    // })
+
     this.setData({
       avatarUrl: e.detail.userInfo.avatarUrl,
+      hasUserInfo: true
     })
+
   },
   /*滑入用户信息*/
   sliderUserInfo: function (e) {
@@ -421,6 +431,11 @@ Page({
     }
   },
   /* 路由事件 */
+  navToMyProfile: function () { 
+    wx.navigateTo({
+      url: '/pages/my_profile/my_profile'
+    })
+  },
   navtoNewRoom: function () { },
   navtoNewHomeowners: function () { },
   navtoGameHomeowners: function () { },
@@ -468,6 +483,30 @@ Page({
       })
 
     */
+    if (wx.getStorageSync('userInfo')) {
+      this.setData({
+        userInfo: wx.getStorageSync('userInfo'),
+        hasUserInfo: true
+      })
+    } else if (!this.data.canIUse) {
+      // 在没有 open-type=getUserInfo 版本的兼容处理
+      // wx.getUserInfo({
+      //   success: res => {
+      //     app.globalData.userInfo = res.userInfo
+      //     this.setData({
+      //       userInfo: res.userInfo,
+      //       hasUserInfo: true
+      //     })
+      //   }
+      // })
+      wx.showModal({
+        title: "微信版本太旧",
+        content: "使用旧版本微信，将无法登陆、使用一些功能。请至 App Store、Play Store 或其他可信渠道更新微信。",
+        showCancel: false,
+        confirmText: "好"
+      })
+    }
+    
   },
 
 
@@ -496,6 +535,7 @@ Page({
       wx.stopPullDownRefresh() //停止下拉刷新
     }, 1500);
   },
+
 })
 
 

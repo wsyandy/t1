@@ -1,9 +1,9 @@
 <!-- 头部 -->
 <view class='head'>
   <view class="avatar_box">
-    <image class='logo_avatar' mode='scaleToFill' wx:if="{{avatarUrl}}" src='{{avatarUrl}}' catchtap="sliderUserInfo"></image>
-    <image class='logo_avatar' mode='scaleToFill' wx:if="{{!avatarUrl}}" src='{{logo}}' catchtap="bindGetUserInfo"></image>
-    <button class="avatar_btn" wx:if="{{canIUse}}" wx:if="{{!avatarUrl}}" open-type="getUserInfo" bindgetuserinfo="bindGetUserInfo">授权登录</button>
+    <image class='logo_avatar' mode='scaleToFill' wx:if="{{hasUserInfo}}" src='{{userInfo.avatar_small_url}}' catchtap="sliderUserInfo"></image>
+    <image class='logo_avatar' mode='scaleToFill' wx:if="{{!hasUserInfo}}" src='{{logo}}' catchtap="bindGetUserInfo"></image>
+    <button class="avatar_btn" wx:if="{{canIUse}}" wx:if="{{!hasUserInfo}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo">授权登录</button>
   </view>
   <text>房间</text>
 </view>
@@ -219,14 +219,15 @@
         <text class="comeback_text">我的</text>
       </view>
       <view class="user_info">
-        <image class='user_avatar' mode='scaleToFill' src='{{userInfo.avatarUrl}}'></image>
-        <view class="info_detail">
+        <image class='user_avatar' mode='scaleToFill' src='{{userInfo.avatar_small_url}}'></image>
+        <view class="info_detail" catchtap="navToMyProfile">
+
           <view class="info_nickname">
             <text class="nickname">{{userInfo.nickname}}</text>
             <image class='info_edit' mode='scaleToFill' src='{{info_edit}}'></image>
           </view>
           <view class="info_id">
-            <text>ID:{{userInfo.id}}</text>
+            <text>ID:{{userInfo.uid}}</text>
           </view>
         </view>
       </view>

@@ -152,11 +152,6 @@ class GiftOrders extends BaseModel
         if ($gift->isDiamondPayType()) {
             $remark = '送礼物消费' . $total_amount . '钻石,礼物总个数' . $total_gift_num . ",礼物id" . $gift->id . ",接收礼物人数" . $receiver_num;
             $opts['remark'] = $remark;
-
-            if ($sender->isCompanyUser()) {
-                $sender->addCompanyUserSendNumber($total_amount);
-            }
-
             $target = \AccountHistories::changeBalance($sender, ACCOUNT_TYPE_BUY_GIFT, $total_amount, $opts);
         } else {
             $remark = '送礼物消费' . $total_amount . '金币,礼物总个数' . $total_gift_num . ",礼物id" . $gift->id . ",接收礼物人数" . $receiver_num;
@@ -238,6 +233,9 @@ class GiftOrders extends BaseModel
 
             $gift_order = new GiftOrders();
             $gift_order->sender_id = $sender_id;
+            $gift_order->sender = $sender;
+            $gift->user = $receiver;
+            $gift->gift = $gift;
             $gift_order->user_id = $receiver_id;
             $gift_order->gift_id = $gift->id;
             $gift_order->amount = $gift_amount * $gift_num;
@@ -296,25 +294,19 @@ class GiftOrders extends BaseModel
 
     function updateUserGiftData($gift, $opts = [])
     {
-        if (!$gift->isNormal()) {
-            info("gift_Normal", $gift->id, $opts);
-            return;
-        }
-
         $time = fetch($opts, 'time', time());
 
         if ($gift->isCar()) {
             \UserGifts::updateGiftExpireAt($this->id);
         } else {
             \UserGifts::updateGiftNum($this->id);
-
-            if ($gift->isDiamondPayType()) {
+            if ($gift->isDiamondPayType() && $gift->isNormal()) {
                 //座驾不增加hi币
                 \HiCoinHistories::createHistory($this->user_id, ['gift_order_id' => $this->id, 'time' => $time]);
             }
         }
 
-        if ($gift->isDiamondPayType() && !$this->sender->isSystemUser()) {
+        if ($gift->isDiamondPayType() && !$this->sender->isSystemUser() && $gift->isNormal()) {
             $this->updateUserData($opts);
         }
     }

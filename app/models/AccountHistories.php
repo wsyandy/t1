@@ -54,14 +54,16 @@ class AccountHistories extends BaseModel
     {
         $user = $this->user;
         $user->diamond = $this->balance;
-        // 系统赠送
-//        if ($this->fee_type == ACCOUNT_TYPE_GIVE && $user->organisation != USER_ORGANISATION_COMPANY) {
-//            $user->organisation = USER_ORGANISATION_COMPANY;
-//        }
         $user->update();
+        $amount = abs($this->amount);
+
+        if ($user->isCompanyUser() && $this->isCostDiamond()) {
+            info($user->id, $amount);
+            $user->addCompanyUserSendNumber($amount);
+        }
 
         $user_attrs = $user->getStatAttrs();
-        $user_attrs['add_value'] = abs($this->amount);
+        $user_attrs['add_value'] = $amount;
         $action = $this->getStatActon();
         \Stats::delay()->record('user', $action, $user_attrs);
 
@@ -132,6 +134,14 @@ class AccountHistories extends BaseModel
     {
         $change_amount = abs($this->amount);
         if ($this->isCostDiamond()) {
+            $user = $this->user;
+            $can_consume_diamond = $user->canConsumeDiamond($change_amount);
+
+            if (!$can_consume_diamond && isProduction()) {
+                info('Exce', 'uset_id', $this->user_id, 'fee_type', $this->fee_type_text, 'amount', $change_amount);
+                return true;
+            }
+
             $change_amount = -$change_amount;
             $this->amount = $change_amount;
         }

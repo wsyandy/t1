@@ -9,6 +9,60 @@
 class KangTask extends \Phalcon\Cli\Task
 {
 
+    function redAction($params){
+        $red_id = $params[0];
+        $user_id = $params[1];
+
+        $red = RedPackets::findFirstById($red_id);
+        $user = Users::findFirstById($user_id);
+
+        $amonut = $red->getRedPacketDiamond($user->id);
+        echoLine($amonut);
+
+    }
+
+    function xxAction(){
+
+        $diamond = 1000;
+        $num = 10;
+        $red_packet_type = RED_PACKET_TYPE_FOLLOW;
+
+        $avg_diamond = ceil($diamond / $num);
+        $min_diamond = 1;
+        $max_diamond = ceil($diamond * 0.35);
+
+        if ($red_packet_type == RED_PACKET_TYPE_NEARBY) {
+            $min_diamond = 50;
+        }
+        if ($red_packet_type == RED_PACKET_TYPE_FOLLOW || $red_packet_type == RED_PACKET_TYPE_STAY_AT_ROOM) {
+            $min_diamond = 5;
+        }
+
+        $user_rate = mt_rand(1, 100);
+        if ($user_rate < mt_rand(60, 80)) {
+            echoLine('均', $avg_diamond);
+            if ($avg_diamond - ceil($diamond * 0.1) < $min_diamond) {
+                $get_diamond = mt_rand($min_diamond, $avg_diamond + ceil($diamond * 0.1));
+            } else {
+                $get_diamond = mt_rand($avg_diamond - ceil($diamond * 0.1), $avg_diamond + ceil($diamond * 0.1));
+            }
+        } else {
+            if (mt_rand(1, 100) < 50) {
+                echoLine('小', $min_diamond);
+                if($min_diamond > ceil($diamond * 0.06)){
+                    $get_diamond = mt_rand($min_diamond, $min_diamond * 2);
+                }else{
+                    $get_diamond = mt_rand($min_diamond, ceil($diamond * 0.06));
+                }
+            } else {
+                echoLine('大', $max_diamond);
+                $get_diamond = mt_rand(ceil($diamond * 0.2), $max_diamond);
+            }
+        }
+
+        echoLine($user_rate, $get_diamond);
+    }
+
     function fixDisAction()
     {
 

@@ -409,9 +409,11 @@ class Rooms extends BaseModel
         $hot_cache = self::getHotWriteCache();
         $key = $this->getUserListKey();
         $real_user_key = $this->getRealUserListKey();
+        $enter_key = $this->getEnterRoomUserListKey();
 
         if (!$user->isSilent()) {
             $hot_cache->zadd($real_user_key, time(), $user->id);
+            $hot_cache->zadd($enter_key, time(), $user->id);
         }
 
         if ($this->user_id == $user->id) {
@@ -435,9 +437,11 @@ class Rooms extends BaseModel
         $hot_cache = self::getHotWriteCache();
         $key = $this->getUserListKey();
         $real_user_key = $this->getRealUserListKey();
+        $enter_key = $this->getEnterRoomUserListKey();
 
         if (!$user->isSilent()) {
             $hot_cache->zrem($real_user_key, $user->id);
+            $hot_cache->zrem($enter_key, $user->id);
         }
 
         $hot_cache->zrem($key, $user->id);
@@ -981,13 +985,8 @@ class Rooms extends BaseModel
 
     static function newSearchHotRooms($user, $page, $per_page)
     {
-        //$new_user_hot_rooms_list_key = Rooms::getNewUserHotRoomListKey(); //新用户房间
-        //$old_user_pay_hot_rooms_list_key = Rooms::getOldUserPayHotRoomListKey(); //充值老用户队列
-        //$old_user_no_pay_hot_rooms_list_key = Rooms::getOldUserNoPayHotRoomListKey(); //未充值老用户队列
-
         $register_time = time() - $user->register_at;
         $time = 60 * 15;
-
         if (isProduction()) {
             $time = 86400;
         }
@@ -995,21 +994,12 @@ class Rooms extends BaseModel
         if ($user->isShieldHotRoom()) {
 
             $hot_room_list_key = Rooms::getHotRoomListKey();
-
         } else {
 
             $hot_room_list_key = Rooms::getTotalRoomListKey(); //新的用户总的队列
-
-//            if ($register_time <= $time) {
-//                $hot_room_list_key = $new_user_hot_rooms_list_key;
-//            } else {
-//
-//                if ($user->pay_amount > 0) {
-//                    $hot_room_list_key = $old_user_pay_hot_rooms_list_key;
-//                } else {
-//                    $hot_room_list_key = $old_user_no_pay_hot_rooms_list_key;
-//                }
-//            }
+            if ($register_time <= $time) {
+                $hot_room_list_key = Rooms::getNewUserHotRoomListKey(); //新用户房间
+            }
         }
 
         $hot_cache = Users::getHotWriteCache();
@@ -1535,9 +1525,7 @@ class Rooms extends BaseModel
 
     static function updateHotRoomList($all_room_ids, $opts = [])
     {
-
         $hot_cache = Rooms::getHotWriteCache();
-
         $hot_room_list_key = Rooms::getHotRoomListKey(); //正常房间
         $new_user_hot_rooms_list_key = Rooms::getNewUserHotRoomListKey(); //新用户房间
         $old_user_pay_hot_rooms_list_key = Rooms::getOldUserPayHotRoomListKey(); //充值老用户队列
@@ -1626,17 +1614,22 @@ class Rooms extends BaseModel
 
 
         $max_score = max($room_ids);
+        debug($new_user_room_ids);
+
         foreach ($room_ids as $room_id => $score) {
+
+            $hot_cache->zadd($total_new_hot_room_list_key, $score, $room_id);
 
             if (!in_array($room_id, $shield_room_ids)) {
                 $hot_cache->zadd($hot_room_list_key, $score, $room_id);
-                if (in_array($room_id, $new_user_room_ids)) {
-                    $hot_cache->zadd($new_user_hot_rooms_list_key, $score + $max_score, $room_id);
-                }
-
             }
 
-            $hot_cache->zadd($total_new_hot_room_list_key, $score, $room_id);
+            if (array_key_exists($room_id, $new_user_room_ids)) {
+                $score = $score + $max_score;
+            }
+
+            debug($max_score, $score);
+            $hot_cache->zadd($new_user_hot_rooms_list_key, $score, $room_id);
         }
 
         unlock($lock);

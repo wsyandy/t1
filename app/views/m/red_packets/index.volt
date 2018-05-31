@@ -2,7 +2,7 @@
 {{ theme_css('/m/css/red_packet_address.css','/m/css/red_packet_index.css','/m/css/red_packet_sex_select.css','/m/css/picker.css') }}
 {{ theme_js('/m/js/picker.min.js','/m/js/font_rem.js') }}
 {{ block_end() }}
-<div id="app">
+<div id="app" class="grab" style="background: #ff4848;" v-cloak>
     <div class="give_red_bg">
         <div class="bottom_bg"></div>
         <div class="give_red_box">
@@ -120,7 +120,7 @@
             sid: "{{ sid }}",
             code: "{{ code }}",
             myDiamond: {{ diamond }},
-            number: 10,
+            number: 5,
             amount: 100,
             nearby_distance: '5km',
             allSex: ['女生', '男生', '男女皆可'],
@@ -132,7 +132,8 @@
             isSex: true,
             error_input: false,
             error_reason: '',
-            diamond_num_limit:'100'
+            diamond_num_limit:'100',
+            submit: false
         },
 
         methods: {
@@ -141,12 +142,18 @@
                 this.type = i;
                 if(this.type == "all"){
                     this.diamond_num_limit = "100";
+                    this.amount = 100;
+                    this.num = 5;
                 }
                 if(this.type == "follow" || this.type == "stay_at_room"){
                     this.diamond_num_limit = "1000";
+                    this.amount = 1000;
+                    this.num = 5;
                 }
                 if(this.type == "nearby"){
                     this.diamond_num_limit = "10000";
+                    this.amount = 10000;
+                    this.num = 5;
                 }
                 vm.isGiveStyle = false;
 
@@ -196,7 +203,14 @@
                     return;
                 }
 
+                if(this.submit){
+                    return;
+                }
+
+                this.submit = true;
+
                 $.authPost('/m/red_packets/create', data, function (resp) {
+                    vm.submit = false;
                     vm.error_reason = resp.error_reason;
                     vm.error_input = true;
                     if (!resp.error_code) {

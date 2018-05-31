@@ -1309,7 +1309,7 @@ class Users extends BaseModel
         info($this->id, date('YmdHis', $this->register_at), date('YmdHis', $this->last_at));
         \Stats::delay()->record('user', 'register', $this->getStatAttrs());
 
-        if(isDevelopmentEnv()){
+        if (isDevelopmentEnv()) {
             $attrs = $this->getStatAttrs();
             $attrs['mobile'] = $this->mobile;
             $attrs['third_unionid'] = $this->third_unionid;
@@ -2211,17 +2211,17 @@ class Users extends BaseModel
             }
 
             // 附近红包
-            if($user->has_red_packet){
+            if ($user->has_red_packet) {
                 $user->has_red_packet = 0;
-                if($user->room_id && $user->room_id == $user->current_room_id){
+                if ($user->room_id && $user->room_id == $user->current_room_id) {
 
                     $distance = intval($geo_distance);
-                    if($user->distance && preg_match('/km/', $user->distance)){
+                    if ($user->distance && preg_match('/km/', $user->distance)) {
                         $distance = intval($geo_distance * 1000);
                     }
 
                     $red_packet = RedPackets::findLastNearby($user, $distance, $this->sex);
-                    if($red_packet && !$red_packet->isGrabbed($this)){
+                    if ($red_packet && !$red_packet->isGrabbed($this)) {
                         $user->has_red_packet = 1;
                     }
                 }
@@ -3678,42 +3678,38 @@ class Users extends BaseModel
         $cache->expire($current_day_company_user_send_diamond_to_personage_num, $past_at);
     }
 
-    function canSendToUser($receiver_ids, $gift_amount)
+    function canConsumeDiamond($amount)
     {
-        if (!$this->isWhiteListUser()) {
-
-            if ($this->isCompanyUser()) {
-                $hot_cache = \Users::getHotWriteCache();
-                $key = 'current_day_company_user_' . date('Y-m-d', time());
-                $send_number = $hot_cache->zscore($key, $this->id);
-                $plan_number = $gift_amount + $send_number;
-
-                if ($plan_number > 100) {
-
-                    //内部账号使用
-
-                    $receivers = Users::findByIds($receiver_ids);
-
-                    foreach ($receivers as $receiver) {
-
-                        if (!$receiver->isCompanyUser()) {
-                            return false;
-                        }
-                    }
-                }
-            }
+        if ($this->isWhiteListUser()) {
+            return true;
         }
 
-        return true;
+        if (!$this->isCompanyUser()) {
+            return true;
+        }
+
+        $hot_cache = \Users::getHotWriteCache();
+        $key = 'current_day_company_user_' . date('Y-m-d');
+        $send_number = $hot_cache->zscore($key, $this->id);
+        $plan_number = $amount + $send_number;
+
+        if ($plan_number <= 200) {
+            return true;
+        }
+
+        info($this->id, $plan_number, $amount, $send_number);
+        return false;
     }
 
+    // 消费钻石的白名单
     function isWhiteListUser()
     {
-        $white_list = [100101, 100102, 100103, 1003380, 8888, 1009518, 1106650];
 
+        $white_list = [100101, 100102, 100103, 1003380, 8888, 1009518, 1106650];
         if (in_array($this->id, $white_list)) {
             return true;
         }
+
         return false;
     }
 
@@ -3907,5 +3903,97 @@ class Users extends BaseModel
             $this->$k = $v;
             $this->update();
         }
+    }
+
+    //微信小程序
+    static function findFirstByXcxOpenid($product_channel_id, $xcx_openid)
+    {
+        $cond['conditions'] = 'xcx_openid=:xcx_openid: and product_channel_id=:product_channel_id: and user_status !=:user_status:';
+        $cond['bind'] = ['xcx_openid' => $xcx_openid, 'product_channel_id' => $product_channel_id, 'user_status' => USER_STATUS_OFF];
+        $cond['order'] = 'id desc';
+        $user = Users::findFirst($cond);
+        return $user;
+    }
+
+    static function registerByOpenidXcx($product_channel, $data)
+    {
+        $code = fetch($data, 'code');
+        $system = fetch($data, 'system');
+
+        $xcx = new \XcxBaseEvents($product_channel);
+        $xcx_openid = $xcx->getOpenid($code);
+        info('openid', $xcx_openid, $data);
+        if (!$xcx_openid) {
+            return null;
+        }
+        $user = \Users::findFirstByXcxOpenid($product_channel->id, $xcx_openid);
+        if ($user) {
+            return $user;
+        }
+
+        list($user_info, $error_code) = $xcx->getUserInfo($code, $data);
+        info('解密用户信息', $user_info, $error_code);
+
+//        $login_name = $xcx_openid . 'xcx';
+        $user_info = json_decode($user_info, true);
+
+//        $fr = fetch($user_info, 'fr');
+//        if (!$fr) {
+//            $fr = $product_channel->xcx_fr;
+//        }
+
+//        $partner = \Partners::findFirstByFrHotCache($fr);
+        $user = new \Users();
+//        if ($partner) {
+//            $user->partner_id = $partner->id;
+//        }
+
+//        $user->nickname = substr(md5($login_name), 0, 10);
+        if ($user_info) {
+            $user->sex = fetch($user_info, 'sex', 1);
+            $user->nickname = fetch($user_info, 'nickName', 1);
+        }
+
+        $user->ip = fetch($data, 'ip');
+//        $user->fr = $fr;
+        $user->xcx_openid = $xcx_openid;
+        $user->product_channel_id = $product_channel->id;
+//        $user->login_name = $login_name;
+        $user->user_type = USER_TYPE_ACTIVE;
+        $user->user_status = USER_STATUS_ON;
+
+        if (stristr($system, 'ios')) {
+            $user->platform = USER_PLATFORM_XCX_IOS;
+        } elseif (stristr($system, 'android')) {
+            $user->platform = USER_PLATFORM_XCX_ANDROID;
+        } else {
+            $user->platform = USER_PLATFORM_XCX_UNKNOW;
+        }
+
+        if ($system) {
+            $user->platform_version = explode(" ", $system)['1'];
+        }
+
+        $user->register_at = time();
+        $user->last_at = time();
+
+        $user->save();
+
+        $user->sid = $user->generateSid('s');
+        $user->update();
+
+        $url = fetch($user_info, 'avatarUrl', 1);
+        $temp = APP_ROOT . 'temp/' . uniqid() . ".jpg";
+        httpSave($url, $temp);
+        $user->updateAvatar($temp);
+
+        unlink($temp);
+
+        $user->session_key = $xcx->getSessionKey($code);
+
+        # 小程序注册统计
+        \Stats::delay()->record('user', 'xcx_active', $user->getStatAttrs());
+
+        return $user;
     }
 }

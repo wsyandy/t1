@@ -1123,63 +1123,7 @@ class RoomsTask extends \Phalcon\Cli\Task
         Rooms::updateHotRoomList($room_ids);
     }
 
-
-    function boomTargetAction()
-    {
-        $line = BoomHistories::getBoomStartLine();
-        $total = BoomHistories::getBoomTotalValue();
-
-        $rooms = Rooms::dayStatRooms();
-        $cache = Rooms::getHotWriteCache();
-
-        foreach ($rooms as $room) {
-            $cur_income_cache_name = Rooms::generateBoomCurIncomeKey($room->id);
-            $cur_income = $cache->get($cur_income_cache_name);
-
-            if ($cur_income >= $line) {
-                $room->pushBoomIncomeMessage($total, $cur_income);
-            }
-        }
-    }
-
-
-    function disappearBoomGiftRocketAction()
-    {
-        $time = time() - 300;
-        $boom_list_key = Rooms::generateBoomGiftListDayKey($time);
-        $cache = Rooms::getHotWriteCache();
-        $total_room_ids = $cache->zrange($boom_list_key, 0, -1);
-        echoLine($total_room_ids);
-        $total = count($total_room_ids);
-        $per_page = 100;
-        $offset = 0;
-        $total_page = ceil($total / $per_page);
-
-        for ($page = 1; $page <= $total_page; $page++) {
-
-            $room_ids = array_slice($total_room_ids, $offset, $per_page);
-            $offset += $per_page;
-
-            $rooms = Rooms::findByIds($room_ids);
-
-            foreach ($rooms as $room) {
-
-                $cur_income = $room->getCurrentBoomGiftValue($time);
-                $boom_config = \BoomConfigs::getBoomConfig();
-                $interval_value = 50000;
-                $boom_num = $this->getBoomNum($time);
-                $total_value = $boom_config->total_value + $interval_value * $boom_num;
-
-                if ($total_value > 250000) {
-                    $total_value = 250000;
-                }
-                $cache->zrem($boom_list_key, $room->id);
-                $room->pushBoomIncomeMessage($total_value, $cur_income, STATUS_OFF);
-            }
-        }
-    }
-
-    function kickingAction()
+    function kickingRealUserAction()
     {
         $room = Rooms::findFirstById(1010149);
 
@@ -1200,26 +1144,47 @@ class RoomsTask extends \Phalcon\Cli\Task
 
     }
 
-    function kicking1Action()
+    //结束爆礼物
+    function overBoomGiftAction()
     {
-        $users = Users::findByIp('61.158.148.7');
-        echoLine(count($users));
-        $room = Rooms::findFirstById(1010149);
+        $expire = 3600;
 
-        $users = $room->findTotalRealUsers();
-
-        foreach ($users as $user) {
-
-            if ($user->current_room_seat_id && !$user->isRoomHost($room)) {
-
-                $room_seat_user_lock_key = "room_seat_user_lock{$user->id}";
-
-                $room->kickingRoom($user, 30);
-                ////$room->pushExitRoomMessage($user, $user->current_room_seat_id);
-
-                unlock($room_seat_user_lock_key);
-            }
+        if (isDevelopmentEnv()) {
+            $expire = 300;
         }
 
+        $time = time() - $expire;
+        $boom_list_key = Rooms::generateBoomGiftListDayKey($time);
+        $cache = Rooms::getHotWriteCache();
+        $total_room_ids = $cache->zrange($boom_list_key, 0, -1);
+        info($total_room_ids);
+        $total = count($total_room_ids);
+        $per_page = 100;
+        $offset = 0;
+        $total_page = ceil($total / $per_page);
+        $boom_config = \BoomConfigs::getBoomConfig();
+
+        for ($page = 1; $page <= $total_page; $page++) {
+
+            $room_ids = array_slice($total_room_ids, $offset, $per_page);
+            $offset += $per_page;
+
+            $rooms = Rooms::findByIds($room_ids);
+
+            foreach ($rooms as $room) {
+
+                $cur_value = $room->getCurrentBoomGiftValue($time);
+                $interval_value = 50000;
+                $boom_num = $room->getBoomNum($time);
+                $total_value = $boom_config->total_value + $interval_value * $boom_num;
+
+                if ($total_value > 250000) {
+                    $total_value = 250000;
+                }
+                $cache->zrem($boom_list_key, $room->id);
+                info($boom_list_key, $room_ids->id, $total_value, $cur_value);
+                $room->pushBoomIncomeMessage($boom_config, ['status' => STATUS_OFF]);
+            }
+        }
     }
 }

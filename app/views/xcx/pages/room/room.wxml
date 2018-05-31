@@ -1,13 +1,13 @@
 <!--pages/room/room.wxml-->
 <image class="room_bg" src="{{roomBg}}"></image>
 <view class="room_page">
+  <!-- 房主信息-->
   <view class="room_header">
     <text class="room_name">{{roomInfo.room_name}}</text>
     <view class="room_number">
       <text>{{roomInfo.room_number}}  人同时在线</text>
       <image class="arrow_right" src="{{arrowRight}}"></image>
     </view>
-
     <view class="room_homeowners">
       <image class="homeowners_avatar phonate" src="{{roomInfo.homeowners}}"></image>
     </view>
@@ -17,29 +17,69 @@
       <text>{{roomInfo.signature}}</text>
     </view>
   </view>
+  <!-- 8个麦位 -->
   <view class="seat_box">
-    <view class="seat_list" wx:for="{{seatList}}" wx:key="seat{{index}}">
+    <view class="seat_list" wx:for="{{seatList}}" wx:key="seat{{index}}" data-index="{{index}}" catchtap="beSeated">
       <view class="seat_img">
-        
-        <image class="seat_avatar {{item.phonate?'phonate':''}}"  src="{{item.vacancy?icoSofa:item.avatar}}"></image>
-      
+        <image class="seat_avatar {{item.phonate?'phonate':''}}" src="{{item.vacancy?icoSofa:item.avatar}}"></image>
         <view class="seat_seal" wx:if="{{item.seal}}">
           <text>封</text>
         </view>
-          <image class="ico_prohibit" wx:if="{{item.prohibit}}" src="{{icoProhibit}}"></image>
-
+        <image class="ico_prohibit" wx:if="{{item.prohibit}}" src="{{icoProhibit}}"></image>
       </view>
       <text class="seat_nickname" wx:if="{{!item.vacancy}}">{{item.nickname}}</text>
     </view>
   </view>
+  <!-- 公告栏 -->
+  <view class="bulletin" style='height:{{bulletinHeight}}px'>
+    <scroll-view scroll-y scroll-with-animation scroll-into-view="{{toView}}">
+      <!-- 系统提醒 -->
+      <view class="bulletin_list">
+        <text class="bulletin_hi">Hi</text>
+        <text class="bulletin_tips">官方提醒大家保持文明，严禁低俗色情内容， 一旦发现永久封禁</text>
+      </view>
+      <view class="bulletin_list" wx:for="{{bulletinList}}" wx:key="bulletin{{index}}" id="bulletin{{index}}">
+        <text class="bulletin_nickname {{item.system?'bulletin_system':''}}}">{{item.nickname}}:</text>
+        <text class="bulletin_info">{{item.system?item.system:item.info}}</text>
+      </view>
+    </scroll-view>
+  </view>
+  <!-- 底部栏 -->
+  <view class="tabbar">
+    <view class="tabbar_list" data-index="{{index}}" wx:for="{{tabbar}}" wx:key="tabbar{{index}}" catchtap="tabbarNav">
+      <image class="tabbar_icon" wx:if="{{index==0}}" src="{{mute?item.mute:item.icon}}"></image>
+      <image class="tabbar_icon" wx:if="{{index==1}}" src="{{prohibit?item.prohibit:item.icon}}"></image>
+      <image class="tabbar_icon" wx:if="{{index>1}}" src="{{item.icon}}"></image>
 
 
-
-<view class="tabbar">
-  <view class="tabbar_list" data-index="{{index}}"
-   wx:for="{{tabbar}}" wx:key="tabbar{{index}}" >
-    <image class="tabbar_icon"  src="{{item.icon}}"></image>
+    </view>
+  </view>
+</view>
+<!-- 授权 弹窗 -->
+<view class="mask" hidden="{{hideMask}}"></view>
+<view class="auth_box" hidden="{{hideAuth}}">
+  <view class="auth_list auth_wechat">
+    <text>进行微信授权</text>
+    <button class="auth_btn" open-type="getUserInfo" bindgetuserinfo="bindGetUserInfo">授权登录</button>
+  </view>
+  <view class="auth_list" catchtap="showLogin">
+    <text>HI账号登录</text>
   </view>
 
+  <image class="auth_close" src="{{authClose}}" catchtap="closeAuth"></image>
 </view>
+<!-- 手机登录 弹窗 -->
+<view class="login_box" hidden="{{hideLogin}}">
+  <view class="login_list">
+    <text class="login_title">手机号</text>
+    <input class="login_input" placeholder-class="placeholder" type="tel" maxlength="11" placeholder="请输入手机号" value="{{telVal}}" />
+  </view>
+  <view class="login_list">
+    <text class="login_title">密码</text>
+    <input class="login_input" placeholder-class="placeholder" type="password" maxlength="11" placeholder="请输入密码" value="{{telVal}}" />
+  </view>
+  <view class="login_btn">
+    <text>登录</text>
+  </view>
+  <image class="login_close" src="{{authClose}}" catchtap="closeLogin"></image>
 </view>

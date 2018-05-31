@@ -331,11 +331,16 @@ trait RoomAttrs
         return $game_history;
     }
 
-    function getTimeForUserInRoom($user_id)
+    function getUserEnterRoomTime($user_id)
     {
         $hot_cache = self::getHotWriteCache();
-        $real_user_key = $this->getRealUserListKey();
-        $time = $hot_cache->zscore($real_user_key, $user_id);
+        $user_key = $this->getEnterRoomUserListKey();
+        $time = $hot_cache->zscore($user_key, $user_id);
+        if ($time < 1) {
+            $real_user_key = $this->getRealUserListKey();
+            $time = $hot_cache->zscore($real_user_key, $user_id);
+        }
+
         return $time;
     }
 
@@ -543,11 +548,8 @@ trait RoomAttrs
 
         if ($user->canReceiveBoomGiftMessage()) {
 
-            if (in_array($this->id, \Rooms::getGameWhiteList()) || isInternalIp($user->ip) || isDevelopmentEnv()) {
-
-                $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet',
-                    'url' => 'url://m/red_packets?room_id=' . $this->id, 'icon' => $root_host . 'images/red_packet.png'];
-            }
+            $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet',
+                'url' => 'url://m/red_packets?room_id=' . $this->id, 'icon' => $root_host . 'images/red_packet.png'];
 
             if ($is_host) {
                 $menu_config[] = ['show' => true, 'url' => 'app://users/pk', 'title' => 'PK', 'type' => 'pk', 'icon' => $root_host . 'images/pk.png'];
@@ -612,7 +614,9 @@ trait RoomAttrs
             '妈', '爸', '干你娘', '办理', '国家', '跪舔', '小婊砸', '我日', '超赚', '领导人', '作弊', '毒品', '淫秽', '异性',
             '私交', '涉嫌', '欺诈', '抢购', '招人', '跪求嫖', '艹', '操B', '艹B', '淫荡', '嫩模', '警察', '喘', '毒', '赌厅',
             '调情', '介绍所', '囚禁', '虐待', '包邮', '出售', '官方', '服务', '屁股', '搞基', '约炮', 'sao', '磕炮', '偷情',
-            '系统小助手', '系统', '嫖', '客服小助手', '官方', '习近平'
+            '系统小助手', '系统', '嫖', '客服小助手', '官方', '习近平', '李源潮', '李克强', '张高丽', '裸照', '网操', '网c', '磕泡泡',
+            '糖糖', 'hello', '寻欢', 'heyhey', '咪爪', '妙声', '声声', '比邻', '荔枝', '刘延东', '彭丽媛', '汪洋', '马凯', '杨晶',
+            '常万全', '杨洁篪', '郭声琨', '王勇', '张德江', '六四', '网警', '巡查', '警察'
         ];
 
         foreach ($keywords as $keyword) {
@@ -1113,6 +1117,11 @@ trait RoomAttrs
     function getRealUserListKey()
     {
         return 'room_real_user_list_' . $this->id;
+    }
+
+    function getEnterRoomUserListKey()
+    {
+        return 'room_enter_room_user_list_' . $this->id;
     }
 
     static function findRoomsByCategoryType($type, $page, $per_page)

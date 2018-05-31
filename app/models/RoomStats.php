@@ -315,13 +315,19 @@ trait RoomStats
     // 爆礼物流水值记录
     function statBoomIncome($sender_id, $income, $time)
     {
-        $boom_config = BoomConfigs::getBoomConfig();
+        $boom_config = BoomConfigs::getBoomConfig($this);
 
         if (isBlank($boom_config)) {
             return;
         }
 
         $interval_value = 50000;
+        $need_push = true;
+
+        if ($this->user->isCompanyUser()) {
+            $interval_value = 500;
+        }
+
         $cache = self::getHotWriteCache();
         $room_id = $this->id;
         $lock = tryLock("stat_boom_income_" . $this->id); //防止并发 跨天出问题
@@ -336,9 +342,6 @@ trait RoomStats
             $expire = endOfDay($time) - $time + 3600;
 
             if (isDevelopmentEnv()) {
-                $minutes = date("YmdHi", $time);
-                $interval = intval(intval($minutes) % 10);
-                $minutes_end = $minutes + (10 - $interval);
                 $expire = 3600;
             }
 
@@ -374,14 +377,11 @@ trait RoomStats
                 $cache->incrby($boom_num_day_key, 1); //爆礼物次数
                 $cache->expire($boom_num_day_key, $expire);
                 $cache->setex($room_boon_gift_sign_key, $boom_expire, $time); //爆钻时间
-
                 $this->pushBoomIncomeMessage($boom_config);
-
                 //临时查询
                 $sender = Users::findFirstById($sender_id);
                 $content = "恭喜【{$sender->nickname}】在【{$this->name}】内，成功引爆火箭，快来抢礼物吧！";
                 Rooms::delay()->asyncAllNoticePush($content, ['type' => 'top_topic_message', 'hot' => 1]);
-
                 unlock($lock);
 
                 return;
@@ -426,15 +426,8 @@ trait RoomStats
         if (isDevelopmentEnv()) {
             $minutes = date("YmdHi", $time);
             $interval = intval(intval($minutes) % 10);
-
-            if ($interval == 0) {
-                $minutes_start = $minutes - 9;
-                $minutes_end = $minutes;
-            } else {
-                $minutes_start = $minutes - $interval + 1;
-                $minutes_end = $minutes + (10 - $interval);
-            }
-
+            $minutes_start = $minutes - $interval;
+            $minutes_end = $minutes + (10 - $interval);
             $key = 'boom_target_value_room_' . $room_id . "_" . $minutes_start . "_" . $minutes_end;
         }
 
@@ -452,15 +445,8 @@ trait RoomStats
         if (isDevelopmentEnv()) {
             $minutes = date("YmdHi", $time);
             $interval = intval(intval($minutes) % 10);
-
-            if ($interval == 0) {
-                $minutes_start = $minutes - 9;
-                $minutes_end = $minutes;
-            } else {
-                $minutes_start = $minutes - $interval + 1;
-                $minutes_end = $minutes + (10 - $interval);
-            }
-
+            $minutes_start = $minutes - $interval;
+            $minutes_end = $minutes + (10 - $interval);
             $key = 'boom_room_record_' . $room_id . "_" . $minutes_start . "_" . $minutes_end;
         }
 
@@ -478,15 +464,8 @@ trait RoomStats
         if (isDevelopmentEnv()) {
             $minutes = date("YmdHi", $time);
             $interval = intval(intval($minutes) % 10);
-
-            if ($interval == 0) {
-                $minutes_start = $minutes - 9;
-                $minutes_end = $minutes;
-            } else {
-                $minutes_start = $minutes - $interval + 1;
-                $minutes_end = $minutes + (10 - $interval);
-            }
-
+            $minutes_start = $minutes - $interval;
+            $minutes_end = $minutes + (10 - $interval);
             $key = 'room_boom_num_room_id_' . $room_id . "_" . $minutes_start . "_" . $minutes_end;
         }
 
@@ -505,15 +484,8 @@ trait RoomStats
         if (isDevelopmentEnv()) {
             $minutes = date("YmdHi", $time);
             $interval = intval(intval($minutes) % 10);
-
-            if ($interval == 0) {
-                $minutes_start = $minutes - 9;
-                $minutes_end = $minutes;
-            } else {
-                $minutes_start = $minutes - $interval + 1;
-                $minutes_end = $minutes + (10 - $interval);
-            }
-
+            $minutes_start = $minutes - $interval;
+            $minutes_end = $minutes + (10 - $interval);
             $key = 'boom_gifts_list_' . $minutes_start . "_" . $minutes_end;
         }
 
@@ -543,9 +515,13 @@ trait RoomStats
         return $pagination;
     }
 
-    function getBoomGiftData($boom_config)
+    function getBoomGiftData($boom_config, $opts = [])
     {
         $interval_value = 50000;
+        if ($this->user->isCompanyUser()) {
+            $interval_value = 500;
+        }
+
         $room_boon_gift_sign_key = \Rooms::generateRoomBoomGiftSignKey($this->id);
         $cache = \Rooms::getHotReadCache();
 
@@ -566,7 +542,7 @@ trait RoomStats
 
         $image_colors = [1 => 'blue', 2 => 'green', 3 => 'orange'];
         $image_color = fetch($image_colors, $boom_num + 1, 'orange');
-
+        $status = fetch($opts, 'status', STATUS_ON);
         $data = [
             'expire_at' => \Rooms::getBoomGiftExpireAt($this->id),
             'client_url' => 'url://m/boom_histories',
@@ -575,7 +551,7 @@ trait RoomStats
             'current_value' => $this->getCurrentBoomGiftValue(Rooms::getBoomGiftTime($this->id)),
             'show_rank' => 1000000,
             'render_type' => 'svga',
-            'status' => STATUS_ON,
+            'status' => $status,
             'image_color' => $image_color
         ];
 

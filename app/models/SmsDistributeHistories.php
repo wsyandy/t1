@@ -90,7 +90,7 @@ class SmsDistributeHistories extends BaseModel
         }
 
 
-        if(!$current_user->isCompanyUser() && isProduction()){
+        if (!$current_user->isCompanyUser() && isProduction()) {
 
             $stat_db = \Stats::getStatDb();
             if ($stat_db->zscore('sms_distribute_history_register_device_ids', $current_user->device_id)) {
@@ -137,7 +137,7 @@ class SmsDistributeHistories extends BaseModel
 
 
     // type: pay / exchange
-    static function checkPay($current_user, $amount, $type = 'pay')
+    static function checkPay($current_user, $diamond, $pay_amount, $type = 'pay')
     {
 
         if (is_numeric($current_user)) {
@@ -155,33 +155,44 @@ class SmsDistributeHistories extends BaseModel
             $stat_db = \Stats::getStatDb();
             $distribute_bonus_key = self::generateDistributeBonusKey();
 
-            $bonus_amount = round($amount * 0.05);
+            $bonus_diamond = round($diamond * 0.05);
 
             if ($type == 'pay') {
-                $opts = ['remark' => '分销充值奖励钻石' . $bonus_amount, 'mobile' => $first_user->mobile, 'target_id' => $current_user->id];
-                $result = \AccountHistories::changeBalance($first_user, ACCOUNT_TYPE_DISTRIBUTE_PAY, $bonus_amount, $opts);
+                $opts = ['remark' => '分销充值奖励钻石' . $bonus_diamond, 'mobile' => $first_user->mobile, 'target_id' => $current_user->id];
+                $result = \AccountHistories::changeBalance($first_user, ACCOUNT_TYPE_DISTRIBUTE_PAY, $bonus_diamond, $opts);
             } else {
-                $opts = ['remark' => '分销兑换奖励钻石' . $bonus_amount, 'mobile' => $first_user->mobile, 'target_id' => $current_user->id];
-                $result = \AccountHistories::changeBalance($first_user, ACCOUNT_TYPE_DISTRIBUTE_EXCHANGE, $bonus_amount, $opts);
+                $opts = ['remark' => '分销兑换奖励钻石' . $bonus_diamond, 'mobile' => $first_user->mobile, 'target_id' => $current_user->id];
+                $result = \AccountHistories::changeBalance($first_user, ACCOUNT_TYPE_DISTRIBUTE_EXCHANGE, $bonus_diamond, $opts);
             }
 
             if ($result) {
-                $stat_db->hincrby($distribute_bonus_key, 'first_distribute_bonus', $bonus_amount);
+                $stat_db->hincrby($distribute_bonus_key, 'first_distribute_bonus', $bonus_diamond);
+
+                //分销人员充值或者Hi币兑换成功，将当前用户ID存入当天集合中
+                self::shareDistributePayUserNum($current_user->id);
+
+                //按天统计，分销人员充值或Hi币兑换钻石总数
+                self::shareDistributePayDiamonds($diamond);
+
+                //按天统计分销人员充值或者Hi兑换金额总数
+                self:: shareDistributePayAmounts($pay_amount);
             }
 
             $second_user = Users::findFirstById($first_user->share_parent_id);
+            
             if ($second_user) {
 
-                $second_bonus_amount = round($amount * 0.01);
+                $second_bonus_diamond = round($diamond * 0.01);
                 if ($type == 'pay') {
-                    $last_opts = ['remark' => '下级分销充值奖励钻石' . $second_bonus_amount, 'mobile' => $second_user->mobile, 'target_id' => $current_user->id];
-                    $second_result = \AccountHistories::changeBalance($second_user, ACCOUNT_TYPE_DISTRIBUTE_PAY, $second_bonus_amount, $last_opts);
+                    $last_opts = ['remark' => '下级分销充值奖励钻石' . $second_bonus_diamond, 'mobile' => $second_user->mobile, 'target_id' => $current_user->id];
+                    $second_result = \AccountHistories::changeBalance($second_user, ACCOUNT_TYPE_DISTRIBUTE_PAY, $second_bonus_diamond, $last_opts);
                 } else {
-                    $last_opts = ['remark' => '下级分销兑换奖励钻石' . $second_bonus_amount, 'mobile' => $second_user->mobile, 'target_id' => $current_user->id];
-                    $second_result = \AccountHistories::changeBalance($second_user, ACCOUNT_TYPE_DISTRIBUTE_EXCHANGE, $second_bonus_amount, $last_opts);
+                    $last_opts = ['remark' => '下级分销兑换奖励钻石' . $second_bonus_diamond, 'mobile' => $second_user->mobile, 'target_id' => $current_user->id];
+                    $second_result = \AccountHistories::changeBalance($second_user, ACCOUNT_TYPE_DISTRIBUTE_EXCHANGE, $second_bonus_diamond, $last_opts);
                 }
+
                 if ($second_result) {
-                    $stat_db->hincrby($distribute_bonus_key, 'second_distribute_bonus', $second_bonus_amount);
+                    $stat_db->hincrby($distribute_bonus_key, 'second_distribute_bonus', $second_bonus_diamond);
                 }
             }
         }
@@ -227,6 +238,30 @@ class SmsDistributeHistories extends BaseModel
         return 'share_distribute_user_list' . date('Ymd', $time);
     }
 
+    static function generateShareDistributePayUserNumKey($time = '')
+    {
+        if (!$time) {
+            $time = time();
+        }
+        return 'share_distribute_pay_user_num_' . date('Ymd', $time);
+    }
+
+    static function generateShareDistributePayDiamondKey($time = '')
+    {
+        if (!$time) {
+            $time = time();
+        }
+        return 'share_distribute_pay_diamond_' . date('Ymd', $time);
+    }
+
+    static function generateShareDistributePayAmountKey($time = '')
+    {
+        if (!$time) {
+            $time = time();
+        }
+        return 'share_distribute_pay_amount_' . date('Ymd', $time);
+    }
+
     //统计分销分享次数
     static function shareDistributeNum()
     {
@@ -242,5 +277,29 @@ class SmsDistributeHistories extends BaseModel
         $stat_db = \Stats::getStatDb();
         $share_user_list_key = \SmsDistributeHistories::generateShareDistributeUserListKey();
         $stat_db->zadd($share_user_list_key, time(), $user_id);
+    }
+
+    //统计分销充值人数
+    static function shareDistributePayUserNum($user_id)
+    {
+        $stat_db = \Stats::getStatDb();
+        $share_user_pay_num_key = \SmsDistributeHistories::generateShareDistributePayUserNumKey();
+        $stat_db->zadd($share_user_pay_num_key, time(), $user_id);
+    }
+
+    //统计分销充值金额
+    static function shareDistributePayAmounts($pay_amount)
+    {
+        $stat_db = \Stats::getStatDb();
+        $share_user_amount_key = \SmsDistributeHistories::generateShareDistributePayAmountKey();
+        $stat_db->incrby($share_user_amount_key, $pay_amount);
+    }
+
+    //统计分销充值钻石数
+    static function shareDistributePayDiamonds($diamond)
+    {
+        $stat_db = \Stats::getStatDb();
+        $share_user_diamond_key = \SmsDistributeHistories::generateShareDistributePayDiamondKey();
+        $stat_db->incrby($share_user_diamond_key, $diamond);
     }
 }

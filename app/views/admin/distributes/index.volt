@@ -19,6 +19,9 @@
             <th>一级充值分成的钻石奖励</th>
             <th>二级充值分成的钻石奖励</th>
             <th>总钻石奖励</th>
+            <th>充值人数</th>
+            <th>充值金额</th>
+            <th>充值钻石数</th>
         </tr>
         </thead>
 
@@ -34,6 +37,9 @@
                 <th>{{ data['first_distribute_bonus'] }}</th>
                 <th>{{ data['second_distribute_bonus'] }}</th>
                 <th>{{ data['distribute_total_amount'] }}</th>
+                <th>{{ data['share_user_pay_num'] }}</th>
+                <th>{{ data['share_user_amount'] }}</th>
+                <th>{{ data['share_user_diamond'] }}</th>
             </tr>
         {% endfor %}
         </tbody>

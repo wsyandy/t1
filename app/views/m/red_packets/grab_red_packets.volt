@@ -2,7 +2,7 @@
 {{ theme_css('/m/css/red_packet_address.css','/m/css/red_packet_index.css','/m/css/red_packet_sex_select.css') }}
 {{ theme_js('/m/js/font_rem.js') }}
 {{ block_end() }}
-<div id="app" class="grab">
+<div id="app" class="grab" v-cloak style="background: #13073e;">
     <div class="get_hongbao_box">
         <div class="hongbao_box">
             <div class="wait_red wait_red_guanzhu">
@@ -75,7 +75,7 @@
             error_reason: "",
             getDiamond: 0,
             grabbed:true,
-
+            submit: false
         },
         methods: {
             getRedPacket: function () {
@@ -85,8 +85,15 @@
                     red_packet_id: vm.red_packet_id
                 };
 
+                if(this.submit){
+                    return;
+                }
+
+                this.submit = true;
+
                 $.authGet('/m/red_packets/grab_red_packets', data, function (resp) {
 
+                    vm.submit = false;
                     vm.getRed = true;
                     if (resp.error_code == 0) {
 

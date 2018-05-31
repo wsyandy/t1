@@ -296,12 +296,12 @@ class RoomsController extends BaseController
 
         // 发起pk
         $pk_history = $room->getPkHistory();
-
         if ($pk_history) {
             $res['pk_history'] = $pk_history->toSimpleJson();
         }
 
-        if (isInternalIp($this->remoteIp()) || isDevelopmentEnv()) {
+        //isInternalIp($this->remoteIp()) || $this->currentUser()->isCompanyUser() || isDevelopmentEnv()
+        if (true) {
             // 房间红包
             $underway_red_packet_num = $room->getNotDrawRedPacketNum($this->currentUser());
             if ($underway_red_packet_num) {
@@ -309,7 +309,8 @@ class RoomsController extends BaseController
             }
         }
 
-        $boom_config = \BoomConfigs::getBoomConfig();
+        $boom_config = \BoomConfigs::getBoomConfig($room);
+
         if ($boom_config && $room->hasBoomGift()) {
             $res['boom_gift'] = $room->getBoomGiftData($boom_config);
         }
@@ -859,15 +860,7 @@ class RoomsController extends BaseController
         }
 
         if (STATUS_ON == $hot) {
-
             $hot_rooms = \Rooms::newSearchHotRooms($this->currentUser(), 1, 9);
-
-//            if (isInternalIp($this->remoteIp()) || $this->currentUser()->isCompanyUser()) {
-//                $hot_rooms = \Rooms::newSearchHotRooms($this->currentUser(), 1, 9);
-//            } else {
-//                $hot_rooms = \Rooms::searchHotRooms($this->currentUser(), 1, 9);
-//            }
-
             \Users::findBatch($hot_rooms);
             $hot_rooms_json = $hot_rooms->toJson('hot_rooms', 'toSimpleJson');
         }

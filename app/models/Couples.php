@@ -9,13 +9,14 @@ class Couples extends BaseModel
         $cache = \Users::getHotWriteCache();
         $key = self::generateReadyCpInfoKey($user->room_id);
         //初始化
-        $body = ['sponsor_id' => $user->id, $user->id => 1];
+        $time = date('YmdHis');
+        $body = ['sponsor_id' => $user->id, $user->id => 1, 'start_at' => $time];
         $cache->hmset($key, $body);
         info('初始化', $cache->hgetall($key));
 
         $cache->expire($key, 10 * 60);
         //同时起一个异步推送scoket
-        self::delay(10 * 60 - 3)->asyncFinishCp($user, $key);
+        self::delay(10 * 60 - 3)->asyncFinishCp($user, $key, $time);
     }
 
     static function generateReadyCpInfoKey($room_id)
@@ -425,11 +426,12 @@ class Couples extends BaseModel
         }
     }
 
-    static function asyncFinishCp($user, $key)
+    static function asyncFinishCp($user, $key, $time)
     {
         $cache = \Users::getHotWriteCache();
         $pursuer_id = $cache->hget($key, 'pursuer_id');
-        if ($pursuer_id) {
+        $start_at = $cache->hget($key, 'start_at');
+        if ($pursuer_id || $start_at != $time) {
             return;
         }
 
