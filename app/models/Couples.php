@@ -14,9 +14,13 @@ class Couples extends BaseModel
         $cache->hmset($key, $body);
         info('初始化', $cache->hgetall($key));
 
-        $cache->expire($key, 10 * 60);
-        //同时起一个异步推送scoket
-        self::delay(10 * 60 - 3)->asyncFinishCp($user, $key, $time);
+        $expire_time = 10 * 60;
+        if (isDevelopmentEnv()) {
+            $expire_time = 2 * 60;
+        }
+        $cache->expire($key, $expire_time);
+        //同时起一个异步推送socket
+        self::delay($expire_time - 3)->asyncFinishCp($user, $key, $time);
     }
 
     static function generateReadyCpInfoKey($room_id)
