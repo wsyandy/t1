@@ -2,7 +2,7 @@
 {{ theme_css('/m/css/red_packet_address.css','/m/css/red_packet_index.css','/m/css/red_packet_sex_select.css') }}
 {{ theme_js('/m/js/font_rem.js') }}
 {{ block_end() }}
-<div id="app">
+<div id="app" v-cloak class="grab">
     <div class="detail_red_top">
         <div class="top_person">
             <div class="pic">

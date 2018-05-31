@@ -42,51 +42,58 @@ img {
 ol, ul, li {
     list-style: none;
 }
-.grab{
-    width: 10.0rem;
+
+.grab {
+    width: 100%;
     height: 100%;
 }
 
 /*红包详情*/
-.detail_red_top{
-    width: 10.0rem;
-    height: 2.64rem;
-    margin:0 auto;
+.detail_red_top {
+    width: 100%;
+    height: 2.24rem;
+    margin: 0 auto;
     background: url(../images/detail_bg.png) no-repeat;
     background-size: 100%;
 }
-.top_person{
-    width: 10.0rem;
-    margin:0 auto;
+
+.top_person {
+    width: 100%;
+    margin: 0 auto;
     text-align: center;
     padding-top: 0.693333rem;
 }
-.top_person .pic{
+
+.top_person .pic {
     width: 2.133333rem;
     height: 2.133333rem;
     border-radius: 50%;
     overflow: hidden;
-    margin:0 auto;
+    margin: 0 auto;
     background: #EEEEEE;
 }
-.top_person .pic img{
+
+.top_person .pic img {
     width: 2.133333rem;
 }
-.top_person h3{
+
+.top_person h3 {
     font-size: 0.453333rem;
     color: #484848;
     margin-top: 0.266667rem;
 }
-.top_person p{
+
+.top_person p {
     font-size: 0.346667rem;
     color: #767676;
-    margin-top: 0.13333rem;
+    margin-top: 0.133333rem;
     padding-bottom: 0.4rem;
 }
-.detail_get{
-    padding:0 0.4rem;
-    width: 10.0rem;
-    margin:0 auto;
+
+.detail_get {
+    padding: 0 0.4rem;
+    width: 100%;
+    margin: 0 auto;
     height: 1.173333rem;
     background: #F6F6F6;
     margin-top: 2.0rem;
@@ -100,16 +107,19 @@ ol, ul, li {
     -ms-flex-pack: justify;
     justify-content: space-between;
 }
-.detail_get span{
+
+.detail_get span {
     font-size: 0.346667rem;
     color: #767676;
 }
-.detail_list{
-    width: 10.0rem;
-    margin:0 auto;
-    padding:0 0 0 0.4rem;
+
+.detail_list {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 0 0 0.4rem;
 }
-.detail_list ul li{
+
+.detail_list ul li {
     padding-right: 0.4rem;
     height: 1.6rem;
     border-bottom: 1px solid #EEEEEE;
@@ -120,17 +130,20 @@ ol, ul, li {
     -ms-flex-align: center;
     align-items: center;
 }
-.detail_list .pic{
+
+.detail_list .pic {
     width: 1.066667rem;
     height: 1.066667rem;
     border-radius: 50%;
     overflow: hidden;
     background: #EEEEEE;
 }
-.detail_list .pic img{
+
+.detail_list .pic img {
     width: 1.066667rem;
 }
-.detail_list .list_text{
+
+.detail_list .list_text {
     margin-left: 0.266667rem;
     display: -webkit-box;
     display: -ms-flexbox;
@@ -145,16 +158,19 @@ ol, ul, li {
     -ms-flex-pack: justify;
     justify-content: space-between;
 }
-.detail_list .list_text .name h3{
+
+.detail_list .list_text .name h3 {
     font-size: 0.373333rem;
     color: #484848;
 }
-.detail_list .list_text .name p{
+
+.detail_list .list_text .name p {
     font-size: 0.32rem;
     color: #AEAEAE;
     margin-top: 0.133333rem;
 }
-.detail_list .list_text .num{
+
+.detail_list .list_text .num {
     font-size: 0.373333rem;
     color: #565656;
     display: -webkit-box;
@@ -164,7 +180,8 @@ ol, ul, li {
     -ms-flex-align: center;
     align-items: center;
 }
-.detail_list .list_text .num i{
+
+.detail_list .list_text .num i {
     display: inline-block;
     width: 0.453333rem;
     height: 0.453333rem;
@@ -173,18 +190,20 @@ ol, ul, li {
     background-size: 100%;
     margin-left: 0.133333rem;
 }
-.detail_bottom{
+
+.detail_bottom {
     margin-top: 3.066667rem;
     font-size: 0.32rem;
     color: #969696;
     text-align: center;
     padding-bottom: 0.506667rem;
 }
+
 /*抢红包*/
-.get_hongbao_box{
-    width: 10.0rem;
+.get_hongbao_box {
+    width: 100%;
     height: 100%;
-    margin:0 auto;
+    margin: 0 auto;
     /*background: url(../images/big_bg.png) no-repeat;*/
     background-image: url(../images/big_bg.png);
     background-repeat: no-repeat;
@@ -199,109 +218,127 @@ ol, ul, li {
     -ms-flex-pack: center;
     justify-content: center;
 }
-.get_hongbao_box .hongbao_box{
+
+.get_hongbao_box .hongbao_box {
     width: 10.0rem;
     height: 12.373333rem;
     background: url(../images/hongbao_bg.png) no-repeat;
     background-size: 100%;
 }
-.red_over img{
+
+.red_over img {
     display: block;
     width: 3.653333rem;
-    margin:0 auto;
+    margin: 0 auto;
     margin-top: 2.533333rem;
 }
-.red_over h3{
+
+.red_over h3 {
     margin-top: 2.066667rem;
     font-size: 0.586667rem;
     color: #FFFFFF;
     text-align: center;
 }
-.look_detail{
+
+.look_detail {
     display: block;
     text-align: center;
     margin-top: 3.84rem;
     font-size: 0.373333rem;
     color: #FFC700;
 }
-.look_detail i{
+
+.look_detail i {
     display: inline-block;
     width: 0.293333rem;
     height: 0.293333rem;
     background: url(../images/icon_right.png) no-repeat;
     background-size: 100%;
 }
-.red_get{
+
+.red_get {
     text-align: center;
 }
-.red_get img{
+
+.red_get img {
     display: block;
     width: 3.573333rem;
-    margin:0 auto;
+    margin: 0 auto;
     margin-top: 2.533333rem;
 }
-.red_get h3{
+
+.red_get h3 {
     font-size: 0.426667rem;
     color: #FFFFFF;
     margin-top: 0.426667rem;
 }
-.red_get .red_get_num{
+
+.red_get .red_get_num {
     font-size: 1.266667rem;
     color: #FFFFFF;
     margin-top: 1.266667rem;
 }
-.red_get .red_get_num i{
+
+.red_get .red_get_num i {
     display: inline-block;
     width: 1.12rem;
     height: 1.12rem;
     background: url(../images/red_zuan.png) no-repeat;
     background-size: 100%;
 }
-.red_get p{
+
+.red_get p {
     font-size: 0.346667rem;
-    color: rgba(255,255,255,0.60);
+    color: rgba(255, 255, 255, 0.60);
     margin-top: 1.466667rem;
 }
-.red_get a{
-    margin-top: 0.7rem;
+
+.red_get a {
+    margin-top: 1.333333rem;
 }
-.wait_red{
+
+.wait_red {
     text-align: center;
 }
-.wait_red .pic{
+
+.wait_red .pic {
     width: 2.133333rem;
     height: 2.133333rem;
     border: 3px solid #bd2b3d;
     border-radius: 50%;
     overflow: hidden;
-    margin:0 auto;
+    margin: 0 auto;
     background: #EEEEEE;
     margin-top: 2.133333rem;
 }
-.wait_red .pic img{
+
+.wait_red .pic img {
     width: 2.2rem;
 }
 
-.wait_red h4{
+.wait_red h4 {
     margin-top: 0.373333rem;
     font-size: 0.426667rem;
     color: #FFC6CD;
 }
-.wait_red h3{
+
+.wait_red h3 {
     margin-top: 1.066667rem;
     font-size: 0.666667rem;
     color: #FFFFFF;
 }
-.wait_red p{
+
+.wait_red p {
     margin-top: 1.066667rem;
     font-size: 0.373333rem;
-    color: rgba(255,255,255,0.60);
+    color: rgba(255, 255, 255, 0.60);
 }
-.wait_red .daojishi{
+
+.wait_red .daojishi {
     width: 2.333333rem;
     height: 0.72rem;
-    margin:0 auto;
-    background: rgba(0,0,0,0.10);
+    margin: 0 auto;
+    background: rgba(0, 0, 0, 0.10);
     border-radius: 1.333333rem;
     margin-top: 1.8rem;
     display: -webkit-box;
@@ -316,18 +353,21 @@ ol, ul, li {
     font-size: 0.373333rem;
     color: #FFDB4A;
 }
-.wait_red_guanzhu h3{
-    font-size: 0.4rem;
+
+.wait_red_guanzhu h3 {
+    font-size: 0.48rem;
 }
-.qiang_red{
+
+.qiang_red {
     width: 2.453333rem;
     height: 2.56rem;
-    margin:0 auto;
+    margin: 0 auto;
     background: url(../images/qiang.png) no-repeat;
     background-size: 100%;
-    margin-top: 0.6rem;
+    margin-top: 1.6rem;
 }
-.guanzhu_qiang_box{
+
+.guanzhu_qiang_box {
     position: fixed;
     left: 0;
     right: 0;
@@ -342,9 +382,11 @@ ol, ul, li {
     -webkit-box-pack: center;
     -ms-flex-pack: center;
     justify-content: center;
-    background: rgba(0,0,0,.50);
+    background: rgba(0, 0, 0, .50);
+    display: none;
 }
-.guanzhu_qiang_box .gz_fangzhu{
+
+.guanzhu_qiang_box .gz_fangzhu {
     text-align: center;
     font-size: 0.453333rem;
     color: #fff;
@@ -355,18 +397,20 @@ ol, ul, li {
     position: absolute;
     top: 50%;
     left: 50%;
-    margin:0 auto;
-    -webkit-transform: translate(-50%,-50%) scale3d(0,0,0);
-    transform: translate(-50%,-50%) scale3d(0,0,0);
-    -webkit-transition:1s;
-    -o-transition:1s;
-    transition:1s;
+    margin: 0 auto;
+    -webkit-transform: translate(-50%, -50%) scale3d(0, 0, 0);
+    transform: translate(-50%, -50%) scale3d(0, 0, 0);
+    -webkit-transition: 1s;
+    -o-transition: 1s;
+    transition: 1s;
 }
-.guanzhu_qiang_box .show{
-    -webkit-transform: translate(-50%,-50%) scale3d(1,1,1);
-    transform: translate(-50%,-50%) scale3d(1,1,1);
+
+.guanzhu_qiang_box .show {
+    -webkit-transform: translate(-50%, -50%) scale3d(1, 1, 1);
+    transform: translate(-50%, -50%) scale3d(1, 1, 1);
 }
-.guanzhu_qiang_box .gz_fangzhu .close{
+
+.guanzhu_qiang_box .gz_fangzhu .close {
     display: block;
     width: 0.293333rem;
     height: 0.293333rem;
@@ -376,10 +420,11 @@ ol, ul, li {
     top: 0.32rem;
     right: 0.32rem;
 }
-.guanzhu_qiang_box .gz_fangzhu .pic{
+
+.guanzhu_qiang_box .gz_fangzhu .pic {
     width: 1.866667rem;
     height: 1.866667rem;
-    border:3px solid #FFFFFF;
+    border: 3px solid #FFFFFF;
     border-radius: 50%;
     overflow: hidden;
     background: #EEEEEE;
@@ -390,23 +435,27 @@ ol, ul, li {
     -ms-transform: translateX(-50%);
     transform: translateX(-50%);
 }
-.guanzhu_qiang_box .gz_fangzhu .pic img{
+
+.guanzhu_qiang_box .gz_fangzhu .pic img {
     width: 1.866667rem;
 }
-.guanzhu_qiang_box .gz_fangzhu h3{
+
+.guanzhu_qiang_box .gz_fangzhu h3 {
     margin-top: 1.2rem;
     font-size: 0.426667rem;
     color: #303030;
 }
-.guanzhu_qiang_box .gz_fangzhu p{
+
+.guanzhu_qiang_box .gz_fangzhu p {
     font-size: 0.373333rem;
     color: #666666;
     margin-top: 0.373333rem;
 }
-.guanzhu_qiang_box .gz_fangzhu .gz_btn{
+
+.guanzhu_qiang_box .gz_fangzhu .gz_btn {
     width: 5.573333rem;
     height: 1.04rem;
-    margin:0 auto;
+    margin: 0 auto;
     background: #F45189;
     border-radius: 1.333333rem;
     font-size: 0.426667rem;
@@ -422,17 +471,19 @@ ol, ul, li {
     justify-content: center;
     margin-top: 0.293333rem;
 }
+
 /*发红包*/
-.give_red_bg{
-    width: 10.0rem;
-    height: 17.786667rem;
+.give_red_bg {
+    width: 100%;
+    height: 100%;
     background-image: linear-gradient(180deg, #FF5555 0%, #FF6D6D 42%, #FF4646 100%);
     position: relative;
-    margin:0 auto;
+    margin: 0 auto;
 }
-.give_red_bg .bottom_bg{
+
+.give_red_bg .bottom_bg {
     position: absolute;
-    width: 10.0rem;
+    width: 100%;
     height: 2.613333rem;
     background: url(../images/bottom_bg.png) no-repeat;
     background-size: 100%;
@@ -440,10 +491,13 @@ ol, ul, li {
     right: 0;
     bottom: 0;
 }
-.give_red_box{
-    padding:0 0.466667rem;
+
+.give_red_box {
+    padding: 0 0.466667rem;
+    margin: 0 auto;
 }
-.give_red_box .give_box{
+
+.give_red_box .give_box {
     background: #FFFFFF;
     border-radius: 0.186667rem;
     display: -webkit-box;
@@ -455,18 +509,22 @@ ol, ul, li {
     -webkit-box-pack: justify;
     -ms-flex-pack: justify;
     justify-content: space-between;
-    width: 9.066667rem;
+    width: 90%;
     height: 1.173333rem;
+    margin: 0 auto;
 }
-.give_red_box .give_box h3{
+
+.give_red_box .give_box h3 {
     font-size: 0.4rem;
     color: #505050;
     padding-left: 0.266667rem;
 }
-.give_red_box .give_list{
+
+.give_red_box .give_list {
     padding-top: 0.533333rem;
 }
-.give_red_box .give_box .give_input{
+
+.give_red_box .give_box .give_input {
     padding-right: 0.266667rem;
     display: -webkit-box;
     display: -ms-flexbox;
@@ -478,33 +536,41 @@ ol, ul, li {
     -ms-flex-pack: end;
     justify-content: flex-end;
 }
-.give_red_box .give_box .give_input input{
+
+.give_red_box .give_box .give_input input {
     text-align: right;
     font-size: 0.4rem;
     color: #404040;
 }
-.give_red_box .give_box .give_input span{
+
+.give_red_box .give_box .give_input span {
     font-size: 0.4rem;
     color: #404040;
     padding-left: 0.133333rem;
 }
-.give_red_box .give_box .give_input .zuan{
+
+.give_red_box .give_box .give_input .zuan {
     width: 0.453333rem;
     height: 0.453333rem;
     background: url(../images/detail_zuan.png) no-repeat;
     background-size: 100%;
     margin-left: 0.133333rem;
 }
-.give_red_box .give_list p{
+
+.give_red_box .give_list p {
     font-size: 0.32rem;
-    color: rgba(255,255,255,0.80);
-    padding:0.133333rem 0 0 0.266667rem;
+    color: rgba(255, 255, 255, 0.80);
+    padding: 0.133333rem 0 0 0.266667rem;
+    width: 90%;
+    margin: 0 auto;
 }
-.give_red_box .give_box .give_input .get_font{
+
+.give_red_box .give_box .give_input .get_font {
     font-size: 0.4rem;
     color: #333333;
 }
-.give_red_box .give_box .give_input .give_right{
+
+.give_red_box .give_box .give_input .give_right {
     display: inline-block;
     width: 0.293333rem;
     height: 0.293333rem;
@@ -512,7 +578,8 @@ ol, ul, li {
     background-size: 100%;
     margin-left: 0.133333rem;
 }
-.give_number{
+
+.give_number {
     margin-top: 1.626667rem;
     display: -webkit-box;
     display: -ms-flexbox;
@@ -524,32 +591,37 @@ ol, ul, li {
     -ms-flex-pack: center;
     justify-content: center;
 }
-.give_number h5{
+
+.give_number h5 {
     font-size: 0.346667rem;
-    color: rgba(255,255,255,0.74);
+    color: rgba(255, 255, 255, 0.74);
 }
-.give_number h5 span{
+
+.give_number h5 span {
     font-size: 0.373333rem;
     color: #FFFFFF;
 }
-.give_number a{
+
+.give_number a {
     font-size: 0.373333rem;
     color: #FFD41A;
     padding-left: 0.8rem;
 }
-.icon_right{
+
+.icon_right {
     display: inline-block;
     width: 0.293333rem;
     height: 0.293333rem;
     background: url(../images/icon_right.png) no-repeat;
     background-size: 100%;
 }
-.give_btn{
+
+.give_btn {
     width: 9.066667rem;
     height: 1.266667rem;
     background: url(../images/give_btn.png) no-repeat;
     background-size: 100%;
-    margin:0 auto;
+    margin: 0 auto;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -561,29 +633,35 @@ ol, ul, li {
     justify-content: center;
     margin-top: 0.4rem;
 }
-.give_btn span{
+
+.give_btn span {
     font-size: 0.48rem;
     color: #AF6A00;
 }
-.give_text{
+
+.give_text {
     text-align: center;
     margin-top: 6.133333rem;
     position: relative;
 }
-.give_text a{
+
+.give_text a {
     font-size: 0.346667rem;
     color: #FFE63D;
 }
-.give_text p{
+
+.give_text p {
     font-size: 0.346667rem;
-    color: rgba(255,255,255,0.80);
+    color: rgba(255, 255, 255, 0.80);
     margin-top: 0.16rem;
 }
-.fang_give_text{
+
+.fang_give_text {
     margin-top: 2.666667rem !important;
 }
+
 /*领取方式弹框*/
-.get_style_bg{
+.get_style_bg {
     position: fixed;
     left: 0;
     right: 0;
@@ -592,19 +670,22 @@ ol, ul, li {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(0,0,0,.50);
+    background: rgba(0, 0, 0, .50);
+    display: none;
 }
-.get_style_bg .get_style_box{
+
+.get_style_bg .get_style_box {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
     background: #FFFFFF;
 }
-.get_style_bg .get_style_box ul li{
+
+.get_style_bg .get_style_box ul li {
     height: 1.253333rem;
-    width: 10.0rem;
-    border-bottom:1px solid #E3E3E3;
+    width: 100%;
+    border-bottom: 1px solid #E3E3E3;
     text-align: center;
     font-size: 0.4rem;
     color: #303030;
@@ -618,17 +699,20 @@ ol, ul, li {
     -ms-flex-pack: center;
     justify-content: center;
 }
-.get_style_bg .get_style_box ul li:last-child{
-    border:none;
+
+.get_style_bg .get_style_box ul li:last-child {
+    border: none;
 }
-.get_style_bg .get_style_box .line{
+
+.get_style_bg .get_style_box .line {
     background: #F3F3F3;
     height: 0.266667rem;
-    border:none;
+    border: none;
 }
-.get_style_bg .get_style_box .quxiao{
+
+.get_style_bg .get_style_box .quxiao {
     height: 1.253333rem;
-    width: 10.0rem;
+    width: 100%;
     font-size: 0.4rem;
     color: #303030;
     display: -webkit-box;
@@ -641,28 +725,33 @@ ol, ul, li {
     -ms-flex-pack: center;
     justify-content: center;
 }
+
 /*红包说明*/
-.red_text_box{
-    padding:0 0.4rem;
+.red_text_box {
+    padding: 0 0.4rem;
 }
-.red_text_box h1{
+
+.red_text_box h1 {
     font-size: 0.4rem;
     color: #404040;
     margin-top: 0.533333rem;
 }
-.red_text_box p{
+
+.red_text_box p {
     font-size: 0.346667rem;
     color: #616161;
     margin-top: 0.133333rem;
 }
-.red_text_box h2{
+
+.red_text_box h2 {
     font-size: 0.373333rem;
     color: #5C5C5C;
     position: relative;
     padding-left: 0.4rem;
     margin-top: 0.48rem;
 }
-.red_text_box h2::before{
+
+.red_text_box h2::before {
     content: "";
     position: absolute;
     width: 0.12rem;
@@ -677,14 +766,16 @@ ol, ul, li {
     -o-transform: translateY(-50%);
     transform: translateY(-50%)
 }
-.red_text_box span{
+
+.red_text_box span {
     display: block;
     margin-left: 0.4rem;
     margin-top: 0.066667rem;
     font-size: 0.346667rem;
     color: #7C7C7C;
 }
-.get_zuan_less_bg{
+
+.get_zuan_less_bg {
     position: fixed;
     left: 0;
     right: 0;
@@ -699,10 +790,11 @@ ol, ul, li {
     -webkit-box-pack: center;
     -ms-flex-pack: center;
     justify-content: center;
-    background: rgba(0,0,0,.50);
+    background: rgba(0, 0, 0, .50);
     display: none;
 }
-.zuan_less_box{
+
+.zuan_less_box {
     width: 7.76rem;
     height: 4.4rem;
     background: #FFFFFF;
@@ -710,28 +802,31 @@ ol, ul, li {
     position: absolute;
     top: 50%;
     left: 50%;
-    margin:0 auto;
-    -webkit-transform: translate(-50%,-50%);
-    -ms-transform: translate(-50%,-50%);
-    transform: translate(-50%,-50%);
+    margin: 0 auto;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }
-.zuan_less_box .less_close{
+
+.zuan_less_box .less_close {
     position: absolute;
     display: block;
     width: 0.293333rem;
     height: 0.293333rem;
     background: url(../images/close.png) no-repeat;
     background-size: 100%;
-    top:0.32rem;
+    top: 0.32rem;
     right: 0.32rem;
 }
-.zuan_less_box p{
+
+.zuan_less_box p {
     font-size: 0.4rem;
     color: #303030;
-    padding:1.04rem 1.28rem 0.693333rem 1.28rem;
+    padding: 1.04rem 1.28rem 0.693333rem 1.28rem;
     text-align: center;
 }
-.zuan_less_box .less_btn{
+
+.zuan_less_box .less_btn {
     display: block;
     width: 5.573333rem;
     height: 1.04rem;
@@ -739,7 +834,7 @@ ol, ul, li {
     border-radius: 1.333333rem;
     font-size: 0.426667rem;
     color: #FFFFFF;
-    margin:0 auto;
+    margin: 0 auto;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -750,25 +845,31 @@ ol, ul, li {
     -ms-flex-pack: center;
     justify-content: center;
 }
-.red_list ul li{
+
+.red_list ul li {
     height: 2.0rem;
 }
-.red_list ul li .pic{
+
+.red_list ul li .pic {
     width: 1.333333rem;
     height: 1.333333rem;
 }
-.red_list ul li .pic img{
+
+.red_list ul li .pic img {
     width: 1.333333rem;
 }
-.red_list .list_text .name h3{
+
+.red_list .list_text .name h3 {
     font-size: 0.4rem;
     color: #404040;
 }
-.red_list .list_text .name p{
+
+.red_list .list_text .name p {
     font-size: 0.32rem;
     color: #888888;
 }
-.red_list_style{
+
+.red_list_style {
     width: 1.733333rem;
     height: 0.8rem;
     border-radius: 1.333333rem;
@@ -783,28 +884,37 @@ ol, ul, li {
     -ms-flex-pack: center;
     justify-content: center;
 }
-.red_list_time{
+
+.red_list_time {
     background: #FFDDDD;
     color: #FE4646 !important;
 }
-.red_list_qiang{
+
+.red_list_qiang {
     background: #FE4646 !important;
     color: #FFFFFF !important;
 }
-.red_list_get_red{
+
+.red_list_get_red {
     background: #F1F1F1 !important;
     color: #969696 !important;
 }
-.red_list_fangzhu{
+
+.red_list_fangzhu {
     width: 2.133333rem !important;
     background: #FFDDDD !important;
     font-size: 0.293333rem !important;
     color: #FE4646 !important;
 }
+
+[v-cloak] {
+    display: none !important;
+}
+
+
 .is_stay_hide{
     display:none;
 }
-
 
 
 

@@ -2,7 +2,7 @@
 {{ theme_css('/m/css/red_packet_address.css','/m/css/red_packet_index.css','/m/css/red_packet_sex_select.css') }}
 {{ theme_js('/m/js/font_rem.js') }}
 {{ block_end() }}
-<div id="app" class="grab">
+<div id="app" class="grab" v-cloak style="background: #13073e;">
     <div class="get_hongbao_box">
         <div class="hongbao_box">
             <div class="wait_red wait_red_guanzhu">
