@@ -25,7 +25,11 @@
     {% endif %}
 {%- endmacro %}
 
+{% macro operate_link(red_packet_history) %}
+    <a href="/admin/red_packets/user_list?id={{ red_packet_history.id }}">详细</a>
+{% endmacro %}
+
 {{ simple_table(red_packet_histories,['id': 'id','房间ID':'room_id','红包发起者':'user_id','红包限制':'red_packet_type_link',
     '总个数':'num','总金额':'diamond','剩余个数':'balance_num','剩余金额':'balance_diamond','红包状态':'status_text',
-'创建时间':'created_at_text']) }}
+'创建时间':'created_at_text',"操作":"operate_link"]) }}
 
