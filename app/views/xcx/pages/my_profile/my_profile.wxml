@@ -1,7 +1,7 @@
 <!--pages/my_profile/my_profile.wxml-->
 <view class="profile_head">
-  <image class='profile_avatar' mode='scaleToFill' src='{{userInfo.avatar}}'></image>
-  <text class="profile_id">ID:{{ userInfo.id}}</text>
+  <image class='profile_avatar' mode='scaleToFill' src='{{userInfo.avatar_small_url}}'></image>
+  <text class="profile_id">ID:{{userInfo.id}}</text>
 </view>
 <view class="profile_box">
   <view class="profile_list" catchtap="editNickname">
@@ -14,7 +14,7 @@
   <view class="profile_list" catchtap="editSex">
     <text class="profile_title">性别</text>
     <view class="profile_info">
-      <text>{{userInfo.sex}}</text>
+      <text>{{userInfo.sex ? '男' : '女'}}</text>
       <image class='profile_arrow' mode='scaleToFill' src='{{profile_arrow}}'></image>
     </view>
   </view>
@@ -22,16 +22,16 @@
     <text class="profile_title">地区</text>
     <view class="profile_info">
       <!-- <text> {{userInfo.province}}-{{userInfo.city}} </text> -->
-      <text class="input"> {{province}}-{{city}} </text>
+      <text class="input"> {{userInfo.province_name ? userInfo.province_name : '未知'}}-{{userInfo.city_name ? userInfo.city_name : '未知'}} </text>
       <image class='profile_arrow' mode='scaleToFill' src='{{profile_arrow}}'></image>
     </view>
   </view>
   <view class="profile_list">
     <text class="profile_title">生日</text>
     <view class="profile_info">
-      <picker mode="date" value="{{date}}" start="2015-09-01" end="2027-09-01" bindchange="bindDateChange">
+      <picker mode="date" value="{{date}}" start="1960-09-01" end="2019-09-01" bindchange="bindDateChange">
         <view class="picker">
-          {{birthday}}
+          {{userInfo.birthday ? userInfo.birthday : '未设置'}}
         </view>
       </picker>
       <image class='profile_arrow' mode='scaleToFill' src='{{profile_arrow}}'></image>
@@ -44,7 +44,7 @@
 <view class="mask" hidden="{{hideMask}}"></view>
 <!-- 修改昵称 -->
 <view class="edit_nick {{hideNick?'':'slider_up'}}" hidden="{{hideNick}}">
-  <input class="edit_input" placeholder-class="placeholder" type="text" maxlength="11" placeholder="请输入昵称" value="{{nicknameVal}}" bindinput="bindNicknameInput" />
+  <input class="edit_input" placeholder-class="placeholder" type="text" maxlength="11" placeholder="请输入昵称" value="{{userInfo.nickname}}" bindinput="bindNicknameInput" />
   <view class="edit_tips">
     <text>* 字数不能超过十字</text>
   </view>

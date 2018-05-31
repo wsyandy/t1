@@ -1,4 +1,4 @@
-// pages/my_profile/my_profile.js
+const request = require('../../utils/wxRequest.js');
 var tcity = require("../../utils/citys.js");
 var configs = require("../../utils/config.js");
 var province = '北京';
@@ -13,15 +13,15 @@ Page({
   data: {
     profile_arrow: '/images/profile_arrow.png',
     icoClose: '/images/ico_close.png',
-    userInfo: {
-      avatar: '/images/room_cover_1.jpg',
-      id: "189069",
-      nickname: "秦王",
-      sex: '女',
-      province: '上海',
-      city: '上海',
-      birthday: '1995-11-11'
-    },
+    // userInfo: {
+    //   avatar: '/images/room_cover_1.jpg',
+    //   id: "189069",
+    //   nickname: "秦王",
+    //   sex: '女',
+    //   province: '上海',
+    //   city: '上海',
+    //   birthday: '1995-11-11'
+    // },
     hideMask: true, /*遮罩层*/
     hideNick: true,  /*修改昵称*/
     nicknameVal: '',
@@ -52,15 +52,37 @@ Page({
   },
   /*保存昵称 并关闭昵称编辑弹窗*/
   saveNickname: function () {
-    let userInfo = this.data.userInfo;
+    var _this = this
+    let userInfo = wx.getStorageSync('userInfo')
+    let nickname = wx.getStorageSync('userInfo').nickname
     let nicknameVal = this.data.nicknameVal;
-    userInfo.nickname = nicknameVal ? nicknameVal : userInfo.nickname
+    if(nickname != nicknameVal){
+      userInfo.nickname = nicknameVal ? nicknameVal : userInfo.nickname
+      _this.userUpdate({ nickname: nicknameVal })
+      
+    }
+
     this.setData({
       hideMask: true,
       hideNick: true,
-      userInfo: userInfo
     })
 
+  },
+  userUpdate:function(data){
+    var _this = this
+    request.postRequest('users/update', data).then(res => {
+      console.log(res)
+      if (res.statusCode == 200){
+        console.log('SUCCESS')
+        wx.setStorageSync('userInfo', res.data)
+      }
+    })
+      .finally(function (res) { 
+        console.log('SUCCESS2')
+        _this.setData({
+          userInfo:wx.getStorageSync('userInfo')
+        })
+      })
   },
   /*关闭昵称编辑弹窗*/
   closeMask: function () {
@@ -164,7 +186,15 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-
+    let userInfo = wx.getStorageSync('userInfo')
+    if(!userInfo){
+      wx.showToast({
+        title: '请先登录',
+        icon: "none",
+        duration: 1000
+      })
+      return;
+    }
     // 初始化城市
     var _this = this;
     tcity.init(_this);
@@ -181,8 +211,9 @@ Page({
     _this.setData({
       'provinces': provinces,
       'citys': citys,
-      'province': cityData[0].name,
-      'city': cityData[0].sub[0].name,
+      'province': userInfo.province_name,
+      'city': userInfo.city_name,
+      'userInfo':userInfo
     })
     console.log('初始化完成');
     

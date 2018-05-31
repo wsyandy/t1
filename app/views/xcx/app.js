@@ -83,10 +83,10 @@ App({
 
               _this.globalData.sid = res.data.sid
               wx.setStorageSync('sid', res.data.sid)
-              return request.postRequest('users/detail', data)
+              return request.postRequest('users/basic_info', data)
             })
             .then(res => {
-              Utils.log(`user/detail返回状态：${res.data.error_code}`)
+              Utils.log(`user/basic_info返回状态：${res.data.error_code}`)
               if (res.data.error_code != 0) {
                 wx.showToast({
                   title: '查询失败',

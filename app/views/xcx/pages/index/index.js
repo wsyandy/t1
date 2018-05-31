@@ -378,20 +378,20 @@ Page({
   /*用户授权*/
   getUserInfo: function (e) {
   
-    // app.getUserInfo(e,  (res)=> {
-    //   Utils.log(`data:${JSON.stringify(res)}`)
-    //   if (res) {
-    //     this.setData({
-    //       userInfo: res,
-    //       hasUserInfo: true
-    //     })
-    //   }
-    // })
-
-    this.setData({
-      avatarUrl: e.detail.userInfo.avatarUrl,
-      hasUserInfo: true
+    app.getUserInfo(e,  (res)=> {
+      Utils.log(`data:${JSON.stringify(res)}`)
+      if (res) {
+        this.setData({
+          userInfo: res,
+          hasUserInfo: true
+        })
+      }
     })
+
+    // this.setData({
+    //   avatarUrl: e.detail.userInfo.avatarUrl,
+    //   hasUserInfo: true
+    // })
 
   },
   /*滑入用户信息*/
