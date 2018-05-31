@@ -985,7 +985,6 @@ class Rooms extends BaseModel
 
     static function newSearchHotRooms($user, $page, $per_page)
     {
-        $new_user_hot_rooms_list_key = Rooms::getNewUserHotRoomListKey(); //新用户房间
         $register_time = time() - $user->register_at;
         $time = 60 * 15;
 
@@ -1000,7 +999,10 @@ class Rooms extends BaseModel
 
             $hot_room_list_key = Rooms::getTotalRoomListKey(); //新的用户总的队列
             if ($register_time <= $time) {
+                $hot_cache = Users::getHotWriteCache();
+                $new_user_hot_rooms_list_key = Rooms::getTotalRoomListKey(); //新用户房间
                 $hot_room_list_key = $new_user_hot_rooms_list_key;
+                echoLine($hot_cache->zrange($new_user_hot_rooms_list_key, 0, -1));
             }
         }
 
@@ -1618,16 +1620,18 @@ class Rooms extends BaseModel
         $max_score = max($room_ids);
         foreach ($room_ids as $room_id => $score) {
 
+            $hot_cache->zadd($total_new_hot_room_list_key, $score, $room_id);
+
             if (!in_array($room_id, $shield_room_ids)) {
                 $hot_cache->zadd($hot_room_list_key, $score, $room_id);
-                if (in_array($room_id, $new_user_room_ids)) {
-                    $score = $score + $max_score;
-                }
-                debug($max_score, $score);
-                $hot_cache->zadd($new_user_hot_rooms_list_key, $score, $room_id);
+            }
+            
+            if (in_array($room_id, $new_user_room_ids)) {
+                $score = $score + $max_score;
             }
 
-            $hot_cache->zadd($total_new_hot_room_list_key, $score, $room_id);
+            debug($max_score, $score);
+            $hot_cache->zadd($new_user_hot_rooms_list_key, $score, $room_id);
         }
 
         unlock($lock);
