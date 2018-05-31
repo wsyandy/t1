@@ -309,7 +309,7 @@ class RedPackets extends BaseModel
     {
 
         $lock_key = 'grab_red_packet_' . $this->id;
-        $lock = tryLock($lock_key);
+        $lock = tryLock($lock_key, 2000);
         if (!$lock) {
             return 0;
         }
@@ -345,13 +345,18 @@ class RedPackets extends BaseModel
         $cache = \Users::getUserDb();
         $user_room_key = self::generateUserRoomRedPacketsKey($this->room_id, $user_id);
         $user_red_key = self::generateUserRedPacketsKey($user_id);
+        $user_diamond_key = $this->generateRedPacketUserDiamondKey();
 
         $balance_diamond = $this->balance_diamond;
         $balance_num = $this->balance_num;
+        $user_num = $cache->zcard($user_diamond_key);
+        if ($user_num >= $this->num || $this->balance_diamond <= 0) {
+            return 0;
+        }
 
         $avg_diamond = ceil($this->diamond / $this->num);
         $min_diamond = 1;
-        $max_diamond = ceil($this->diamond * 0.30);
+        $max_diamond = ceil($this->diamond * 0.3);
 
         if ($this->red_packet_type == RED_PACKET_TYPE_NEARBY) {
             $min_diamond = 50;
@@ -366,22 +371,24 @@ class RedPackets extends BaseModel
             $usable_balance_diamond = $balance_diamond;
         } else {
 
+            $usable_balance_diamond = $balance_diamond - ($balance_num - 1) * $min_diamond * 2;
             if ($balance_num * 2 > $this->num) {
-                $usable_balance_diamond = ceil($this->diamond * mt_rand(40, 60) / 100);
-            } else {
-                $usable_balance_diamond = $balance_diamond - ($balance_num - 1) * $min_diamond * 2;
+                $usable_balance_diamond2 = ceil($balance_diamond * mt_rand(40, 60) / 100);
+                if($usable_balance_diamond2 < $usable_balance_diamond){
+                    $usable_balance_diamond = $usable_balance_diamond2;
+                }
             }
 
             $user_rate = mt_rand(1, 100);
             if ($user_rate < mt_rand(60, 80)) {
-                if ($avg_diamond - ceil($this->diamond * 0.1) < $min_diamond) {
+                if ($avg_diamond - ceil($this->diamond * 0.05) < $min_diamond) {
                     $get_diamond = mt_rand($min_diamond, $avg_diamond + ceil($this->diamond * 0.1));
                 } else {
                     $get_diamond = mt_rand($avg_diamond - ceil($this->diamond * 0.05), $avg_diamond + ceil($this->diamond * 0.1));
                 }
             } else {
                 if (mt_rand(1, 100) < 80) {
-                    $get_diamond = mt_rand($min_diamond, ceil($this->diamond * 0.05));
+                    $get_diamond = mt_rand($min_diamond, ceil($this->diamond * 0.1));
                 } else {
                     $get_diamond = mt_rand(ceil($this->diamond * 0.15), $max_diamond);
                 }
@@ -403,9 +410,12 @@ class RedPackets extends BaseModel
         $this->balance_diamond = $balance_diamond - $get_diamond;
         $this->balance_num = $balance_num - 1;
 
-        if ($this->balance_diamond < 0) {
-            $get_diamond = 0;
+        if ($this->balance_diamond < 0 || $this->balance_num <= 0) {
+            info('Exce', $this->id, $this->user_id, 'get', $get_diamond, $usable_balance_diamond, '总', $this->balance_diamond, $this->balance_num, $min_diamond, $max_diamond, $avg_diamond);
+
+            $get_diamond = $balance_diamond;
             $this->balance_diamond = 0;
+            $this->balance_num = 0;
         }
 
         if ($this->balance_diamond <= 0) {
