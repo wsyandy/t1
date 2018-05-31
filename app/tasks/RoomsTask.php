@@ -13,9 +13,11 @@ class RoomsTask extends \Phalcon\Cli\Task
     {
 
         $cond = ['conditions' => 'status = :status: and last_at<:last_at:',
-            'bind' => ['status' => STATUS_ON, 'last_at' => time() - 3600 * 24]];
+            'bind' => ['status' => STATUS_ON, 'last_at' => time() - 3600 * 24],
+            'order' => 'id asc'
+        ];
 
-        $rooms = Rooms::findForeach($cond);
+        $rooms = Rooms::findPagination($cond, 1, 500);
         $hot_cache = Rooms::getHotWriteCache();
 
         foreach ($rooms as $room) {
@@ -29,16 +31,17 @@ class RoomsTask extends \Phalcon\Cli\Task
             if (count($user_ids) < 1) {
                 $room->status = STATUS_OFF;
                 $room->save();
-                info('no user', $room->id, 'online_status_text', $room->online_status_text, date('c', $room->last_at));
+                info('no user', $room->id, 'online_status_text', $room->online_status_text, date('YmdHis', $room->last_at));
                 continue;
             }
 
             $users = Users::findByIds($user_ids);
             foreach ($users as $user) {
                 $room->exitRoom($user, true);
-                info('exit', $user->id, $room->id, $user->user_type_text);
+                info('exit', $user->id, $room->id, $user->user_type_text, date('YmdHis', $room->last_at));
             }
         }
+
     }
 
     function checkUserRoom2Action()
