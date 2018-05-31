@@ -80,6 +80,8 @@ App({
               let data = {
                 sid: res.data.sid
               }
+              _this.globalData.sid = res.data.sid
+              wx.setStorageSync('sid', res.data.sid)
               return request.postRequest('users/detail', data)
             })
             .then(res => {
@@ -93,8 +95,8 @@ App({
                 return;
               }
               _this.globalData.userInfo = res.data.user
-              _this.globalData.sid = res.data.user.sid
-              wx.setStorageSync('sid', res.data.user.sid)
+              // _this.globalData.sid = res.data.user.sid
+              // wx.setStorageSync('sid', res.data.user.sid)
               wx.setStorageSync('userInfo', res.data.user)
               callback(res.data.user)
             })

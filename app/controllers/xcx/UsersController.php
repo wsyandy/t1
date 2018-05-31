@@ -7,7 +7,6 @@ class UsersController extends BaseController
 
     function registerAction()
     {
-        info("111111111111111111111111111");
         if (!$this->request->isPost()) {
             return $this->renderJSON(ERROR_CODE_FAIL, '错误请求');
         }
@@ -24,7 +23,6 @@ class UsersController extends BaseController
         }
 
         $data['ip'] = $this->remoteIp();
-        info("data==",$data);
         $user = \Users::registerByOpenidXcx($product_channel, $data);
         info("注册的用户信息", $user);
         if (!$user) {
