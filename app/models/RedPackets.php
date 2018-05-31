@@ -46,9 +46,10 @@ class RedPackets extends BaseModel
     function afterCreate()
     {
 
-        $cache = \Users::getUserDb();
-        //当前正在进行中的红包id集合
+        // 分包
+        $this->subPackets();
 
+        $cache = \Users::getUserDb();
         if ($this->sex == USER_SEX_COMMON) {
             $underway_red_packet_list_key = self::getUnderwayRedPacketListKey($this->room_id, 0);
             $cache->zadd($underway_red_packet_list_key, time(), $this->id);
@@ -59,7 +60,6 @@ class RedPackets extends BaseModel
             $cache->zadd($underway_red_packet_list_key, time(), $this->id);
         }
 
-        // || $this->user->isCompanyUser() && $this->diamond >= 100
         if ($this->diamond >= 10000) {
             $this->user->has_red_packet = STATUS_ON;
             $this->user->update();
@@ -74,6 +74,10 @@ class RedPackets extends BaseModel
     function afterUpdate()
     {
         if ($this->hasChanged('status') && $this->status == STATUS_OFF) {
+
+            // 分包
+            $hot_cache = \RedPackets::getHotWriteCache();
+            $hot_cache->del("red_packets_shuffle_diamond_" . $this->id);
 
             $cache = \Users::getUserDb();
             if ($this->sex == USER_SEX_COMMON) {
@@ -305,6 +309,103 @@ class RedPackets extends BaseModel
         return $distance_start_at;
     }
 
+    function getSubPacketDiamond()
+    {
+
+        $cache = \RedPackets::getHotWriteCache();
+        $key = "red_packets_shuffle_diamond_" . $this->id;
+        $diamond = $cache->rpop($key);
+        if (!$diamond) {
+            return 0;
+        }
+
+        return $diamond;
+    }
+
+    function subPackets()
+    {
+
+        $cache = \RedPackets::getHotWriteCache();
+
+        $balance_diamond = $this->balance_diamond;
+        $balance_num = $this->balance_num;
+
+        $min_diamond = 1;
+        if ($this->red_packet_type == RED_PACKET_TYPE_NEARBY) {
+            $min_diamond = 50;
+        }
+        if ($this->red_packet_type == RED_PACKET_TYPE_FOLLOW || $this->red_packet_type == RED_PACKET_TYPE_STAY_AT_ROOM) {
+            $min_diamond = 5;
+        }
+
+        $avg_diamond = ceil($this->diamond / $this->num);
+        $max_diamond = ceil($this->diamond * 0.3);
+        if ($max_diamond < $avg_diamond * 2) {
+            $max_diamond += $avg_diamond;
+        }
+
+        if ($max_diamond > $avg_diamond * 3) {
+            $max_diamond = ceil($this->diamond * 0.2);
+        }
+
+        $min_avg = $avg_diamond - ceil(($avg_diamond - $min_diamond) / 2);
+        $max_avg = $avg_diamond + ceil(($max_diamond - $avg_diamond) / 2);
+
+        info($min_diamond, $min_avg, $avg_diamond, $max_avg, $max_diamond);
+
+        $total_get_diamond = 0;
+        $get_diamonds = [];
+        for ($i = 0; $i < $this->num; $i++) {
+
+            $usable_balance_diamond = $balance_diamond - ($balance_num - 1) * $min_diamond;
+            if ($usable_balance_diamond < $min_diamond) {
+                $usable_balance_diamond = $min_diamond;
+            }
+            $user_rate = mt_rand(1, 100);
+            if ($user_rate < 65) {
+                $get_diamond = mt_rand($min_avg, $max_avg);
+            } else {
+
+                if (mt_rand(1, 100) < 90) {
+                    $get_diamond = mt_rand($min_diamond, $min_avg);
+                } else {
+                    $get_diamond = mt_rand($max_avg, $max_diamond);
+                }
+            }
+
+            // 防止超出
+            if ($get_diamond >= $usable_balance_diamond && $balance_num > 1) {
+                if ($balance_num <= 3) {
+                    $get_diamond = ceil($usable_balance_diamond * 0.25);
+                }
+            }
+
+            if ($total_get_diamond + $get_diamond >= $this->diamond || $get_diamond < $min_diamond || $usable_balance_diamond < $get_diamond) {
+                $get_diamond = $min_diamond;
+            }
+
+            if ($balance_num == 1) {
+                $get_diamond = $balance_diamond;
+            }
+
+            $get_diamonds[] = $get_diamond;
+            $total_get_diamond += $get_diamond;
+
+            $balance_diamond = $balance_diamond - $get_diamond;
+            $balance_num = $balance_num - 1;
+
+            info($get_diamond, 'total', $total_get_diamond, 'balance', $balance_diamond, $balance_num, 'ke', $usable_balance_diamond);
+        }
+
+        shuffle($get_diamonds);
+        info($get_diamonds);
+
+        foreach ($get_diamonds as $diamond) {
+            $cache->rpush("red_packets_shuffle_diamond_" . $this->id, $diamond);
+        }
+
+    }
+
     function grabRedPacket($user)
     {
 
@@ -346,14 +447,48 @@ class RedPackets extends BaseModel
         $user_room_key = self::generateUserRoomRedPacketsKey($this->room_id, $user_id);
         $user_red_key = self::generateUserRedPacketsKey($user_id);
         $user_diamond_key = $this->generateRedPacketUserDiamondKey();
-
-        $balance_diamond = $this->balance_diamond;
-        $balance_num = $this->balance_num;
         $user_num = $cache->zcard($user_diamond_key);
         if ($user_num >= $this->num || $this->balance_diamond <= 0) {
             return 0;
         }
 
+        $get_diamond = $this->getSubPacketDiamond();
+        if ($get_diamond) {
+            return 0;
+        }
+
+        $this->balance_diamond = $this->balance_diamond - $get_diamond;
+        $this->balance_num = $this->balance_num - 1;
+
+        if ($this->balance_diamond < 0 || $this->balance_num < 0) {
+            info('Exce', $this->id, $this->user_id, 'get', $get_diamond, '总', $this->balance_diamond, $this->balance_num);
+
+            $this->balance_diamond = 0;
+            $this->balance_num = 0;
+        }
+
+        if ($this->balance_diamond <= 0) {
+            $this->status = STATUS_OFF;
+        }
+        $this->save();
+
+        info($this->id, $this->user_id, 'get', $get_diamond, '总', $this->balance_diamond, $this->balance_num);
+
+        $red_user_list_key = $this->generateRedPacketUserListKey();
+        $user_diamond_key = $this->generateRedPacketUserDiamondKey();
+        $cache->zadd($user_diamond_key, $get_diamond, $user_id);
+        $cache->zadd($red_user_list_key, time(), $user_id);
+        $cache->zadd($user_room_key, $get_diamond, $this->id);
+        $cache->zadd($user_red_key, time(), $this->id);
+
+        return $get_diamond;
+    }
+
+    function getRedPacketDiamond2()
+    {
+
+        $balance_diamond = $this->balance_diamond;
+        $balance_num = $this->balance_num;
         $avg_diamond = ceil($this->diamond / $this->num);
         $min_diamond = 1;
         $max_diamond = ceil($this->diamond * 0.3);
@@ -374,7 +509,7 @@ class RedPackets extends BaseModel
             $usable_balance_diamond = $balance_diamond - ($balance_num - 1) * $min_diamond * 2;
             if ($balance_num * 2 > $this->num) {
                 $usable_balance_diamond2 = ceil($balance_diamond * mt_rand(40, 60) / 100);
-                if($usable_balance_diamond2 < $usable_balance_diamond){
+                if ($usable_balance_diamond2 < $usable_balance_diamond) {
                     $usable_balance_diamond = $usable_balance_diamond2;
                 }
             }
@@ -406,32 +541,6 @@ class RedPackets extends BaseModel
                 $get_diamond = ceil($usable_balance_diamond * 0.25);
             }
         }
-
-        $this->balance_diamond = $balance_diamond - $get_diamond;
-        $this->balance_num = $balance_num - 1;
-
-        if ($this->balance_diamond < 0 || $this->balance_num <= 0) {
-            info('Exce', $this->id, $this->user_id, 'get', $get_diamond, $usable_balance_diamond, '总', $this->balance_diamond, $this->balance_num, $min_diamond, $max_diamond, $avg_diamond);
-
-            $get_diamond = $balance_diamond;
-            $this->balance_diamond = 0;
-            $this->balance_num = 0;
-        }
-
-        if ($this->balance_diamond <= 0) {
-            $this->status = STATUS_OFF;
-        }
-
-        $this->save();
-
-        info($this->id, $this->user_id, 'get', $get_diamond, $usable_balance_diamond, '总', $this->balance_diamond, $this->balance_num, $min_diamond, $max_diamond, $avg_diamond);
-
-        $red_user_list_key = $this->generateRedPacketUserListKey();
-        $user_diamond_key = $this->generateRedPacketUserDiamondKey();
-        $cache->zadd($user_diamond_key, $get_diamond, $user_id);
-        $cache->zadd($red_user_list_key, time(), $user_id);
-        $cache->zadd($user_room_key, $get_diamond, $this->id);
-        $cache->zadd($user_red_key, time(), $this->id);
 
         return $get_diamond;
     }
