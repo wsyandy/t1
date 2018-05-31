@@ -584,11 +584,6 @@ class Activities extends BaseModel
             return;
         }
 
-        if (!$sender->isInRoom($room) || !$receiver->isInRoom($room)) {
-            return;
-        }
-
-
         $opts = ['sender_current_room_id' => $sender->current_room_id, 'receiver_current_room_id' => $receiver->current_room_id];
         GiftOrders::asyncCreateGiftOrder($sender->id, [$receiver->id], $gift->id, $opts);
 
