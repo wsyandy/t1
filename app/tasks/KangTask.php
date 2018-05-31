@@ -15,8 +15,8 @@ class KangTask extends \Phalcon\Cli\Task
         $red->id = 1;
         $red->user_id = 2;
         $red->room_id = 3;
-        $red->diamond = 100;
-        $red->num = 5;
+        $red->diamond = 1000;
+        $red->num = 100;
         $red->balance_diamond = $red->diamond;
         $red->balance_num = $red->num;
         $red->status = STATUS_ON;
