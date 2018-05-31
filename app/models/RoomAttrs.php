@@ -139,7 +139,7 @@ trait RoomAttrs
     function getRealUserStayTimeScore()
     {
         $hot_cache = self::getHotWriteCache();
-        $key = $this->getRealUserListKey();
+        $key = $this->getEnterRoomUserListKey();
 
         $user_num = $hot_cache->zcount($key, '-inf', time() - 15 * 60);
 
