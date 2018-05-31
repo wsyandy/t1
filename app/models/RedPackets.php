@@ -345,9 +345,14 @@ class RedPackets extends BaseModel
         $cache = \Users::getUserDb();
         $user_room_key = self::generateUserRoomRedPacketsKey($this->room_id, $user_id);
         $user_red_key = self::generateUserRedPacketsKey($user_id);
+        $user_diamond_key = $this->generateRedPacketUserDiamondKey();
 
         $balance_diamond = $this->balance_diamond;
         $balance_num = $this->balance_num;
+        $user_num = $cache->zcard($user_diamond_key);
+        if ($user_num >= $this->num || $this->balance_diamond <= 0) {
+            return 0;
+        }
 
         $avg_diamond = ceil($this->diamond / $this->num);
         $min_diamond = 1;
