@@ -13,6 +13,38 @@ class RoomsTask extends \Phalcon\Cli\Task
     {
 
         $cond = ['conditions' => 'status = :status: and last_at<:last_at:',
+            'bind' => ['status' => STATUS_ON, 'last_at' => time() - 3600 * 24]];
+
+        $rooms = Rooms::findForeach($cond);
+        $hot_cache = Rooms::getHotWriteCache();
+
+        foreach ($rooms as $room) {
+
+            if ($room->isIosAuthRoom()) {
+                continue;
+            }
+
+            $key = $room->getUserListKey();
+            $user_ids = $hot_cache->zrange($key, 0, -1);
+            if (count($user_ids) < 1) {
+                $room->status = STATUS_OFF;
+                $room->save();
+                info('no user', $room->id, 'online_status_text', $room->online_status_text, date('c', $room->last_at));
+                continue;
+            }
+
+            $users = Users::findByIds($user_ids);
+            foreach ($users as $user) {
+                $room->exitRoom($user, true);
+                info('exit', $user->id, $room->id, $user->user_type_text);
+            }
+        }
+    }
+
+    function checkUserRoom2Action()
+    {
+
+        $cond = ['conditions' => 'status = :status: and last_at<:last_at:',
             'bind' => ['status' => STATUS_ON, 'last_at' => time()]];
 
         $rooms = Rooms::findForeach($cond);
