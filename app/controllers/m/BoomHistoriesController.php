@@ -121,7 +121,7 @@ class BoomHistoriesController extends BaseController
                 $number = 1;
             }
 
-            info("contribution_user", $user->id, $target_id, $boom_user_id, $type, $number);
+            info("contribution_user", $user->id, $rank, $target_id, $boom_user_id, $type, $number);
 
         } else {
             $data = \BoomHistories::randomBoomGiftIdByBoomNum($room, 60);
