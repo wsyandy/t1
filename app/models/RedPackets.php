@@ -411,7 +411,7 @@ class RedPackets extends BaseModel
         if ($this->balance_diamond < 0 || $this->balance_num < 0) {
             info('Exce', $this->id, $this->user_id, 'get', $get_diamond, $usable_balance_diamond, '总', $this->balance_diamond, $this->balance_num, $min_diamond, $max_diamond, $avg_diamond);
 
-            $get_diamond = 0;
+            $get_diamond = $this->balance_diamond;
             $this->balance_diamond = 0;
             $this->balance_num = 0;
         }
