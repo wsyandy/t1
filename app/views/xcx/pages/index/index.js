@@ -1,8 +1,7 @@
 const app = getApp()
 Page({
   data: {
-    isIos: app.globalData.isIos, /*设备是否为IOS*/
-    isIpx: app.globalData.isIpx,/*设备是否为iPhone X*/
+    isIos: app.globalData.isIos, /*设备是否为IOS*/ 
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
     logo: '/images/logo_hi.png',
     avatarUrl: '',

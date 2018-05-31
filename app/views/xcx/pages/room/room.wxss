@@ -19,9 +19,9 @@
 
 .room_header {
   width: 100%;
+  height: 400rpx;
   flex-direction: column;
   align-items: center;
-  padding: 0rpx 30rpx 30rpx 30rpx;
 }
 
 .room_name {
@@ -76,6 +76,7 @@
 
 .seat_box {
   width: 100%;
+  height: 350rpx;
   flex-wrap: wrap;
 }
 
@@ -139,24 +140,182 @@
 }
 
 /*底部操作栏*/
-.tabbar{
+
+.tabbar {
   width: 100%;
   height: 120rpx;
   position: fixed;
   bottom: 0;
   left: 0;
-  flex-wrap: wrap; 
+  flex-wrap: wrap;
 }
-.tabbar_list{
+
+.tabbar_list {
   width: 20%;
   justify-content: center;
   align-items: center;
 }
-.tabbar_icon{
+
+.tabbar_icon {
   width: 64rpx;
   height: 64rpx;
 }
-.tabbar_list:nth-child(3) .tabbar_icon{
+
+.tabbar_list:nth-child(3) .tabbar_icon {
   width: 68rpx;
   height: 68rpx;
+}
+
+/*公示栏*/
+
+.bulletin {
+  position: fixed;
+  bottom: 120rpx; /*底部栏的高度*/
+  left: 0;
+  width: 590rpx;
+  height: 300rpx;
+  padding-left: 20rpx;
+  font-size: 24rpx;
+  color: #f0f0f0;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.bulletin_list {
+  background: rgba(255, 255, 255, 0.10);
+  border-radius: 8rpx;
+  margin-bottom: 14rpx;
+  padding: 16rpx;
+}
+
+.bulletin_hi {
+  color: #fe3f56;
+  padding-right: 10rpx;
+}
+
+.bulletin_tips {
+  color: #f0f0f0;
+}
+
+.bulletin_nickname {
+  color: #94939f;
+  padding-right: 10rpx;
+}
+
+.bulletin_system {
+  color: #ffbe00;
+}
+
+.bulletin_info {
+  color: #e3e2e5;
+}
+
+/*授权弹窗*/
+
+.auth_box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 630rpx;
+  height: 480rpx;
+  background-color: #fff;
+  border-radius: 16rpx;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth_list {
+  position: relative;
+  width: 510rpx;
+  height: 88rpx;
+  background-color: #ff4686;
+  border-radius: 8rpx;
+  justify-content: center;
+  align-items: center;
+  font-size: 32rpx;
+  color: #fff;
+}
+
+.auth_wechat {
+  margin-bottom: 80rpx;
+}
+
+.auth_btn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+
+.auth_close {
+  position: absolute;
+  bottom: -100rpx;
+  left: 50%;
+  width: 72rpx;
+  height: 72rpx;
+  margin-left: -36rpx;
+}
+
+/*HI账号登录*/
+
+.login_box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 630rpx;
+  height: 480rpx;
+  background-color: #fff;
+  border-radius: 16rpx;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.login_list {
+  position: relative;
+  width: 100%;
+  height: 88rpx;
+  padding: 0 30rpx;
+  align-items: center;
+  font-size: 32rpx;
+  color: #2d2d2d;
+  margin-top: 40rpx;
+}
+
+.login_title {
+  width: 120rpx;
+}
+
+.login_input {
+  border: 1px solid #ddd;
+  border-radius: 8rpx;
+  width: 440rpx;
+  height: 88rpx;
+  padding: 0 30rpx;
+}
+
+.login_btn {
+  margin-top: 50rpx;
+  width: 510rpx;
+  height: 88rpx;
+  background: #ff4686;
+  border-radius: 8rpx;
+  font-size: 32rpx;
+  color: #fff;
+  justify-content: center;
+  align-items: center;
+}
+
+.login_close {
+  position: absolute;
+  bottom: -100rpx;
+  left: 50%;
+  width: 72rpx;
+  height: 72rpx;
+  margin-left: -36rpx;
 }
