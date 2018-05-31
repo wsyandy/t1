@@ -508,7 +508,7 @@ ol, ul, li {
     -webkit-box-pack: justify;
     -ms-flex-pack: justify;
     justify-content: space-between;
-    width: 9.066667rem;
+    width: 100%;
     height: 1.173333rem;
 }
 
