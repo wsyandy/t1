@@ -389,19 +389,24 @@ class RedPackets extends BaseModel
         }
 
         if ($get_diamond > $max_diamond) {
-            $get_diamond = ceil($balance_diamond * 0.1);
+            $get_diamond = ceil($usable_balance_diamond * 0.1);
         }
 
         // 防止超出
-        if (($get_diamond >= $usable_balance_diamond || $get_diamond >= $balance_diamond) && $balance_num > 1) {
+        if ($get_diamond >= $usable_balance_diamond && $balance_num > 1) {
             $get_diamond = $min_diamond;
             if ($balance_num <= 3) {
-                $get_diamond = ceil($balance_diamond * 0.25);
+                $get_diamond = ceil($usable_balance_diamond * 0.25);
             }
         }
 
         $this->balance_diamond = $balance_diamond - $get_diamond;
         $this->balance_num = $balance_num - 1;
+
+        if ($this->balance_diamond < 0) {
+            $get_diamond = 0;
+            $this->balance_diamond = 0;
+        }
 
         if ($this->balance_diamond <= 0) {
             $this->status = STATUS_OFF;
