@@ -29,8 +29,10 @@
                 </div>
                 <div class="gift_num">
                     <p><span>礼物：</span> ${gift_order.name}x${ gift_order.gift_num }</p>
-                    <p><span>价格：</span> <i :class="[gift_order.pay_type == 'diamond'? 'diamond':'gold']"></i> ${
-                        gift_order.amount }${gift_order.pay_type_text}</p>
+                    <p v-if="gift_order.amount > 0"><span>价格：</span> <i
+                                :class="[gift_order.pay_type == 'diamond'? 'diamond':'gold']"></i>${gift_order.amount}${gift_order.pay_type_text}
+                    </p>
+                    <p v-if="gift_order.amount > 0" v-else><span>价格：</span> <i></i>天价</p>
                 </div>
             </div>
         </div>
