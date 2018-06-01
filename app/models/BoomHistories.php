@@ -429,6 +429,7 @@ class BoomHistories extends BaseModel
         $boom_amount = $room->getCurrentBoomGiftValue($boom_gift_time);
         $boom_num = $room->getBoomNum($boom_gift_time);
         $type = BOOM_HISTORY_GIFT_TYPE;
+        $target_id = 0;
         $number = 1;
 
         $lock = tryLock("boom_room_lock_" . $room_id);
