@@ -159,7 +159,10 @@
                         $('.cover').addClass('is-visible');
                         if (resp.error_code == 0) {
                             vm.has_prize = true;
-                            $('.cover').addClass('is-visible');
+                            vm.tip = '恭喜您抽中';
+                        } else {
+                            vm.has_prize = false;
+                            vm.tip = resp.error_reason;
                         }
                     }
                 })
