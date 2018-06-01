@@ -1,0 +1,1424 @@
+/* css reset */
+body, div, p, span, img, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, a, button, input, textarea, table, th, tr, td {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+    width: 100%;
+    background-color: #78CCB0;
+}
+
+body {
+    color: #333;
+    font-family: "微软雅黑";
+    width: 100%;
+
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: normal;
+    font-size: 100%;
+}
+
+input, textarea {
+    outline: none;
+}
+
+a {
+    color: #555;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+img {
+    border: none;
+}
+
+ol, ul, li {
+    list-style: none;
+}
+
+.vueBox {
+    width: 100%;
+}
+
+/* placeholder 字体颜色*/
+::-webkit-input-placeholder { /* WebKit browsers */
+    color: #B0B0B0;
+}
+
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color: #B0B0B0;
+}
+
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color: #B0B0B0;
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10+ */
+    color: #B0B0B0;
+}
+
+.banner {
+    width: 100%;
+    height: 3.1rem;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.prize {
+    width: 2rem;
+    height: 2rem;
+}
+
+.bg01_bottom, .bg01_bottom li {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    margin-right: 0.3rem;
+    font-size: 0.28rem;
+    color: #E17E42;
+}
+
+.bg01_bottom {
+    margin-top: 0.2rem;
+}
+
+.bg01_bottom .arrow01 {
+    margin-top: 0.18rem;
+}
+
+/*本周礼物上新*/
+
+.weekly_main {
+    width: 100%;
+    padding-top: 3.1rem;
+    position: relative;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-box-orient: vertical;
+    -moz-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    /*margin-top: -1.2rem;*/
+}
+
+/*本周礼物上新*/
+.new_prize {
+    position: absolute;
+    width: 1.02rem;
+    height: 1.02rem;
+    top: 2.92rem;
+    right: 0.18rem;
+    background-image: url("../images/new_prize.png");
+    -webkit-background-size: 100% 100%;
+    -moz-background-size: 100% 100%;
+    -o-background-size: 100% 100%;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-box-orient: vertical;
+    -moz-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    font-size: 0.22rem;
+    color: #33755F;
+    z-index: 2;
+
+}
+
+.prize_list {
+    width: 100%;
+    height: 100%;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+
+.prize_list li {
+    width: 50%;
+    margin-bottom: 0.5rem;
+
+    -webkit-border-radius: 0.2rem;
+    -moz-border-radius: 0.2rem;
+    border-radius: 0.2rem;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-box-orient: vertical;
+    -moz-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    font-size: 0.3rem;
+    color: #33755F;
+}
+
+.prize_list li img {
+    width: 2rem;
+    height: 2rem;
+    margin-bottom: 0.1rem;
+}
+
+/*上周榜单TOP1*/
+
+.title {
+    position: relative;
+    width: 100%;
+    height: 1.2rem;
+    background-image: url("../images/bg_title_0604.png");
+    -webkit-background-size: 3.3rem 0.88rem;
+    -moz-background-size: 3.3rem 0.88rem;
+    -o-background-size: 3.3rem 0.88rem;
+    background-size: 3.3rem 0.88rem;
+    background-repeat: no-repeat;
+    background-position: center center;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+
+}
+
+.title_text {
+    font-size: 0.3rem;
+    color: #FF8900;
+    padding-top: 0.3rem;
+}
+
+.bubble {
+    width: 0.2rem;
+    height: 0.2rem;
+    background: #D6FFF1;
+    border: 2px solid #54CEA5;
+    -webkit-box-shadow: inset 0 -4px 20px 0 #8AD3F2, inset 0 1px 20px 0 #67FFCC;
+    -moz-box-shadow: inset 0 -4px 20px 0 #8AD3F2, inset 0 1px 20px 0 #67FFCC;
+    box-shadow: inset 0 -4px 20px 0 #8AD3F2, inset 0 1px 20px 0 #67FFCC;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 0;
+    left: 1.18rem;
+
+}
+
+.lastweekly_top10 {
+    width: 100%;
+    padding-top: 0.4rem;
+}
+
+.lastweekly_list {
+    width: 100%;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-wrap: nowrap;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+
+.lastweekly_list li {
+    width: 1.8rem;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-box-orient: vertical;
+    -moz-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-flex-wrap: nowrap;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+
+}
+
+.list_tit {
+    font-size: 0.3rem;
+    color: #FFFFFF;
+    letter-spacing: 0;
+    text-align: center;
+    text-shadow: 0 4px 2px #33755F;
+    padding-bottom: 0.3rem;
+}
+
+.list_info {
+    width: 1.79rem;
+    height: 1.84rem;
+    background-image: url("../images/list_info_bg.png");
+    -webkit-background-size: 100% 100%;
+    -moz-background-size: 100% 100%;
+    -o-background-size: 100% 100%;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    position: relative;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-box-orient: vertical;
+    -moz-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    font-size: 0.22rem;
+    color: #33755F;
+
+}
+
+.list_icon {
+    height: 0.4rem;
+    margin-bottom: 0.24rem;
+}
+
+.list_avatar {
+    width: 0.8rem;
+    height: 0.8rem;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: #D8D8D8;
+    margin-bottom: 0.1rem;
+}
+
+.list_avatars {
+    position: relative;
+    width: 1.2rem;
+    height: 0.8rem;
+    margin-bottom: 0.05rem;
+}
+
+.list_avatars img {
+    width: 0.8rem;
+    height: 0.8rem;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: #D8D8D8;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1
+}
+
+.list_avatars img:last-child {
+    left: 0.4rem;
+    background-color: #c8c8c8;
+    z-index: 0;
+}
+.list_info p{
+    width: 1.5rem;
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-align: center;
+}
+/*本周榜单TOP10*/
+.weekly_footer {
+
+    width: 100%;
+    position: relative;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-box-orient: vertical;
+    -moz-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    margin-top: 0.8rem;
+}
+
+.bubble_two {
+    position: absolute;
+    top: 0;
+    right: 0.72rem;
+    width: 0.56rem;
+    height: 0.67rem;
+
+}
+
+.green_leaf {
+    position: absolute;
+    top: 0.3rem;
+    left: 0.72rem;
+    width: 1.21rem;
+    height: 1.98rem;
+
+}
+
+.remaining_time {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    font-size: 0.24rem;
+    color: #fff;
+    padding-top: 0.24rem;
+    padding-bottom: 0.36rem;
+}
+
+.count_down {
+    width: 2.2rem;
+}
+
+.bg04 {
+    position: relative;
+    width: 6.6rem;
+    background: #FFFFFF;
+    -webkit-border-radius: 0.2rem;
+    -moz-border-radius: 0.2rem;
+    border-radius: 0.2rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.4rem;
+}
+
+.orange_slice {
+    position: absolute;
+    top: -0.36rem;
+    right: 0.36rem;
+    width: 0.72rem;
+    height: 0.72rem;
+}
+
+.tabs {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+
+.tabs li {
+    width: 1.4rem;
+    height: 0.5rem;
+    background: #33A680;
+    -webkit-border-radius: 0.1rem;
+    -moz-border-radius: 0.1rem;
+    border-radius: 0.1rem;
+    font-size: 0.26rem;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    margin-right: 0.24rem;
+    color: #FFFFFF;
+}
+
+.tabs li.cur {
+    background: #FF8900;
+}
+
+.tabs li:nth-child(4) {
+    margin-right: 0
+}
+
+.tabs_tips {
+    width: 100%;
+    padding: 0.3rem;
+    text-align: center;
+    font-size: 0.22rem;
+    color: #999999;
+}
+
+.award_title {
+    font-size: 0.3rem;
+    color: #FF8900;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    padding: 0.1rem;
+}
+
+.award_list {
+    width: 100%;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    padding: 0.3rem;
+
+}
+
+.award_list li {
+    padding: 0 0.2rem;
+    -webkit-border-radius: 0.2rem;
+    -moz-border-radius: 0.2rem;
+    border-radius: 0.2rem;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-box-orient: vertical;
+    -moz-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    font-size: 0.24rem;
+    color: #33755F;
+    text-align: center;
+}
+
+.award_list li img {
+    width: 0.9rem;
+    height: 0.9rem;
+    margin-bottom: 0.1rem;
+}
+
+.award_list .award_tips {
+    font-size: 0.22rem;
+    color: #666666;
+}
+
+.new_list {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-justify-content: space-around;
+    -ms-flex-pack: distribute;
+    justify-content: space-around;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    padding: 0.3rem;
+
+}
+
+.new_list li {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-box-orient: vertical;
+    -moz-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    font-size: 0.24rem;
+    color: #666666;
+}
+
+.new_list .ico_prize {
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-bottom: 0.1rem;
+}
+
+.myself {
+    width: 100%;
+    padding: 0.3rem 0 0 0.5rem;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    border-top: 1px dashed #DDDDDD;
+    margin-top: 0.5rem;
+}
+
+.myself_avatar {
+    width: 1rem;
+    height: 1rem;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    background-color: #D8D8D8;;
+
+}
+
+.myself_text {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-box-orient: vertical;
+    -moz-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    font-size: 0.24rem;
+    padding-left: 0.24rem;
+}
+
+.myself_name {
+    color: #333333;
+    padding-bottom: 0.1rem;
+}
+
+.myself_info {
+    color: #999999;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+.myself_info p {
+    margin-right: 0.5rem;
+}
+
+/*情侣榜*/
+.myself_lover {
+    font-size: 0.24rem;
+}
+
+.myself .lover_imgs {
+
+    margin-left: 0.6rem;
+}
+
+.myself .lover_avatar {
+    border: 0;
+}
+
+.myself .lover_names {
+    font-size: 0.26rem;
+    color: #333333;
+}
+
+.myself_lover .myself_info {
+    margin-left: 1.2rem;
+    padding: 0.2rem;
+}
+
+/*本周榜单 贡献榜 魅力榜 礼物榜 列表*/
+.rank_list {
+    width: 100%;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-box-orient: vertical;
+    -moz-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    position: relative;
+    padding-top: 2.6rem;
+
+}
+
+.rank_list li {
+    width: 100%;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    font-size: 0.24rem;
+}
+
+.rank_info {
+    width: 6rem;
+    height: 1.1rem;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.rank_list li:last-child .rank_info {
+    border-bottom: none;
+}
+
+.rank_num {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    width: 0.4rem;
+    height: 0.4rem;
+
+    color: #666666;
+}
+
+.rank_avatar_bg {
+    width: 0.6rem;
+    height: 0.6rem;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    background-color: #D8D8D8;
+    margin-left: 0.6rem;
+    margin-right: 0.3rem;
+    overflow: hidden;
+}
+
+.rank_avatar {
+    width: 100%;
+    height: 100%;
+
+}
+
+.rank_name {
+    width: 4rem;
+    display: block;
+    color: #666666;
+    overflow: hidden;
+    white-space: nowrap;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+}
+
+/* 第1名*/
+.rank_list li.rank_first {
+    position: absolute;
+    width: 2.6rem;
+    top: 0.3rem;
+    left: 50%;
+    margin-left: -1.3rem;
+
+}
+
+.rank_list li.rank_first .rank_num {
+    display: none;
+}
+
+.rank_list li.rank_first .rank_info {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-box-orient: vertical;
+    -moz-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    height: auto;
+    /*background-image: none;*/
+
+    border-bottom: none;
+}
+
+.rank_list li.rank_first .rank_avatar_bg {
+    position: relative;
+    width: 2.08rem;
+    height: 1.56rem;
+
+    background-color: transparent;
+    margin: 0;
+
+}
+
+.rank_list li.rank_first .rank_avatar_bg .rank_avatar {
+    position: absolute;
+    top: 0.04rem;
+    left: 50%;
+    margin-left: -0.69rem;
+    width: 1.38rem;
+    height: 1.38rem;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+}
+
+.rank_list li.rank_first .rank_name {
+    width: 2.6rem;
+    padding-top: 0.1rem;
+    text-align: center;
+    font-size: 0.3rem;
+    color: #FF9700;
+}
+
+/* 第2名*/
+
+.rank_list li.rank_second .rank_num, .rank_list li.rank_second .rank_name {
+    color: #3C80E2
+}
+
+/* 第3名*/
+
+.rank_list li.rank_third .rank_num, .rank_list li.rank_third .rank_name {
+    color: #FF761B;
+}
+
+.rank_avatar_border {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+/*情侣榜*/
+
+.lover_list {
+    width: 100%;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-box-orient: vertical;
+    -moz-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    padding-top: 0.5rem;
+}
+
+.lover_list li {
+    width: 100%;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    font-size: 0.24rem;
+}
+
+.lover_info {
+    position: relative;
+    width: 6rem;
+    height: 1.2rem;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    color: #666666;
+    border-bottom: 1px solid #ddd;
+}
+
+.lover_list li:last-child .lover_info {
+    border-bottom: none
+}
+
+.lover_num {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    width: 0.8rem;
+    height: 0.4rem;
+}
+
+.lover_imgs {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    padding: 0 0.3rem;
+}
+
+.lover_avatar {
+    width: 0.8rem;
+    height: 0.8rem;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    background-color: #D8D8D8;
+    border: 1px solid #FE8BA8;
+}
+
+.lover_heart {
+    width: 0.3rem;
+    height: 0.25rem;
+    margin: 0.1rem;
+}
+
+.lover_names {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+
+.lover_name {
+    max-width: 1.5rem;
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+}
+
+/*第一名*/
+.lover_info1 {
+    font-size: 0.3rem;
+    color: #FF5B85;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-box-orient: vertical;
+    -moz-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    height: 2.4rem;
+}
+
+.lover_info1 .symbol_and {
+    width: 1.1rem;
+}
+
+.lover_info1 .lover_num {
+    font-size: 0.24rem;
+    background: #FF5B85;
+    -webkit-border-radius: 0.08rem;
+    -moz-border-radius: 0.08rem;
+    border-radius: 0.08rem;
+    color: #fff;
+    position: absolute;
+    left: 0;
+    top: 0.1rem;
+}
+
+.lover_info1 .lover_imgs {
+    padding-bottom: 0.2rem;
+}
+
+.lover_info1 .lover_avatar {
+    border: 1px solid #FF5B85;
+    width: 1.2rem;
+    height: 1.2rem;
+}
+
+.lover_info1 .lover_heart {
+    width: 0.62rem;
+    height: 0.54rem;
+    margin: 0.24rem;
+}
+
+/*第二名*/
+
+.lover_info2 {
+    color: #5C9EFF;
+}
+
+.lover_info2 .lover_num {
+    background: #5C9EFF;
+    -webkit-border-radius: 0.08rem;
+    -moz-border-radius: 0.08rem;
+    border-radius: 0.08rem;
+    color: #fff;
+}
+
+.lover_info2 .lover_avatar {
+    border: 1px solid #5C9EFF;
+}
+
+/*第三名*/
+.lover_info3 {
+    color: #FF7237;
+}
+
+.lover_info3 .lover_num {
+    background: #FF7237;
+    -webkit-border-radius: 0.08rem;
+    -moz-border-radius: 0.08rem;
+    border-radius: 0.08rem;
+    color: #fff;
+}
+
+.lover_info3 .lover_avatar {
+    border: 1px solid #FF7237;
+}
+
+/*规则*/
+
+.rule_btn {
+    width: 0.6rem;
+    height: 0.7rem;
+    position: absolute;
+    top: 0;
+    left: 0.36rem;
+    z-index: 9;
+}
+
+.footer {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    font-size: 0.24rem;
+    color: #fff;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.footer_bubble_two {
+    position: absolute;
+    bottom: 0;
+    right: 0.72rem;
+    width: 0.56rem;
+    height: 0.67rem;
+
+}
+
+/*规则说明*/
+
+.mask {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-box-orient: vertical;
+    -moz-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    z-index: 9;
+}
+
+.rule_box, .new_box {
+    position: relative;
+    width: 6.6rem;
+    height: 8.45rem;
+    background-image: url("../images/rule_bg_4.png");
+    -webkit-background-size: 100% 100%;
+    -moz-background-size: 100% 100%;
+    -o-background-size: 100% 100%;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    padding: 2rem 0.5rem 0.6rem 0.5rem;
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
+    -ms-transform: translateY(0);
+    -o-transform: translateY(0);
+    transform: translateY(0);
+    -webkit-transition: -webkit-transform 0.3s;
+    transition: -webkit-transform 0.3s;
+    -o-transition: -o-transform 0.3s;
+    -moz-transition: transform 0.3s, -moz-transform 0.3s;
+    transition: transform 0.3s;
+    transition: transform 0.3s, -webkit-transform 0.3s, -moz-transform 0.3s, -o-transform 0.3s;
+}
+
+.new_box {
+    padding: 2.2rem 0.5rem 0.6rem 0.5rem;
+    background-image: url("../images/new_bg.png");
+}
+
+.rule_list li {
+    font-size: 0.28rem;
+    color: #625044;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    padding-bottom: 0.3rem;
+}
+
+.rule_list li p {
+    width: 5rem;
+}
+
+.rule_num {
+    display: inline-block;
+    width: 0.32rem;
+    height: 0.32rem;
+    background: #FFBD3C;;
+    line-height: 0.32rem;
+    text-align: center;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    color: #fff;
+    margin-right: 0.24rem;
+}
+
+.highlight {
+    color: #f00;
+}
+
+.rule_right {
+    width: 100%;
+    position: absolute;
+    bottom: .5rem;
+    left: 0;
+    text-align: center;
+    font-size: 0.24rem;
+    color: #999;
+}
+
+.rule_close {
+    position: absolute;
+    left: 50%;
+    bottom: -1.2rem;
+    width: 0.6rem;
+    height: 0.6rem;
+    margin-left: -0.3rem;
+
+}
+
+/* 遮罩层弹出动画 */
+.slidup {
+    display: block;
+    -webkit-animation: slidup 0.3s ease-out both;
+    -moz-animation: slidup 0.3s ease-out both;
+    -o-animation: slidup 0.3s ease-out both;
+    animation: slidup 0.3s ease-out both;
+}
+
+@-webkit-keyframes slidup {
+    from {
+        -webkit-transform: translateY(-100%);
+        transform: translateY(-100%);
+    }
+    to {
+        -webkit-transform: translateY(0%);
+        transform: translateY(0%);
+    }
+}
+
+@-moz-keyframes slidup {
+    from {
+        -moz-transform: translateY(-100%);
+        transform: translateY(-100%);
+    }
+    to {
+        -moz-transform: translateY(0%);
+        transform: translateY(0%);
+    }
+}
+
+@-o-keyframes slidup {
+    from {
+        -o-transform: translateY(-100%);
+        transform: translateY(-100%);
+    }
+    to {
+        -o-transform: translateY(0%);
+        transform: translateY(0%);
+    }
+}
+
+@keyframes slidup {
+    from {
+        -webkit-transform: translateY(-100%);
+        -moz-transform: translateY(-100%);
+        -o-transform: translateY(-100%);
+        transform: translateY(-100%);
+    }
+    to {
+        -webkit-transform: translateY(0%);
+        -moz-transform: translateY(0%);
+        -o-transform: translateY(0%);
+        transform: translateY(0%);
+    }
+}
+[v-cloak] {
+    display: none !important;
+}

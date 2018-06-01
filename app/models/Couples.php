@@ -83,12 +83,6 @@ class Couples extends BaseModel
         return 'cp_marriage_time';
     }
 
-    //保存cp后互刷的情侣值
-    static function generateCpInfoKey()
-    {
-        return 'cp_info';
-    }
-
     static function getMarriageTime($sponsor_id, $pursuer_id)
     {
         $db = \Users::getUserDb();
@@ -161,12 +155,6 @@ class Couples extends BaseModel
 
 
         info('更新情侣值', $amount, $member);
-        //520当天总榜，暂已停用
-
-
-//        $cp_info_key = self::generateCpInfoKey();
-//        $db->zincrby($cp_info_key, $amount, $member);
-
 
         //同步双方的情侣值
         self::updateCoupleTotalValue($sender_id, $receive_id, $amount);
@@ -175,6 +163,16 @@ class Couples extends BaseModel
         self::updateCoupleWeekValue($member, $amount);
         //统计各自的周榜情侣值
         self::updateCoupleWeekValueForUser($sender_id, $receive_id, $amount);
+
+        //统计日榜情侣值
+        self::updateCoupleDayValue($member, $amount);
+
+        //统计各自日榜情侣值
+        self::updateCoupleDayValueForUser($sender_id, $receive_id, $amount);
+
+        //统计总榜情侣值
+        self::updateTotalCoupleValue($member, $amount);
+
     }
 
     //双方各自的同步总cp值
@@ -201,28 +199,26 @@ class Couples extends BaseModel
     static function updateCoupleWeekValueForUser($sender_id, $receive_id, $amount)
     {
         $db = \Users::getUserDb();
-        $sender_key = self::generateCoupleWeekValueKey($sender_id);
+        $sender_key = self::generateCoupleKeyForUser('week', $sender_id);
         $db->zincrby($sender_key, $amount, $receive_id);
 
-        $receive_key = self::generateCoupleWeekValueKey($receive_id);
+        $receive_key = self::generateCoupleKeyForUser('week', $receive_id);
         $db->zincrby($receive_key, $amount, $sender_id);
 
         info('情侣值周榜增加', $sender_key, $receive_key, $amount);
     }
 
-
-    static function generateCoupleWeekValueKey($user_id, $time = '')
-    {
-        if (!$time) {
-            $time = time();
-        }
-        return 'couple_week_value_' . $user_id . '_' . date("Ymd", beginOfWeek($time)) . '_' . date("Ymd", endOfWeek($time));
-    }
+    //做了一个总的 暂时停用
+//    static function generateCoupleWeekValueKey($user_id, $time = '')
+//    {
+//        if (!$time) {
+//            $time = time();
+//        }
+//        return 'couple_week_value_' . $user_id . '_' . date("Ymd", beginOfWeek($time)) . '_' . date("Ymd", endOfWeek($time));
+//    }
 
     static function sendCpFinishMessage($user, $body)
     {
-        //在游戏结束回调通知的时候，发送结束通知
-
         $intranet_ip = $user->getIntranetIp();
         $receiver_fd = $user->getUserFd();
 
@@ -320,16 +316,18 @@ class Couples extends BaseModel
         $db = \Users::getUserDb();
 
         $offset = $per_page * ($page - 1);
-        $res = $db->zrevrange($key, $offset, $offset + $per_page - 1);
+        $res = $db->zrevrange($key, $offset, $offset + $per_page - 1, 'withscores');
 
         $all_users = [];
-        foreach ($res as $index => $re) {
-            $ids = explode('_', $re);
+        $index = 0;
+        foreach ($res as $ids_str => $score) {
+            $ids = explode('_', $ids_str);
             $users = \Users::findByIds($ids);
             if (isPresent($users)) {
-                $all_users[$index][] = $users[0]->toCpJson();
-                $all_users[$index][] = $users[1]->toCpJson();
-
+                $all_users[$index][] = $users[0]->toRankListJson();
+                $all_users[$index][] = $users[1]->toRankListJson();
+                $all_users[$index]['score'] = $score;
+                $index++;
             }
         }
         return $all_users;
@@ -348,6 +346,29 @@ class Couples extends BaseModel
 
         //删除当前周情侣榜,双方周情侣值，只清除当前周
         self::clearWeekCoupleInfo($sponsor_id, $pursuer_id);
+
+        //清除当前日榜情侣榜、双方日情侣值，只清除当天
+        self::clearDayCoupleInfo($sponsor_id, $pursuer_id);
+    }
+
+    static function clearDayCoupleInfo($sponsor_id, $pursuer_id)
+    {
+        $user_db = \Users::getUserDb();
+        $cp_week_charm_key = \Users::generateFieldRankListKey('day', 'cp');
+        if ($user_db->zscore($cp_week_charm_key, $sponsor_id . '_' . $pursuer_id)) {
+            $user_db->zrem($cp_week_charm_key, $sponsor_id . '_' . $pursuer_id);
+        }
+
+        //删除双方天情侣值，只清除当天
+        $sponsor_cp_week_key = self::generateCoupleKeyForUser('day', $sponsor_id);
+        if ($user_db->zscore($sponsor_cp_week_key, $pursuer_id)) {
+            $user_db->zrem($sponsor_cp_week_key, $pursuer_id);
+        }
+
+        $pursuer_cp_week_key = self::generateCoupleKeyForUser('day', $pursuer_id);
+        if ($user_db->zscore($pursuer_cp_week_key, $sponsor_id)) {
+            $user_db->zrem($pursuer_cp_week_key, $sponsor_id);
+        }
     }
 
     static function clearCoupleInfoForUser($sponsor_id, $pursuer_id)
@@ -386,7 +407,7 @@ class Couples extends BaseModel
     static function clearTotalCoupleInfo($sponsor_id, $pursuer_id)
     {
         $user_db = \Users::getUserDb();
-        $cp_info_key = \Couples::generateCpInfoKey();
+        $cp_info_key = \Users::generateFieldRankListKey('total', 'cp');
         if ($user_db->zscore($cp_info_key, $sponsor_id . '_' . $pursuer_id) > 0) {
             $user_db->zrem($cp_info_key, $sponsor_id . '_' . $pursuer_id);
         }
@@ -402,12 +423,12 @@ class Couples extends BaseModel
         }
 
         //删除双方周情侣值，只清除当前周
-        $sponsor_cp_week_key = self::generateCoupleWeekValueKey($sponsor_id);
+        $sponsor_cp_week_key = self::generateCoupleKeyForUser('week', $sponsor_id);
         if ($user_db->zscore($sponsor_cp_week_key, $pursuer_id)) {
             $user_db->zrem($sponsor_cp_week_key, $pursuer_id);
         }
 
-        $pursuer_cp_week_key = self::generateCoupleWeekValueKey($pursuer_id);
+        $pursuer_cp_week_key = self::generateCoupleKeyForUser('week', $pursuer_id);
         if ($user_db->zscore($pursuer_cp_week_key, $sponsor_id)) {
             $user_db->zrem($pursuer_cp_week_key, $sponsor_id);
         }
@@ -442,5 +463,63 @@ class Couples extends BaseModel
         $cache->expire($key, 0);
         $body = ['action' => 'game_notice', 'type' => 'over', 'content' => 'cp超时，自动关闭'];
         self::sendCpFinishMessage($user, $body);
+    }
+
+    //统计日榜情侣值
+    static function updateCoupleDayValue($member, $amount)
+    {
+        $db = \Users::getUserDb();
+        $cp_week_charm_key = \Users::generateFieldRankListKey('day', 'cp');
+        info('情侣值周榜增加', $cp_week_charm_key, $member);
+        $db->zincrby($cp_week_charm_key, $amount, $member);
+    }
+
+
+    //统计各自日榜情侣值
+    static function updateCoupleDayValueForUser($sender_id, $receive_id, $amount)
+    {
+        $db = \Users::getUserDb();
+        $sender_key = self::generateCoupleKeyForUser('day', $sender_id);
+        $db->zincrby($sender_key, $amount, $receive_id);
+
+        $receive_key = self::generateCoupleKeyForUser('day', $receive_id);
+        $db->zincrby($receive_key, $amount, $sender_id);
+
+        info('情侣值日榜增加', $sender_key, $receive_key, $amount);
+    }
+
+    //统计总榜情侣值
+    static function updateTotalCoupleValue($member, $amount)
+    {
+        $db = \Users::getUserDb();
+        $cp_week_charm_key = \Users::generateFieldRankListKey('total', 'cp');
+        info('情侣值总榜增加', $cp_week_charm_key, $member);
+        $db->zincrby($cp_week_charm_key, $amount, $member);
+    }
+
+    //根据不同的类型生成对应不成的key  total/week/day  用户针对于用户个人存储
+    static function generateCoupleKeyForUser($type, $user_id, $opts = [])
+    {
+        switch ($type) {
+            case 'day':
+                $date = fetch($opts, 'date', date("Ymd"));
+                $key = 'couple_day_value_' . $user_id . '_' . $date;
+                break;
+            case
+            'week':
+                $start_at = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                $end_at = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                $key = 'couple_week_value_' . $user_id . '_' . $start_at . '_' . $end_at;
+                break;
+            case 'total':
+//                $key = 'cp_info_for_user_' . $user_id;
+                //用的地方太多，暂时这么写，以防数据错乱，初步完成后，再调整
+                $key = self::generateCpInfoForUserKey($user_id);
+                break;
+            default:
+                return '';
+        }
+
+        return $key;
     }
 }

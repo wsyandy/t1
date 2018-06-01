@@ -687,6 +687,66 @@ class ActivitiesController extends BaseController
         return $this->giftCharmRankActivity();
     }
 
+    //礼物周榜活动    2018-06-04
+    function giftCharmWeek20180604rankActivityAction()
+    {
+        return $this->newGiftCharmRankActivity();
+    }
+
+    function newGiftCharmRankActivity()
+    {
+        $current_user = $this->currentUser();
+        $id = $this->params('id');
+        $current_user = $this->currentUser();
+        $activity = \Activities::findFirstById($id);
+
+        if (!$activity) {
+            echo "参数错误";
+            return false;
+        }
+
+        $last_activity_id = $activity->last_activity_id;
+
+        $last_activity = \Activities::findFirstById($last_activity_id);
+
+        if ($last_activity_id && !$last_activity) {
+            echo "参数错误";
+            return false;
+        }
+
+        list($last_gifts, $gifts) = \Gifts::getGiftsList($last_activity, $activity);
+
+        $last_activity_start = date("Ymd", beginOfWeek($last_activity->start_at));
+        $last_activity_end = date("Ymd", endOfWeek($last_activity->start_at));
+        $opts = ['start' => $last_activity_start, 'end' => $last_activity_end];
+
+        //根据关联活动的时间拿到对应周的贡献榜（wealth）、魅力榜(charm)、礼物榜(total_gifts)、情侣榜(cp)的周榜第一名
+        $last_activity_wealth_key = \Users::generateFieldRankListKey('week', 'wealth', $opts);
+        $last_activity_charm_key = \Users::generateFieldRankListKey('week', 'charm', $opts);
+        $last_activity_cp_key = \Users::generateFieldRankListKey('week', 'cp', $opts);
+        $last_activity_total_gifts_key = $last_activity->getStatKey('');
+
+
+        $cp_users = \Couples::findCpRankListByKey($last_activity_cp_key, 1, 1);
+        $wealth_users = \Users::findFieldRankListByKey($last_activity_wealth_key, 'wealth', 1, 1);
+        $charm_users = \Users::findFieldRankListByKey($last_activity_charm_key, 'charm', 1, 1);
+        $total_gifts_users = \Users::findFieldRankListByKey($last_activity_total_gifts_key, 'total_gifts', 1, 1);
+
+
+        $last_activity_users = array_merge(['cp' => $cp_users], $wealth_users->toJson('wealth', 'toChatJson'),
+            $charm_users->toJson('charm', 'toChatJson'), $total_gifts_users->toJson('total_gifts', 'toChatJson'));
+        info('上周top1', $last_activity_users);
+        info('上次活动名类型', $last_activity->activity_type, $last_activity->id);
+
+        $this->view->last_activity_users = json_encode($last_activity_users,JSON_UNESCAPED_UNICODE);
+        $this->view->id = $id;
+        $this->view->gifts = $gifts;
+        $this->view->activity = $activity;
+        $this->view->start_time = date("Y/m/d H:i:s", $activity->start_at);
+        $this->view->end_time = date("Y/m/d H:i:s", $activity->end_at);
+        $this->view->current_user = $current_user->toChatJson();
+    }
+
     function getCurrentActivityRankListAction()
     {
         if ($this->request->isAjax()) {
@@ -748,7 +808,7 @@ class ActivitiesController extends BaseController
 
 
             $users = \Couples::findCpRankListByKey($key, 1, 10);
-            $current_user_cp_info = $user->getCurrentWeekActivityCpInfo($activity->start_at, $opts);
+            $current_user_cp_info = $user->getCurrentRankListCpInfo('week', $opts);
             debug($key);
             info('当前用户信息', $current_user_cp_info);
 
