@@ -329,7 +329,7 @@ class GiftOrders extends BaseModel
 
                 if (!$this->sender->isSilent()) {
                     debug($this->amount, $this->sender_id, $this->gift_num, $params);
-                    Rooms::statDayIncome($room, $this->amount, $this->sender_id, $this->gift_num, $params);
+                    Rooms::statDayIncome($room, $this->amount, $this->sender, $this->gift_num, $params);
                 }
             }
 
