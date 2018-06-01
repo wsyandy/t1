@@ -2318,6 +2318,12 @@ class Users extends BaseModel
         return $this->id == $room->user_id;
     }
 
+    //是否为群主
+    function isGroupChatHost($group_chat)
+    {
+        return $this->id == $group_chat->user_id;
+    }
+
     function setSpeaker($speaker)
     {
         $this->speaker = $speaker;
