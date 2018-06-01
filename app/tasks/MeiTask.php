@@ -13,7 +13,7 @@ class MeiTask extends \Phalcon\Cli\Task
         $room = Rooms::findFirstById(54);
         for ($i = 1; $i <= 1000; $i++) {
             $user = Users::randomSilentUser();
-            $user->segment = 1;
+            //$user->segment = 1;
             BoomHistories::getPrize($user, $room);
         }
     }
