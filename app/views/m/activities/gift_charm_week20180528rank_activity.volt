@@ -122,25 +122,25 @@
                             <span>{{ current_user['nickname'] }}</span>
                         </div>
                         <div class="myself_info" v-show="curIdx==0">
-                            <p>贡献榜排名：<span class="highlight" v-text="current_user_info['current_rank']"></span>名</p>
+                            <p>贡献榜排名：<span class="highlight" v-text="current_user_info['current_rank_text']"></span>名</p>
                             <p>贡献值：<span class="highlight"
                                          v-text="current_user_info['current_score']?current_user_info['current_score']:0"></span>分
                             </p>
                         </div>
                         <div class="myself_info" v-show="curIdx==1">
-                            <p>魅力榜排名：<span class="highlight" v-text="current_user_info['current_rank']"></span>名</p>
+                            <p>魅力榜排名：<span class="highlight" v-text="current_user_info['current_rank_text']"></span>名</p>
                             <p>魅力值：<span class="highlight"
                                          v-text="current_user_info['current_score']?current_user_info['current_score']:0"></span>分
                             </p>
                         </div>
                         <div class="myself_info" v-show="curIdx==2">
-                            <p>礼物榜排名：<span class="highlight" v-text="current_user_info['current_rank']"></span>名</p>
+                            <p>礼物榜排名：<span class="highlight" v-text="current_user_info['current_rank_text']"></span>名</p>
                             <p>礼物值：<span class="highlight"
                                          v-text="current_user_info['current_score']?current_user_info['current_score']:0"></span>分
                             </p>
                         </div>
                         <div class="myself_info" v-show="curIdx==3">
-                            <p>情侣榜排名：<span class="highlight" v-text="current_user_info['current_rank']"></span>名</p>
+                            <p>情侣榜排名：<span class="highlight" v-text="current_user_info['current_rank_text']"></span>名</p>
                             <p>情侣值：<span class="highlight"
                                          v-text="current_user_info['current_score']?current_user_info['current_score']:0"></span>分
                             </p>
