@@ -1,3 +1,5 @@
 {
-  "navigationBarTitleText": "我的礼物"
+  "navigationBarTitleText": "我的礼物",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
 }
