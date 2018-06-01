@@ -3,8 +3,9 @@ const request = require('../../utils/wxRequest.js');
 const Utils = require('../../utils/util.js');
 Page({
   data: {
+    page:1,
     hasUserInfo: false,
-    isIos: app.globalData.isIos, /*设备是否为IOS*/ 
+    isIos: app.globalData.isIos, /*设备是否为IOS*/
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
     logo: '/images/logo_hi.png',
     avatarUrl: '',
@@ -358,6 +359,7 @@ Page({
   /* 滚动选项卡点击 Swiper 跳转到对应显示页 */
   tabSelect: function (e) {
     let idx = e.currentTarget.dataset.idx
+    console.log(idx)
     this.setData({
       curIdx: idx,
       curItem: idx,
@@ -368,6 +370,7 @@ Page({
   /* Swiper 内容改变时，滚动选项卡跳转到对应位置 */
   tabSwiperChange: function (e) {
     let i = e.detail.current
+    console.log(i)
     this.setData({
       curIdx: i,
       toView: 'tabs_' + (i - 1)
@@ -377,15 +380,20 @@ Page({
 
   /*用户授权*/
   getUserInfo: function (e) {
-  
-    // app.getUserInfo(e,  (res)=> {
-    //   Utils.log(`data:${JSON.stringify(res)}`)
-    //   if (res) {
-    //     this.setData({
-    //       userInfo: res,
-    //       hasUserInfo: true
-    //     })
-    //   }
+
+    app.getUserInfo(e, (res) => {
+      Utils.log(`data:${JSON.stringify(res)}`)
+      if (res) {
+        this.setData({
+          userInfo: res,
+          hasUserInfo: true
+        })
+      }
+    })
+
+    // this.setData({
+    //   avatarUrl: e.detail.userInfo.avatarUrl,
+    //   hasUserInfo: true
     // })
 
     this.setData({
@@ -414,11 +422,26 @@ Page({
   },
   navToInfo: function (e) {
     let index = e.currentTarget.dataset.index;
+
     switch (index) {
       case 0:
-        wx.navigateTo({
-          url: '/pages/room/room'
-        })
+
+        var url = getCurrentPages()[getCurrentPages().length - 1].route //获取当前页面的路径
+        Utils.log(`当前页面的路径:${url}`)
+        if (url == 'pages/index/index') {
+          this.setData({
+            hideInfo: true,
+          })
+          setTimeout(() => {
+            this.setData({
+              hideMask: true,
+            })
+          }, 500)
+        } else {
+          wx.redirectTo({
+            url: '/pages/index/index'
+          })
+        }
         break;
       case 1:
         wx.navigateTo({
@@ -443,7 +466,7 @@ Page({
     }
   },
   /* 路由事件 */
-  navToMyProfile: function () { 
+  navToMyProfile: function () {
     wx.navigateTo({
       url: '/pages/my_profile/my_profile'
     })
@@ -518,10 +541,48 @@ Page({
         confirmText: "好"
       })
     }
-    
+    this.showTab()//加载房间分类标题
+    // this.creatRoom('测试房间1')
   },
+  showTab: function () {
+    var _this = this
+    request.postRequest('rooms/types').then(res => {
+      if (res.data.error_code != 0) {
+        wx.showToast({
+          title: '请求失败',
+          icon: "none",
+          duration: 1000
+        })
+      } else {
+        let types = res.data.types
+        _this.setData({
+          topTabs: types
+        })
+        console.log(types)
+        _this.roomList(types[0].type, types[0].value)
+      }
+    })
+  },
+  roomList: function (type, value) {
+    let data = { new: value, page: this.data.page, per_page:10 }
+    var _this = this
+    console.log(data)
+    request.postRequest('rooms/index',data).then(res => {
+      console.log(res.data.rooms)
+      // if(data.hot){
+        _this.setData({
+          hotList:res.data.rooms
+        })
+      // }
+    })
 
-
+  },
+  creatRoom: function (name, room_tag_ids){
+    let data = { name: name, room_tag_ids: room_tag_ids }
+    request.postRequest('rooms/create', data).then(res => {
+      console.log(res)
+    })
+  },
   /**
  * 页面相关事件处理函数--监听用户下拉动作
  */
