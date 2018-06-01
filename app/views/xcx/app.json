@@ -5,7 +5,8 @@
     "pages/my_profile/my_profile",
     "pages/my_account/my_account",
     "pages/my_gift/my_gift",
-    "pages/my_focus/my_focus"
+    "pages/my_focus/my_focus",
+    "pages/ranking/ranking"
   ],
   "window": {
     "backgroundTextStyle": "light",

@@ -1,0 +1,39 @@
+<!--pages/ranking/ranking.wxml-->
+<view class="rank_head">
+  <view class="rank_tabs">
+    <text class="{{tabsIdx==index?'rank_tab_cur':'rank_tab'}}" wx:for="{{tabs}}" data-index="{{index}}" wx:key="rank{{index}}" catchtap="rankTabs">{{item}}</text>
+  </view>
+  <view class="rank_type">
+  <view catchtap='tabSelect' class="rank_type_item {{curIdx==index?'rank_type_cur':'rank_type_text'}}" wx:for="{{topTabs}}" wx:key="{{index}}"  data-idx="{{index}}"  >
+    <text >{{item}}</text>
+  </view>
+</view>
+</view>
+
+
+<!-- swiper导航标签页 -->
+<view class='slider-wrapper'>
+  <swiper bindchange="tabSwiperChange" current="{{curItem}}" style='height:{{scrollheight}}px'>
+    <!-- 日榜 -->
+    <swiper-item>
+      <scroll-view scroll-y style='height:{{scrollheight}}px'>
+123
+      </scroll-view>
+
+    </swiper-item>
+    <!-- 月榜 -->
+    <swiper-item>
+      <scroll-view scroll-y style='height:{{scrollheight}}px'>
+abc
+      </scroll-view>
+
+    </swiper-item>
+    <!-- 总榜 -->
+    <swiper-item>
+      <scroll-view scroll-y style='height:{{scrollheight}}px'>
+2ef
+      </scroll-view>
+
+    </swiper-item>
+  </swiper>
+</view>
