@@ -431,7 +431,7 @@ class BoomHistories extends BaseModel
                         if (!Backpacks::createBackpack($user, ['target_id' => $target_id, 'number' => $number, 'type' => BACKPACK_GIFT_TYPE])) {
                             return [ERROR_CODE_FAIL, '加入背包失败', null];
                         }
-                        if (!$gift->isNormal()) {
+                        if (!$gift->isNormal() && $gift->isSvga()) {
                             $content = "恭喜【{$user->nickname}】在爆火箭中获得了超超超绝版礼物[{$gift->name}]";
                             Rooms::delay()->asyncAllNoticePush($content, ['hot' => 1, 'type' => 'top_topic_message']);
                         }
@@ -554,7 +554,7 @@ class BoomHistories extends BaseModel
             $type = fetch($data, 'type');
             $target_id = fetch($data, 'target_id');
             $number = fetch($data, 'number');
-            info("contribution_user", $user->id, $user->uid, $user->segment, $pay_amount, $rank, $target_id, $type, $number);
+            info("contribution_user", $user->id, $user->uid, $user->segment, 'pay_amount', $pay_amount, 'rank', $rank, 'target_id', $target_id, 'type', $type, 'number', $number);
         } else {
             if ($user->segment) {
                 $data = \BoomHistories::userSegmentGift($user, $room, ['boom_num' => $boom_num]);
