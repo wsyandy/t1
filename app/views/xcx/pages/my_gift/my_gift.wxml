@@ -1,0 +1,70 @@
+<!--pages/my_gift/my_gift.wxml-->
+<view class="mygift_head">
+  <view class="mygift_tabs">
+    <text class="{{tabsIdx==index?'mygift_tab_cur':'mygift_tab'}}" wx:for="{{tabs}}" data-index="{{index}}" wx:key="mygift{{index}}" catchtap="mygiftTabs">{{item}}</text>
+  </view>
+</view>
+<scroll-view class="mygift_scroll" scroll-y style='height:{{scrollheight}}px'>
+<!-- 收到礼物 -->
+  <view hidden="{{tabsIdx!==0}}" class="mygift_get">
+    <view class="mygift_list" wx:for="{{giftgetList}}" data-index="{{index}}" wx:key="gift{{index}}">
+      <view class='gift_img'>
+        <image class='gift_avatar' mode='scaleToFill' src='{{item.avatar}}' catchtap="navTouserInfo"></image>
+      </view>
+      <view class="gift_info">
+        <view class="gift_info_top">
+          <view class="gift_giver" catchtap="navTouserInfo">
+            <text class="gift_name">{{item.giver}}</text>
+            <text class="highlight">送给您的礼物</text>
+          </view>
+          <text class="gift_time">{{item.time}}</text>
+        </view>
+        <view class="gift_info_list">
+          <image class='gift_ico' mode='scaleToFill' src='{{item.gift_ico}}'></image>
+          <view class="gift_txt">
+            <view class="gift_tit">
+              <text>礼物：</text>
+              <text class="gift_num">{{item.gift_tit}} × {{item.num}}</text>
+            </view>
+            <view class="gift_tit">
+              <text>价格：</text>
+              <image class="icon_diamond" src="{{icon_diamond}}"></image>
+              <text class="gift_num">{{item.gift_price*item.num}}钻石</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  <!-- 送出礼物 -->
+  <view class="mygift_send" hidden="{{tabsIdx!==1}}">
+    <view class="mygift_list" wx:for="{{giftSendList}}" data-index="{{index}}" wx:key="gift{{index}}">
+      <view class='gift_img'>
+        <image class='gift_avatar' mode='scaleToFill' src='{{item.avatar}}' catchtap="navTouserInfo"></image>
+      </view>
+      <view class="gift_info">
+        <view class="gift_info_top">
+          <view class="gift_giver" catchtap="navTouserInfo">
+            <text class="gift_name">{{item.giver}}</text>
+            <text class="highlight">送给您的礼物</text>
+          </view>
+          <text class="gift_time">{{item.time}}</text>
+        </view>
+        <view class="gift_info_list">
+          <image class='gift_ico' mode='scaleToFill' src='{{item.gift_ico}}'></image>
+          <view class="gift_txt">
+            <view class="gift_tit">
+              <text>礼物：</text>
+              <text class="gift_num">{{item.gift_tit}} × {{item.num}}</text>
+            </view>
+            <view class="gift_tit">
+              <text>价格：</text>
+              <image class="icon_diamond" src="{{icon_diamond}}"></image>
+              <text class="gift_num">{{item.gift_price*item.num}}钻石</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</scroll-view>

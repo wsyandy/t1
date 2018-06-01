@@ -1,0 +1,115 @@
+/* pages/my_gift/my_gift.wxss */
+
+.mygift_head {
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 110rpx;
+  background-color: #fff;
+}
+
+.mygift_tabs {
+  width: 600rpx;
+  height: 70rpx;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8rpx;
+  font-size: 30rpx;
+  color: #F45189;
+}
+
+.mygift_tab,.mygift_tab_cur {
+  width: 50%; 
+  justify-content: center;
+  align-items: center;
+}
+.mygift_tab_cur{ 
+  background: #F45189;
+  color: #fff;
+}
+.mygift_scroll{
+  margin-top: 10rpx;   
+}
+.mygift_get,.mygift_send{
+  flex-direction: column;
+}
+/* 礼物列表 */
+.mygift_list{
+  width: 100%;
+  height: 250rpx;
+  padding: 30rpx;
+  background-color: #fff;
+  margin-bottom: 2rpx;
+   justify-content: space-between;
+  align-items: center;
+}
+.gift_info{
+  flex: 1;
+  padding-left:24rpx;  
+  flex-direction: column;
+}
+.gift_info_top{
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 30rpx;
+}
+.gift_img{
+  width: 86rpx;
+  height: 100%; 
+}
+.gift_avatar{
+  width: 86rpx;
+  height: 86rpx;
+  border-radius: 50%;
+}
+.gift_giver{
+  justify-content: space-between;
+  align-items: center;
+}
+.gift_name{
+  max-width: 200rpx;
+  font-size: 30rpx;
+  color: #2D2D2D;
+  padding-right:  10rpx;
+  display: block;
+  white-space:nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden
+}
+.gift_time{
+  font-size: 22rpx;
+  color: #B8B8B8;
+}
+.highlight{
+  font-size: 24rpx;
+  color: #F45189;
+}
+.gift_info_list{
+  width: 100%;
+  border: 1px solid #f6f6f6;
+  padding: 20rpx;
+}
+.gift_ico{
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background-color: #f6f6f6;
+}
+.gift_txt{
+  flex-direction: column;
+  padding: 0 20rpx;
+}
+.gift_tit{
+  font-size: 24rpx;
+  color: #999;
+  align-items: center;
+}
+.gift_num{
+   color: #666
+}
+.icon_diamond {
+  width: 23rpx;
+  height: 22rpx;
+  margin-right: 10rpx; 
+}
