@@ -18,6 +18,11 @@ class BoomHistories extends BaseModel
      */
     private $_boom_user;
 
+    /**
+     * @type Rooms
+     */
+    private $_room;
+
     static $TYPE = [BOOM_HISTORY_GIFT_TYPE => '礼物', BOOM_HISTORY_DIAMOND_TYPE => '钻石', BOOM_HISTORY_GOLD_TYPE => '金币'];
 
     function afterCreate()
