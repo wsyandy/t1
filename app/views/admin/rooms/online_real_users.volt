@@ -21,10 +21,9 @@
 
 {% macro product_channel_view(user) %}
     产品渠道:{{ user.product_channel_name }}<br/>
-    FR:{{ user.fr }}<br/>
-    FR名称:{{ user.partner_name }}<br/>
-    注册时间: {{ user.created_at_text }}<br/>
-    平台:{{ user.platform }}<br/>
+    FR:{{ user.fr }}  FR名称:{{ user.partner_name }}<br/>
+    平台:{{ user.platform }} 平台版本:{{ user.platform_version }}<br/>
+    版本名称:{{ user.version_name }} 软件版本号:{{ user.version_code }}<br/>
     设备ID:<a href="/admin/devices?device[id_eq]={{ user.device_id }}">{{ user.device_id }}</a><br/>
 {% endmacro %}
 
@@ -34,7 +33,6 @@
 {% endmacro %}
 
 {% macro msg_link(user) %}
-    {#<a href="/admin/rooms/send_msg?user_id={{ user.id }}" class="modal_action">模拟消息</a><br/>#}
     <a href="/admin/rooms/kicking?id={{ user.current_room_id }}&user_id={{ user.id }}" data-user_id="{{ user.id }}"
        class="kicking">踢出</a><br/>
 {% endmacro %}
