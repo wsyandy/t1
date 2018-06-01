@@ -78,7 +78,7 @@ class BoomHistories extends BaseModel
         $gift_datas = [];
 
         foreach ($data as $datum) {
-            $res = self::isLimit($room, $data, ['boom_num' => $boom_num, 'type' => $type]);
+            $res = self::isLimit($room, $datum, ['boom_num' => $boom_num, 'type' => $type]);
             if ($res) {
                 info($datum);
                 continue;
@@ -124,7 +124,7 @@ class BoomHistories extends BaseModel
         $gift_datas = [];
 
         foreach ($data as $datum) {
-            $res = self::isLimit($room, $data, ['boom_num' => $boom_num, 'type' => $type]);
+            $res = self::isLimit($room, $datum, ['boom_num' => $boom_num, 'type' => $type]);
             if ($res) {
                 info($datum);
                 continue;
@@ -181,7 +181,7 @@ class BoomHistories extends BaseModel
         $gift_datas = [];
 
         foreach ($data as $datum) {
-            $res = self::isLimit($room, $data, ['boom_num' => $boom_num, 'type' => $type]);
+            $res = self::isLimit($room, $datum, ['boom_num' => $boom_num, 'type' => $type]);
             if ($res) {
                 info($datum);
                 continue;
