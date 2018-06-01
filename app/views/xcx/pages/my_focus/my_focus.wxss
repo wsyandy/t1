@@ -1,0 +1,136 @@
+/* pages/my_focus/my_focus.wxss */
+
+/* 开黑 */
+
+page {
+  background-color: #fff;
+}
+
+.nofocus {
+  width: 100%;
+  height: 600rpx;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 26rpx;
+  color: #666;
+}
+
+.icon_nofocus {
+  width: 307rpx;
+  height: 192rpx;
+  margin-bottom: 40rpx;
+}
+
+.myfocus_list {
+  position: relative;
+  width: 100%;
+  padding-left: 30rpx;
+}
+
+.myfocus_list:hover {
+  background-color: #f6f6f6;
+}
+
+.myfocus_info {
+  position: relative;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 150rpx;
+  padding-right: 30rpx;
+  border-bottom: 1px solid #f3f3f3;
+}
+
+.myfocus_img {
+  position: relative;
+  width: 110rpx;
+  height: 110rpx;
+}
+
+.myfocus_avatar {
+  width: 110rpx;
+  height: 110rpx;
+  border-radius: 50%;
+}
+
+.myfocus_befond {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 28rpx;
+  height: 28rpx;
+}
+
+.myfocus_text {
+  width: 60%;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.myfocus_text_top {
+  align-items: center;
+}
+
+.myfocus_right {
+  width: 100rpx;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.myfocus_name {
+  max-width: 80%;
+  font-size: 30rpx;
+  color: #2d2d2d;
+  display: block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.myfocus_signature {
+  padding-top: 10rpx;
+  font-size: 24rpx;
+  color: #969696;
+  display: block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.myfocus_male, .myfocus_female {
+  margin-left: 10rpx;
+  width: 72rpx;
+  height: 30rpx;
+  justify-content: center;
+  align-items: center;
+  background: #9accf9;
+  border-radius: 100rpx;
+}
+
+.myfocus_female {
+  background: #f99ad3;
+}
+
+.ico_sex {
+  width: 18rpx;
+  height: 18rpx;
+  margin-right: 5rpx;
+}
+
+.myfocus_age {
+  font-size: 20rpx;
+  color: #fff;
+}
+
+.myfocus_distance {
+  padding-top: 10rpx;
+  font-size: 20rpx;
+  color: #969696;
+}
+
+.ico_room {
+  width: 40rpx;
+  height: 38rpx;
+}

@@ -4,7 +4,8 @@
     "pages/room/room",
     "pages/my_profile/my_profile",
     "pages/my_account/my_account",
-    "pages/my_gift/my_gift"
+    "pages/my_gift/my_gift",
+    "pages/my_focus/my_focus"
   ],
   "window": {
     "backgroundTextStyle": "light",

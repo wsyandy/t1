@@ -33,7 +33,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 2,
+			"current": 3,
 			"list": [
 				{
 					"id": -1,
@@ -51,6 +51,12 @@
 					"id": 2,
 					"name": "我的礼物",
 					"pathName": "pages/my_gift/my_gift",
+					"query": ""
+				},
+				{
+					"id": 3,
+					"name": "我的关注",
+					"pathName": "pages/my_focus/my_focus",
 					"query": ""
 				}
 			]

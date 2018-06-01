@@ -1,0 +1,36 @@
+<!--pages/my_focus/my_focus.wxml-->
+
+<!-- 有关注  -->
+ 
+  <view  class="myfocus_list" wx:if="{{!nofocus}}" wx:for="{{focusList}}"  wx:key="focu{{index}}"> 
+          <view class="myfocus_info" data-id="{{item.userId}}" catchtap="navtoUserInfo">
+              <view class="myfocus_img"  data-index="{{index}}"  catchtap="toBeFond">
+                  <image class='myfocus_avatar' mode='scaleToFill' src='{{item.avatar}}'> </image>
+                  <image class='myfocus_befond' hidden="{{!item.befond}}" mode='scaleToFill' src='{{be_fond}}'> </image>
+              </view>
+              <view class="myfocus_text">
+              <view class="myfocus_text_top">
+               <text class="myfocus_name">{{item.nickname}}</text>
+              <view class="{{item.male?'myfocus_male':'myfocus_female'}}">
+               <image class='ico_sex' mode='scaleToFill' src='{{item.male?ico_male:ico_female}}'> </image>
+                <text class="myfocus_age">{{item.age}}</text>
+              </view>
+              </view>
+               
+                <text class="myfocus_signature ">{{item.signature}}</text>
+              </view>
+             <view class="myfocus_right">
+                <image class='ico_room' wx:if="{{item.room}}" mode='scaleToFill' src='{{ico_room}}'> </image>
+               
+              </view>
+           
+          </view>
+        </view>
+
+<!-- 无关注  -->
+<view wx:if="{{nofocus}}" class="nofocus">
+  <image class="icon_nofocus" src="{{icon_nofocus}}"></image>
+  <text>还没有关注呦，快去关注一个吧～</text>
+</view>
+
+<!-- 附近 -->
