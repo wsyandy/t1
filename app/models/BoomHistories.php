@@ -461,9 +461,24 @@ class BoomHistories extends BaseModel
             $target_id = fetch($data, 'target_id');
             $number = fetch($data, 'number');
             info("contribution_user", $user->id, $user->uid, $user->segment, $pay_amount, $rank, $target_id, $type, $number);
+        } else {
+            if ($user->segment) {
+                $data = \BoomHistories::userSegmentGift($user, $room, ['boom_num' => $boom_num]);
+            } else {
+                $data = \BoomHistories::randomBoomGiftIdByBoomNum($user, $room, ['boom_num' => $boom_num]);
+            }
+
+            if (!$data) {
+                unlock($lock);
+                return [ERROR_CODE_FAIL, '亲，奖品已经领完了，你的反应有点慢哦', null];
+            }
+
+            $type = fetch($data, 'type');
+            $target_id = fetch($data, 'target_id');
+            $number = fetch($data, 'number');
         }
 
-        info("boom_record", "用户id:", $user->id, 'uid', $user->uid, "贡献值:", $pay_amount, "房间id:", $room_id, "个数", $number, 'type', $type);
+        info("boom_record", "用户id:", $user->id, 'uid', $user->uid, "贡献值:", $pay_amount, "房间id:", $room_id, "个数", $number, 'type', $type, $target_id);
 
         $res = \BoomHistories::createBoomHistory($user,
             ['target_id' => $target_id, 'type' => $type, 'number' => $number, 'room_id' => $room_id, 'boom_user_id' => $boom_user_id,
