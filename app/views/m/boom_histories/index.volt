@@ -57,7 +57,7 @@
         </ul>
         <dl class="gift_type">
             <dt>礼物类型：</dt>
-            <dd>金币，钻石，绝版礼物</dd>
+            <dd>钻石、神秘大奖（你从来没见过的那种)</dd>
         </dl>
     </div>
     <div class="footer">

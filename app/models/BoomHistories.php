@@ -25,11 +25,6 @@ class BoomHistories extends BaseModel
 
     static $TYPE = [BOOM_HISTORY_GIFT_TYPE => '礼物', BOOM_HISTORY_DIAMOND_TYPE => '钻石', BOOM_HISTORY_GOLD_TYPE => '金币'];
 
-    function afterCreate()
-    {
-
-    }
-
     public function getGiftName()
     {
         if ($this->target_id == 0) {
