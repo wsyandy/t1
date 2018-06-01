@@ -58,6 +58,11 @@ class BoomHistories extends BaseModel
         }
 
         $gift_ids = [1 => 74, 2 => 87, 3 => 103];
+
+        if (isDevelopmentEnv()) {
+            $gift_ids = [1 => 42, 2 => 162, 3 => 175];
+        }
+
         $gift_id = fetch($gift_ids, $boom_num, 1);
         return $gift_id;
     }
@@ -91,6 +96,21 @@ class BoomHistories extends BaseModel
                 2 => ['id' => 22, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 1, 'target_id' => 105, 'number' => 1]
             ]
         ];
+
+        if (isDevelopmentEnv()) {
+            $datas = [
+                1 => [
+                    1 => ['id' => 19, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 1, 'target_id' => 172, 'number' => 1]
+                ],
+                2 => [
+                    1 => ['id' => 20, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 1, 'target_id' => 174, 'number' => 1]
+                ],
+                3 => [
+                    1 => ['id' => 21, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 1, 'target_id' => 172, 'number' => 1],
+                    2 => ['id' => 22, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 1, 'target_id' => 174, 'number' => 1]
+                ]
+            ];
+        }
 
         $data = fetch($datas, $boom_num);
         $gift_datas = [];
@@ -137,6 +157,23 @@ class BoomHistories extends BaseModel
                 2 => ['id' => 28, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 30, 'target_id' => 110, 'number' => 1],
             ]
         ];
+
+        if (isDevelopmentEnv()) {
+            $datas = [
+                1 => [
+                    1 => ['id' => 23, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 30, 'target_id' => 181, 'number' => 1],
+                    2 => ['id' => 24, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 30, 'target_id' => 182, 'number' => 1],
+                ],
+                2 => [
+                    1 => ['id' => 25, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 30, 'target_id' => 184, 'number' => 1],
+                    2 => ['id' => 26, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 30, 'target_id' => 183, 'number' => 1],
+                ],
+                3 => [
+                    1 => ['id' => 27, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 30, 'target_id' => 185, 'number' => 1],
+                    2 => ['id' => 28, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 30, 'target_id' => 186, 'number' => 1],
+                ]
+            ];
+        }
 
         $data = fetch($datas, $boom_num);
         $gift_datas = [];
