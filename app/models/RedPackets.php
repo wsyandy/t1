@@ -399,7 +399,7 @@ class RedPackets extends BaseModel
         }
 
         shuffle($get_diamonds);
-        
+
         info($this->id, $get_diamonds);
 
         foreach ($get_diamonds as $diamond) {
@@ -567,6 +567,8 @@ class RedPackets extends BaseModel
     static function sendRedPacketMessageToUsers($user, $room, $opts)
     {
 
+        info($user->id, $room->id, $opts);
+
         $type = fetch($opts, 'type');
         $content = fetch($opts, 'content');
         $red_packet_type = fetch($opts, 'red_packet_type');
@@ -641,7 +643,7 @@ class RedPackets extends BaseModel
             }
 
             $result = \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
-            info($user->id, $receiver_fd, '推送结果=>', $result, '结构=>', $body);
+            info('cur', $current_user->id, $user->id, $receiver_fd, '推送结果=>', $result, '结构=>', $body);
         }
     }
 
