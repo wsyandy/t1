@@ -21,14 +21,25 @@ class BoomHistories extends BaseModel
 
     static $TYPE = [BOOM_HISTORY_GIFT_TYPE => '礼物', BOOM_HISTORY_DIAMOND_TYPE => '钻石', BOOM_HISTORY_GOLD_TYPE => '金币'];
 
+    function afterCreate()
+    {
+        if (BOOM_HISTORY_GIFT_TYPE == $this->type) {
+            $gift = Gifts::findFirstById($this->target_id);
+
+            if ($gift->isCar()) {
+
+            }
+        }
+    }
+
     public function getGiftName()
     {
         if ($this->target_id == 0) {
             return null;
         }
 
-        $gifts = Gifts::findFirstById($this->target_id);
-        return $gifts->name;
+        $gift = Gifts::findFirstById($this->target_id);
+        return $gift->name;
     }
 
     //引爆者礼物
@@ -153,28 +164,28 @@ class BoomHistories extends BaseModel
 
         $datas = [
             1 => [
-                1 => ['id' => 1, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 20, 'number' => 5],
-                2 => ['id' => 2, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 20, 'number' => 10],
-                3 => ['id' => 3, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 15, 'number' => 15],
-                4 => ['id' => 4, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 15, 'number' => 20],
-                5 => ['id' => 5, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 15, 'number' => 25],
-                6 => ['id' => 6, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 15, 'number' => 30],
+                1 => ['id' => 1, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 20, 'number' => 5],
+                2 => ['id' => 2, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 20, 'number' => 10],
+                3 => ['id' => 3, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 15, 'number' => 15],
+                4 => ['id' => 4, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 15, 'number' => 20],
+                5 => ['id' => 5, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 15, 'number' => 25],
+                6 => ['id' => 6, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 15, 'number' => 30],
             ],
             2 => [
-                1 => ['id' => 7, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 20, 'number' => 5],
-                2 => ['id' => 8, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 20, 'number' => 10],
-                3 => ['id' => 9, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 15, 'number' => 15],
-                4 => ['id' => 10, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 15, 'number' => 20],
-                5 => ['id' => 11, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 15, 'number' => 25],
-                6 => ['id' => 12, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 15, 'number' => 30],
+                1 => ['id' => 7, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 20, 'number' => 5],
+                2 => ['id' => 8, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 20, 'number' => 10],
+                3 => ['id' => 9, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 15, 'number' => 15],
+                4 => ['id' => 10, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 15, 'number' => 20],
+                5 => ['id' => 11, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 15, 'number' => 25],
+                6 => ['id' => 12, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 15, 'number' => 30],
             ],
             3 => [
-                1 => ['id' => 13, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 20, 'number' => 5],
-                2 => ['id' => 14, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 20, 'number' => 10],
-                3 => ['id' => 15, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 15, 'number' => 15],
-                4 => ['id' => 16, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 15, 'number' => 20],
-                5 => ['id' => 17, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 15, 'number' => 25],
-                6 => ['id' => 18, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 15, 'number' => 30],
+                1 => ['id' => 13, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 20, 'number' => 5],
+                2 => ['id' => 14, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 20, 'number' => 10],
+                3 => ['id' => 15, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 15, 'number' => 15],
+                4 => ['id' => 16, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 15, 'number' => 20],
+                5 => ['id' => 17, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 15, 'number' => 25],
+                6 => ['id' => 18, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 15, 'number' => 30],
             ]
         ];
         $data = fetch($datas, $boom_num);
