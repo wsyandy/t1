@@ -542,6 +542,10 @@ class BoomHistories extends BaseModel
             if (!$data) {
                 if ($user->segment) {
                     $data = \BoomHistories::userSegmentGift($user, $room, ['boom_num' => $boom_num]);
+
+                    if (!$data) {
+                        $data = \BoomHistories::randomBoomGiftIdByBoomNum($user, $room, ['boom_num' => $boom_num]);
+                    }
                 } else {
                     $data = \BoomHistories::randomBoomGiftIdByBoomNum($user, $room, ['boom_num' => $boom_num]);
                 }
@@ -559,6 +563,11 @@ class BoomHistories extends BaseModel
         } else {
             if ($user->segment) {
                 $data = \BoomHistories::userSegmentGift($user, $room, ['boom_num' => $boom_num]);
+
+                if (!$data) {
+                    $data = \BoomHistories::randomBoomGiftIdByBoomNum($user, $room, ['boom_num' => $boom_num]);
+                }
+                
             } else {
                 $data = \BoomHistories::randomBoomGiftIdByBoomNum($user, $room, ['boom_num' => $boom_num]);
             }
