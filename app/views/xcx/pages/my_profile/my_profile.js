@@ -63,7 +63,7 @@ Page({
   closeMask: function () {
     this.setData({
       hideMask: true,
-      hideSex: true,
+      hideNick: true,
     })
   },
 

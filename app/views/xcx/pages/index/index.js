@@ -378,20 +378,20 @@ Page({
   /*用户授权*/
   getUserInfo: function (e) {
   
-    app.getUserInfo(e,  (res)=> {
-      Utils.log(`data:${JSON.stringify(res)}`)
-      if (res) {
-        this.setData({
-          userInfo: res,
-          hasUserInfo: true
-        })
-      }
-    })
-
-    // this.setData({
-    //   avatarUrl: e.detail.userInfo.avatarUrl,
-    //   hasUserInfo: true
+    // app.getUserInfo(e,  (res)=> {
+    //   Utils.log(`data:${JSON.stringify(res)}`)
+    //   if (res) {
+    //     this.setData({
+    //       userInfo: res,
+    //       hasUserInfo: true
+    //     })
+    //   }
     // })
+
+    this.setData({
+      avatarUrl: e.detail.userInfo.avatarUrl,
+      hasUserInfo: true
+    })
 
   },
   /*滑入用户信息*/
@@ -417,16 +417,28 @@ Page({
     switch (index) {
       case 0:
         wx.navigateTo({
-          url: '/pages/index/index'
+          url: '/pages/room/room'
         })
         break;
       case 1:
+        wx.navigateTo({
+          url: '/pages/my_account/my_account'
+        })
         break;
       case 2:
+        wx.navigateTo({
+          url: '/pages/my_gift/my_gift'
+        })
         break;
       case 3:
+        wx.navigateTo({
+          url: '/pages/my_focus/my_focus'
+        })
         break;
       case 4:
+        wx.navigateTo({
+          url: '/pages/ranking/ranking'
+        })
         break;
     }
   },

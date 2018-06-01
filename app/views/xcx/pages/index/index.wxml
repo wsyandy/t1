@@ -221,7 +221,6 @@
       <view class="user_info">
         <image class='user_avatar' mode='scaleToFill' src='{{userInfo.avatar_small_url}}'></image>
         <view class="info_detail" catchtap="navToMyProfile">
-
           <view class="info_nickname">
             <text class="nickname">{{userInfo.nickname}}</text>
             <image class='info_edit' mode='scaleToFill' src='{{info_edit}}'></image>
@@ -235,7 +234,6 @@
     <view class="info_list" wx:for="{{infoList}}" wx:key="{{index}}" data-index="{{index}}" catchtap="navToInfo">
       <image class='info_icon' mode='scaleToFill' src='{{item.icon}}'></image>
       <text>{{item.text}}</text>
-      
     </view>
   </view>
 </view>

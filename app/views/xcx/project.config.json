@@ -33,7 +33,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": -1,
+			"current": 2,
 			"list": [
 				{
 					"id": -1,
@@ -45,6 +45,12 @@
 					"id": -1,
 					"name": "我的资料",
 					"pathName": "pages/my_profile/my_profile",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "我的账户",
+					"pathName": "pages/my_account/my_account",
 					"query": ""
 				}
 			]

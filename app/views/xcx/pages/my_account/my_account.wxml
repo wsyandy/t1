@@ -1,0 +1,30 @@
+<!--pages/my_account/my_account.wxml-->
+<view class="account_head">
+  <view class="diamond_info">
+    <image class="ico_diamond" src="{{ico_diamond}}"></image>
+    <text>钻石余额：</text>
+    <text class="diamond_num"> {{myDiamond}} </text>
+  </view>
+  <text class="diamond_tip">(钻石是用来送礼物的)</text>
+</view>
+<view class="top-up-box">
+  <view class="top-up-list" wx:for="{{topupList}}" wx:key="topup{{index}}"  data-index="{{index}}"  catchtap="topupChecked">
+    <view class="top-up-list-diamond">
+      <image class="ico_diamond" src="{{ico_diamond}}"></image>
+      <text class="top-up-diamond">{{item.diamond}}</text>
+      <text class="top-up-diamond" wx:if="{{item.giving}}">+{{item.giving}}</text>
+    </view>
+    <view class="top-up-list-gold" wx:if="{{item.gold}}">
+      <image class="ico_gold" src="{{ico_gold}}"></image>
+      <text class="top-up-gold">  {{item.gold}}</text>
+    </view>
+    <view class="top-up-list-rmb">
+       <text class="top-up-rmb {{checkedIdx==index?'is_checked':'is_check'}}">￥{{item.rmb}}</text>
+       <image class="ico_check" src="{{checkedIdx==index?ico_checked:ico_check}}"></image>
+    </view>
+  </view>
+</view>
+
+<view class="top-up-btn"  catchtap="topupDiamond">
+  <text>确定</text>
+</view>

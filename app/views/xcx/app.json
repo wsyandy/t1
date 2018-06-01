@@ -2,7 +2,8 @@
   "pages": [
     "pages/index/index",
     "pages/room/room",
-    "pages/my_profile/my_profile"
+    "pages/my_profile/my_profile",
+    "pages/my_account/my_account"
   ],
   "window": {
     "backgroundTextStyle": "light",
