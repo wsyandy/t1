@@ -8,7 +8,6 @@
 
 class BoomHistories extends BaseModel
 {
-
     /**
      * @type Users
      */
@@ -26,8 +25,16 @@ class BoomHistories extends BaseModel
         if (BOOM_HISTORY_GIFT_TYPE == $this->type) {
             $gift = Gifts::findFirstById($this->target_id);
 
-            if ($gift->isCar()) {
-
+            if (!$gift->isNormal()) {
+                $user = Users::findFirstById($this->user_id);
+                if ($gift->isCar()) {
+                    $content = "恭喜【{$user->nickname}】在爆火箭中获得了超超超绝版座驾[{$gift->name}]";
+                    Rooms::delay()->asyncAllNoticePush($content, ['hot' => 1, 'type' => 'top_topic_message']);
+                } else {
+                    $content = "恭喜【{$user->nickname}】在爆火箭中获得了超超超绝版礼物[{$gift->name}]";
+                    $system_user = Users::getSysTemUser();
+                    $this->room->pushTopTopicMessage($system_user, $content);
+                }
             }
         }
     }
