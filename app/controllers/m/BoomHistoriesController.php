@@ -38,9 +38,13 @@ class BoomHistoriesController extends BaseController
         $room = \Rooms::findFirstById($room_id);
         $res = \BoomHistories::getPrize($user, $room);
         list($code, $reason, $boom_history) = $res;
+
         $json = [];
+
         if ($boom_history) {
             $json = $boom_history->toSimpleJson();
+        } else {
+            return $this->renderJSON($code, $reason);
         }
 
         return $this->renderJSON($code, $reason, ['boom_histories' => [$json]]);
