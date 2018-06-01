@@ -212,6 +212,10 @@ trait RoomAttrs
 
         $user_db->hmset("hot_room_score_record_room_id_{$this->id}", $data);
 
+        if ($this->getRealUserNum() <= 3) {
+            $total_score = intval($total_score * 0.3);
+        }
+
         info($this->id, $send_gift_amount_score, $send_gift_num_score, $real_user_pay_score, $real_user_stay_time_score, $room_host_score,
             $id_card_auth_users_score, $ratio, $total_score);
 
@@ -628,7 +632,7 @@ trait RoomAttrs
 
         return false;
     }
-    
+
     function isInShieldRoomList()
     {
         $hot_shield_room_list_key = Rooms::generateShieldHotRoomListKey();
@@ -721,7 +725,7 @@ trait RoomAttrs
             return false;
         }
 
-        if ($this->getRealUserNum() < $least_user_num) {
+        if ($this->getRealUserNum() <= $least_user_num) {
             return false;
         }
 
