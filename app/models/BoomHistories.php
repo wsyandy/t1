@@ -14,6 +14,11 @@ class BoomHistories extends BaseModel
      */
     private $_user;
 
+    /**
+     * @type Users
+     */
+    private $_boom_user;
+
     static $TYPE = [BOOM_HISTORY_GIFT_TYPE => '礼物', BOOM_HISTORY_DIAMOND_TYPE => '钻石', BOOM_HISTORY_GOLD_TYPE => '金币'];
 
     public function getGiftName()
@@ -263,11 +268,29 @@ class BoomHistories extends BaseModel
             return [ERROR_CODE_FAIL, '参数错误', null];
         }
 
+        $boom_amount = fetch($opts, 'boom_amount');
+        $boom_num = fetch($opts, 'boom_num');
+        $pay_amount = fetch($opts, 'pay_amount');
+        $boom_user_id = fetch($opts, 'boom_user_id');
+        $amount = $number;
+
+        if (BOOM_HISTORY_GIFT_TYPE == $type) {
+            $gift = Gifts::findFirstById($target_id);
+            if ($gift) {
+                $amount = $gift->amount;
+            }
+        }
+
         $boom_history->user_id = $user->id;
         $boom_history->target_id = $target_id;
         $boom_history->type = $type;
         $boom_history->number = $number;
         $boom_history->room_id = $room_id;
+        $boom_history->boom_amount = $boom_amount;
+        $boom_history->boom_num = $boom_num;
+        $boom_history->pay_amount = $pay_amount;
+        $boom_history->boom_user_id = $boom_user_id;
+        $boom_history->amount = $amount;
 
         if ($boom_history->save()) {
 
