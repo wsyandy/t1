@@ -225,11 +225,7 @@ class Backpacks extends BaseModel
                 ]
             );
 
-            if (!$gift->isNormal()) {
-                $gift_amount = 0;
-            } else {
-                $gift_amount = count($receiver_ids) * $gift->amount;
-            }
+            $gift_amount = count($receiver_ids) * $gift->amount;
 
             $res = array_merge($notify_data, ['diamond' => $sender->diamond, 'gold' => $sender->gold, 'total_amount' => $gift_amount, 'pay_type' => $gift->pay_type]);
 
