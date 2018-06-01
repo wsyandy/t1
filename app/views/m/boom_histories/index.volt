@@ -74,11 +74,11 @@
                 </div>
                 <!--抽中金币或钻石奖品-->
                 {#<div class="prize_box" style="display:none;">#}
-                    {#<span v-if="has_prize">恭喜您抽中</span>#}
-                    {#<div class="prize">#}
-                        {#<img class="ico" src="/m/images/ico.png" alt="">#}
-                        {#<span> x999钻石 </span>#}
-                    {#</div>#}
+                {#<span v-if="has_prize">恭喜您抽中</span>#}
+                {#<div class="prize">#}
+                {#<img class="ico" src="/m/images/ico.png" alt="">#}
+                {#<span> x999钻石 </span>#}
+                {#</div>#}
                 {#</div>#}
                 <!--抽中多个奖品-->
                 <div class="prize_box prizes_body">
@@ -150,7 +150,7 @@
                     code: vm.code,
                 }, function (resp) {
                     if (resp.error_code != undefined) {
-
+                        var is_car = resp.is_car;
                         $.each(resp.boom_histories, function (index, item) {
                             vm.target_list.push(item);
                             vm.cache_list[index] = {'id': item.id, 'number': item.number};
@@ -160,6 +160,9 @@
                         if (resp.error_code == 0) {
                             vm.has_prize = true;
                             vm.tip = '恭喜您抽中';
+                            if (is_car) {
+                                vm.tip = '您的座驾已入库';
+                            }
                         } else {
                             vm.has_prize = false;
                             vm.tip = resp.error_reason;

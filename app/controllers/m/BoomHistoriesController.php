@@ -37,14 +37,18 @@ class BoomHistoriesController extends BaseController
         list($code, $reason, $boom_history) = $res;
 
         $json = [];
-
+        $is_car = 0;
         if ($boom_history) {
             $json = $boom_history->toSimpleJson();
+
+            if ($boom_history->isCar()) {
+                $is_car = 1;
+            }
         } else {
             return $this->renderJSON($code, $reason, ['boom_histories' => '']);
         }
 
-        return $this->renderJSON($code, $reason, ['boom_histories' => [$json]]);
+        return $this->renderJSON($code, $reason, ['boom_histories' => [$json], 'is_car' => $is_car]);
     }
 
     /**

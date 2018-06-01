@@ -35,6 +35,19 @@ class BoomHistories extends BaseModel
         return $gift->name;
     }
 
+    function isCar()
+    {
+        if (!$this->gift) {
+            return false;
+        }
+
+        if (!$this->gift->isCar()) {
+            return false;
+        }
+
+        return true;
+    }
+
     //引爆者礼物
     static function randomBoomUserGiftId($user, $room, $opts = [])
     {
@@ -316,8 +329,8 @@ class BoomHistories extends BaseModel
     static public function findHistoriesByRoom($room, $per_page = 10)
     {
         $conditions = [
-            'conditions' => 'room_id = :room_id: and created_at >= :start: and created_at <= :end:',
-            'bind' => ['room_id' => $room->id, 'start' => time() - 600, 'end' => time()],
+            'conditions' => 'type = :type: and amount > 1',
+            'bind' => ['type' => BOOM_HISTORY_GIFT_TYPE],
             'order' => 'id asc'
         ];
 
@@ -343,9 +356,7 @@ class BoomHistories extends BaseModel
      */
     public function toSimpleJson()
     {
-
         if ($this->type != BOOM_HISTORY_GIFT_TYPE) {
-
             if ($this->type == BOOM_HISTORY_DIAMOND_TYPE) {
                 $name = '钻石';
                 $image_url = Backpacks::getDiamondImage();
@@ -353,13 +364,10 @@ class BoomHistories extends BaseModel
                 $name = '金币';
                 $image_url = Backpacks::getGoldImage();
             }
-
         } else {
-
             $target = Gifts::findFirstById($this->target_id);
             $image_url = $target->image_url;
             $name = $target->name;
-
         }
 
         return ['user' => $this->user->nickname, 'name' => $name, 'number' => $this->number, 'image_url' => $image_url];
@@ -438,10 +446,8 @@ class BoomHistories extends BaseModel
                     }
                 }
             } elseif ($type == BOOM_HISTORY_DIAMOND_TYPE) {
-
                 $opts['remark'] = '爆礼物获得' . $number . '钻石';
                 \AccountHistories::changeBalance($user, ACCOUNT_TYPE_IN_BOOM, $number, $opts);
-
             } elseif ($type == BOOM_HISTORY_GOLD_TYPE) {
 
                 $opts['remark'] = '爆礼物获得' . $number . '金币';
