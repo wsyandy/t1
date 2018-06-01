@@ -226,7 +226,7 @@
             <image class='info_edit' mode='scaleToFill' src='{{info_edit}}'></image>
           </view>
           <view class="info_id">
-            <text>ID:{{userInfo.id}}</text>
+            <text>ID:{{userInfo.uid}}</text>
           </view>
         </view>
       </view>

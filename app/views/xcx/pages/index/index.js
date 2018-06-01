@@ -3,7 +3,7 @@ const request = require('../../utils/wxRequest.js');
 const Utils = require('../../utils/util.js');
 Page({
   data: {
-    page:1,
+    page: 1,
     hasUserInfo: false,
     isIos: app.globalData.isIos, /*设备是否为IOS*/
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
@@ -564,20 +564,21 @@ Page({
     })
   },
   roomList: function (type, value) {
-    let data = { new: value, page: this.data.page, per_page:10 }
-    var _this = this
+    type = 'broadcast'//临时获取数据用
+    let data = { [type]: value, page: this.data.page, per_page: 20 }
+    let _this = this
     console.log(data)
-    request.postRequest('rooms/index',data).then(res => {
+    request.postRequest('rooms/index', data).then(res => {
       console.log(res.data.rooms)
       // if(data.hot){
-        _this.setData({
-          hotList:res.data.rooms
-        })
+      _this.setData({
+        hotList: res.data.rooms
+      })
       // }
     })
 
   },
-  creatRoom: function (name, room_tag_ids){
+  creatRoom: function (name, room_tag_ids) {
     let data = { name: name, room_tag_ids: room_tag_ids }
     request.postRequest('rooms/create', data).then(res => {
       console.log(res)
@@ -611,7 +612,7 @@ Page({
   /**
    * 进入房间操作
    */
-  enterRoom:function(){
+  enterRoom: function () {
     wx.navigateTo({
       url: '../room/room'
     })

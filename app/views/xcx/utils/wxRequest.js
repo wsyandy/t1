@@ -34,7 +34,7 @@ function getRequest(url, data = {}, judge = false) {
   data.sid = data.sid ? data.sid : wx.getStorageSync('sid')
 
   return getRequest({
-    url: judge ? url : configs.config.server_domain + url,
+    url: judge ? configs.config.server_domain + url : configs.config.server_domain + 'xcx/' + url,
     method: 'GET',
     data: data,
     header: {
@@ -54,7 +54,7 @@ function postRequest(url, data = {}, judge = false) {
   data.sid = data.sid ? data.sid : wx.getStorageSync('sid')
 
   return postRequest({
-    url: judge ? url : configs.config.server_domain + url,
+    url: judge ? configs.config.server_domain + url : configs.config.server_domain + 'xcx/' + url,
     method: 'POST',
     data: data,
     header: {

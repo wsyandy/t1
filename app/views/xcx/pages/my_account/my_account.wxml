@@ -1,4 +1,3 @@
-<!--pages/my_account/my_account.wxml-->
 <view class="account_head">
   <view class="diamond_info">
     <image class="ico_diamond" src="{{ico_diamond}}"></image>

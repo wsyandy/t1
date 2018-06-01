@@ -1,6 +1,6 @@
 <view class="profile_head">
   <image class='profile_avatar' mode='scaleToFill' src='{{userInfo.avatar_small_url}}'></image>
-  <text class="profile_id">ID:{{userInfo.id}}</text>
+  <text class="profile_id">ID:{{userInfo.uid}}</text>
 </view>
 <view class="profile_box">
   <view class="profile_list" catchtap="editNickname">
