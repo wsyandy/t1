@@ -9,8 +9,8 @@
 </view>
 <!--导航 -->
 <scroll-view class="scroll_tabs" scroll-x  scroll-with-animation scroll-into-view="{{toView}}">
-  <view catchtap='tabSelect' class="scroll_tabs_item" wx:for="{{topTabs}}" wx:key="{{index}}" id="tabs_{{index}}" data-idx="{{index}}">
-    <text class="{{curIdx==index?(isIos?'scroll_tabs_ios':'scroll_tabs_cur'):'scroll_tabs_text'}}">{{item}}</text>
+  <view catchtap='tabSelect' class="scroll_tabs_item" wx:for="{{topTabs}}" wx:key="{{index}}" id="tabs_{{index}}" data-idx="{{index}}" data-typr='{{item.type}}' data-value='{{item.value}}'>
+    <text class="{{curIdx==index?(isIos?'scroll_tabs_ios':'scroll_tabs_cur'):'scroll_tabs_text'}}">{{item.name}}</text>
     <image hidden="{{curIdx!==index}}" class="tag_stars" src="{{stars}}" mode='aspectFit'></image>
   </view>
 </scroll-view>
@@ -22,15 +22,15 @@
       <scroll-view scroll-y bindscrolltoupper="hotUpper" bindscrolltolower="hotLower" bindscroll="hotScroll" style='height:{{scrollheight}}px'>
         <view class="hot_box">
           <view class="hot_list" wx:for="{{hotList}}" wx:key="{{item.room_name}}">
-            <image class="room_cover" src="{{item.room_cover}}" mode='aspectFit'></image>
+            <image class="room_cover" src="{{item.avatar_big_url}}" mode='aspectFit'></image>
             <view class="room_people">
               <image class="ico_people" src="{{ico_people}}" mode='aspectFit'></image>
-              <text class="room_num">{{item.room_num}}</text>
+              <text class="room_num">{{item.user_num}}</text>
             </view>
             <view class="room_name">
               <view class='room_name_bg'>
               </view>
-              <text class="room_name_txt"> {{item.room_name}} </text>
+              <text class="room_name_txt"> {{item.name}} </text>
             </view>
           </view>
         </view>
