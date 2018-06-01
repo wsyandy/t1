@@ -30,6 +30,16 @@ class MicroClassController extends BaseController
         $this->view->title="购买记录";
     }
 
+    function courseDetailAction()
+    {
+        $this->view->title="考拉微课";
+    }
+
+    function weixinPayAction()
+    {
+        $this->view->title="微信支付";
+    }
+
 
 
 }

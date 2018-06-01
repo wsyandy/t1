@@ -28,13 +28,13 @@ Promise.prototype.finally = function (callback) {
  * url
  * data 以对象的格式传入
  */
-function getRequest(url, data = {}) {
+function getRequest(url, data = {}, judge = false) {
   var getRequest = wxPromisify(wx.request)
   data.version_number = configs.version_number
   data.sid = data.sid ? data.sid : wx.getStorageSync('sid')
 
   return getRequest({
-    url: configs.config.server_domain + url,
+    url: judge ? url : configs.config.server_domain + url,
     method: 'GET',
     data: data,
     header: {
@@ -48,13 +48,13 @@ function getRequest(url, data = {}) {
  * url
  * data 以对象的格式传入
  */
-function postRequest(url, data = {}) {
+function postRequest(url, data = {}, judge = false) {
   var postRequest = wxPromisify(wx.request)
   data.version_number = configs.version_number
   data.sid = data.sid ? data.sid : wx.getStorageSync('sid')
 
   return postRequest({
-    url: configs.config.server_domain + url,
+    url: judge ? url : configs.config.server_domain + url,
     method: 'POST',
     data: data,
     header: {

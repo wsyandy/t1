@@ -399,7 +399,7 @@ class RedPackets extends BaseModel
         }
 
         shuffle($get_diamonds);
-        
+
         info($this->id, $get_diamonds);
 
         foreach ($get_diamonds as $diamond) {
@@ -567,6 +567,8 @@ class RedPackets extends BaseModel
     static function sendRedPacketMessageToUsers($user, $room, $opts)
     {
 
+        info($user->id, 'uid', $user->uid, $room->id, $opts);
+
         $type = fetch($opts, 'type');
         $content = fetch($opts, 'content');
         $red_packet_type = fetch($opts, 'red_packet_type');
@@ -578,7 +580,7 @@ class RedPackets extends BaseModel
         self::pushRedPacketTopTopicMessage($room, $content);
 
         //首页下沉通知
-        if ($type == 'create' && $red_packet_type == RED_PACKET_TYPE_NEARBY && fetch($opts, 'diamond' >= 10000)) {
+        if ($type == 'create' && $red_packet_type == RED_PACKET_TYPE_NEARBY && fetch($opts, 'diamond') >= 10000) {
             self:: pushRedPacketSinkMessage($user, $room, $opts);
         }
     }
@@ -598,14 +600,14 @@ class RedPackets extends BaseModel
 
         if ($type == 'update') {
             $underway_red_packet_num = $room->getNotDrawRedPacketNum($user);
-            info($room->id, $user->id, $underway_red_packet_num);
+            info($room->id, $user->id, 'uid', $user->uid, $underway_red_packet_num);
             $room->pushRedPacketNumToUser($user, $underway_red_packet_num, $url);
         } else {
 
             $users = $room->findTotalRealUsers();
             foreach ($users as $other_user) {
                 $underway_red_packet_num = $room->getNotDrawRedPacketNum($other_user);
-                info($room->id, $other_user->id, $underway_red_packet_num);
+                info($user->id, 'uid', $user->uid, $room->id, $other_user->id, $underway_red_packet_num);
                 $room->pushRedPacketNumToUser($other_user, $underway_red_packet_num, $url);
             }
         }
@@ -641,7 +643,7 @@ class RedPackets extends BaseModel
             }
 
             $result = \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
-            info($user->id, $receiver_fd, '推送结果=>', $result, '结构=>', $body);
+            info('cur', $current_user->id, $current_user->uid, $user->id, $user->uid, $receiver_fd, '推送结果=>', $result, '结构=>', $body);
         }
     }
 

@@ -22,9 +22,9 @@
     <div class="home_banner">
         <div class="swiper-container">
             <div class="swiper-wrapper">
-                <a class="swiper-slide" href="#1"><img class="swiper-img" src="/wx/layuyin/images/index_pic.png" alt="Slide 1"></a>
-                <a class="swiper-slide" href="#2"><img class="swiper-img" src="/wx/layuyin/images/index_pic.png" alt="Slide 2"></a>
-                <a class="swiper-slide" href="#3"><img class="swiper-img" src="/wx/layuyin/images/index_pic.png" alt="Slide 3"></a>
+                <a class="swiper-slide" href="/wx/micro_class/course_detail"><img class="swiper-img" src="/wx/layuyin/images/index_pic.png" alt="Slide 1"></a>
+                <a class="swiper-slide" href="/wx/micro_class/course_detail"><img class="swiper-img" src="/wx/layuyin/images/index_pic.png" alt="Slide 2"></a>
+                <a class="swiper-slide" href="/wx/micro_class/course_detail"><img class="swiper-img" src="/wx/layuyin/images/index_pic.png" alt="Slide 3"></a>
             </div>
             <!-- Add Pagination -->
             <div class="swiper-pagination"></div>
@@ -88,25 +88,30 @@
         </div>
         <ul class="boutique_list">
             <li>
+                <a href="/wx/micro_class/course_detail">
                 <div class="boutique_list_img">
-                    <img src="/wx/layuyin/images/index_pic.png" alt="">
+                    <img src="/wx/layuyin/images/chuanyi.jpg" alt="">
                 </div>
                 <div class="boutique_list_text">
                     <p class="line_hide">清华名师张老师来清华名师张老师来清华名师张老师来清华名师张老师来</p>
                     <span>1241415人学习</span>
                 </div>
+                </a>
             </li>
             <li>
+                <a href="/wx/micro_class/course_detail">
                 <div class="boutique_list_img">
                     <span class="label">系列</span>
-                    <img src="/wx/layuyin/images/index_pic.png" alt="">
+                    <img src="/wx/layuyin/images/chuanyi.jpg    " alt="">
                 </div>
                 <div class="boutique_list_text">
                     <p class="line_hide">清华名师张老师来清华名师张老师来清华名师张老师来清华名师张老师来...</p>
                     <span>1241415人学习</span>
                 </div>
+                </a>
             </li>
             <li>
+                <a href="/wx/micro_class/course_detail">
                 <div class="boutique_list_img">
                     <img src="/wx/layuyin/images/index_pic.png" alt="">
                 </div>
@@ -114,8 +119,10 @@
                     <p class="line_hide">清华名师张老师来清华名师张老师来清华名师张老师来清华名师张老师来...</p>
                     <span>1241415人学习</span>
                 </div>
+                </a>
             </li>
             <li>
+                <a href="/wx/micro_class/course_detail">
                 <div class="boutique_list_img">
                     <img src="/wx/layuyin/images/index_pic.png" alt="">
                 </div>
@@ -123,6 +130,7 @@
                     <p class="line_hide">清华名师张老师来清华名师张老师来清华名师张老师来清华名师张老师来...</p>
                     <span>1241415人学习</span>
                 </div>
+                </a>
             </li>
         </ul>
     </div>
@@ -131,10 +139,11 @@
             <p>热门直播间</p>
         </div>
         <ul class="boutique_list hot_room">
+            <a href="/wx/micro_class/course_detail">
             <li>
                 <div class="boutique_list_img index_hot_img">
                     <span class="label">系列</span>
-                    <img src="" alt="">
+                    <img src="/wx/layuyin/images/xiaobai.png" alt="">
                 </div>
                 <div class="boutique_list_text">
                     <p class="row_hide">清华名师张老师来清华名师张老师来清华名师张老师来清华名师张老师来清华名师张老师来...</p>
@@ -142,9 +151,11 @@
                     <span class="study_num">1241415人学习</span>
                 </div>
             </li>
+            </a>
+            <a href="/wx/micro_class/course_detail">
             <li>
                 <div class="boutique_list_img index_hot_img">
-                    <img src="" alt="">
+                    <img src="/wx/layuyin/images/zgh.png" alt="">
                 </div>
                 <div class="boutique_list_text">
                     <p class="row_hide">清华名师张老师来清华名师张老师来清华名师张老师来清华名师张老师来清华名师张老师来...</p>
@@ -152,9 +163,11 @@
                     <span class="study_num">1241415人学习</span>
                 </div>
             </li>
+            </a>
+            <a href="/wx/micro_class/course_detail">
             <li>
                 <div class="boutique_list_img index_hot_img">
-                    <img src="" alt="">
+                    <img src="/wx/layuyin/images/zcr.jpg" alt="">
                 </div>
                 <div class="boutique_list_text">
                     <p class="row_hide">清华名师张老师来清华名师张老师来清华名师张老师来清华名师张老师来清华名师张老师来...</p>
@@ -162,6 +175,7 @@
                     <span class="study_num">1241415人学习</span>
                 </div>
             </li>
+            </a>
         </ul>
     </div>
 

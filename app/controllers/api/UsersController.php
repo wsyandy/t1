@@ -517,6 +517,7 @@ class UsersController extends BaseController
     function basicInfoAction()
     {
         $basic_json = $this->currentUser()->toBasicJson();
+        $basic_json['medal_image_url'] = '';
         $app_id = $this->currentProductChannel()->getImAppId();
         $signaling_key = $this->currentProductChannel()->getSignalingKey($this->currentUser()->id);
 
