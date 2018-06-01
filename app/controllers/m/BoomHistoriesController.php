@@ -61,8 +61,10 @@ class BoomHistoriesController extends BaseController
         $boom_gift_time = \Rooms::getBoomGiftTime($room_id);
         //用户贡献值 控制概率
         $record_key = \Rooms::generateBoomRecordDayKey($room_id, $boom_gift_time);
-        $amount = $cache->zscore($record_key, $user->id);
+        $pay_amount = $cache->zscore($record_key, $user->id);
         $boom_user_id = $room->getBoomUserId();
+        $boom_amount = $room->getCurrentBoomGiftValue($boom_gift_time);
+        $boom_num = $room->getBoomNum($boom_gift_time);
         $type = BOOM_HISTORY_GIFT_TYPE;
         $number = 1;
 
@@ -74,7 +76,7 @@ class BoomHistoriesController extends BaseController
 
             info("boom_user", $user->id, $target_id, $boom_user_id);
 
-        } elseif ($amount > 0) {
+        } elseif ($pay_amount > 0) {
 
             $rank = $cache->zrank($record_key, $user->id) + 1;
             $gift_id = 0;
@@ -145,9 +147,11 @@ class BoomHistoriesController extends BaseController
             info("random_boom_gift", $user->id, $target_id, $type, $number);
         }
 
-        info("boom_record", "用户id:", $this->currentUser()->id, "贡献值:", $amount, "房间id:", $room_id, "个数", $number, 'type', $type);
+        info("boom_record", "用户id:", $this->currentUser()->id, "贡献值:", $pay_amount, "房间id:", $room_id, "个数", $number, 'type', $type);
 
-        $res = \BoomHistories::createBoomHistory($user, ['target_id' => $target_id, 'type' => $type, 'number' => $number, 'room_id' => $room_id]);
+        $res = \BoomHistories::createBoomHistory($user,
+            ['target_id' => $target_id, 'type' => $type, 'number' => $number, 'room_id' => $room_id, 'boom_user_id' => $boom_user_id,
+                'boom_amount' => $boom_amount, 'boom_num' => $boom_num, 'pay_amount' => $pay_amount]);
 
         list($code, $reason, $boom_history) = $res;
 

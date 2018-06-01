@@ -57,7 +57,7 @@
     <div class="cer_foot">
         <div class="cer_btn">
             <div class="save_image" @click="screenshotsImg('save')"> 存至相册</div>
-            <div class="cp_relieve" @click="cpRelieve" v-if="is_show_clear_cp"> 解除 CP</div>
+            <div class="cp_relieve" @click="cpRelieve"> 解除 CP</div>
         </div>
         <img class="cer_share" :src="cer_share" alt="" @click="cerShare">
     </div>
@@ -96,7 +96,6 @@
     var opts = {
         data: {
             isShareSuccess: false,
-            is_show_clear_cp: "{{ is_show_clear_cp }}",
             sid: '{{ sid }}',
             code: '{{ code }}',
             logo: '/m/images/logo_2.png',

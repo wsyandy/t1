@@ -194,13 +194,7 @@ class CouplesController extends BaseController
         // StoreFile::download($sponsor->avatar, $couple_new_file);
         $sponsor->avatar_base64_url = \Couples::base64EncodeImage(\StoreFile::download($sponsor->avatar, $couple_new_file));
         $pursuer->avatar_base64_url = \Couples::base64EncodeImage(\StoreFile::download($pursuer->avatar, $couple_new_file));
-
-        $is_show_clear_cp = false;
-        if (isDevelopmentEnv()) {
-            $is_show_clear_cp = true;
-        }
-
-        $this->view->is_show_clear_cp = $is_show_clear_cp;
+        
         $this->view->sponsor = json_encode($sponsor->toCpJson(), JSON_UNESCAPED_UNICODE);
         $this->view->pursuer = json_encode($pursuer->toCpJson(), JSON_UNESCAPED_UNICODE);
         $this->view->marriage_at_text = date('Y-m-d', $marriage_at);

@@ -25,11 +25,6 @@ class GiftsController extends BaseController
             'pay_url' => 'url://m/products'
         ];
 
-//        if ($this->currentUser()->isNativePay()) {
-//            $products = \Products::findDiamondListByUser($this->currentUser(), 'toApiJson');
-//            $user_diamond_info['products'] = $products;
-//        }
-
         return $this->renderJSON(
             ERROR_CODE_SUCCESS, '',
             array_merge($user_diamond_info, $gifts->toJson('gifts', 'toSimpleJson'))
