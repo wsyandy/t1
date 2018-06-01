@@ -68,6 +68,7 @@
     {% endif %}
     是否热门：{{ room.hot_text }}<br/>
     房间类型：{{ room.types_text }}
+    房间类型：{{ room.channel_name }}
 {% endmacro %}
 
 {% macro room_status_info(room, boom_config) %}
