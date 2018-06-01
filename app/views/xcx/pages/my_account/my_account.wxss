@@ -1,0 +1,109 @@
+/* pages/my_account/my_account.wxss */
+
+.account_head {
+  width: 100%;
+  height: 140rpx;
+  margin-top: 20rpx;
+  margin-bottom: 20rpx;
+  background-color: #fff;
+  padding: 0 30rpx;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.diamond_info {
+  align-items: baseline;
+  font-size: 30rpx;
+  color: #2d2d2d;
+}
+
+.diamond_num {
+  font-size: 44rpx;
+  color: #f45189;
+}
+
+.diamond_tip {
+  font-size: 22rpx;
+  color: #9a999a;
+  padding-left: 50rpx;
+}
+
+.ico_diamond {
+  width: 30rpx;
+  height: 27rpx;
+  margin-right: 20rpx;
+}
+
+/*充值选项*/
+
+.top-up-box {
+  flex-direction: column;
+  padding-left: 30rpx;
+  background-color: #fff;
+}
+
+.top-up-list {
+  width: 100%;
+  height: 98rpx;
+  padding-right: 30rpx;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 30rpx;
+  border-bottom: 1px solid #f3f3f3;
+}
+
+.top-up-list:last-child {
+  border-bottom: 0;
+}
+
+.top-up-list-diamond {
+  width: 40%;
+  align-items: center;
+}
+
+.top-up-list-gold {
+  width: 20%;
+  align-items: center;
+}
+
+.top-up-list-rmb {
+  width: 35%;
+  align-items: center;
+  justify-content: flex-end;
+  color: #969696;
+}
+
+.top-up-diamond {
+  color: #2d2d2d;
+}
+
+.top-up-gold {
+  padding-left: 10rpx;
+}
+
+.ico_gold {
+  width: 30rpx;
+  height: 30rpx;
+}
+
+.ico_check {
+  width: 30rpx;
+  height: 30rpx;
+  margin-left: 20rpx;
+}
+
+.is_checked {
+  color: #f45189;
+}
+
+.top-up-btn {
+  width: 690rpx;
+  height: 98rpx;
+  background: #f45189;
+  border-radius: 100rpx;
+  font-size: 36rpx;
+  color: #fff;
+  justify-content: center;
+  align-items: center;
+  margin: 80rpx auto 0 auto;
+}

@@ -38,7 +38,7 @@ class GiftOrders extends BaseModel
 
     static $TYPE = [GIFT_ORDER_TYPE_USER_SEND => '用户赠送', GIFT_ORDER_TYPE_USER_BUY => '购买',
         GIFT_ORDER_TYPE_SYSTEM_SEND => '系统赠送', GIFT_ORDER_TYPE_ACTIVITY_LUCKY_DRAW => '抽奖赠送',
-        GIFT_ORDER_TYPE_USER_BACKPACK_SEND => '背包赠送'
+        GIFT_ORDER_TYPE_USER_BACKPACK_SEND => '背包赠送', GIFT_ORDER_TYPE_BOOM_GIFT => '爆礼物'
     ];
 
     function afterCreate()
@@ -329,7 +329,7 @@ class GiftOrders extends BaseModel
 
                 if (!$this->sender->isSilent()) {
                     debug($this->amount, $this->sender_id, $this->gift_num, $params);
-                    Rooms::statDayIncome($room, $this->amount, $this->sender_id, $this->gift_num, $params);
+                    Rooms::statDayIncome($room, $this->amount, $this->sender, $this->gift_num, $params);
                 }
             }
 

@@ -1186,61 +1186,60 @@ trait UserAttrs
     {
         $db = \Users::getUserDb();
         $current_rank = $this->getRankByKey($key);
-        $current_user_info['current_rank'] = $current_rank <= 100 ? $current_rank : '100+';
-        $current_user_info['current_score'] = $db->zscore($key, $this->id);
+        $current_user_info['current_rank'] = $current_rank <= 100 ? $current_rank : $current_rank + 1000;
+        $current_user_info['current_rank_text'] = $current_rank <= 100 ? $current_rank : '100+';
+        $current_score = $db->zscore($key, $this->id);
+        $current_user_info['current_score'] = $current_score ? $current_score : 0;
 
         return $current_user_info;
     }
 
 
-    function getCurrentWeekActivityCpInfo($start_at, $opts = [])
+    function getCurrentRankListCpInfo($type = 'week', $opts = [])
     {
         $db = \Users::getUserDb();
         //先去当前用户的周情侣值最高的数据，拼接成员，到周总榜，拿到当前排名和当前分数
-        $total_cp_week_charm_key = \Users::generateFieldRankListKey('week', 'cp', $opts);
+        $total_cp_week_charm_key = \Users::generateFieldRankListKey($type, 'cp', $opts);
 
         //当前用户周情侣值
-        $cp_week_charm_key = \Couples::generateCoupleWeekValueKey($this->id, $start_at);
+        $cp_week_charm_key = \Couples::generateCoupleKeyForUser($type, $this->id, $opts);
         $height_data = $db->zrevrange($cp_week_charm_key, 0, 0);
-        $current_score = 0;
         info($height_data);
-        if ($height_data) {
-            $other_user_id = $height_data[0];
+        if (!$height_data) {
+            return '';
+        }
+        $other_user_id = $height_data[0];
 
-            $key = \Couples::generateSeraglioKey($this->id);
-            $status = $db->zscore($key, $other_user_id);
-            switch ($status) {
-                case 1:
-                    $member = $other_user_id . '_' . $this->id;
-                    break;
-                case 2:
-                    $member = $this->id . '_' . $other_user_id;
-                    break;
-            }
+        $key = \Couples::generateSeraglioKey($this->id);
+        $status = $db->zscore($key, $other_user_id);
+        switch ($status) {
+            case 1:
+                $member = $other_user_id . '_' . $this->id;
+                break;
+            case 2:
+                $member = $this->id . '_' . $other_user_id;
+                break;
+        }
 
-            $rank = $db->zrrank($total_cp_week_charm_key, $member);
-            $current_score = $db->zscore($total_cp_week_charm_key, $member);
+        $rank = $db->zrrank($total_cp_week_charm_key, $member);
+        $current_score = $db->zscore($total_cp_week_charm_key, $member);
 
-            if (is_null($rank)) {
-                $total_entries = $db->zcard($total_cp_week_charm_key);
-                if ($total_entries) {
-                    $rank = $total_entries;
-                }
-            }
-
-            $current_rank = $rank + 1;
-            $current_user_info['current_score'] = $db->zscore($total_cp_week_charm_key, $member);
-        } else {
+        if (is_null($rank)) {
             $total_entries = $db->zcard($total_cp_week_charm_key);
             if ($total_entries) {
                 $rank = $total_entries;
             }
-
-            $current_rank = $rank + 1;
         }
 
-        $current_user_info['current_rank'] = $current_rank <= 100 ? $current_rank : '100+';
-        $current_user_info['current_score'] = $current_score;
+        $current_rank = $rank + 1;
+
+        $current_user_info['current_rank'] = $current_rank;
+        $current_user_info['current_rank_text'] = $current_rank <= 100 ? $current_rank : '100+';
+        $current_user_info['current_score'] = $current_score ? $current_score : 0;
+
+        $other_user = \Users::findFirstById($other_user_id);
+        $current_user_info['other_user_nickname'] = $other_user->nickname;
+        $current_user_info['other_user_avatar_url'] = $other_user->avatar_url;
 
         return $current_user_info;
     }

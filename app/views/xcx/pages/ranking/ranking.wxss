@@ -1,0 +1,73 @@
+/* pages/ranking/ranking.wxss */
+
+.rank_head {
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 220rpx;
+  padding: 20rpx;
+  background-color: #fff;
+  border-bottom: 1px solid #EAEAEA;
+}
+
+.rank_tabs {
+  width: 600rpx;
+  height: 70rpx;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8rpx;
+  font-size: 30rpx;
+  color: #F45189;
+}
+
+.rank_tab,.rank_tab_cur {
+  width: 50%; 
+  justify-content: center;
+  align-items: center;
+}
+.rank_tab_cur{ 
+  background: #F45189;
+  color: #fff;
+}
+
+/*日榜月榜总榜*/
+.rank_type {
+  width: 600rpx; 
+  background-color: #fff; 
+  justify-content: space-between
+}
+.rank_type_item {
+  position: relative; 
+  justify-content: center;
+  align-items: center;
+}
+
+.rank_type_text {
+  width: 160rpx;
+  height: 56rpx;
+font-size: 28rpx;
+color: #A4A4A4;
+background: #F3F3F3;
+border-radius: 100rpx;
+align-items: center;
+justify-content: center;
+}
+ 
+.rank_type_cur {
+   width: 160rpx;
+  height: 56rpx;
+font-size: 28rpx;
+color: #fff;
+background: #F45189;
+border-radius: 100rpx;
+align-items: center;
+justify-content: center;
+ 
+}
+.slider-wrapper { 
+  position: relative;
+  display: block;
+  background-color: #fff;
+}
+ 

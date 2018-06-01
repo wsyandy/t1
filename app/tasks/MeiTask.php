@@ -8,9 +8,26 @@
 
 class MeiTask extends \Phalcon\Cli\Task
 {
+    function test74Action()
+    {
+        $room = Rooms::findFirstById(54);
+        for ($i = 1; $i <= 1000; $i++) {
+            $user = Users::randomSilentUser();
+            $user->segment = 1;
+            BoomHistories::getPrize($user, $room);
+        }
+    }
 
     function test73Action()
     {
+        $cache = Users::getHotWriteCache();
+        $record_key = "test_user_record";
+        $cache->zadd($record_key, 1, 1001303);
+        $cache->zadd($record_key, 100000, 1001304);
+        $cache->zadd($record_key, 500, 1001305);
+        echoLine(2 - $cache->zrank($record_key, 1001304), $cache->zrank($record_key, 1001304));
+
+        $rank = $cache->zrank($record_key, $user->id) + 1;
         $orders = Orders::find(['conditions' => 'status = :status:',
             'bind' => ['status' => ORDER_STATUS_SUCCESS],
             'columns' => 'distinct user_id'

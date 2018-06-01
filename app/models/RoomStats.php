@@ -268,6 +268,13 @@ trait RoomStats
     //按天统计房间收益和送礼物人数,送礼物个数
     static function statDayIncome($room, $income, $sender_id, $gift_num, $opts = [])
     {
+        if (is_numeric($sender_id)) {
+            $sender = Users::findFirstById($sender_id);
+        } else {
+            $sender = $sender_id;
+            $sender_id = $sender->id;
+        }
+
         if ($income > 0 && $room) {
 
             if (is_numeric($room)) {
@@ -308,13 +315,20 @@ trait RoomStats
             $hot_cache->expire($minutes_num_stat_key, 3600 * 3);
 
             // 爆礼物
-            $room->statBoomIncome($sender_id, $income, $time);
+            $room->statBoomIncome($sender, $income, $time);
         }
     }
 
     // 爆礼物流水值记录
     function statBoomIncome($sender_id, $income, $time)
     {
+        if (is_numeric($sender_id)) {
+            $sender = Users::findFirstById($sender_id);
+        } else {
+            $sender = $sender_id;
+            $sender_id = $sender->id;
+        }
+
         $boom_config = BoomConfigs::getBoomConfig($this);
 
         if (isBlank($boom_config)) {
@@ -379,9 +393,8 @@ trait RoomStats
                 $cache->setex($room_boon_gift_sign_key, $boom_expire, $time); //爆钻时间
                 $this->pushBoomIncomeMessage($boom_config);
                 //临时查询
-                $sender = Users::findFirstById($sender_id);
-                $content = "恭喜【{$sender->nickname}】在【{$this->name}】内，成功引爆火箭，快来抢礼物吧！";
-                Rooms::delay()->asyncAllNoticePush($content, ['hot' => 1, 'room_id' => $this->id]);
+                $content = "恭喜【{$sender->nickname}】在【{$this->name}】房间引爆了火箭，快来领取奖品吧！";
+                Rooms::delay()->asyncAllNoticePush($content, ['hot' => 1, 'type' => 'top_topic_message']);
                 unlock($lock);
 
                 return;

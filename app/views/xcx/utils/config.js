@@ -11,12 +11,12 @@ switch (debug) {
     config.image_url = ""
     break;
   case 1:
-    config.server_domain = "http://test.xianjinchaoren.com/xcx/"
+    config.server_domain = "http://test.xianjinchaoren.com/"
     config.websocket_domain = ""
     config.image_url = "http://test.xianjinchaoren.com/xcx/images/"
     break;
   case 2:
-    config.server_domain = "http://chance.com/xcx/"
+    config.server_domain = "http://chance.com/"
     config.websocket_domain = "ws://127.0.0.1:9501"
     config.image_url = "http://chance.com/xcx/images/"
     break;

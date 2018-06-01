@@ -27,142 +27,24 @@ class BoomHistoriesController extends BaseController
     {
         $user = $this->currentUser();
         $room_id = $user->current_room_id;
-        // 前三排行
-        $boom_histories = \BoomHistories::findHistoriesByUser($user, 3);
-        $boom_histories = $boom_histories->toJson('boom_histories', 'toSimpleJson');
 
         if (!$room_id) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误', $boom_histories);
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误', ['boom_histories' => '']);
         }
 
         $room = \Rooms::findFirstById($room_id);
-
-        // 没爆礼物不抽奖
-        $expire_at = \Rooms::getBoomGiftExpireAt($room_id);
-
-        if (isBlank($expire_at)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '未开始爆礼物', $boom_histories);
-        }
-
-        // 抽奖物品保存至爆礼物结束时间
-        $expire = $expire_at - time();
-        $expire = $expire > 180 ? 180 : ($expire < 0 ? 1 : $expire);
-
-        // 爆出的礼物从缓存拿到
-        $cache = \BoomHistories::getHotWriteCache();
-        $user_sign_key = \BoomHistories::generateBoomUserSignKey($user->id, $room_id);
-        $user_sign = $cache->get($user_sign_key);
-
-        // 领取后缓存值为1
-        if ($user_sign == 1) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '已领取！', $boom_histories);
-        }
-
-        $boom_gift_time = \Rooms::getBoomGiftTime($room_id);
-        //用户贡献值 控制概率
-        $record_key = \Rooms::generateBoomRecordDayKey($room_id, $boom_gift_time);
-        $pay_amount = $cache->zscore($record_key, $user->id);
-        $boom_user_id = $room->getBoomUserId();
-        $boom_amount = $room->getCurrentBoomGiftValue($boom_gift_time);
-        $boom_num = $room->getBoomNum($boom_gift_time);
-        $type = BOOM_HISTORY_GIFT_TYPE;
-        $number = 1;
-
-        $lock = tryLock("boom_room_lock_" . $room_id);
-        if ($boom_user_id == $user->id) {
-
-            $gift_id = \BoomHistories::randomBoomUserGiftId();
-            $target_id = $gift_id;
-
-            info("boom_user", $user->id, $target_id, $boom_user_id);
-
-        } elseif ($pay_amount > 0) {
-
-            $rank = $cache->zrank($record_key, $user->id) + 1;
-            $gift_id = 0;
-            $data = [];
-
-            if ($rank && $rank > 0 && $rank <= 3) {
-
-                $gift_id = \BoomHistories::randomContributionUserGiftIdByRank($rank);
-
-                if (!$gift_id) {
-                    $data = \BoomHistories::randomBoomGiftIdByBoomNum($room);
-                }
-
-            } else {
-                $data = \BoomHistories::randomBoomGiftIdByBoomNum($room);
-            }
-
-            if (!$data && !$gift_id) {
-                $gift_id = 64;
-
-                if (isDevelopmentEnv()) {
-                    $gift_id = 54;
-                }
-
-                $target_id = $gift_id;
-                $type = BOOM_HISTORY_GIFT_TYPE;
-                $number = 1;
-            } elseif ($gift_id) {
-                $target_id = $gift_id;
-                info($user->id, $rank, $target_id);
-            } elseif ($data) {
-                $type = fetch($data, 'type');
-                $target_id = fetch($data, 'target_id');
-                $number = fetch($data, 'number');
-            } else {
-                $gift_id = 64;
-
-                if (isDevelopmentEnv()) {
-                    $gift_id = 54;
-                }
-
-                $target_id = $gift_id;
-                $type = BOOM_HISTORY_GIFT_TYPE;
-                $number = 1;
-            }
-
-            info("contribution_user", $user->id, $rank, $target_id, $boom_user_id, $type, $number);
-
-        } else {
-            $data = \BoomHistories::randomBoomGiftIdByBoomNum($room, 60);
-
-            if (!$data) {
-                $gift_id = 64;
-
-                if (isDevelopmentEnv()) {
-                    $gift_id = 54;
-                }
-
-                $target_id = $gift_id;
-                $type = BOOM_HISTORY_GIFT_TYPE;
-                $number = 1;
-            } else {
-                $type = fetch($data, 'type');
-                $target_id = fetch($data, 'target_id');
-                $number = fetch($data, 'number');
-            }
-
-            info("random_boom_gift", $user->id, $target_id, $type, $number);
-        }
-
-        info("boom_record", "用户id:", $this->currentUser()->id, "贡献值:", $pay_amount, "房间id:", $room_id, "个数", $number, 'type', $type);
-
-        $res = \BoomHistories::createBoomHistory($user,
-            ['target_id' => $target_id, 'type' => $type, 'number' => $number, 'room_id' => $room_id, 'boom_user_id' => $boom_user_id,
-                'boom_amount' => $boom_amount, 'boom_num' => $boom_num, 'pay_amount' => $pay_amount]);
-
+        $res = \BoomHistories::getPrize($user, $room);
         list($code, $reason, $boom_history) = $res;
 
-        if ($code == ERROR_CODE_FAIL) {
-            unlock($lock);
-            return $this->renderJSON($code, $reason);
+        $json = [];
+
+        if ($boom_history) {
+            $json = $boom_history->toSimpleJson();
+        } else {
+            return $this->renderJSON($code, $reason, ['boom_histories' => '']);
         }
 
-        $cache->setex($user_sign_key, $expire, 1);
-        unlock($lock);
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['boom_histories' => [$boom_history->toSimpleJson()]]);
+        return $this->renderJSON($code, $reason, ['boom_histories' => [$json]]);
     }
 
     /**

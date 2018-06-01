@@ -1,0 +1,73 @@
+<view class="mygift_head">
+  <view class="mygift_tabs">
+    <text class="{{tabsIdx==index?'mygift_tab_cur':'mygift_tab'}}" wx:for="{{tabs}}" data-index="{{index}}" wx:key="mygift{{index}}" catchtap="mygiftTabs">{{item}}</text>
+  </view>
+</view>
+<scroll-view class="mygift_scroll" scroll-y style='height:{{scrollheight}}px'>
+  <!-- 收到礼物 -->
+  <view hidden="{{tabsIdx!==0}}" class="mygift_get">
+    <view class="mygift_list" wx:for="{{receiveGifts}}" data-index="{{index}}" wx:key="gift{{index}}">
+      <view class='gift_img'>
+        <image class='gift_avatar' mode='scaleToFill' src='{{item.sender_avatar_small_url}}' catchtap="navTouserInfo"></image>
+      </view>
+      <view class="gift_info">
+        <view class="gift_info_top">
+          <view class="gift_giver" catchtap="navTouserInfo">
+            <text class="gift_name">{{item.sender_name}}</text>
+            <text class="highlight">送给您的礼物</text>
+          </view>
+          <text class="gift_time">{{item.created_at_text}}</text>
+        </view>
+        <view class="gift_info_list">
+          <image class='gift_ico' mode='scaleToFill' src='{{item.image_small_url}}'></image>
+          <view class="gift_txt">
+            <view class="gift_tit">
+              <text>礼物：</text>
+              <text class="gift_num">{{item.name}} ∗ {{item.gift_num}}</text>
+            </view>
+            <view class="gift_tit">
+              <text>价格：</text>
+              <image class="icon_diamond" src="{{item.pay_type == 'gold' ? icon_gold : icon_diamond }}"></image>
+              <!-- <image wx:if='{{item.pay_type == "diamond"}}' class="icon_diamond" src="{{icon_diamond}}"></image>
+              <image wx:if='{{item.pay_type == "gold"}}' class="icon_diamond" src="{{icon_gold}}"></image> -->
+              <text class="gift_num">{{item.amount}}{{item.pay_type_text}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  <!-- 送出礼物 -->
+  <view class="mygift_send" hidden="{{tabsIdx!==1}}">
+    <view class="mygift_list" wx:for="{{giftSendList}}" data-index="{{index}}" wx:key="gift{{index}}">
+      <view class='gift_img'>
+        <image class='gift_avatar' mode='scaleToFill' src='{{item.user_avatar_small_url}}' catchtap="navTouserInfo"></image>
+      </view>
+      <view class="gift_info">
+        <view class="gift_info_top">
+          <view class="gift_giver" catchtap="navTouserInfo">
+            <text class="gift_name">{{item.user_name}}</text>
+            <text class="highlight">收到您的礼物</text>
+          </view>
+          <text class="gift_time">{{item.created_at_text}}</text>
+        </view>
+        <view class="gift_info_list">
+          <image class='gift_ico' mode='scaleToFill' src='{{item.image_small_url}}'></image>
+          <view class="gift_txt">
+            <view class="gift_tit">
+              <text>礼物：</text>
+              <text class="gift_num">{{item.name}} ∗ {{item.gift_num}}</text>
+            </view>
+            <view class="gift_tit">
+              <text>价格：</text>
+              <image class="icon_diamond" src="{{item.pay_type == 'gold' ? icon_gold : icon_diamond }}"></image>
+              <!-- <image wx:if='{{item.pay_type == "diamond"}}' class="icon_diamond" src="{{icon_diamond}}"></image>
+              <image wx:if='{{item.pay_type == "gold"}}' class="icon_diamond" src="{{icon_gold}}"></image> -->
+              <text class="gift_num">{{item.amount}}{{item.pay_type_text}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</scroll-view>
