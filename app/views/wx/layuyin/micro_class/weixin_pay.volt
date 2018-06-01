@@ -19,7 +19,7 @@
         </li>
     </ul>
     <div class="topup_affirm">
-        <span>确认支付</span>
+        <span>占时无法购买</span>
     </div>
 </div>
 <script>
