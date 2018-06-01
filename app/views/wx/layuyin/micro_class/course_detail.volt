@@ -95,7 +95,7 @@
             <div class="course_buy_list">
                 <ul>
                     <li>
-                        <a href="/wx/payments/weixin"><span>购买课程</span></a>
+                        <a href="/wx/micro_class/weixin_pay"><span>购买课程</span></a>
                     </li>
                 </ul>
             </div>

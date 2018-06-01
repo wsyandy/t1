@@ -324,3 +324,17 @@
   background: #1892EA !important;
 }
 
+.pay_course{
+  height: 134px;
+  background-color: white;
+  text-align: center;
+  padding-top: 34px;
+}
+.pay_course_title {
+  height: 40px;
+  padding-left: 14px;
+  font-size: 16px;
+  color: #666666;
+  line-height: 40px;
+}
+
