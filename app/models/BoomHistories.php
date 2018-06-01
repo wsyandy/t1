@@ -25,11 +25,6 @@ class BoomHistories extends BaseModel
 
     static $TYPE = [BOOM_HISTORY_GIFT_TYPE => '礼物', BOOM_HISTORY_DIAMOND_TYPE => '钻石', BOOM_HISTORY_GOLD_TYPE => '金币'];
 
-    function afterCreate()
-    {
-
-    }
-
     public function getGiftName()
     {
         if ($this->target_id == 0) {
@@ -38,6 +33,19 @@ class BoomHistories extends BaseModel
 
         $gift = Gifts::findFirstById($this->target_id);
         return $gift->name;
+    }
+
+    function isCar()
+    {
+        if (!$this->gift) {
+            return false;
+        }
+
+        if (!$this->gift->isCar()) {
+            return false;
+        }
+
+        return true;
     }
 
     //引爆者礼物
@@ -61,13 +69,12 @@ class BoomHistories extends BaseModel
     //贡献这礼物 rank 用户贡献的排名
     static function randomContributionUserGiftIdByRank($user, $room, $opts = [])
     {
-        $cache = self::getHotWriteCache();
         $type = 'contribution_gift';
         $boom_num = fetch($opts, 'boom_num');
         $rank = fetch($opts, 'rank');
 
         if ($boom_num < 3 && $rank > 2) {
-            info($boom_num, $rank);
+            info($user->id, $room->id, $boom_num, $rank);
             return null;
         }
 
@@ -109,7 +116,7 @@ class BoomHistories extends BaseModel
         foreach ($data as $datum) {
             $res = self::isLimit($room, $datum, ['boom_num' => $boom_num, 'type' => $type]);
             if ($res) {
-                info($datum);
+                info($user->id, $room->id, $datum, $boom_num);
                 continue;
             }
             $gift_datas[] = $datum;
@@ -136,16 +143,16 @@ class BoomHistories extends BaseModel
 
         $datas = [
             1 => [
-                1 => ['id' => 23, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 30, 'target_id' => 106, 'number' => 1],
-                2 => ['id' => 24, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 30, 'target_id' => 109, 'number' => 1],
+                1 => ['id' => 23, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 15, 'target_id' => 106, 'number' => 1],
+                2 => ['id' => 24, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 15, 'target_id' => 109, 'number' => 1],
             ],
             2 => [
-                1 => ['id' => 25, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 30, 'target_id' => 107, 'number' => 1],
-                2 => ['id' => 26, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 30, 'target_id' => 111, 'number' => 1],
+                1 => ['id' => 25, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 15, 'target_id' => 107, 'number' => 1],
+                2 => ['id' => 26, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 15, 'target_id' => 111, 'number' => 1],
             ],
             3 => [
-                1 => ['id' => 27, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 30, 'target_id' => 108, 'number' => 1],
-                2 => ['id' => 28, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 30, 'target_id' => 110, 'number' => 1],
+                1 => ['id' => 27, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 15, 'target_id' => 108, 'number' => 1],
+                2 => ['id' => 28, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 15, 'target_id' => 110, 'number' => 1],
             ]
         ];
 
@@ -172,7 +179,7 @@ class BoomHistories extends BaseModel
         foreach ($data as $datum) {
             $res = self::isLimit($room, $datum, ['boom_num' => $boom_num, 'type' => $type]);
             if ($res) {
-                info($datum);
+                info($user->id, $room->id, $datum, $boom_num);
                 continue;
             }
             $gift_datas[] = $datum;
@@ -259,7 +266,7 @@ class BoomHistories extends BaseModel
         foreach ($data as $datum) {
             $res = self::isLimit($room, $datum, ['boom_num' => $boom_num, 'type' => $type]);
             if ($res) {
-                info($datum);
+                info($user->id, $room->id, $datum, $boom_num);
                 continue;
             }
             $gift_datas[] = $datum;
@@ -283,7 +290,7 @@ class BoomHistories extends BaseModel
         $total_number = fetch($data, 'total_number');
         $num = $boom_num;
         $key = "boom_gift_hit_num_room_id{$room->id}" . "_{$id}_boom_num_" . $num . "_type_" . $type;
-        $hit_num = $cache->get($key);
+        $hit_num = intval($cache->get($key));
         info($room->id, $key, $hit_num, $data, $opts);
         if ($hit_num >= $total_number) {
             return true;
@@ -309,7 +316,7 @@ class BoomHistories extends BaseModel
         $id = fetch($gift_data, 'id');
         $key = "boom_gift_hit_num_room_id{$room->id}" . "_{$id}_boom_num_" . $boom_num . "_type_" . $type;
         $cache->incrby($key, 1);
-        $cache->expire($key, 600);
+        $cache->expire($key, \Rooms::getBoomGiftExpireAt($room->id) - time() + 5);
     }
 
     /**
@@ -321,8 +328,8 @@ class BoomHistories extends BaseModel
     static public function findHistoriesByRoom($room, $per_page = 10)
     {
         $conditions = [
-            'conditions' => 'room_id = :room_id: and created_at >= :start: and created_at <= :end:',
-            'bind' => ['room_id' => $room->id, 'start' => time() - 600, 'end' => time()],
+            'conditions' => 'type = :type: and amount > 1',
+            'bind' => ['type' => BOOM_HISTORY_GIFT_TYPE],
             'order' => 'id asc'
         ];
 
@@ -348,9 +355,7 @@ class BoomHistories extends BaseModel
      */
     public function toSimpleJson()
     {
-
         if ($this->type != BOOM_HISTORY_GIFT_TYPE) {
-
             if ($this->type == BOOM_HISTORY_DIAMOND_TYPE) {
                 $name = '钻石';
                 $image_url = Backpacks::getDiamondImage();
@@ -358,13 +363,10 @@ class BoomHistories extends BaseModel
                 $name = '金币';
                 $image_url = Backpacks::getGoldImage();
             }
-
         } else {
-
             $target = Gifts::findFirstById($this->target_id);
             $image_url = $target->image_url;
             $name = $target->name;
-
         }
 
         return ['user' => $this->user->nickname, 'name' => $name, 'number' => $this->number, 'image_url' => $image_url];
@@ -436,17 +438,15 @@ class BoomHistories extends BaseModel
                         if (!Backpacks::createBackpack($user, ['target_id' => $target_id, 'number' => $number, 'type' => BACKPACK_GIFT_TYPE])) {
                             return [ERROR_CODE_FAIL, '加入背包失败', null];
                         }
-                        if (!$gift->isNormal()) {
+                        if (!$gift->isNormal() && $gift->isSvga()) {
                             $content = "恭喜【{$user->nickname}】在爆火箭中获得了超超超绝版礼物[{$gift->name}]";
                             Rooms::delay()->asyncAllNoticePush($content, ['hot' => 1, 'type' => 'top_topic_message']);
                         }
                     }
                 }
             } elseif ($type == BOOM_HISTORY_DIAMOND_TYPE) {
-
                 $opts['remark'] = '爆礼物获得' . $number . '钻石';
                 \AccountHistories::changeBalance($user, ACCOUNT_TYPE_IN_BOOM, $number, $opts);
-
             } elseif ($type == BOOM_HISTORY_GOLD_TYPE) {
 
                 $opts['remark'] = '爆礼物获得' . $number . '金币';
@@ -513,7 +513,7 @@ class BoomHistories extends BaseModel
         $user_sign_key = \BoomHistories::generateBoomUserSignKey($user->id, $room_id);
         $user_sign = $cache->get($user_sign_key);
         if ($user_sign == 1) {
-            return [ERROR_CODE_FAIL, '已领取！', null];
+            return [ERROR_CODE_FAIL, '您已领取！', null];
         }
 
         $boom_gift_time = \Rooms::getBoomGiftTime($room_id);
@@ -533,7 +533,7 @@ class BoomHistories extends BaseModel
             $target_id = $gift_id;
             info("boom_user", $user->id, $boom_num, $target_id, $boom_user_id);
         } elseif ($pay_amount > 0) {
-            $rank = $cache->zrank($record_key, $user->id) + 1;
+            $rank = $cache->zcard($record_key) - $cache->zrank($record_key, $user->id);
             $data = [];
             if ($rank && $rank > 0 && $rank <= 3) {
                 $data = \BoomHistories::randomContributionUserGiftIdByRank($user, $room, ['rank' => $rank, 'boom_num' => $boom_num]);
@@ -542,6 +542,10 @@ class BoomHistories extends BaseModel
             if (!$data) {
                 if ($user->segment) {
                     $data = \BoomHistories::userSegmentGift($user, $room, ['boom_num' => $boom_num]);
+
+                    if (!$data) {
+                        $data = \BoomHistories::randomBoomGiftIdByBoomNum($user, $room, ['boom_num' => $boom_num]);
+                    }
                 } else {
                     $data = \BoomHistories::randomBoomGiftIdByBoomNum($user, $room, ['boom_num' => $boom_num]);
                 }
@@ -555,10 +559,15 @@ class BoomHistories extends BaseModel
             $type = fetch($data, 'type');
             $target_id = fetch($data, 'target_id');
             $number = fetch($data, 'number');
-            info("contribution_user", $user->id, $user->uid, $user->segment, $pay_amount, $rank, $target_id, $type, $number);
+            info("contribution_user", $user->id, $user->uid, $user->segment, 'pay_amount', $pay_amount, 'rank', $rank, 'target_id', $target_id, 'type', $type, 'number', $number);
         } else {
             if ($user->segment) {
                 $data = \BoomHistories::userSegmentGift($user, $room, ['boom_num' => $boom_num]);
+
+                if (!$data) {
+                    $data = \BoomHistories::randomBoomGiftIdByBoomNum($user, $room, ['boom_num' => $boom_num]);
+                }
+
             } else {
                 $data = \BoomHistories::randomBoomGiftIdByBoomNum($user, $room, ['boom_num' => $boom_num]);
             }

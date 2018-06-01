@@ -199,7 +199,7 @@
                         </p>
                     </div>
                     <div class="myself_info" v-show="curIdx==3" v-if="!current_user_info">
-                        <p>您还没有Cp，快去寻找那个Ta~</p>
+                        <p>暂无数据</p>
                     </div>
                 </div>
 

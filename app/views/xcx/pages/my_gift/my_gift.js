@@ -1,128 +1,35 @@
-// pages/my_account/my_account.js
+const request = require('../../utils/wxRequest.js');
+const Utils = require('../../utils/util.js');
 const app = getApp()
 Page({
 
   /**
    * 页面的初始数据
    */
-  data: { 
-    icon_diamond: '/images/icon_diamond.png',  
+  data: {
+    sendPage: 1,
+    receivePage: 1,
+    receiveTotalPage: 1,
+    sendTotalPage: 1,
+    icon_diamond: '/images/icon_diamond.png',
+    icon_gold: '/images/ico_gold.png',
     tabsIdx: 0,
-    tabs: ["收到","送出"],
+    tabs: ["收到", "送出"],
     scrollheight: '',/*设置可滚动 高度*/
-    giftgetList: [
-      {
-        avatar: '/images/room_cover_1.jpg',
-        giver: '王晓馨王晓馨王晓馨王晓馨王晓馨',
-        gift_ico: '/images/gift01.png', 
-        gift_tit: '西瓜', 
-        gift_price: 20,
-        time: '2018-01-29 20:28:00',
-        num: 2,
-      },
-      {
-        avatar: '/images/room_cover_2.jpg',
-        giver: '王晓馨',
-        gift_ico: '/images/gift02.png',
-        gift_tit: '烧烤',
-        gift_price: 30,
-        time: '2018-01-29 20:29:00',
-        num: 3,
-      },
-      {
-        avatar: '/images/room_cover_1.jpg',
-        giver: '王晓馨',
-        gift_ico: '/images/gift03.png',
-        gift_tit: '雪糕',
-        gift_price: 10,
-        time: '2018-01-29 20:28:00',
-        num: 4,
-      },
-      {
-        avatar: '/images/room_cover_2.jpg',
-        giver: '王晓馨',
-        gift_ico: '/images/gift04.png',
-        gift_tit: '龙虾',
-        gift_price: 40,
-        time: '2018-01-29 20:29:00',
-        num: 1,
-      },
-      {
-        avatar: '/images/room_cover_1.jpg',
-        giver: '王晓馨王晓馨王晓馨王晓馨王晓馨',
-        gift_ico: '/images/gift01.png',
-        gift_tit: '西瓜',
-        gift_price: 20,
-        time: '2018-01-29 20:28:00',
-        num: 2,
-      },
-      {
-        avatar: '/images/room_cover_2.jpg',
-        giver: '王晓馨',
-        gift_ico: '/images/gift02.png',
-        gift_tit: '烧烤',
-        gift_price: 30,
-        time: '2018-01-29 20:29:00',
-        num: 3,
-      },
-      {
-        avatar: '/images/room_cover_1.jpg',
-        giver: '王晓馨',
-        gift_ico: '/images/gift03.png',
-        gift_tit: '雪糕',
-        gift_price: 10,
-        time: '2018-01-29 20:28:00',
-        num: 4,
-      },
-    ],
-    giftSendList: [
-      
-      {
-        avatar: '/images/room_cover_2.jpg',
-        giver: '王晓馨',
-        gift_ico: '/images/gift04.png',
-        gift_tit: '龙虾',
-        gift_price: 40,
-        time: '2018-01-29 20:29:00',
-        num: 1,
-      },
-      {
-        avatar: '/images/room_cover_1.jpg',
-        giver: '王晓馨王晓馨王晓馨王晓馨王晓馨',
-        gift_ico: '/images/gift01.png',
-        gift_tit: '西瓜',
-        gift_price: 20,
-        time: '2018-01-29 20:28:00',
-        num: 2,
-      },
-      {
-        avatar: '/images/room_cover_2.jpg',
-        giver: '王晓馨',
-        gift_ico: '/images/gift02.png',
-        gift_tit: '烧烤',
-        gift_price: 30,
-        time: '2018-01-29 20:29:00',
-        num: 3,
-      },
-      {
-        avatar: '/images/room_cover_1.jpg',
-        giver: '王晓馨',
-        gift_ico: '/images/gift03.png',
-        gift_tit: '雪糕',
-        gift_price: 10,
-        time: '2018-01-29 20:28:00',
-        num: 4,
-      },
-    ]
+    giftSendList: [],
+    receiveGifts: [],
   },
-  /*选择充值金额*/
+
   mygiftTabs: function (e) {
     let index = e.currentTarget.dataset.index;
+    if (index) {
+      this.receiveGift('send', 'giftSendList')
+    }
     this.setData({
       tabsIdx: index
     })
   },
-  
+
   /*进入送礼物的个人主页*/
   navTouserInfo: function () {
 
@@ -135,6 +42,74 @@ Page({
     this.setData({
       scrollheight: app.globalData.windowHeight - (app.globalData.windowWidth / 750 * 120)
     });
+    this.receiveGift('receive', 'receiveGifts')//加载收到的礼物列表
+  },
+  /**
+   * 收到礼物列表
+   * receive收到的礼物
+   * send送出的礼物
+   */
+  receiveGift: function (type = 'receive', objName) {
+    let _this = this
+
+    if (type == 'receive') {
+      if (_this.data.receivePage > _this.data.receiveTotalPage) {
+        wx.showToast({
+          title: '已经到底了',
+          icon: 'none',
+          duration: 1500
+        })
+        return
+      }
+
+    } else {
+      if (_this.data.sendPage > _this.data.sendTotalPage) {
+        wx.showToast({
+          title: '已经到底了',
+          icon: 'none',
+          duration: 1500
+        })
+        return
+      }
+
+    }
+
+    let data = { [type]: type, page: 1 }
+    request.postRequest('gift_orders/index', data).then(res => {
+      Utils.log(`列表数据:${JSON.stringify(res.data.gift_orders)}`)
+      let gifts = []
+      if (type == 'receive') {
+        _this.data.receiveTotalPage = res.data.total_page
+        _this.data.receivePage++
+        _this.data.receiveGifts.concat(res.data.gift_orders)
+        gifts = _this.data.receiveGifts
+      } else {
+        _this.data.sendTotalPage = res.data.total_page
+        _this.data.sendPage++
+        _this.data.giftSendList.concat(res.data.gift_orders)
+        gifts = _this.data.giftSendList
+      }
+
+      _this.setData({
+        [objName]: gifts ? gifts : {}
+      })
+    })
+  },
+  /**
+   * 初始化数据
+   */
+  initData: function () {
+    if (this.data.tabsIdx) {
+      this.data.sendPage = 1
+      this.data.sendTotalPage = 1
+      this.data.giftSendList = []
+      Utils.log(`初始化送出列表`)
+    } else {
+      this.data.receivePage = 1
+      this.data.receiveTotalPage = 1
+      this.data.receiveGifts = []
+      Utils.log(`初始化收到列表`)
+    }
   },
 
   /**
@@ -169,14 +144,35 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
+    var _this = this
+    _this.initData()
+    wx.showNavigationBarLoading() //在标题栏中显示加载
 
+    //模拟加载
+    setTimeout(function () {
+      if (_this.data.tabsIdx) {
+        _this.receiveGift('send', 'giftSendList')
+        Utils.log(`在送出列表下拉`)
+      } else {
+        _this.receiveGift('receive', 'receiveGifts')
+        Utils.log(`在收到列表下拉`)
+      }
+      wx.hideNavigationBarLoading() //完成停止加载
+      wx.stopPullDownRefresh() //停止下拉刷新
+    }, 1800);
   },
 
   /**
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-
+    if (this.data.tabsIdx) {
+      this.receiveGift('send', 'giftSendList')
+      Utils.log(`在送出列表触底`)
+    } else {
+      this.receiveGift('receive', 'receiveGifts')
+      Utils.log(`在收到列表触底`)
+    }
   },
 
   /**
