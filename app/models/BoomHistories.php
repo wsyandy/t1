@@ -144,16 +144,16 @@ class BoomHistories extends BaseModel
 
         $datas = [
             1 => [
-                1 => ['id' => 23, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 30, 'target_id' => 106, 'number' => 1],
-                2 => ['id' => 24, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 30, 'target_id' => 109, 'number' => 1],
+                1 => ['id' => 23, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 15, 'target_id' => 106, 'number' => 1],
+                2 => ['id' => 24, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 15, 'target_id' => 109, 'number' => 1],
             ],
             2 => [
-                1 => ['id' => 25, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 30, 'target_id' => 107, 'number' => 1],
-                2 => ['id' => 26, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 30, 'target_id' => 111, 'number' => 1],
+                1 => ['id' => 25, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 15, 'target_id' => 107, 'number' => 1],
+                2 => ['id' => 26, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 15, 'target_id' => 111, 'number' => 1],
             ],
             3 => [
-                1 => ['id' => 27, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 30, 'target_id' => 108, 'number' => 1],
-                2 => ['id' => 28, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 30, 'target_id' => 110, 'number' => 1],
+                1 => ['id' => 27, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 15, 'target_id' => 108, 'number' => 1],
+                2 => ['id' => 28, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 15, 'target_id' => 110, 'number' => 1],
             ]
         ];
 
