@@ -533,7 +533,7 @@ class BoomHistories extends BaseModel
             $target_id = $gift_id;
             info("boom_user", $user->id, $boom_num, $target_id, $boom_user_id);
         } elseif ($pay_amount > 0) {
-            $rank = $cache->zrank($record_key, $user->id) + 1;
+            $rank = $cache->zcard($record_key) - $cache->zrank($record_key, $user->id) + 1;
             $data = [];
             if ($rank && $rank > 0 && $rank <= 3) {
                 $data = \BoomHistories::randomContributionUserGiftIdByRank($user, $room, ['rank' => $rank, 'boom_num' => $boom_num]);
@@ -567,7 +567,7 @@ class BoomHistories extends BaseModel
                 if (!$data) {
                     $data = \BoomHistories::randomBoomGiftIdByBoomNum($user, $room, ['boom_num' => $boom_num]);
                 }
-                
+
             } else {
                 $data = \BoomHistories::randomBoomGiftIdByBoomNum($user, $room, ['boom_num' => $boom_num]);
             }
