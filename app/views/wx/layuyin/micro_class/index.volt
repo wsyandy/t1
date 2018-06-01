@@ -99,6 +99,7 @@
                 </a>
             </li>
             <li>
+                <a href="/wx/micro_class/course_detail">
                 <div class="boutique_list_img">
                     <span class="label">系列</span>
                     <img src="/wx/layuyin/images/chuanyi.jpg    " alt="">
@@ -107,8 +108,10 @@
                     <p class="line_hide">清华名师张老师来清华名师张老师来清华名师张老师来清华名师张老师来...</p>
                     <span>1241415人学习</span>
                 </div>
+                </a>
             </li>
             <li>
+                <a href="/wx/micro_class/course_detail">
                 <div class="boutique_list_img">
                     <img src="/wx/layuyin/images/index_pic.png" alt="">
                 </div>
@@ -116,8 +119,10 @@
                     <p class="line_hide">清华名师张老师来清华名师张老师来清华名师张老师来清华名师张老师来...</p>
                     <span>1241415人学习</span>
                 </div>
+                </a>
             </li>
             <li>
+                <a href="/wx/micro_class/course_detail">
                 <div class="boutique_list_img">
                     <img src="/wx/layuyin/images/index_pic.png" alt="">
                 </div>
@@ -125,6 +130,7 @@
                     <p class="line_hide">清华名师张老师来清华名师张老师来清华名师张老师来清华名师张老师来...</p>
                     <span>1241415人学习</span>
                 </div>
+                </a>
             </li>
         </ul>
     </div>
@@ -133,6 +139,7 @@
             <p>热门直播间</p>
         </div>
         <ul class="boutique_list hot_room">
+            <a href="/wx/micro_class/course_detail">
             <li>
                 <div class="boutique_list_img index_hot_img">
                     <span class="label">系列</span>
@@ -144,6 +151,8 @@
                     <span class="study_num">1241415人学习</span>
                 </div>
             </li>
+            </a>
+            <a href="/wx/micro_class/course_detail">
             <li>
                 <div class="boutique_list_img index_hot_img">
                     <img src="/wx/layuyin/images/zgh.png" alt="">
@@ -154,6 +163,8 @@
                     <span class="study_num">1241415人学习</span>
                 </div>
             </li>
+            </a>
+            <a href="/wx/micro_class/course_detail">
             <li>
                 <div class="boutique_list_img index_hot_img">
                     <img src="/wx/layuyin/images/zcr.jpg" alt="">
@@ -164,6 +175,7 @@
                     <span class="study_num">1241415人学习</span>
                 </div>
             </li>
+            </a>
         </ul>
     </div>
 
