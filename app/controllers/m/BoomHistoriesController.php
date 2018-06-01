@@ -27,12 +27,9 @@ class BoomHistoriesController extends BaseController
     {
         $user = $this->currentUser();
         $room_id = $user->current_room_id;
-        // 前三排行
-        $boom_histories = \BoomHistories::findHistoriesByUser($user, 3);
-        $boom_histories = $boom_histories->toJson('boom_histories', 'toSimpleJson');
 
         if (!$room_id) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误', $boom_histories);
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误', ['boom_histories' => '']);
         }
 
         $room = \Rooms::findFirstById($room_id);
