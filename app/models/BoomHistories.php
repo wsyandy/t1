@@ -514,7 +514,7 @@ class BoomHistories extends BaseModel
         $user_sign_key = \BoomHistories::generateBoomUserSignKey($user->id, $room_id);
         $user_sign = $cache->get($user_sign_key);
         if ($user_sign == 1) {
-            return [ERROR_CODE_FAIL, '已领取！', null];
+            return [ERROR_CODE_FAIL, '您已领取！', null];
         }
 
         $boom_gift_time = \Rooms::getBoomGiftTime($room_id);

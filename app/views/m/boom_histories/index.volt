@@ -161,7 +161,7 @@
                             vm.has_prize = true;
                             vm.tip = '恭喜您抽中';
                             if (is_car) {
-                                vm.tip = '您的座驾已入库';
+                                vm.tip = '您的座驾已放入车库';
                             }
                         } else {
                             vm.has_prize = false;
