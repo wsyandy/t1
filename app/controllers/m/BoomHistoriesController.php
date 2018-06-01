@@ -43,7 +43,7 @@ class BoomHistoriesController extends BaseController
             $json = $boom_history->toSimpleJson();
         }
 
-        return $this->renderJSON($code, $reason, ['boom_histories' => $json]);
+        return $this->renderJSON($code, $reason, ['boom_histories' => [$json]]);
     }
 
     /**
