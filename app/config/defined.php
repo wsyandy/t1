@@ -184,6 +184,7 @@ define('GIFT_ORDER_TYPE_USER_BUY', 2); //用户购买
 define('GIFT_ORDER_TYPE_SYSTEM_SEND', 3); //系统赠送
 define('GIFT_ORDER_TYPE_ACTIVITY_LUCKY_DRAW', 4); //活动抽奖
 define('GIFT_ORDER_TYPE_USER_BACKPACK_SEND', 5); //活动抽奖
+define('GIFT_ORDER_TYPE_BOOM_GIFT', 6); //爆礼物
 
 define('PRODUCT_GROUP_FEE_TYPE_DIAMOND', 'diamond'); //钻石
 define('PRODUCT_GROUP_FEE_TYPE_I_GOLD', 'i_gold'); //国际版金币

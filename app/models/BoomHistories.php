@@ -27,21 +27,7 @@ class BoomHistories extends BaseModel
 
     function afterCreate()
     {
-        if (BOOM_HISTORY_GIFT_TYPE == $this->type) {
-            $gift = Gifts::findFirstById($this->target_id);
 
-            if (!$gift->isNormal()) {
-                $user = Users::findFirstById($this->user_id);
-                if ($gift->isCar()) {
-                    $content = "恭喜【{$user->nickname}】在爆火箭中获得了超超超绝版座驾[{$gift->name}]";
-                    Rooms::delay()->asyncAllNoticePush($content, ['hot' => 1, 'type' => 'top_topic_message']);
-                } else {
-                    $content = "恭喜【{$user->nickname}】在爆火箭中获得了超超超绝版礼物[{$gift->name}]";
-                    $system_user = Users::getSysTemUser();
-                    $this->room->pushTopTopicMessage($system_user, $content);
-                }
-            }
-        }
     }
 
     public function getGiftName()
@@ -384,7 +370,7 @@ class BoomHistories extends BaseModel
         return ['user' => $this->user->nickname, 'name' => $name, 'number' => $this->number, 'image_url' => $image_url];
     }
 
-    static public function createBoomHistory($user, $opts)
+    static public function createBoomHistory($user, $room, $opts)
     {
         $target_id = fetch($opts, 'target_id');
         $number = fetch($opts, 'number');
@@ -406,11 +392,13 @@ class BoomHistories extends BaseModel
         $pay_amount = fetch($opts, 'pay_amount');
         $boom_user_id = fetch($opts, 'boom_user_id');
         $amount = $number;
+        $gift = null;
 
         if (BOOM_HISTORY_GIFT_TYPE == $type) {
             $gift = Gifts::findFirstById($target_id);
             if ($gift) {
                 $amount = $gift->amount;
+                $boom_history->gift = $gift;
             }
         }
 
@@ -424,6 +412,8 @@ class BoomHistories extends BaseModel
         $boom_history->pay_amount = $pay_amount;
         $boom_history->boom_user_id = $boom_user_id;
         $boom_history->amount = $amount;
+        $boom_history->user = $user;
+        $boom_history->room = $room;
 
         if ($boom_history->save()) {
 
@@ -433,10 +423,25 @@ class BoomHistories extends BaseModel
                     return [ERROR_CODE_FAIL, '', null];
                 }
 
-                if (!Backpacks::createBackpack($user, ['target_id' => $target_id, 'number' => $number, 'type' => BACKPACK_GIFT_TYPE])) {
-                    return [ERROR_CODE_FAIL, '加入背包失败', null];
-                }
+                $gift = $boom_history->gift;
 
+                if ($gift) {
+                    if ($gift->isCar()) {
+                        GiftOrders::asyncCreateGiftOrder(SYSTEM_ID, [$user->id], $gift->id, ['remark' => '爆礼物', 'type' => GIFT_ORDER_TYPE_BOOM_GIFT]);
+                        if (!$gift->isNormal()) {
+                            $content = "恭喜【{$user->nickname}】在爆火箭中获得了超超超绝版座驾[{$gift->name}]";
+                            Rooms::delay()->asyncAllNoticePush($content, ['hot' => 1, 'type' => 'top_topic_message']);
+                        }
+                    } else {
+                        if (!Backpacks::createBackpack($user, ['target_id' => $target_id, 'number' => $number, 'type' => BACKPACK_GIFT_TYPE])) {
+                            return [ERROR_CODE_FAIL, '加入背包失败', null];
+                        }
+                        if (!$gift->isNormal()) {
+                            $content = "恭喜【{$user->nickname}】在爆火箭中获得了超超超绝版礼物[{$gift->name}]";
+                            Rooms::delay()->asyncAllNoticePush($content, ['hot' => 1, 'type' => 'top_topic_message']);
+                        }
+                    }
+                }
             } elseif ($type == BOOM_HISTORY_DIAMOND_TYPE) {
 
                 $opts['remark'] = '爆礼物获得' . $number . '钻石';
@@ -570,7 +575,7 @@ class BoomHistories extends BaseModel
 
         info("boom_record", "用户id:", $user->id, 'uid', $user->uid, "贡献值:", $pay_amount, "房间id:", $room_id, "个数", $number, 'type', $type, $target_id);
 
-        $res = \BoomHistories::createBoomHistory($user,
+        $res = \BoomHistories::createBoomHistory($user, $room,
             ['target_id' => $target_id, 'type' => $type, 'number' => $number, 'room_id' => $room_id, 'boom_user_id' => $boom_user_id,
                 'boom_amount' => $boom_amount, 'boom_num' => $boom_num, 'pay_amount' => $pay_amount]);
 
