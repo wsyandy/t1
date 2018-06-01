@@ -43,6 +43,29 @@ class GroupChats extends BaseModel
 
     }
 
+    /**
+     * 上传头像
+     * @param $filename
+     * @return bool
+     */
+    function updateAvatar($filename)
+    {
+        $old_avatar = $this->avatar_file;
+        $dest_filename = APP_NAME . '/group_chats/avatar/' . date('YmdH') . uniqid() . '.jpg';
+        $res = \StoreFile::upload($filename, $dest_filename);
+
+        if ($res) {
+            $this->avatar_file = $dest_filename;
+            $this->avatar_status = AUTH_SUCCESS;
+            if ($this->update()) {
+                //  删除老头像
+                if ($old_avatar) {
+                    \StoreFile::delete($old_avatar);
+                }
+            }
+        }
+    }
+
     function updateGroupChat($opts)
     {
         $name = fetch($opts,'name');
@@ -61,64 +84,70 @@ class GroupChats extends BaseModel
 
     }
 
+    static function getGroupChatsDb()
+    {
+        $endpoint = self::config('msg_db');
+        return XRedis::getInstance($endpoint);
+    }
+
     /**
      * 加入群聊key
      */
 
-    static function getJoinGroupChatKey($uid)
+    static function getJoinGroupChatKey($id)
     {
-        return "join_group_chat_key_".$uid;
+        return "join_group_chat_key_".$id;
     }
 
     /**
      * 审核群聊key
      */
 
-    static function getReviewGroupChatKey($uid)
+    static function getReviewGroupChatKey($id)
     {
-        return "review_group_chat_key_".$uid;
+        return "review_group_chat_key_".$id;
     }
 
     /**
      * 群管理员key
      */
 
-    static function getAdminGroupChatKey($uid)
+    static function getManagerGroupChatKey($id)
     {
-        return "admin_group_chat_key_".$uid;
+        return "manager_group_chat_key_".$id;
     }
 
 
-    function joinGroupChat($user)
+    function joinGroupChat($user_id)
     {
-        if(!$user){
+        if(!$user_id){
             return false;
         }
-        $key = self::getJoinGroupChatKey($this->uid);
-        $hot_cache = self::getHotWriteCache();
-        $hot_cache->zadd($key,time(),$user->id);
+        $key = self::getJoinGroupChatKey($this->id);
+        $msg_db = self::getGroupChatsDb();
+        $msg_db->zadd($key,time(),$user_id);
 
     }
 
-    function reviewJoinGroupChat($user)
+    function reviewJoinGroupChat($user_id)
     {
-        if(!$user){
+        if(!$user_id){
             return false;
         }
-        $key = self::getReviewGroupChatKey($this->uid);
-        $hot_cache = self::getHotWriteCache();
-        $hot_cache->zadd($key,time(),$user->id);
+        $key = self::getReviewGroupChatKey($this->id);
+        $msg_db = self::getGroupChatsDb();
+        $msg_db->zadd($key,time(),$user_id);
 
     }
 
-    function adminGroupChat($user)
+    function managerGroupChat($user_id)
     {
-        if(!$user){
+        if(!$user_id){
             return false;
         }
-        $key = self::getAdminGroupChatKey($this->uid);
-        $hot_cache = self::getHotWriteCache();
-        $hot_cache->zadd($key,time(),$user->id);
+        $key = self::getManagerGroupChatKey($this->id);
+        $msg_db = self::getGroupChatsDb();
+        $msg_db->zadd($key,time(),$user_id);
 
     }
 
@@ -127,34 +156,34 @@ class GroupChats extends BaseModel
      * @return bool
      * 踢出群成员
      */
-    function kickGroupChat($user)
+    function kickGroupChat($user_id)
     {
-        if(!$user){
+        if(!$user_id){
             return false;
         }
-        $key = self::getJoinGroupChatKey($this->uid);
-        $hot_cache = self::getHotWriteCache();
-        $hot_cache->zrem($key,$user->id);
+        $key = self::getJoinGroupChatKey($this->id);
+        $msg_db = self::getGroupChatsDb();
+        $msg_db->zrem($key,$user_id);
     }
 
-    function remReviewGroupChat($user)
+    function remReviewGroupChat($user_id)
     {
-        if(!$user){
+        if(!$user_id){
             return false;
         }
-        $key = self::getReviewGroupChatKey($this->uid);
-        $hot_cache = self::getHotWriteCache();
-        $hot_cache->zrem($key,$user->id);
+        $key = self::getReviewGroupChatKey($this->id);
+        $msg_db = self::getGroupChatsDb();
+        $msg_db->zrem($key,$user_id);
     }
 
-    function remAdminGroupChat($user)
+    function remManagerGroupChat($user_id)
     {
-        if(!$user){
+        if(!$user_id){
             return false;
         }
-        $key = self::getAdminGroupChatKey($this->uid);
-        $hot_cache = self::getHotWriteCache();
-        $hot_cache->zrem($key,$user->id);
+        $key = self::getManagerGroupChatKey($this->id);
+        $msg_db = self::getGroupChatsDb();
+        $msg_db->zrem($key,$user_id);
     }
 
     /**
@@ -162,29 +191,34 @@ class GroupChats extends BaseModel
      */
     function getAllGroupMembers()
     {
-        $key = self::getJoinGroupChatKey($this->uid);
-        $hot_cache = self::getHotWriteCache();
-        $user_ids = $hot_cache->zrange($key,0,-1);
+        $key = self::getJoinGroupChatKey($this->id);
+        $msg_db = self::getGroupChatsDb();
+        $user_ids = $msg_db->zrange($key,0,-1);
 
-        $users = \Users::findByIds($user_ids);
-
-        return $users;
+        return $user_ids;
     }
 
     /**
      * 返回群聊所有管理员
      */
-    function getAllGroupAdmins()
+    function getAllGroupManagers()
     {
-        $key = self::getAdminGroupChatKey($this->uid);
-        $hot_cache = self::getHotWriteCache();
-        $user_ids = $hot_cache->zrange($key,0,-1);
+        $key = self::getManagerGroupChatKey($this->id);
+        $msg_db = self::getGroupChatsDb();
+        $user_ids = $msg_db->zrange($key,0,-1);
 
-        $users = \Users::findByIds($user_ids);
-
-        return $users;
+        return $user_ids;
     }
 
+
+    function isGroupManager($user_id)
+    {
+        $manager_ids = $this->getAllGroupManagers();
+        if(in_array($user_id,$manager_ids)){
+            return true;
+        }
+        return false;
+    }
 
 
 
