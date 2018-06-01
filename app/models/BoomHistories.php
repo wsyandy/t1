@@ -67,7 +67,7 @@ class BoomHistories extends BaseModel
         $rank = fetch($opts, 'rank');
 
         if ($boom_num < 3 && $rank > 2) {
-            info($boom_num, $rank);
+            info($user->id, $room->id, $boom_num, $rank);
             return null;
         }
 
@@ -109,7 +109,7 @@ class BoomHistories extends BaseModel
         foreach ($data as $datum) {
             $res = self::isLimit($room, $datum, ['boom_num' => $boom_num, 'type' => $type]);
             if ($res) {
-                info($datum);
+                info($user->id, $room->id, $datum, $boom_num);
                 continue;
             }
             $gift_datas[] = $datum;
@@ -172,7 +172,7 @@ class BoomHistories extends BaseModel
         foreach ($data as $datum) {
             $res = self::isLimit($room, $datum, ['boom_num' => $boom_num, 'type' => $type]);
             if ($res) {
-                info($datum);
+                info($user->id, $room->id, $datum, $boom_num);
                 continue;
             }
             $gift_datas[] = $datum;
@@ -259,7 +259,7 @@ class BoomHistories extends BaseModel
         foreach ($data as $datum) {
             $res = self::isLimit($room, $datum, ['boom_num' => $boom_num, 'type' => $type]);
             if ($res) {
-                info($datum);
+                info($user->id, $room->id, $datum, $boom_num);
                 continue;
             }
             $gift_datas[] = $datum;
@@ -283,7 +283,7 @@ class BoomHistories extends BaseModel
         $total_number = fetch($data, 'total_number');
         $num = $boom_num;
         $key = "boom_gift_hit_num_room_id{$room->id}" . "_{$id}_boom_num_" . $num . "_type_" . $type;
-        $hit_num = $cache->get($key);
+        $hit_num = intval($cache->get($key));
         info($room->id, $key, $hit_num, $data, $opts);
         if ($hit_num >= $total_number) {
             return true;

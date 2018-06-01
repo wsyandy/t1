@@ -8,6 +8,15 @@
 
 class MeiTask extends \Phalcon\Cli\Task
 {
+    function test74Action()
+    {
+        $room = Rooms::findFirstById(54);
+        for ($i = 1; $i <= 1000; $i++) {
+
+            $user = Users::randomSilentUser();
+            BoomHistories::getPrize($user, $room);
+        }
+    }
 
     function test73Action()
     {
