@@ -25,6 +25,7 @@
 
 ## url协议
 1. 注册登录协议 url://m/product_channels/reg_agreement
+2. 家族 url://m/unions
 
 ## http协议
 1. 内部打开第三方h5页面 http://www.baidu.com
