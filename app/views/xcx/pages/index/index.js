@@ -608,6 +608,14 @@ Page({
       wx.stopPullDownRefresh() //停止下拉刷新
     }, 1500);
   },
+  /**
+   * 进入房间操作
+   */
+  enterRoom:function(){
+    wx.navigateTo({
+      url: '../room/room'
+    })
+  },
 
 })
 
