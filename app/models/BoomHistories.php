@@ -166,16 +166,16 @@ class BoomHistories extends BaseModel
         if (isDevelopmentEnv()) {
             $datas = [
                 1 => [
-                    1 => ['id' => 23, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 30, 'target_id' => 181, 'number' => 1],
-                    2 => ['id' => 24, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 30, 'target_id' => 182, 'number' => 1],
+                    1 => ['id' => 23, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 2, 'target_id' => 181, 'number' => 1],
+                    2 => ['id' => 24, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 2, 'target_id' => 182, 'number' => 1],
                 ],
                 2 => [
-                    1 => ['id' => 25, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 30, 'target_id' => 184, 'number' => 1],
-                    2 => ['id' => 26, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 30, 'target_id' => 183, 'number' => 1],
+                    1 => ['id' => 25, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 2, 'target_id' => 184, 'number' => 1],
+                    2 => ['id' => 26, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 2, 'target_id' => 183, 'number' => 1],
                 ],
                 3 => [
-                    1 => ['id' => 27, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 30, 'target_id' => 185, 'number' => 1],
-                    2 => ['id' => 28, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 30, 'target_id' => 186, 'number' => 1],
+                    1 => ['id' => 27, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 2, 'target_id' => 185, 'number' => 1],
+                    2 => ['id' => 28, 'type' => BOOM_HISTORY_GIFT_TYPE, 'total_number' => 2, 'target_id' => 186, 'number' => 1],
                 ]
             ];
         }
@@ -237,6 +237,36 @@ class BoomHistories extends BaseModel
                 6 => ['id' => 18, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 15, 'number' => 30],
             ]
         ];
+
+        if (isDevelopmentEnv()) {
+            $datas = [
+                1 => [
+                    1 => ['id' => 1, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 2, 'number' => 5],
+                    2 => ['id' => 2, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 2, 'number' => 10],
+                    3 => ['id' => 3, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 1, 'number' => 15],
+                    4 => ['id' => 4, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 1, 'number' => 20],
+                    5 => ['id' => 5, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 1, 'number' => 25],
+                    6 => ['id' => 6, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 1, 'number' => 30],
+                ],
+                2 => [
+                    1 => ['id' => 7, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 2, 'number' => 5],
+                    2 => ['id' => 8, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 2, 'number' => 10],
+                    3 => ['id' => 9, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 1, 'number' => 15],
+                    4 => ['id' => 10, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 1, 'number' => 20],
+                    5 => ['id' => 11, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 1, 'number' => 25],
+                    6 => ['id' => 12, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 1, 'number' => 30],
+                ],
+                3 => [
+                    1 => ['id' => 13, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 2, 'number' => 5],
+                    2 => ['id' => 14, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 2, 'number' => 10],
+                    3 => ['id' => 15, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 1, 'number' => 15],
+                    4 => ['id' => 16, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 1, 'number' => 20],
+                    5 => ['id' => 17, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 1, 'number' => 25],
+                    6 => ['id' => 18, 'type' => BOOM_HISTORY_DIAMOND_TYPE, 'total_number' => 1, 'number' => 30],
+                ]
+            ];
+        }
+
         $data = fetch($datas, $boom_num);
         $gift_datas = [];
 
