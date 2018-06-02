@@ -48,7 +48,11 @@ class UserGifts extends BaseModel
 
     static function updateGiftNum($gift_order_id)
     {
-        $gift_order = \GiftOrders::findById($gift_order_id);
+        if (is_numeric($gift_order_id)) {
+            $gift_order = \GiftOrders::findFirstById($gift_order_id);
+        } else {
+            $gift_order = $gift_order_id;
+        }
 
         if (isBlank($gift_order) || !$gift_order->isSuccess()) {
             return false;
@@ -58,7 +62,7 @@ class UserGifts extends BaseModel
         $lock = tryLock($lock_key);
 
         $user_gift = \UserGifts::findFirstOrNew(['user_id' => $gift_order->user_id, 'gift_id' => $gift_order->gift_id]);
-        $gift = \Gifts::findFirstById($gift_order->gift_id);
+        $gift = $gift_order->gift;
 
         $gift_amount = $gift->amount;
         $gift_num = $gift_order->gift_num;
@@ -82,7 +86,11 @@ class UserGifts extends BaseModel
     {
         $content = fetch($opts, 'content');
 
-        $gift_order = \GiftOrders::findById($gift_order_id);
+        if (is_numeric($gift_order_id)) {
+            $gift_order = \GiftOrders::findFirstById($gift_order_id);
+        } else {
+            $gift_order = $gift_order_id;
+        }
 
         if (isBlank($gift_order) || !$gift_order->isSuccess()) {
             return false;
@@ -93,7 +101,7 @@ class UserGifts extends BaseModel
 
         $exist_user_gift = $gift_order->user->getUserCarGift();
         $user_gift = \UserGifts::findFirstOrNew(['user_id' => $gift_order->user_id, 'gift_id' => $gift_order->gift_id]);
-        $gift = \Gifts::findFirstById($gift_order->gift_id);
+        $gift = $gift_order->gift;
 
         $gift_amount = $gift->amount;
         $gift_num = $gift_order->gift_num;
@@ -107,9 +115,9 @@ class UserGifts extends BaseModel
         $user_gift->gift_type = $gift->type;
 
         if (!$exist_user_gift) {
-            debug($gift_order_id, $gift_order->user_id);
             $user_gift->status = STATUS_ON;
         }
+
         if (isDevelopmentEnv()) {
             if ($user_gift->expire_at > time()) {
                 $user_gift->expire_at += $gift->expire_day * 60 * 2;
@@ -125,7 +133,6 @@ class UserGifts extends BaseModel
         }
 
         $user_gift->save();
-
         $user_gift->statSilentUserSendGiftNum($gift_order);
 
         if ($gift_order->sender_id != $gift_order->user_id) {
