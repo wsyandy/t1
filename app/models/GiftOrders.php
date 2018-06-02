@@ -297,9 +297,9 @@ class GiftOrders extends BaseModel
         $time = fetch($opts, 'time', time());
 
         if ($gift->isCar()) {
-            \UserGifts::updateGiftExpireAt($this->id);
+            \UserGifts::updateGiftExpireAt($this);
         } else {
-            \UserGifts::updateGiftNum($this->id);
+            \UserGifts::updateGiftNum($this);
             if ($gift->isDiamondPayType() && $gift->isNormal()) {
                 //座驾不增加hi币
                 \HiCoinHistories::createHistory($this->user_id, ['gift_order_id' => $this->id, 'time' => $time]);
