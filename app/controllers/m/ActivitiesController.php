@@ -727,18 +727,18 @@ class ActivitiesController extends BaseController
         $last_activity_total_gifts_key = $last_activity->getStatKey('');
 
 
-        $cp_users = \Couples::findCpRankListByKey($last_activity_cp_key, 1, 1);
-        $wealth_users = \Users::findFieldRankListByKey($last_activity_wealth_key, 'wealth', 1, 1);
-        $charm_users = \Users::findFieldRankListByKey($last_activity_charm_key, 'charm', 1, 1);
-        $total_gifts_users = \Users::findFieldRankListByKey($last_activity_total_gifts_key, 'total_gifts', 1, 1);
+        $cp_users = \Couples::findCpRankListByKey($last_activity_cp_key, 1, 1)[0];
+        $wealth_user = \Users::findFieldRankListByKey($last_activity_wealth_key, 'wealth', 1, 1)[0];
+        $charm_user = \Users::findFieldRankListByKey($last_activity_charm_key, 'charm', 1, 1)[0];
+        $total_gifts_user = \Users::findFieldRankListByKey($last_activity_total_gifts_key, 'total_gifts', 1, 1)[0];
 
 
-        $last_activity_users = array_merge(['cp' => $cp_users], $wealth_users->toJson('wealth', 'toChatJson'),
-            $charm_users->toJson('charm', 'toChatJson'), $total_gifts_users->toJson('total_gifts', 'toChatJson'));
+        $last_activity_users = array_merge(['cp' => $cp_users], ['wealth' => $wealth_user->toChatJson()],
+            ['charm' => $charm_user->toChatJson()], ['total_gifts' => $total_gifts_user->toChatJson()]);
         info('上周top1', $last_activity_users);
         info('上次活动名类型', $last_activity->activity_type, $last_activity->id);
 
-        $this->view->last_activity_users = json_encode($last_activity_users,JSON_UNESCAPED_UNICODE);
+        $this->view->last_activity_users = json_encode($last_activity_users, JSON_UNESCAPED_UNICODE);
         $this->view->id = $id;
         $this->view->gifts = $gifts;
         $this->view->activity = $activity;
