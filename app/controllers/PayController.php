@@ -3,6 +3,31 @@
 class PayController extends ApplicationController
 {
 
+    function indexTestAction()
+    {
+
+        $code = $this->params('code', 'yuewan');
+        $product_channel = \ProductChannels::findFirstByCode($code);
+
+        $fee_type = 'diamond';
+        $product_group = \ProductGroups::findFirst(['product_channel_id' => $product_channel->id, 'fee_type' => $fee_type, 'status' => STATUS_ON]);
+        $products = \Products::find([
+            'conditions' => 'product_group_id = :product_group_id: and status = :status: and amount>3000 and (apple_product_no="" or apple_product_no is null)',
+            'bind' => ['product_group_id' => $product_group->id, 'status' => STATUS_ON],
+            'order' => 'amount asc']);
+
+        $selected_payment_channels = [];
+        $selected_payment_channels[] = \PaymentChannels::findFirstById(9);
+
+        $pay_user_id = $this->session->get('pay_user_id');
+        $this->view->title = '大额充值';
+        $this->view->pay_user_id = $pay_user_id;
+        $this->view->products = $products;
+        $this->view->product_channel = $product_channel;
+        $this->view->payment_channels = $selected_payment_channels;
+
+    }
+
     function indexAction()
     {
 

@@ -155,7 +155,7 @@
                 if (0 == resp.error_code) {
                     location.href = resp.url;
                 } else {
-                    alert(resp.error_code);
+                    alert(resp.error_reason);
                 }
             });
         });
