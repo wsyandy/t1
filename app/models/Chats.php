@@ -152,6 +152,25 @@ class Chats extends BaseModel
         return \Chats::sendSystemMessage($user, $content_type, $content);
     }
 
+    static function sendTextNewsSystemMessage($user_id, $content = '', $opts = [])
+    {
+        if (!$content) {
+            info("Exce content_error", $user_id);
+            return false;
+        }
+
+        if (is_numeric($user_id)) {
+            $user = Users::findFirstById($user_id);
+        } else {
+            $user = $user_id;
+            $user_id = $user->id;
+        }
+
+        $content_type = CHAT_CONTENT_TYPE_TEXT_NEWS;
+
+        return \Chats::sendSystemMessage($user, $content_type, $content, $opts);
+    }
+
     static function batchSendTextSystemMessage($user_ids, $content = '')
     {
 
@@ -168,8 +187,12 @@ class Chats extends BaseModel
         }
     }
 
-    static function sendSystemMessage($receiver_id, $content_type, $content)
+    static function sendSystemMessage($receiver_id, $content_type, $content, $opts = [])
     {
+        $title = fetch($opts, 'title');
+        $image_url = fetch($opts, 'image_url');
+        $url = fetch($opts, 'url');
+
         if (is_numeric($receiver_id)) {
             $user = Users::findFirstById($receiver_id);
         } else {
@@ -188,6 +211,14 @@ class Chats extends BaseModel
             'content' => $content,
             'content_type' => $content_type
         );
+
+        if ($content_type == CHAT_CONTENT_TYPE_TEXT_NEWS) {
+            $attrs = array_merge($attrs, [
+                'title' => $title,
+                'image_url' => $image_url,
+                'url' => $url
+            ]);
+        }
 
         $user->addUnreadMessagesNum();
 
