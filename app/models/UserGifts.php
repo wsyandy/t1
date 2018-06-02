@@ -152,23 +152,26 @@ class UserGifts extends BaseModel
 
     function toJson()
     {
+        $gift = $this->gift;
+
         return [
-            'gift_id' => $this->gift_id,
-            'name' => $this->gift_name,
+            'gift_id' => $gift->id,
+            'name' => $gift->name,
             'amount' => $this->amount,
             'pay_type' => $this->pay_type,
-            'image_url' => $this->gift_image_url,
-            'image_small_url' => $this->gift_image_small_url,
-            'image_big_url' => $this->gift_image_big_url,
-            'dynamic_image_url' => $this->gift_dynamic_image_url,
+            'image_url' => $gift->image_url,
+            'image_small_url' => $gift->image_small_url,
+            'image_big_url' => $gift->image_big_url,
+            'dynamic_image_url' => $gift->dynamic_image_url,
             'num' => $this->num,
             'pay_type_text' => $this->getPayTypeText(),
             'gift_type_text' => $this->getGiftTypeText(),
             'expire_day' => $this->expire_day,
-            'svga_image_name' => $this->gift_svga_image_name,
-            'render_type' => $this->gift_render_type,
-            'svga_image_url' => $this->gift_svga_image_url,
-            'status' => $this->status
+            'svga_image_name' => $gift->svga_image_name,
+            'render_type' => $gift->render_type,
+            'svga_image_url' => $gift->svga_image_url,
+            'status' => $this->status,
+            'is_expired' => $gift->isExpired()
         ];
     }
 
