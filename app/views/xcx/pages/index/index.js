@@ -356,28 +356,6 @@ Page({
     // console.log(e)
   },
 
-  /* 滚动选项卡点击 Swiper 跳转到对应显示页 */
-  tabSelect: function (e) {
-    let idx = e.currentTarget.dataset.idx
-    console.log(idx)
-    this.setData({
-      curIdx: idx,
-      curItem: idx,
-      toView: 'tabs_' + (idx - 1)
-    })
-
-  },
-  /* Swiper 内容改变时，滚动选项卡跳转到对应位置 */
-  tabSwiperChange: function (e) {
-    let i = e.detail.current
-    console.log(i)
-    this.setData({
-      curIdx: i,
-      toView: 'tabs_' + (i - 1)
-    })
-
-  },
-
   /*用户授权*/
   getUserInfo: function (e) {
 
@@ -524,16 +502,6 @@ Page({
         hasUserInfo: true
       })
     } else if (!this.data.canIUse) {
-      // 在没有 open-type=getUserInfo 版本的兼容处理
-      // wx.getUserInfo({
-      //   success: res => {
-      //     app.globalData.userInfo = res.userInfo
-      //     this.setData({
-      //       userInfo: res.userInfo,
-      //       hasUserInfo: true
-      //     })
-      //   }
-      // })
       wx.showModal({
         title: "微信版本太旧",
         content: "使用旧版本微信，将无法登陆、使用一些功能。请至 App Store、Play Store 或其他可信渠道更新微信。",
@@ -542,8 +510,41 @@ Page({
       })
     }
     this.showTab()//加载房间分类标题
-    // this.creatRoom('测试房间1')
+
   },
+  /* 滚动选项卡点击 Swiper 跳转到对应显示页 */
+  tabSelect: function (e) {
+    let idx = e.currentTarget.dataset.idx
+    console.log(idx)
+    this.setData({
+      curIdx: idx,
+      curItem: idx,
+      toView: 'tabs_' + (idx - 1)
+    })
+
+  },
+  /* Swiper 内容改变时，滚动选项卡跳转到对应位置 */
+  tabSwiperChange: function (e) {
+    let i = e.detail.current
+    console.log(i)
+    this.setData({
+      curIdx: i,
+      toView: 'tabs_' + (i - 1)
+    })
+
+    // // 从缓存中去当前分类下的数据，取到则不调用接口
+    // if (wx.getStorageSync(this.data.topTabs[i].type)) {
+    //   this.setData({
+    //     [this.data.topTabs[i].type]: wx.getStorageSync(this.data.topTabs[i].type),
+    //     roomList: wx.getStorageSync(this.data.topTabs[i].type),
+    //     // roomList: {},//后续修改至统一参数，根据type进行判断展示什么样式
+    //     // type: type,
+    //   })
+    //   return;
+    // }
+    this.roomList(this.data.topTabs[i].type, this.data.topTabs[i].value)
+  },
+
   showTab: function () {
     var _this = this
     request.postRequest('rooms/types').then(res => {
@@ -558,7 +559,6 @@ Page({
         _this.setData({
           topTabs: types
         })
-        console.log(types)
         _this.roomList(types[0].type, types[0].value)
       }
     })
@@ -570,20 +570,21 @@ Page({
     console.log(data)
     request.postRequest('rooms/index', data).then(res => {
       console.log(res.data.rooms)
+
+      //当前页面的数据存入缓存，以分类名命名
+      // wx.setStorageSync(type, res.data.rooms)
+
       // if(data.hot){
       _this.setData({
-        hotList: res.data.rooms
+        // [type]: res.data.rooms,
+        roomList: res.data.rooms,
+        type: type
       })
       // }
     })
 
   },
-  creatRoom: function (name, room_tag_ids) {
-    let data = { name: name, room_tag_ids: room_tag_ids }
-    request.postRequest('rooms/create', data).then(res => {
-      console.log(res)
-    })
-  },
+
   /**
  * 页面相关事件处理函数--监听用户下拉动作
  */
