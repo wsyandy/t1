@@ -20,7 +20,7 @@ class DrawHistoriesController extends BaseController
             'order' => 'id desc'
         ];
 
-        $draw_histories = \DrawHistories::findPagination($cond, 1, 20);
+        $draw_histories = \DrawHistories::findPagination($cond, 1, 15);
         $res = $draw_histories->toJson('draw_histories', 'toSimpleJson');
 
 
