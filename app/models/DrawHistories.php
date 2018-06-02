@@ -361,8 +361,9 @@ class DrawHistories extends BaseModel
                     ]);
 
                     foreach ($user_hit_10w_histories as $history) {
+
                         $hit_user = Users::findFirstById($history->user_id);
-                        if ($hit_user && ($hit_user->device_id == $user->device_id || $hit_user->ip == $user->ip)) {
+                        if ($hit_user && $hit_user->id != $user->id && ($hit_user->device_id == $user->device_id || $hit_user->ip == $user->ip)) {
                             info('continue hit10w 同一个用户', $user->id, $hit_user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
                             $user_db = Users::getUserDb();
                             $user_db->zadd('draw_histories_block_user_ids', time(), $user->id);
