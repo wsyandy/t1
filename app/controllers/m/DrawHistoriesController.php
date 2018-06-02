@@ -110,7 +110,7 @@ class DrawHistoriesController extends BaseController
             $num = $num - $draw_num;
         }
 
-        if ($remain_draw_num) {
+        if ($draw_num) {
             $user->setDrawNum($remain_draw_num);
         }
 
