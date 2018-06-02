@@ -7,6 +7,8 @@ class GroupChats extends BaseModel
      */
     private $_user;
 
+    static $TYPE = [USER_CHATS => '个人', UNION_CHATS => '家族'];
+
     function beforeCreate()
     {
 
@@ -23,9 +25,9 @@ class GroupChats extends BaseModel
 
     static function createGroupChat($user, $opts)
     {
-        $name = fetch($opts,'name');
-        $introduce = fetch($opts,'introduce');
-        $avatar = fetch($opts,'avatar');
+        $name = fetch($opts, 'name');
+        $introduce = fetch($opts, 'introduce');
+        $avatar = fetch($opts, 'avatar');
 
         $group_chats = new GroupChats();
         $group_chats->name = $name;
@@ -58,7 +60,7 @@ class GroupChats extends BaseModel
             $this->avatar_file = $dest_filename;
             $this->avatar_status = AUTH_SUCCESS;
             if ($this->update()) {
-                //  删除老头像
+                //  删除旧头像
                 if ($old_avatar) {
                     \StoreFile::delete($old_avatar);
                 }
@@ -68,15 +70,14 @@ class GroupChats extends BaseModel
 
     function updateGroupChat($opts)
     {
-        $name = fetch($opts,'name');
-        $introduce = fetch($opts,'introduce');
-        $avatar = fetch($opts,'avatar');
-        $join_type = fetch($opts,'join');
-        $chat = fetch($opts,'chat','true');
+        $name = fetch($opts, 'name');
+        $introduce = fetch($opts, 'introduce');
+        $avatar = fetch($opts, 'avatar');
+        $join_type = fetch($opts, 'join');
+        $chat = fetch($opts, 'chat', 'true');
 
         $this->name = $name;
         $this->introduce = $introduce;
-        $this->avatar = $avatar;
         $this->join_type = $join_type;
         $this->chat = $chat;
 
@@ -96,7 +97,7 @@ class GroupChats extends BaseModel
 
     static function getJoinGroupChatKey($id)
     {
-        return "join_group_chat_key_".$id;
+        return "join_group_chat_key_" . $id;
     }
 
     /**
@@ -105,7 +106,7 @@ class GroupChats extends BaseModel
 
     static function getReviewGroupChatKey($id)
     {
-        return "review_group_chat_key_".$id;
+        return "review_group_chat_key_" . $id;
     }
 
     /**
@@ -114,40 +115,40 @@ class GroupChats extends BaseModel
 
     static function getManagerGroupChatKey($id)
     {
-        return "manager_group_chat_key_".$id;
+        return "manager_group_chat_key_" . $id;
     }
 
 
     function joinGroupChat($user_id)
     {
-        if(!$user_id){
+        if (!$user_id) {
             return false;
         }
         $key = self::getJoinGroupChatKey($this->id);
         $msg_db = self::getGroupChatsDb();
-        $msg_db->zadd($key,time(),$user_id);
+        $msg_db->zadd($key, time(), $user_id);
 
     }
 
     function reviewJoinGroupChat($user_id)
     {
-        if(!$user_id){
+        if (!$user_id) {
             return false;
         }
         $key = self::getReviewGroupChatKey($this->id);
         $msg_db = self::getGroupChatsDb();
-        $msg_db->zadd($key,time(),$user_id);
+        $msg_db->zadd($key, time(), $user_id);
 
     }
 
     function managerGroupChat($user_id)
     {
-        if(!$user_id){
+        if (!$user_id) {
             return false;
         }
         $key = self::getManagerGroupChatKey($this->id);
         $msg_db = self::getGroupChatsDb();
-        $msg_db->zadd($key,time(),$user_id);
+        $msg_db->zadd($key, time(), $user_id);
 
     }
 
@@ -158,32 +159,42 @@ class GroupChats extends BaseModel
      */
     function kickGroupChat($user_id)
     {
-        if(!$user_id){
+        if (!$user_id) {
             return false;
         }
         $key = self::getJoinGroupChatKey($this->id);
         $msg_db = self::getGroupChatsDb();
-        $msg_db->zrem($key,$user_id);
+        $msg_db->zrem($key, $user_id);
     }
 
     function remReviewGroupChat($user_id)
     {
-        if(!$user_id){
+        if (!$user_id) {
             return false;
         }
         $key = self::getReviewGroupChatKey($this->id);
         $msg_db = self::getGroupChatsDb();
-        $msg_db->zrem($key,$user_id);
+        $msg_db->zrem($key, $user_id);
     }
 
     function remManagerGroupChat($user_id)
     {
-        if(!$user_id){
+        if (!$user_id) {
             return false;
         }
         $key = self::getManagerGroupChatKey($this->id);
         $msg_db = self::getGroupChatsDb();
-        $msg_db->zrem($key,$user_id);
+        $msg_db->zrem($key, $user_id);
+    }
+
+    /**
+     * 解散群
+     */
+    function remAllGroupMembers()
+    {
+        $key = self::getJoinGroupChatKey($this->id);
+        $msg_db = self::getGroupChatsDb();
+        $msg_db->zremrangebyrank($key, 0, -1);
     }
 
     /**
@@ -193,7 +204,7 @@ class GroupChats extends BaseModel
     {
         $key = self::getJoinGroupChatKey($this->id);
         $msg_db = self::getGroupChatsDb();
-        $user_ids = $msg_db->zrange($key,0,-1);
+        $user_ids = $msg_db->zrange($key, 0, -1);
 
         return $user_ids;
     }
@@ -205,7 +216,7 @@ class GroupChats extends BaseModel
     {
         $key = self::getManagerGroupChatKey($this->id);
         $msg_db = self::getGroupChatsDb();
-        $user_ids = $msg_db->zrange($key,0,-1);
+        $user_ids = $msg_db->zrange($key, 0, -1);
 
         return $user_ids;
     }
@@ -214,12 +225,36 @@ class GroupChats extends BaseModel
     function isGroupManager($user_id)
     {
         $manager_ids = $this->getAllGroupManagers();
-        if(in_array($user_id,$manager_ids)){
+        if (in_array($user_id, $manager_ids)) {
             return true;
         }
         return false;
     }
 
+    function setChat($chat, $user_id)
+    {
+        $msg_db = self::getGroupChatsDb();
+
+        if ($chat) {
+            $msg_db->zrem("chat_status_group_chat{$this->id}user" . $user_id, $user_id);
+            return;
+        }
+
+        $msg_db->zadd("chat_status_group_chat{$this->id}user" . $user_id, time(), $user_id);
+    }
+
+    function canChat($user_id)
+    {
+        $msg_db = self::getGroupChatsDb();
+        $key = "chat_status_group_chat{$this->id}user" . $user_id;
+        $chat = $msg_db->zrange($key, 0, -1);
+
+        if ($chat) {
+            return false;
+        }
+
+        return true;
+    }
 
 
 }

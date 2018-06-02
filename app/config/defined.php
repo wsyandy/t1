@@ -229,6 +229,8 @@ define('WITHDRAW_STATUS_FAIL', 2); //提现失败
 define('COMPLAINT_USER', 1); //举报用户
 define('COMPLAINT_ROOM', 2); //举报房间
 define('COMPLAINT_MUSIC', 3); //举报音乐
+define('COMPLAINT_GROUP_CHAT', 4); //举报群聊
+
 
 define('COMPLAINT_TYPE_SEX', 1); //色情
 define('COMPLAINT_TYPE_HARASS', 2); //骚扰
@@ -348,3 +350,10 @@ define('XCX_ILLEGAL_AES_KEY', -41001);    //encodingAesKey 非法
 define('XCX_ILLEGAL_IV', -41002);    //    iv非法
 define('XCX_ILLEGAL_BUFFER', -41003);    //aes 解密失败
 define('XCX_DECODE_BASE64_ERROR', -41004);    //解密后得到的buffer非法
+
+//群聊类型
+define('USER_CHATS',1);  //个人群聊
+define('UNION_CHATS',2);  //家族群聊
+define('JOIN_REVIEW',2);  //加群待审核
+define('JOIN_SUCCESS');  //加群成功
+define('JOIN_FAILD');  //加群失败

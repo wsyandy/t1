@@ -30,7 +30,7 @@ class  Complaints extends BaseModel
     static $COMPLAINT_TYPE = [COMPLAINT_TYPE_SEX => '色情', COMPLAINT_TYPE_HARASS => '骚扰',
         COMPLAINT_TYPE_BAD_INFO => '不良信息', COMPLAINT_TYPE_AD => '广告', COMPLAINT_TYPE_ERROR_CONTENT => '歌名不符合歌曲内容'];
 
-    static $TYPE = [COMPLAINT_USER => '举报用户', COMPLAINT_ROOM => '举报房间', COMPLAINT_MUSIC => '举报音乐'];
+    static $TYPE = [COMPLAINT_USER => '举报用户', COMPLAINT_ROOM => '举报房间', COMPLAINT_MUSIC => '举报音乐',COMPLAINT_GROUP_CHAT => '举报群聊'];
 
     static function createComplaint($complainer, $opts = [])
     {
