@@ -95,7 +95,9 @@
             </li>
         {% endif %}
 
-        {% if isAllowed('rooms','index') or isAllowed('rooms','auto_hot') or isAllowed('broadcasts','index') or isAllowed('room_categories','index') %}
+        {% if isAllowed('rooms','index') or isAllowed('rooms','auto_hot') or isAllowed('broadcasts','index') or isAllowed('room_categories','index')
+            or  isAllowed('room_tags','index') or  isAllowed('serach_histories','room') or  isAllowed('rooms','hot_search_keywrods')
+            or isAllowed('rooms','forbidden_to_hot_list') %}
             <li>
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">房间<b class="caret"></b></a>
                 <ul class="dropdown-menu">
@@ -157,7 +159,8 @@
         {% endif %}
 
 
-        {% if isAllowed('orders','index') or isAllowed('gift_orders','index') or isAllowed('withdraw_histories','index') %}
+        {% if isAllowed('orders','index') or isAllowed('gift_orders','index') or isAllowed('withdraw_histories','index')
+            or isAllowed('hi_coin_histories','index') or isAllowed('payments','index') %}
             <li>
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">订单<b class="caret"></b></a>
                 <ul class="dropdown-menu">
