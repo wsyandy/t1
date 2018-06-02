@@ -6,7 +6,7 @@
   {{ f.textarea('app_key',['label':'app密钥(或支付宝公钥或微信商户密钥)']) }}
   {{ f.textarea('app_password',['label':'app私钥(或支付宝商户密钥)']) }}
   {{ f.input('fee', ['label': '费率','width':'33%']) }}
-  {{ f.input('rank', ['label': '排序','width':'3%']) }}
+  {{ f.input('rank', ['label': '排序','width':'33%']) }}
   {{ f.select('status', ['label': '有效', 'collection': PaymentChannels.STATUS,'width':'33%']) }}
   {{ f.select('clazz', ['label': '网关', 'collection': clazz_names, 'blank':true,'width':'50%']) }}
   {{ f.select('payment_type', ['label': '支付类型', 'collection': PaymentChannels.PAYMENT_TYPE, 'blank':true,'width':'50%']) }}
