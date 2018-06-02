@@ -3409,6 +3409,10 @@ class Users extends BaseModel
         $results = $db->zrevrange($key, $offset, $stop, 'withscores');
         $total_entries = $db->zcard($key);
 
+        if ($total_entries < 1) {
+            return [];
+        }
+
         if ($total_entries > $max_entries) {
             $total_entries = $max_entries;
         }
