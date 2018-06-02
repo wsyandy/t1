@@ -1,0 +1,1 @@
+alter table payment_channels add column apply_domain VARCHAR (127);
