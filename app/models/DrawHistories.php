@@ -305,6 +305,11 @@ class DrawHistories extends BaseModel
             // && $user_rate_multi < 30
             if ($number >= 10000) {
 
+                if ($total_pay_amount && ($user_total_get_amount / $total_pay_amount > 2)) {
+                    info('continue hit1w超出支出2倍', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
+                    return 0;
+                }
+
                 if ($user_total_get_amount + mt_rand(7000, 10000) > $total_pay_amount && $is_block_user) {
                     info('continue hit1w超出支出, 屏蔽', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
                     return 0;
