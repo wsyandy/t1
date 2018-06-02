@@ -305,6 +305,11 @@ class DrawHistories extends BaseModel
             // && $user_rate_multi < 30
             if ($number >= 10000) {
 
+                if ($user_total_get_amount + mt_rand(7000, 10000) > $total_pay_amount && $is_block_user) {
+                    info('continue hit1w超出支出, 屏蔽', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
+                    return 0;
+                }
+
                 $hit_1w_history = self::findFirst([
                     'conditions' => 'type=:type: and number>=:number: and created_at>=:start_at:',
                     'bind' => ['type' => 'diamond', 'number' => 10000, 'start_at' => time() - 300],
@@ -344,7 +349,7 @@ class DrawHistories extends BaseModel
                     $user_hit_10w_history = self::findFirst([
                         'conditions' => 'user_id = :user_id: and type=:type: and number=:number:',
                         'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'number' => 100000]]);
-                    if ($user_hit_10w_history && (time() - $user_hit_10w_history->created_at < 10 * 3600 * 24 || $user_total_get_amount + mt_rand(80000, 100000) > $total_pay_amount)) {
+                    if ($user_hit_10w_history && (time() - $user_hit_10w_history->created_at < 7 * 3600 * 24 || $user_total_get_amount + mt_rand(80000, 100000) > $total_pay_amount)) {
                         info('continue hit10w已命中', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
                         return 0;
                     }
