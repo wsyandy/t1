@@ -11,7 +11,7 @@
 {%- endmacro %}
 
 {{ simple_table(payments, [
-    'ID': 'id', '流水号': 'payment_no', '用户': 'user_link', '订单': 'order_link',
+    'ID': 'id', '流水号': 'payment_no', '用户': 'user_link', '订单': 'order_link','支付通道ID': 'payment_channel_id',
     '支付通道': 'payment_channel_name', '支付类型': 'payment_type', '支付金额': 'amount','结算金额': 'paid_amount',
     '支付状态': 'pay_status_link', '创建时间': 'created_at_text'
 ]) }}
@@ -22,6 +22,7 @@
     <td>${payment.payment_no}</td>
     <td><a href="/admin/users/detail?id=${payment.user_id}"><img src="${payment.user_avatar_url}" width="30"></a></td>
     <td><a href="/admin/orders?order[id_eq]=${payment.order_id}">订单</a></td>
+    <td>${payment.payment_channel_id}</td>
     <td>${payment.payment_channel_name}</td>
     <td>${payment.payment_type}</td>
     <td>${payment.amount}</td>
