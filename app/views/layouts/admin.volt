@@ -389,7 +389,9 @@
                     {% if isAllowed('distributes', 'index') %}
                         <li><a href="/admin/distributes">分销统计</a></li>
                     {% endif %}
-
+                    {% if isAllowed('award_histories', 'index') %}
+                        <li><a href="/admin/award_histories">扶持奖励统计</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}
