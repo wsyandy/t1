@@ -1264,4 +1264,11 @@ trait UserAttrs
         $user_db = Users::getUserDb();
         return intval($user_db->get('available_draw_num_user_id_' . $this->id));
     }
+
+    function setDrawNum($num)
+    {
+        $user_db = Users::getUserDb();
+        $user_db->set('available_draw_num_user_id_' . $this->id, $num);
+    }
+
 }
