@@ -230,7 +230,7 @@
                                      v-text="current_user_info['current_score']"></span>分
                         </p>
                     </div>
-                    <div class="myself_info" v-if="!current_user_info">
+                    <div class="myself_info" v-if="current_user_info == ''">
                         <p>暂无数据</p>
                     </div>
                 </div>
