@@ -222,7 +222,7 @@ class DrawHistories extends BaseModel
                     'bind' => ['user_id' => $user->id, 'start_at' => time() - 300]
                 ]);
 
-                if ($user_hit_num > mt_rand(35, 60)) {
+                if ($user_hit_num > mt_rand(40, 100)) {
 
                     $user_hit_diamond = \DrawHistories::sum([
                         'conditions' => 'user_id = :user_id: and type = :type: and created_at>=:start_at:',
@@ -230,15 +230,15 @@ class DrawHistories extends BaseModel
                         'column' => 'number'
                     ]);
 
-                    if (($user_hit_num * 10 - $user_hit_diamond) / $user_hit_num * 10 > 0.5 && mt_rand(1, 100) < 75) {
+                    if (($user_hit_num * 10 - $user_hit_diamond) / $user_hit_num * 10 > 0.5 && mt_rand(1, 100) < 55) {
                         $user_rate_multi = mt_rand(2, 5) * intval($user_hit_num / 40);
                         if ($user_rate_multi > 10) {
                             $user_rate_multi = 10;
                         }
                     }
 
-                    if ($user_rate_multi > 5 && $total_get_amount > $total_pay_amount + 3000) {
-                        $user_rate_multi = mt_rand(2, 4);
+                    if ($user_rate_multi > 4 && $total_get_amount > $total_pay_amount + 3000) {
+                        $user_rate_multi = mt_rand(1, 4);
                     }
 
                     info('五分钟内倍率', $user->id, 'user_hit_num', $user_hit_num, 'user_hit_diamond', $user_hit_diamond, '倍率', $user_rate_multi);
