@@ -222,7 +222,7 @@ class DrawHistories extends BaseModel
                     'bind' => ['user_id' => $user->id, 'start_at' => time() - 300]
                 ]);
 
-                if ($user_hit_num > mt_rand(40, 100)) {
+                if ($user_hit_num > mt_rand(40, 75)) {
 
                     $user_hit_diamond = \DrawHistories::sum([
                         'conditions' => 'user_id = :user_id: and type = :type: and created_at>=:start_at:',
