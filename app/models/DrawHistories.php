@@ -305,7 +305,7 @@ class DrawHistories extends BaseModel
             // && $user_rate_multi < 30
             if ($number >= 10000) {
 
-                if ($total_pay_amount && ($user_total_get_amount / $total_pay_amount > 2)) {
+                if ($total_pay_amount && (($user_total_get_amount + $number) / $total_pay_amount > 2)) {
                     info('continue hit1w超出支出2倍', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
                     return 0;
                 }
@@ -548,8 +548,6 @@ class DrawHistories extends BaseModel
         if ($is_block_user && $user_rate_multi >= 5) {
             $user_rate_multi = mt_rand(1, 5);
         }
-
-        info('cal', $user->id, '系统收入', $total_incr_diamond, '系统支出', $total_decr_diamond, 'user_rate_multi', $user_rate_multi);
 
         $random = mt_rand(1, 1000);
 
