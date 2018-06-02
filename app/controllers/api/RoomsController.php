@@ -766,9 +766,9 @@ class RoomsController extends BaseController
                 $cond['conditions'] = " room_category_types like :room_category_types:";
                 $cond['bind']['room_category_types'] = "%," . $room_category->type . ",%";
             } else {
-                $cond['conditions'] = 'name like :name:';
+                $cond['conditions'] = 'name like :name: and room_category_types like :room_category_types:';
                 $cond['bind']['name'] = '%' . $keyword . '%';
-                $cond['bind']['room_category_names'] = '%' . $keyword . '%';
+                $cond['bind']['room_category_types'] = '%' . $keyword . '%';
             }
 
         } elseif ($type) {
