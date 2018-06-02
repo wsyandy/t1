@@ -3,7 +3,7 @@
 class PayController extends ApplicationController
 {
 
-    function indexTestAction()
+    function testAction()
     {
 
         $code = $this->params('code', 'yuewan');
@@ -37,7 +37,7 @@ class PayController extends ApplicationController
         $fee_type = 'diamond';
         $product_group = \ProductGroups::findFirst(['product_channel_id' => $product_channel->id, 'fee_type' => $fee_type, 'status' => STATUS_ON]);
         $products = \Products::find([
-            'conditions' => 'product_group_id = :product_group_id: and status = :status: and amount>3000 and (apple_product_no="" or apple_product_no is null)',
+            'conditions' => 'product_group_id = :product_group_id: and status = :status: and (apple_product_no="" or apple_product_no is null)',
             'bind' => ['product_group_id' => $product_group->id, 'status' => STATUS_ON],
             'order' => 'amount asc']);
 
