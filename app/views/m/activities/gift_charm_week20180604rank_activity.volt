@@ -209,28 +209,30 @@
                     <div class="myself_name">
                         <span>{{ current_user['nickname'] }}</span>
                     </div>
-                    <div class="myself_info" v-show="curIdx==0">
+                    <div class="myself_info" v-show="curIdx==0"  v-if="current_user_info">
                         <p>贡献榜排名：<span class="highlight" v-text="current_user_info['current_rank_text']"></span>名
                         </p>
                         <p>贡献值：<span class="highlight"
                                      v-text="current_user_info['current_score']"></span>分
                         </p>
                     </div>
-                    <div class="myself_info" v-show="curIdx==1">
+                    <div class="myself_info" v-show="curIdx==1" v-if="current_user_info">
                         <p>魅力榜排名：<span class="highlight" v-text="current_user_info['current_rank_text']"></span>名
                         </p>
                         <p>魅力值：<span class="highlight"
                                      v-text="current_user_info['current_score']"></span>分
                         </p>
                     </div>
-                    <div class="myself_info" v-show="curIdx==2">
+                    <div class="myself_info" v-show="curIdx==2" v-if="current_user_info">
                         <p>礼物榜排名：<span class="highlight" v-text="current_user_info['current_rank_text']"></span>名
                         </p>
                         <p>礼物值：<span class="highlight"
                                      v-text="current_user_info['current_score']"></span>分
                         </p>
                     </div>
-
+                    <div class="myself_info" v-show="curIdx==3" v-if="!current_user_info">
+                        <p>暂无数据</p>
+                    </div>
                 </div>
             </div>
             {% endif %}
@@ -369,6 +371,7 @@
                 };
                 $.authGet('/m/activities/get_current_activity_cp_rank_list', data, function (resp) {
                     vm.cp_users = [];
+                    vm.current_user_info = '';
                     if (resp.error_code == 0) {
                         $.each(resp.users, function (index, item) {
                             vm.current_user_info = resp.current_user_cp_info;
@@ -386,6 +389,7 @@
                 };
                 $.authGet('/m/activities/get_current_activity_rank_list', data, function (resp) {
                     vm.users = [];
+                    vm.current_user_info = '';
                     console.log(resp);
                     if (resp.error_code == 0) {
                         $.each(resp.users, function (index, item) {
