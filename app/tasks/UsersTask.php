@@ -1387,8 +1387,7 @@ EOF;
     function serviceMessageAction()
     {
         $content = <<<EOF
-520马上就要过了，你处CP了吗？如果没有的话，您可在【我的房间】可发起处CP，让您的对象在麦上点击【处CP】，即可结为情侣。
-520当日结为情侣更有机会获得520靓号、绝版专属礼物、全服爱的宣言！
+系统通知：亲爱的Hi语音玩家，系统将从2018年6月8日开始提高荣耀等级升级难度啦，想提升等级的要抓紧提升哦，最后倒计时现在开始咯，千万别错过哟~
 EOF;
 
         $title = "";
@@ -1396,7 +1395,7 @@ EOF;
 
         $users = Users::find([
             'conditions' => 'product_channel_id = 1 and register_at > 0 and user_type = :user_type: and last_at >= :last_at:',
-            'bind' => ['user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 2 * 86400],
+            'bind' => ['user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 15 * 86400],
             'columns' => 'id'
         ]);
 
