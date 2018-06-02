@@ -11,23 +11,28 @@ class MeiTask extends \Phalcon\Cli\Task
     function test74Action()
     {
         $room = Rooms::findFirstById(54);
+        $boom_gift_time = \Rooms::getBoomGiftTime(54);
+        $cache = Users::getHotWriteCache();
         for ($i = 1; $i <= 1000; $i++) {
             $user = Users::randomSilentUser();
-            //$user->segment = 1;
+            $user->segment = 'eee';
+            $record_key = \Rooms::generateBoomRecordDayKey($room->id, $boom_gift_time);
+            $cache->zadd($record_key, mt_rand(1, 100), $user->id);
             BoomHistories::getPrize($user, $room);
         }
+
+        $cache = Users::getHotWriteCache();
+        echoLine($cache->ttl('boom_gift_hit_num_room_id54_24_boom_num_1_type_user_segment_gift'));
+        echoLine($cache->zcard('test_record_code') - $cache->zrank('test_record_code', 1001307));
+        $cache->zadd('test_record_code', 10, 1001303);
+        $cache->zadd('test_record_code', 9, 1001304);
+        $cache->zadd('test_record_code', 8, 1001305);
+        $cache->zadd('test_record_code', 7, 1001306);
+        $cache->zadd('test_record_code', 6, 1001307);
     }
 
     function test73Action()
     {
-        $cache = Users::getHotWriteCache();
-        $record_key = "test_user_record";
-        $cache->zadd($record_key, 1, 1001303);
-        $cache->zadd($record_key, 100000, 1001304);
-        $cache->zadd($record_key, 500, 1001305);
-        echoLine(2 - $cache->zrank($record_key, 1001304), $cache->zrank($record_key, 1001304));
-
-        $rank = $cache->zrank($record_key, $user->id) + 1;
         $orders = Orders::find(['conditions' => 'status = :status:',
             'bind' => ['status' => ORDER_STATUS_SUCCESS],
             'columns' => 'distinct user_id'
