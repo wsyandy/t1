@@ -368,8 +368,8 @@
                     type: type
                 };
                 $.authGet('/m/activities/get_current_activity_cp_rank_list', data, function (resp) {
+                    vm.cp_users = [];
                     if (resp.error_code == 0) {
-                        vm.cp_users = [];
                         $.each(resp.users, function (index, item) {
                             vm.current_user_info = resp.current_user_cp_info;
                             vm.cp_users.push(item);
@@ -385,9 +385,9 @@
                     type: type
                 };
                 $.authGet('/m/activities/get_current_activity_rank_list', data, function (resp) {
+                    vm.users = [];
                     console.log(resp);
                     if (resp.error_code == 0) {
-                        vm.users = [];
                         $.each(resp.users, function (index, item) {
                             vm.current_user_info = resp.current_user_info;
                             vm.users.push(item);
