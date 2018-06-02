@@ -467,4 +467,9 @@ class Gifts extends BaseModel
     {
         return STATUS_ON == $this->status;
     }
+
+    function isExpired()
+    {
+        return STATUS_OFF == $this->status;
+    }
 }
