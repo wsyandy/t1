@@ -330,7 +330,7 @@ class BoomHistories extends BaseModel
         $conditions = [
             'conditions' => 'type = :type: and amount > 1',
             'bind' => ['type' => BOOM_HISTORY_GIFT_TYPE],
-            'order' => 'id asc'
+            'order' => 'id desc'
         ];
 
         $list = BoomHistories::findPagination($conditions, 1, $per_page);
