@@ -1249,4 +1249,11 @@ trait UserAttrs
 
         return $current_user_info;
     }
+
+    //可用抽奖次数
+    function getDrawNum()
+    {
+        $user_db = Users::getUserDb();
+        return intval($user_db->get('available_draw_num_user_id_' . $this->id));
+    }
 }
