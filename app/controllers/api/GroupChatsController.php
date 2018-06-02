@@ -27,6 +27,21 @@ class GroupChatsController extends BaseController
             'introduce' => $introduce,
         ];
 
+        $res = \GroupChats::findFirstUserId($this->currentUserId());
+        if ($res && $res->status == STATUS_ON) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '已有创建的群');
+        }
+
+        if ($res && $res->status == STATUS_OFF) {
+            $res->name = $name;
+            $res->introduce = $introduce;
+            $res->status = STATUS_ON;
+            $res->update();
+            $res->updateAvatar($avatar_file);
+
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功');
+        }
+
         $group_chat = \GroupChats::createGroupChat($this->currentUser(), $opts);
         $group_chat->updateAvatar($avatar_file);
         return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功');
@@ -52,7 +67,7 @@ class GroupChatsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功');
     }
 
-    //加入群聊
+    //加入群
     function addGroupChatAction()
     {
         $group_chat_id = $this->params('id');
@@ -69,17 +84,42 @@ class GroupChatsController extends BaseController
         if ($group_chat->join_type == 'review') {
             $group_chat->reviewJoinGroupChat($this->currentUserId());
 
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '加入成功,请等待审核!',['user'=>$this->currentUser(),'status'=>2]);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '加入成功,请等待审核!', ['user' => $this->currentUser(), 'status' => 2]);
         }
 
         if ($group_chat->join_type == 'all') {
             $group_chat->joinGroupChat($this->currentUserId());
+            $res['user'] = $this->currentUser();
+            $res['user_chat'] = $group_chat->canChat($this->currentUserId());
+            $res['status'] = 1;
 
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '加入成功',['user'=>$this->currentUser(),'status'=>1]);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '加入成功', $res);
         }
 
 
+    }
 
+    //退出群
+    function quitGroupChatAction()
+    {
+        $group_chat = new \GroupChats();
+        $group_members = $group_chat->getAllGroupMembers();
+        $user_id = $this->currentUserId();
+        if (!in_array($user_id, $group_members)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '当前用户不在群内!');
+        }
+
+        if ($group_chat->isGroupManager($user_id)) {
+            $group_chat->remManagerGroupChat($user_id);
+        }
+
+        if ($this->currentUser()->isGroupChatHost(\GroupChats::findFirstByUserId($user_id))) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '群主不能退群!');
+        }
+
+        $group_chat->kickGroupChat($user_id);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '退出成功');
     }
 
     //群主邀请
@@ -95,10 +135,13 @@ class GroupChatsController extends BaseController
 
         $group_chat->joinGroupChat($user_id);
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '加入成功');
+        $res['user'] = \Users::findFirstById($user_id);
+        $res['user_chat'] = $group_chat->canChat($user_id);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '加入成功', $res);
     }
 
-    //加入管理员
+    //添加管理员
     function addManagerAction()
     {
         $user_id = $this->params('user_id');    //邀请管理员的id
@@ -110,13 +153,32 @@ class GroupChatsController extends BaseController
         }
         $group_member_ids = $group_chat->getAllGroupMembers();
 
-        if(!in_array($user_id,$group_member_ids)){
+        if (!in_array($user_id, $group_member_ids)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '该用户不在群内！');
         }
 
         $group_chat->managerGroupChat($user_id);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '加入成功');
+    }
+
+    //删除管理员
+    function deleteManagerAction()
+    {
+        $user_id = $this->params('user_id');
+        $group_chat_id = $this->params('id');   //当前群的id
+
+        $group_chat = \GroupChats::findFirstById($group_chat_id);
+        if (!$this->currentUser()->isGroupChatHost($group_chat)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+        }
+        if (!$group_chat->isGroupManager($user_id)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '该用户不是本群管理员');
+        }
+
+        $group_chat->remManagerGroupChat($user_id);
+
+        return $this->renderJSON(ERROR_CODE_FAIL, '删除成功');
     }
 
     //踢出群聊
@@ -131,7 +193,7 @@ class GroupChatsController extends BaseController
         }
 
         $group_member_ids = $group_chat->getAllGroupMembers();
-        if(!in_array($user_id,$group_member_ids)){
+        if (!in_array($user_id, $group_member_ids)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '该用户不在群内！');
         }
 
@@ -157,4 +219,210 @@ class GroupChatsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '加入成功');
 
     }
+
+    //解散群
+    function disbandAction()
+    {
+        $group_chat_id = $this->params('id');
+        $group_chat = \GroupChats::findFirstById($group_chat_id);
+        if (!$group_chat) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+        if (!$this->currentUser()->isGroupChatHost($group_chat)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+        }
+
+        $group_chat->status = STATUS_OFF;
+        $group_chat->update();
+        $group_chat->remAllGroupMembers();
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '解散成功');
+    }
+
+    //设置加群方式
+    function setJoinTypeAction()
+    {
+        $group_chat_id = $this->params('id');
+        $join_type = $this->params('join_type');
+
+        $group_chat = \GroupChats::findFirstById($group_chat_id);
+        if (!$group_chat) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+        if (!$this->currentUser()->isGroupChatHost($group_chat)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+        }
+        $group_chat->join_type = $join_type;
+        $group_chat->update();
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '设置成功');
+    }
+
+    //全员解禁与禁言
+    function openChatAction()
+    {
+        $group_chat_id = $this->params('id');
+        $group_chat = \GroupChats::findFirstById($group_chat_id);
+
+        if (!$group_chat) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        if (!$this->currentUser()->isGroupChatHost($group_chat) && !$group_chat->isGroupManager($this->currentUserId())) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+        }
+
+        $group_chat->chat = true;
+        $group_chat->update();
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
+    }
+
+    function closeChatAction()
+    {
+        $group_chat_id = $this->params('id');
+        $group_chat = \GroupChats::findFirstById($group_chat_id);
+
+        if (!$group_chat) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        if (!$this->currentUser()->isGroupChatHost($group_chat) && !$group_chat->isGroupManager($this->currentUserId())) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+        }
+
+        $group_chat->chat = false;
+        $group_chat->update();
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
+    }
+
+    //单个用户解禁与禁言
+    function openUserChatAction()
+    {
+        $group_chat_id = $this->params('id');
+        $user_id = $this->params('user_id');
+        $group_chat = \GroupChats::findFirstById($group_chat_id);
+
+        if (!$group_chat) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        if (!$this->currentUser()->isGroupChatHost($group_chat) && !$group_chat->isGroupManager($this->currentUserId())) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+        }
+
+        $group_chat->setChat(true, $user_id);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
+    }
+
+    function closeUserChatAction()
+    {
+        $group_chat_id = $this->params('id');
+        $user_id = $this->params('user_id');
+        $group_chat = \GroupChats::findFirstById($group_chat_id);
+
+        if (!$group_chat) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        if (!$this->currentUser()->isGroupChatHost($group_chat) && !$group_chat->isGroupManager($this->currentUserId())) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+        }
+
+        $group_chat->setChat(false, $user_id);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
+    }
+
+    //用户进入群聊
+    function entranceGroupChatAction()
+    {
+        $group_chat_id = $this->params('id');
+        $group_chat = \GroupChats::findFirstById($group_chat_id);
+
+        if (!$group_chat) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+        $user = $this->currentUser();
+
+        $res = $group_chat->toJson();
+        $res['user'] = $user;
+        $res['user_chat'] = $group_chat->canChat($user->id);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
+
+    }
+
+    //搜索群成员
+    function searchMemberAction()
+    {
+        $nickname = $this->params('nickname');
+
+        $cond = ['conditions' => 'nickname like %' . $nickname . '%',
+            'bind' => ['nickname' => $nickname]
+        ];
+        $users = \Users::findByConditions($cond);
+
+        $group_chat = new \GroupChats();
+        $group_members = $group_chat->getAllGroupMembers();
+        $members = [];
+        foreach ($users as $user) {
+            if (in_array($user->id, $group_members)) {
+                $members = [
+                    'id' => $user->id,
+                    'nickname' => $user->nickname,
+                    'avatar_small_url' => $user->avatar_small_url,
+                ];
+            }
+        }
+
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', ['users' => $members]);
+    }
+
+    //查看所有群成员
+    function membersInfoAction()
+    {
+        $group_chat_id = $this->params('id');
+        $group_chat = \GroupChats::findFirstById($group_chat_id);
+
+        $group_host_id = $group_chat->user_id;
+        $group_manager_ids = $group_chat->getAllGroupManagers();
+        $group_member_ids = $group_chat->getAllGroupMembers();
+
+        $res['group_host'] = \Users::findFirstById($group_host_id);
+        $res['group_managers'] = \Users::findByIds($group_manager_ids);
+        $res['group_members'] = \Users::findByIds($group_member_ids);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
+    }
+
+    //查看单个群成员
+    function getMemberInfoAction()
+    {
+        $user_id = $this->params('user_id');
+        $user = \Users::findFirstById($user_id);
+        if (!$user) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['user' => $user]);
+    }
+
+    //发群消息
+    function sendMsgAction()
+    {
+        $group_chat_id = $this->params('id');
+        $content = $this->params('content');
+        $content_type = $this->params('content_type'); // text image voice
+        $file = $this->params('file');
+
+        if (isDevelopmentEnv() && isBlank($content) && 'text' == $content_type) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '内容不能为空');
+        }
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '发送成功');
+    }
+
+
 }
