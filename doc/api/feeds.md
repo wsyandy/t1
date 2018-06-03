@@ -58,11 +58,11 @@
 ##### 2.1 请求参数说明
 |参数|名称|值类型|是否可空|备注
 |---|---|---|---|---|
-| content |动态内容|string|否|||
-| location |地址|string|否|||
-| feed_topic_id |动态话题id|string|是|||
-| duration |动态语音时长|int|是|||
-| voice_file |动态语音文件|file|是|||
+| content |动态内容|string|否||
+| location |地址|string|否||
+| feed_topic_id |动态话题id|string|是||
+| duration |动态语音时长|int|是||
+| voice_file |动态语音文件|file|是||
 | feed_image 1~9 |动态语音图片对应的9张图片|file|是|||
 
 ##### 2.2 回应参数说明
