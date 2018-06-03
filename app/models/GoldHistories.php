@@ -35,7 +35,8 @@ class GoldHistories extends BaseModel
         GOLD_TYPE_BIND_MOBILE => '绑定手机号码',
         GOLD_TYPE_DRAW_INCOME => '转盘抽奖收入',
         GOLD_TYPE_DRAW_EXPENSES => '转盘抽奖支出',
-        GOLD_TYPE_IN_BOOM => '爆礼物获取'
+        GOLD_TYPE_IN_BOOM => '爆礼物获取',
+        GOLD_TYPE_SYSTEM_AWARD => '系统扶持奖励'
     ];
 
     function beforeCreate()

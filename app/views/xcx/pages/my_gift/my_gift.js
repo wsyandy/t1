@@ -22,7 +22,11 @@ Page({
 
   mygiftTabs: function (e) {
     let index = e.currentTarget.dataset.index;
-    if (index) {
+    if (index && this.data.giftSendList) {
+      this.setData({
+        giftSendList: this.data.giftSendList
+      })
+    } else if (index) {
       this.receiveGift('send', 'giftSendList')
     }
     this.setData({

@@ -488,9 +488,9 @@ class BoomHistories extends BaseModel
      * @param $room_id
      * @return string
      */
-    static public function generateBoomUserSignKey($user_id, $room_id)
+    static public function generateBoomUserSignKey($user_id, $room_id, $boom_num)
     {
-        return 'boom_target_room_' . $room_id . '_user_' . $user_id;
+        return 'boom_target_room_' . $room_id . '_user_' . $user_id . "_boom_num_" . $boom_num;
     }
 
     static function getPrize($user, $room)
@@ -504,25 +504,23 @@ class BoomHistories extends BaseModel
             return [ERROR_CODE_FAIL, '未开始爆礼物', null];
         }
 
-        // 抽奖物品保存至爆礼物结束时间
-        $expire = $expire_at - time();
-        $expire = $expire > 180 ? 180 : ($expire < 0 ? 1 : $expire);
-
         // 爆出的礼物从缓存拿到
         $cache = \BoomHistories::getHotWriteCache();
-        $user_sign_key = \BoomHistories::generateBoomUserSignKey($user->id, $room_id);
+        $boom_gift_time = \Rooms::getBoomGiftTime($room_id);
+        $boom_num = $room->getBoomNum($boom_gift_time);
+        $user_sign_key = \BoomHistories::generateBoomUserSignKey($user->id, $room_id, $boom_num);
         $user_sign = $cache->get($user_sign_key);
         if ($user_sign == 1) {
             return [ERROR_CODE_FAIL, '您已领取！', null];
         }
 
-        $boom_gift_time = \Rooms::getBoomGiftTime($room_id);
+        $cache->setex($user_sign_key, 300, 1);
+
         //用户贡献值 控制概率
         $record_key = \Rooms::generateBoomRecordDayKey($room_id, $boom_gift_time);
         $pay_amount = $cache->zscore($record_key, $user->id);
         $boom_user_id = $room->getBoomUserId();
         $boom_amount = $room->getCurrentBoomGiftValue($boom_gift_time);
-        $boom_num = $room->getBoomNum($boom_gift_time);
         $type = BOOM_HISTORY_GIFT_TYPE;
         $target_id = 0;
         $number = 1;
@@ -595,7 +593,6 @@ class BoomHistories extends BaseModel
             return [ERROR_CODE_FAIL, '领取失败', null];
         }
 
-        $cache->setex($user_sign_key, $expire, 1);
         unlock($lock);
 
         return [$code, $reason, $boom_history];

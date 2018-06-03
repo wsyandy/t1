@@ -42,7 +42,8 @@ class AccountHistories extends BaseModel
         ACCOUNT_TYPE_RED_PACKET_EXPENSES => '红包支出',
         ACCOUNT_TYPE_RED_PACKET_INCOME => '红包收入',
         ACCOUNT_TYPE_RED_PACKET_RESTORATION => '红包余额返还',
-        ACCOUNT_TYPE_IN_BOOM => '爆礼物获取'
+        ACCOUNT_TYPE_IN_BOOM => '爆礼物获取',
+        ACCOUNT_TYPE_SYSTEM_AWARD => '系统扶持奖励'
     ];
 
     function beforeCreate()

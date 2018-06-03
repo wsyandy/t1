@@ -72,6 +72,7 @@ Page({
   },
   /*确定充值*/
   topupDiamond: function (e) {
+    console.log(this.data.checkedIdx)
     console.log(e)
   },
   /**

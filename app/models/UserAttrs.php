@@ -1212,9 +1212,17 @@ trait UserAttrs
         $height_data = $db->zrevrange($cp_week_charm_key, 0, 0);
         info($height_data);
         if (!$height_data) {
-            return '';
+            $seraglio_key = \Couples::generateSeraglioKey($this->id);
+            $num = $db->zcard($seraglio_key);
+            info('个数', $num);
+            if (!$num) {
+                return '';
+            }
+
+            $other_user_id = $db->zrange($seraglio_key, 0, 0)[0];
+        } else {
+            $other_user_id = $height_data[0];
         }
-        $other_user_id = $height_data[0];
 
         $key = \Couples::generateSeraglioKey($this->id);
         $status = $db->zscore($key, $other_user_id);

@@ -137,7 +137,7 @@
 
         {% if isAllowed('unions','index') or isAllowed('hot_room_histories','index') or isAllowed('id_card_auths','index') %}
             <li>
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">公会和家族<b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">家族<b class="caret"></b></a>
                 <ul class="dropdown-menu">
                     {% if isAllowed('unions', 'index') %}
                         <li><a href="/admin/unions?auth_status=1">公会</a></li>
@@ -211,7 +211,7 @@
         <!--活动列表-->
         {% if isAllowed('game_histories','index') or isAllowed('draw_histories','index') or isAllowed('users','wish_luck_histories') or isAllowed('pk_histories','index') %}
             <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">活动记录列表<b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">活动记录<b class="caret"></b></a>
                 <ul class="dropdown-menu">
                     {% if isAllowed('game_histories','index') %}
                         <li><a href="/admin/game_histories">游戏记录</a></li>
@@ -392,7 +392,9 @@
                     {% if isAllowed('distributes', 'index') %}
                         <li><a href="/admin/distributes">分销统计</a></li>
                     {% endif %}
-
+                    {% if isAllowed('award_histories', 'index') %}
+                        <li><a href="/admin/award_histories">扶持奖励统计</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}

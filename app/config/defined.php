@@ -150,6 +150,7 @@ define('ACCOUNT_TYPE_IN_BOOM', 34); //爆礼物获得
 define('ACCOUNT_TYPE_RED_PACKET_EXPENSES', 35);  //红包支出
 define('ACCOUNT_TYPE_RED_PACKET_INCOME', 36);    //红包收入
 define('ACCOUNT_TYPE_RED_PACKET_RESTORATION', 37);   //红包余额返还
+define('ACCOUNT_TYPE_SYSTEM_AWARD', 38); //系统扶持奖励
 
 //金币
 define('GOLD_TYPE_SIGN_IN', 1); //用户签到
@@ -165,6 +166,7 @@ define('GOLD_TYPE_BIND_MOBILE', 13); //绑定手机赠送
 define('GOLD_TYPE_DRAW_INCOME', 30); //转盘抽奖收入
 define('GOLD_TYPE_DRAW_EXPENSES', 31); //转盘抽奖支出
 define('GOLD_TYPE_IN_BOOM', 32); // 爆礼物获得
+define('GOLD_TYPE_SYSTEM_AWARD', 33);   //系统扶持奖励
 
 
 // 兑换比例
@@ -230,6 +232,8 @@ define('WITHDRAW_STATUS_FAIL', 2); //提现失败
 define('COMPLAINT_USER', 1); //举报用户
 define('COMPLAINT_ROOM', 2); //举报房间
 define('COMPLAINT_MUSIC', 3); //举报音乐
+define('COMPLAINT_GROUP_CHAT', 4); //举报群聊
+
 
 define('COMPLAINT_TYPE_SEX', 1); //色情
 define('COMPLAINT_TYPE_HARASS', 2); //骚扰
@@ -349,3 +353,16 @@ define('XCX_ILLEGAL_AES_KEY', -41001);    //encodingAesKey 非法
 define('XCX_ILLEGAL_IV', -41002);    //    iv非法
 define('XCX_ILLEGAL_BUFFER', -41003);    //aes 解密失败
 define('XCX_DECODE_BASE64_ERROR', -41004);    //解密后得到的buffer非法
+
+
+//系统扶持奖励类型
+define('AWARD_DIAMOND', 'diamond');  //钻石奖励
+define('AWARD_GOLD', 'gold');        //金币奖励
+
+//群聊类型
+define('USER_CHATS',1);  //个人群聊
+define('UNION_CHATS',2);  //家族群聊
+define('JOIN_REVIEW',2);  //加群待审核
+define('JOIN_SUCCESS',0);  //加群成功
+define('JOIN_FAILD',1);  //加群失败
+
