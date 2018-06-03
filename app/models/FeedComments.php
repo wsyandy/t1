@@ -79,4 +79,21 @@ class FeedComments extends BaseModel
         $endpoint = self::config('msg_db');
         return XRedis::getInstance($endpoint);
     }
+
+    static function createFeedComment($user, $feed, $opts = [])
+    {
+        $content = fetch($opts, 'content');
+        $feed_comment = new \FeedComments();
+        $feed_comment->feed_id = $feed->id;
+        $feed_comment->user_id = $user->id;
+        $feed_comment->user = $user;
+        $feed_comment->feed = $feed;
+        $feed_comment->content = $content;
+
+        if($feed_comment->create()) {
+            return $feed;
+        }
+
+        return null;
+    }
 }

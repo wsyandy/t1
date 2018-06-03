@@ -77,6 +77,12 @@ class Feeds extends BaseModel
      */
     private $auth_status = AUTH_NONE;
 
+    /**
+     * 动态话题id
+     * @type integer
+     */
+    private $_feed_topic_id;
+
     function beforeCreate()
     {
         $this->id = $this->generateId();
