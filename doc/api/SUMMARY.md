@@ -33,4 +33,5 @@
 * [家族](unions.md)
 * [房间标签](room_tags.md)
 * [背包](backpack.md)
+* [动态](feeds.md)
 ## Published with GitBook

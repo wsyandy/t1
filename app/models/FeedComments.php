@@ -59,7 +59,7 @@ class FeedComments extends BaseModel
 
     function afterCreate()
     {
-
+        $this->addFeedCommentList();
     }
 
     static function getCacheEndPoint()
@@ -80,6 +80,17 @@ class FeedComments extends BaseModel
         return XRedis::getInstance($endpoint);
     }
 
+    function addFeedCommentList()
+    {
+        $msg_db = Feeds::getMsgDb();
+        $feed = $this->feed;
+        $feed_comment_list = 'feed_comment_list_' . $this->feed_id;
+        $msg_db->zadd($feed_comment_list, time(), $this->id);
+        $total = $msg_db->zcard($feed_comment_list);
+        $feed->feed_comments_num = $total;
+        $feed->update();
+    }
+
     static function createFeedComment($user, $feed, $opts = [])
     {
         $content = fetch($opts, 'content');
@@ -90,10 +101,22 @@ class FeedComments extends BaseModel
         $feed_comment->feed = $feed;
         $feed_comment->content = $content;
 
-        if($feed_comment->create()) {
+        if ($feed_comment->create()) {
             return $feed;
         }
 
         return null;
+    }
+
+    function toSimpleJson()
+    {
+        $user = $this->user;
+
+        return [
+            'id' => $this->id, 'content' => $this->content, 'created_at' => $this->created_at,
+            'feed_id' => $this->feed_id,
+            'user_id' => $this->user_id, 'avatar_small_url' => $user->avatar_small_url,
+            'nickname' => $user->nickname
+        ];
     }
 }
