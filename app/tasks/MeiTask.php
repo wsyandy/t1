@@ -8,5 +8,14 @@
 
 class MeiTask extends \Phalcon\Cli\Task
 {
-
+    function checkBoomHistoriesAction()
+    {
+        $cond = [
+            'conditions' => 'created_at >= :start: and created_at <= :end: and boom_num = :boom_num:',
+            'bind' => ['start' => beginOfDay(), 'end' => endOfDay(), 'boom_num' => 2],
+            'columns' => 'distinct user_id'
+        ];
+        $boom_histories = BoomHistories::find($cond);
+        echoLine(count($boom_histories));
+    }
 }
