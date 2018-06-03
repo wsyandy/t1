@@ -88,12 +88,14 @@ class UnionsTask extends \Phalcon\Cli\Task
 
         $hi_coin_histories = HiCoinHistories::find(
             [
-                'conditions' => 'created_at >= :start: and created_at <= :end:',
-                'bind' => ['start' => $start, 'end' => $end],
+                'conditions' => 'created_at >= :start: and created_at <= :end: and fee_type = :fee_type:',
+                'bind' => ['start' => $start, 'end' => $end, 'fee_type' => HI_COIN_FEE_TYPE_RECEIVE_GIFT],
                 'columns' => 'distinct user_id'
             ]);
 
         echoLine(count($hi_coin_histories));
+        $rewards = [];
+        $titles = ['uid', '昵称', 'hi币收益', '奖励钻石数额'];
 
         foreach ($hi_coin_histories as $hi_coin_history) {
 
@@ -125,34 +127,47 @@ class UnionsTask extends \Phalcon\Cli\Task
 
                 switch ($income) {
                     case $income >= 1000 && $income <= 2000:
-                        $reward = 100;
+                        $reward = 1200;
                         break;
                     case $income > 2000 && $income <= 5000:
-                        $reward = 200;
+                        $reward = 2400;
                         break;
                     case $income > 5000 && $income <= 20000:
-                        $reward = 500;
+                        $reward = 6000;
                         break;
                     case $income > 20000 && $income <= 50000:
-                        $reward = 800;
+                        $reward = 9600;
                         break;
                     case $income > 50000:
-                        $reward = 1000;
+                        $reward = 12300;
                         break;
                 }
 
-
                 if ($reward > 0) {
 
+                    $nickname = preg_replace_callback(
+                        '/./u',
+                        function ($match) {
+                            return strlen($match[0]) >= 4 ? '*' : $match[0];
+                        },
+                        $user->nickname);
 
-                    $remark = "主播奖励:" . $reward . "元";
-
+                    $rewards[$reward][] = [$user->uid, $nickname, $income, $reward];
+                    $remark = "主播奖励:" . $reward . "钻石";
+                    echoLine($user->id, $user->uid, $user->nickname, $income, $remark);
                     //HiCoinHistories::createHistory($user->id, ['fee_type' => HI_COIN_FEE_TYPE_HOST_REWARD, 'remark' => $remark,
                     // 'hi_coins' => $reward]);
 
                     // Chats::sendTextSystemMessage($user->id, "恭喜您获得2018年4月份主持扶持奖励{$reward}元，小Hi已帮你存到Hi币收益，请注意查收！");
                 }
             }
+        }
+
+        foreach ($rewards as $reward => $data) {
+            echoLine("奖励" . $reward . "钻的用户");
+            $temp_file = 'reward_history_1_'. $reward . '.xls';
+            $uri = writeExcel($titles, $data, $temp_file, true);
+            echoLine(StoreFile::getUrl($uri), $uri);
         }
     }
 
@@ -207,7 +222,7 @@ class UnionsTask extends \Phalcon\Cli\Task
 
                 if ($reward > 0) {
 
-                    echoLine($union->id, $income, $reward);
+                    //echoLine($union->id, $income, $reward);
 
                     $remark = "家族长奖励:" . $reward . "元";
 
@@ -215,7 +230,7 @@ class UnionsTask extends \Phalcon\Cli\Task
                     //  'hi_coins' => $reward]);
 
                     //Chats::sendTextSystemMessage($union->user_id, "恭喜您获得2018年4月份家族长扶持奖励{$reward}元，小Hi已帮你存到Hi币收益，请注意查收！");
-                    echoLine($union->id, $income, $reward);
+                    echoLine($union->id, $union->name, $income, $reward);
                 }
             }
         }
