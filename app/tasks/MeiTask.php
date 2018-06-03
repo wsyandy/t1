@@ -10,7 +10,11 @@ class MeiTask extends \Phalcon\Cli\Task
 {
     function testRemoteDelayAction()
     {
-        Users::delay()->testRemoteDelay(['name' => 'user']);
+        $di = \Phalcon\Di::getDefault();
+        $config = $di->get('config');
+        echoLine($config->job_queue->remote_endpoint);
+
+        Users::remoteDelay()->testRemoteDelay(['name' => 'user']);
     }
 
     function checkBoomHistoriesAction()
