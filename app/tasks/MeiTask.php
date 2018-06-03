@@ -8,6 +8,11 @@
 
 class MeiTask extends \Phalcon\Cli\Task
 {
+    function testRemoteDelayAction()
+    {
+        Users::delay()->testRemoteDelay(['name' => 'user']);
+    }
+
     function checkBoomHistoriesAction()
     {
         $cond = [
