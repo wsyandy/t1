@@ -412,7 +412,8 @@ Page({
   /**
  * 页面上拉触底事件的处理函数
  */
-  onReachBottom: function () {
+  bindscrolltolower: function () {
+    console.log("触底事件")
     this.roomList(this.data.topTabs[this.data.curIdx].type, this.data.topTabs[this.data.curIdx].value)
   },
   /**
