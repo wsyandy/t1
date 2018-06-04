@@ -23,18 +23,44 @@ class GroupChats extends BaseModel
 
     }
 
+    function toDataJson()
+    {
+        return [
+            'id'=>$this->id,
+            'user_id'=>$this->user_id,
+            'name'=>$this->name,
+            'introduce'=>$this->introduce,
+            'avatar_file'=>$this->avatar_file_small_url,
+            'uid'=>$this->uid,
+            'status'=>$this->status,
+            'join_type'=>$this->join_type,
+            'created_at'=>$this->created_at_text,
+            'last_at'=>$this->last_at_text,
+            'chat'=>$this->chat,
+        ];
+    }
+
+    function getAvatarFileSmallUrl()
+    {
+        if (isBlank($this->avatar_file)) {
+            return null;
+        }
+        $url = StoreFile::getUrl($this->avatar_file)."@!small";
+
+        return $url;
+    }
+
     static function createGroupChat($user, $opts)
     {
         $name = fetch($opts, 'name');
         $introduce = fetch($opts, 'introduce');
-        $avatar = fetch($opts, 'avatar');
 
         $group_chats = new GroupChats();
         $group_chats->name = $name;
         $group_chats->introduce = $introduce;
-        $group_chats->avatar = $avatar;
         $group_chats->user_id = $user->id;
         $group_chats->status = STATUS_ON;
+        $group_chats->join_type = 'all';
         $group_chats->chat = true;
 
         $group_chats->last_at = time();
@@ -72,14 +98,9 @@ class GroupChats extends BaseModel
     {
         $name = fetch($opts, 'name');
         $introduce = fetch($opts, 'introduce');
-        $avatar = fetch($opts, 'avatar');
-        $join_type = fetch($opts, 'join');
-        $chat = fetch($opts, 'chat', 'true');
 
         $this->name = $name;
         $this->introduce = $introduce;
-        $this->join_type = $join_type;
-        $this->chat = $chat;
 
         $this->update();
 
@@ -126,7 +147,7 @@ class GroupChats extends BaseModel
         }
         $key = self::getJoinGroupChatKey($this->id);
         $msg_db = self::getGroupChatsDb();
-        $msg_db->zadd($key, time(), $user_id);
+        $msg_db->zadd($key, 3, $user_id);  //  1群主  2 管理员  3 群员  4 待审核人员
 
     }
 
@@ -137,7 +158,7 @@ class GroupChats extends BaseModel
         }
         $key = self::getReviewGroupChatKey($this->id);
         $msg_db = self::getGroupChatsDb();
-        $msg_db->zadd($key, time(), $user_id);
+        $msg_db->zadd($key, 4, $user_id);
 
     }
 
