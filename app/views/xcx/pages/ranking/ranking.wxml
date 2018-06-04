@@ -1,5 +1,5 @@
 <!--pages/ranking/ranking.wxml-->
-<view class="rank_head">
+<view class="rank_head" wx:if="{{networkType}}">
   <!-- 顶部选项卡 -->
   <view class="rank_tabs">
     <text class="{{tabsIdx==index?'rank_tab_cur':'rank_tab'}}" wx:for="{{rankTabs}}" data-index="{{index}}" wx:key="rank{{index}}" catchtap="rankingTabs">{{item}}</text>
@@ -18,15 +18,15 @@
   </view>
 </view>
 <!-- swiper导航标签页 -->
-<view class='slider-wrapper'>
+<view class="slider-wrapper" wx:if="{{networkType}}">
   <!-- 魅力榜 -->
   <swiper bindchange="tabSwiperChange" current="{{curItem}}" style='height:{{scrollheight}}px' hidden="{{!tabsIdx==0}}">
     <!-- 日榜 -->
     <swiper-item>
       <scroll-view scroll-y style='height:{{scrollheight}}px'>
         <view class="rank_scroll">
-          <view class="rank_box{{index<3?index+1:''}}" wx:for="{{dailyCharmList}}" wx:key="charm{{index}}" data-idx="{{index}}">
-            <view class="rank_list">
+          <view class="rank_box{{index<3?index+1:''}}" wx:for="{{dailyCharmList}}" wx:key="charm{{index}}"  >
+            <view class="rank_list" data-userid="{{item.userId}}" catchtap="lookUserInfo" >
               <view class="rank_number" wx:if="{{index>2}}">
                 <text>{{index+1}}</text>
               </view>
@@ -63,8 +63,8 @@
     <swiper-item>
       <scroll-view scroll-y style='height:{{scrollheight}}px'>
         <view class="rank_scroll">
-          <view class="rank_box{{index<3?index+1:''}}" wx:for="{{monthlyCharmList}}" wx:key="charm{{index}}" data-idx="{{index}}">
-            <view class="rank_list">
+          <view class="rank_box{{index<3?index+1:''}}" wx:for="{{monthlyCharmList}}" wx:key="charm{{index}}" data-idx="{{index}}" >
+            <view class="rank_list" data-userid="{{item.userId}}" catchtap="lookUserInfo" >
               <view class="rank_number" wx:if="{{index>2}}">
                 <text>{{index+1}}</text>
               </view>
@@ -102,7 +102,7 @@
       <scroll-view scroll-y style='height:{{scrollheight}}px'>
         <view class="rank_scroll">
           <view class="rank_box{{index<3?index+1:''}}" wx:for="{{charmList}}" wx:key="charm{{index}}" data-idx="{{index}}">
-            <view class="rank_list">
+            <view class="rank_list" data-userid="{{item.userId}}" catchtap="lookUserInfo" >
               <view class="rank_number" wx:if="{{index>2}}">
                 <text>{{index+1}}</text>
               </view>
@@ -142,8 +142,8 @@
     <swiper-item>
       <scroll-view scroll-y style='height:{{scrollheight}}px'>
         <view class="rank_scroll">
-          <view class="rank_box{{index<3?index+1:''}}" wx:for="{{dailyContributeList}}" wx:key="charm{{index}}" data-idx="{{index}}">
-            <view class="rank_list">
+          <view class="rank_box{{index<3?index+1:''}}" wx:for="{{dailyContributeList}}" wx:key="contribute{{index}}"  >
+            <view class="rank_list" data-userid="{{item.userId}}" catchtap="lookUserInfo">
               <view class="rank_number" wx:if="{{index>2}}">
                 <text>{{index+1}}</text>
               </view>
@@ -180,8 +180,8 @@
     <swiper-item>
       <scroll-view scroll-y style='height:{{scrollheight}}px'>
         <view class="rank_scroll">
-          <view class="rank_box{{index<3?index+1:''}}" wx:for="{{monthlyContributeList}}" wx:key="charm{{index}}" data-idx="{{index}}">
-            <view class="rank_list">
+          <view class="rank_box{{index<3?index+1:''}}" wx:for="{{monthlyContributeList}}" wx:key="contribute{{index}}"  >
+            <view class="rank_list" data-userid="{{item.userId}}" catchtap="lookUserInfo">
               <view class="rank_number" wx:if="{{index>2}}">
                 <text>{{index+1}}</text>
               </view>
@@ -218,8 +218,8 @@
     <swiper-item>
       <scroll-view scroll-y style='height:{{scrollheight}}px'>
         <view class="rank_scroll">
-          <view class="rank_box{{index<3?index+1:''}}" wx:for="{{charmList}}" wx:key="charm{{index}}" data-idx="{{index}}">
-            <view class="rank_list">
+          <view class="rank_box{{index<3?index+1:''}}" wx:for="{{contributeList}}" wx:key="contribute{{index}}"  >
+            <view class="rank_list" data-userid="{{item.userId}}" catchtap="lookUserInfo">
               <view class="rank_number" wx:if="{{index>2}}">
                 <text>{{index+1}}</text>
               </view>
@@ -253,4 +253,44 @@
 
     </swiper-item>
   </swiper>
+</view>
+<view class="mask" hidden="{{hideMask}}"></view>
+<view class="popup_box" hidden="{{hideInfo}}">
+  <image class='look_avatar' mode='scaleToFill' src="{{lookInfo.avatar_small_url}}"></image>
+  <view class="look_info">
+    <text class="look_nickname"  wx:if="{{lookInfo.nickname}}">{{lookInfo.nickname}}</text>
+    <view class="{{lookInfo.male?'look_male':'look_female'}}">
+      <image class='ico_sex' mode='scaleToFill' src="{{lookInfo.male?ico_male:ico_female}}"></image>
+      <text class="rank_age" wx:if="{{lookInfo.age}}">{{lookInfo.age}}</text>
+    </view>
+    <view class="look_province"  wx:if="{{lookInfo.province_name}}">
+      <text>{{lookInfo.province_name}}</text>
+    </view>
+  </view>
+  <view class="look_id">
+    <image class='look_id_ico' mode='scaleToFill' src="{{ico_id}}"></image>
+    <text class="look_id_num" wx:if="{{lookInfo.userId}}">{{lookInfo.userId}}</text>
+  </view>
+  <view class="look_btn">
+    <view class="look_onfocus " wx:if="{{!lookInfo.onfocus}}" catchtap="getFocus">
+      <text >关注</text> 
+      <image class="{{ico_nofocus}}" mode='scaleToFill' src="{{ico_nofocus}}"></image>
+    </view> 
+      <view class="look_focus" wx:if="{{lookInfo.onfocus}}"> 
+      <text>已关注</text>
+      <image class="ico_onfocus" mode='scaleToFill' src="{{ico_onfocus}}"></image>
+    </view>
+    <view class="look_room" datat-room="{{lookInfo.room}}"  catchtap="navToTheRoom">
+      <text>所在房间</text>
+    </view>
+  </view>
+  <view class="not_at_room" hidden="{{notRoom}}"><text>用户不在房间</text></view>
+  <image class='ico_close' mode='scaleToFill' src="{{ico_close}}" catchtap="closePopup"></image>
+</view>
+
+
+<!-- 无网络状态 -->
+<view class="nonetwork" wx:if="{{!networkType}}">
+  <image class='nonetwork_img' mode='scaleToFill' src="{{nonetwork}}"></image>
+  <text class="nonetwork_txt">网络加载失败，点击重试</text>
 </view>

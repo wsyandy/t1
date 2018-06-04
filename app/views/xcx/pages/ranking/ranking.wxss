@@ -205,7 +205,7 @@
 .rank_box1 .rank_info, .rank_box1 .rank_value {
   width: 100%;
   color: #333;
-  padding-top: 12rpx;
+  padding: 12rpx 0 0 0; 
 }
 
 .rank_box1 .rank_avatar {
@@ -319,4 +319,164 @@
 .rank_box3 .rank_nickname {
   color: #f37f32;
   text-align: center;
+}
+
+/*查看个人信息弹出层*/
+
+.popup_box {
+  width: 590rpx;
+  height: 480rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  position: fixed;
+  top: calc(50% - 240rpx);
+  left: calc(50% - 295rpx);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.look_info {
+  justify-content: center;
+  align-items: center;
+  padding: 20rpx 10rpx;
+}
+
+.look_avatar {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  background: #d8d8d8;
+  border: 1px solid #979797;
+}
+
+.look_nickname {
+  font-size: 32rpx;
+  color: #2d2d2d;
+  padding-right: 10rpx;
+  max-width: 70%;
+  display: block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.look_male, .look_female {
+  height: 30rpx;
+  background: #9accf9;
+  border-radius: 100rpx;
+  padding: 0 10rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10rpx;
+}
+
+.look_female {
+  background: #f99ad3;
+}
+
+.look_province {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.look_id {
+  justify-content: center;
+  align-items: center;
+  font-size: 32rpx;
+  color: #2d2d2d;
+}
+
+.look_id_ico {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 10rpx;
+}
+
+.look_btn {
+  padding-top: 30rpx;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.look_focus {
+  width: 190rpx;
+  height: 70rpx;
+  justify-content: center;
+  align-items: center;
+  background: #bbb;
+  border-radius: 8rpx;
+  font-size: 32rpx;
+  color: #fff;
+}
+
+.look_onfocus, .look_room {
+  width: 190rpx;
+  height: 70rpx;
+  justify-content: center;
+  align-items: center;
+  background: #ff4686;
+  border-radius: 8rpx;
+  font-size: 32rpx;
+  color: #fff;
+  margin-left: 50rpx;
+}
+
+.ico_nofocus {
+  width: 30rpx;
+  height: 30rpx;
+  margin-left: 10rpx;
+}
+
+.ico_onfocus {
+  width: 34rpx;
+  height: 25rpx;
+  margin-left: 10rpx;
+}
+
+.not_at_room{
+  position: absolute;
+  top: clac (50% - 40rpx);
+  left: clac (50% - 145rpx);
+  width: 290rpx;
+  height: 80rpx; 
+  border-radius: 8rpx;
+  background-color: rgba(0,0,0,0.7);
+  font-size: 34rpx;
+  color: #FFFFFF;
+  justify-content: center;
+  align-items: center; 
+}
+
+.ico_close {
+  width: 70rpx;
+  height: 70rpx;
+  position: absolute;
+  bottom: -100rpx;
+  left: calc(50% - 35rpx);
+}
+
+
+
+/*无网络状态*/
+
+.nonetwork {
+  width: 100%;
+  height: 600rpx;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.nonetwork_img {
+  width: 310rpx;
+  height: 211rpx;
+}
+
+.nonetwork_txt {
+  padding-top: 30rpx;
+  font-size: 28rpx;
+  color: #666;
 }
