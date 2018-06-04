@@ -550,7 +550,7 @@ class Unions extends BaseModel
 
 
         $user_system_content = "如果家族会长同意可立即退出家族，如果家族长未审批，7天后自动退出家族";
-        Chats::sendTextSystemMessage($user, $user_system_content);
+        //Chats::sendTextSystemMessage($user, $user_system_content);
 
         $union_system_content = "{$user->nickname}申请退出家族";
         Chats::sendTextSystemMessage($this->user_id, $union_system_content);
