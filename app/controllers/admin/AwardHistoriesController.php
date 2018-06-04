@@ -39,8 +39,11 @@ class AwardHistoriesController extends BaseController
             $auth_status = $this->params('auth_status');
             $award_history = \AwardHistories::findFirstById($id);
             $award_history->auth_status = $auth_status;
-            $award_history->update();
-
+            if ($award_history->update()) {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '操作成功', ['award_history' => $award_history->toJson()]);
+            } else {
+                return $this->renderJSON(ERROR_CODE_FAIL, '操作失败');
+            }
         }
 
         $this->view->user_id = $user_id;
