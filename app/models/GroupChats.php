@@ -27,14 +27,13 @@ class GroupChats extends BaseModel
     {
         $name = fetch($opts, 'name');
         $introduce = fetch($opts, 'introduce');
-        $avatar = fetch($opts, 'avatar');
 
         $group_chats = new GroupChats();
         $group_chats->name = $name;
         $group_chats->introduce = $introduce;
-        $group_chats->avatar = $avatar;
         $group_chats->user_id = $user->id;
         $group_chats->status = STATUS_ON;
+        $group_chats->join_type = 'all';
         $group_chats->chat = true;
 
         $group_chats->last_at = time();
@@ -72,14 +71,15 @@ class GroupChats extends BaseModel
     {
         $name = fetch($opts, 'name');
         $introduce = fetch($opts, 'introduce');
-        $avatar = fetch($opts, 'avatar');
         $join_type = fetch($opts, 'join');
         $chat = fetch($opts, 'chat', 'true');
+        $status = fetch($opts, 'status');
 
         $this->name = $name;
         $this->introduce = $introduce;
         $this->join_type = $join_type;
         $this->chat = $chat;
+        $this->status = $status;
 
         $this->update();
 

@@ -27,24 +27,35 @@ class GroupChatsController extends BaseController
             'introduce' => $introduce,
         ];
 
-        $res = \GroupChats::findFirstUserId($this->currentUserId());
-        if ($res && $res->status == STATUS_ON) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '已有创建的群');
-        }
+        $res = \GroupChats::findFirstByUserId($this->currentUserId());
+//        if ($res && $res->status == STATUS_ON) {
+//            return $this->renderJSON(ERROR_CODE_FAIL, '已有创建的群');
+//        }
 
         if ($res && $res->status == STATUS_OFF) {
-            $res->name = $name;
-            $res->introduce = $introduce;
-            $res->status = STATUS_ON;
-            $res->update();
+            $opts['status'] = STATUS_ON;
+            $res->updateGroupChat($opts);
             $res->updateAvatar($avatar_file);
 
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功');
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功',['group_chat'=>$res]);
         }
 
         $group_chat = \GroupChats::createGroupChat($this->currentUser(), $opts);
         $group_chat->updateAvatar($avatar_file);
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功');
+        $info = [
+            'id'=>$group_chat->id,
+            'user_id'=>$group_chat->user_id,
+            'name'=>$group_chat->name,
+            'introduce'=>$group_chat->introduce,
+            'avatar'=>$group_chat->avatar_file,
+            'uid'=>$group_chat->uid,
+            'status'=>$group_chat->status,
+            'join_type'=>$group_chat->join_type,
+            'created_at'=>$group_chat->created_at_text,
+            'last_at'=>$group_chat->last_at_text,
+            'type'=>$group_chat->type
+            ];
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功',['info'=>$info]);
 
     }
 
