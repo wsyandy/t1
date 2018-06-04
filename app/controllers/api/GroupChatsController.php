@@ -37,13 +37,13 @@ class GroupChatsController extends BaseController
             $res->updateGroupChat($opts);
             $res->updateAvatar($avatar_file);
 
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功',['group_chat'=>$res]);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', ['group_chat' => $res]);
         }
 
         $group_chat = \GroupChats::createGroupChat($this->currentUser(), $opts);
         $group_chat->updateAvatar($avatar_file);
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功',['group_chat'=>$group_chat->toDataJson()]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', ['group_chat' => $group_chat->toDataJson()]);
 
     }
 
@@ -62,15 +62,28 @@ class GroupChatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
 
-        if($avatar_file){
+        if ($avatar_file) {
             $group_chat->updateAvatar($avatar_file);
         }
 
         $group_chat->updateGroupChat($this->params());
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功',['group_chat'=>$group_chat->toDataJson()]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功', ['group_chat' => $group_chat->toDataJson()]);
     }
 
     //搜索群
+    function searchAction()
+    {
+        $uid = $this->params('uid');
+
+        $group_chat = \GroupChats::findFirstByUid($uid);
+
+        if (!$group_chat) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '未找到该群！');
+        }
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', ['group_chat' => $group_chat->toDataJson()]);
+
+    }
 
     //加入群
     function addGroupChatAction()
@@ -394,7 +407,6 @@ class GroupChatsController extends BaseController
         $group_host_id = $group_chat->user_id;
         $group_manager_ids = $group_chat->getAllGroupManagers();
         $group_member_ids = $group_chat->getAllGroupMembers();
-
 
 
         $res['group_host'] = \Users::findFirstById($group_host_id);

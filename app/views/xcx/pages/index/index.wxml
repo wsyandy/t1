@@ -19,7 +19,7 @@
   <swiper bindchange="tabSwiperChange" current="{{curItem}}" style='height:{{scrollheight}}px'>
     <!-- 热门 -->
     <swiper-item>
-      <scroll-view scroll-y bindscrolltoupper="hotUpper" bindscrolltolower="hotLower" bindscroll="hotScroll" style='height:{{scrollheight}}px'>
+      <scroll-view scroll-y bindscrolltoupper="hotUpper" bindscrolltolower="bindscrolltolower" bindscroll="hotScroll" style='height:{{scrollheight}}px'>
         <view class="hot_box">
           <!-- <view class="hot_list" wx:for="{{hot}}" wx:key="{{item.room_name}}"> -->
              <view class="hot_list" wx:for="{{broadcast}}" wx:key="{{item.room_name}}"> 
@@ -39,7 +39,7 @@
     </swiper-item>
     <!-- 最新 -->
     <swiper-item>
-      <scroll-view scroll-y style='height:{{scrollheight}}px'>
+      <scroll-view scroll-y style='height:{{scrollheight}}px' bindscrolltolower="bindscrolltolower" >
         <view class="new_list" wx:for="{{new}}" wx:key="item{{index}}">
           <view class="new_info" catchtap="navtoNewRoom">
             <image class='new_homeowners' mode='scaleToFill' src='{{item.avatar_small_url}}' catchtap="navtoNewHomeowners"></image>
@@ -65,7 +65,7 @@
     </swiper-item>
     <!-- 开黑 -->
     <swiper-item>
-      <scroll-view scroll-y style='height:{{scrollheight}}px'>
+      <scroll-view scroll-y style='height:{{scrollheight}}px' bindscrolltolower="bindscrolltolower" >
         <view class="game_list" wx:for="{{gang_up}}" wx:key="game{{index}}">
           <view class="game_info" catchtap="navtoGameRoom">
             <view>
@@ -87,7 +87,7 @@
     </swiper-item>
     <!-- 交友 -->
     <swiper-item>
-      <scroll-view scroll-y style='height:{{scrollheight}}px'>
+      <scroll-view scroll-y style='height:{{scrollheight}}px' bindscrolltolower="bindscrolltolower" >
         <view class="game_list" wx:for="{{friend}}" wx:key="dating{{index}}">
           <view class="game_info" catchtap="navtoFriendRoom">
             <view>
@@ -109,7 +109,7 @@
     </swiper-item>
     <!-- 娱乐 -->
     <swiper-item>
-      <scroll-view scroll-y style='height:{{scrollheight}}px'>
+      <scroll-view scroll-y style='height:{{scrollheight}}px' bindscrolltolower="bindscrolltolower" >
         <view class="game_list" wx:for="{{amuse}}" wx:key="dating{{index}}">
           <view class="game_info" catchtap="navtoAmuseRoom">
             <view>
@@ -131,7 +131,7 @@
     </swiper-item>
     <!-- 唱歌 -->
     <swiper-item>
-      <scroll-view scroll-y style='height:{{scrollheight}}px'>
+      <scroll-view scroll-y style='height:{{scrollheight}}px' bindscrolltolower="bindscrolltolower" >
         <view class="game_list" wx:for="{{sing}}" wx:key="sing{{index}}">
           <view class="game_info" catchtap="navtoSingRoom">
             <view>
@@ -154,7 +154,7 @@
 
     <!-- 电台 -->
     <swiper-item>
-      <scroll-view scroll-y style='height:{{scrollheight}}px'>
+      <scroll-view scroll-y style='height:{{scrollheight}}px' bindscrolltolower="bindscrolltolower" >
         <view class="game_list" wx:for="{{broadcast}}" wx:key="radio{{index}}">
           <view class="game_info" catchtap="navtoBroadcastingRoom">
             <view>
@@ -176,7 +176,7 @@
     </swiper-item>
     <!-- 关注 -->
     <swiper-item>
-      <scroll-view scroll-y style='height:{{scrollheight}}px'>
+      <scroll-view scroll-y style='height:{{scrollheight}}px' bindscrolltolower="bindscrolltolower" >
         <!-- 有关注  -->
         <view wx:if="{{nofocus}}" class="game_list" wx:for="{{follow}}" wx:key="focus{{index}}">
           <view class="game_info" catchtap="navtoFollowRoom">
@@ -204,7 +204,7 @@
     </swiper-item>
     <!-- 附近 -->
     <!-- <swiper-item> 
-    <scroll-view scroll-y style='height:{{scrollheight}}px'>
+    <scroll-view scroll-y style='height:{{scrollheight}}px' bindscrolltolower="bindscrolltolower" >
         <view  class="nearby_list" wx:for="{{nearbyList}}" wx:key="nearby{{index}}">
           <view class="nearby_info" catchtap="navtoNearbyRoom">
               <image class='nearby_avatar' mode='scaleToFill' src='{{item.avatar}}'> </image>
