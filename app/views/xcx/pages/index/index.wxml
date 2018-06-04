@@ -89,7 +89,7 @@
     <swiper-item>
       <scroll-view scroll-y style='height:{{scrollheight}}px'>
         <view class="game_list" wx:for="{{friend}}" wx:key="dating{{index}}">
-          <view class="game_info" catchtap="navtoGameRoom">
+          <view class="game_info" catchtap="navtoFriendRoom">
             <view>
               <image class='game_homeowners' mode='scaleToFill' src='{{item.avatar_small_url}}' catchtap="navtoGameHomeowners"></image>
               <view class="game_text">
@@ -111,7 +111,7 @@
     <swiper-item>
       <scroll-view scroll-y style='height:{{scrollheight}}px'>
         <view class="game_list" wx:for="{{amuse}}" wx:key="dating{{index}}">
-          <view class="game_info" catchtap="amuseRoom">
+          <view class="game_info" catchtap="navtoAmuseRoom">
             <view>
               <image class='game_homeowners' mode='scaleToFill' src='{{item.avatar_small_url}}' catchtap="navtoGameHomeowners"></image>
               <view class="game_text">
@@ -133,7 +133,7 @@
     <swiper-item>
       <scroll-view scroll-y style='height:{{scrollheight}}px'>
         <view class="game_list" wx:for="{{sing}}" wx:key="sing{{index}}">
-          <view class="game_info" catchtap="navtoGameRoom">
+          <view class="game_info" catchtap="navtoSingRoom">
             <view>
               <image class='game_homeowners' mode='scaleToFill' src='{{item.avatar_small_url}}' catchtap="navtoGameHomeowners"></image>
               <view class="game_text">
@@ -156,7 +156,7 @@
     <swiper-item>
       <scroll-view scroll-y style='height:{{scrollheight}}px'>
         <view class="game_list" wx:for="{{broadcast}}" wx:key="radio{{index}}">
-          <view class="game_info" catchtap="navtoGameRoom">
+          <view class="game_info" catchtap="navtoBroadcastingRoom">
             <view>
               <image class='game_homeowners' mode='scaleToFill' src='{{item.avatar_small_url}}' catchtap="navtoGameHomeowners"></image>
               <view class="game_text">
@@ -179,7 +179,7 @@
       <scroll-view scroll-y style='height:{{scrollheight}}px'>
         <!-- 有关注  -->
         <view wx:if="{{nofocus}}" class="game_list" wx:for="{{follow}}" wx:key="focus{{index}}">
-          <view class="game_info" catchtap="navtoGameRoom">
+          <view class="game_info" catchtap="navtoFollowRoom">
             <view>
               <image class='game_homeowners' mode='scaleToFill' src='{{item.avatar_small_url}}' catchtap="navtoGameHomeowners"></image>
               <view class="game_text">

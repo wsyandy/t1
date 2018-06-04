@@ -90,15 +90,36 @@ Page({
         icon: '/images/info_rank.png',
         text: '排行榜',
       },
-
     ],
+    /**
+     * 首页分页加载所需数据
+     */
+    hotPage: 1,
+    hotTotalPage: 1,
+    hot: [],
+    newPage: 1,
+    newTotalPage: 1,
+    new: [],
+    gang_upPage: 1,
+    gang_upTotalPage: 1,
+    gang_up: [],
+    friendPage: 1,
+    friendTotalPage: 1,
+    friend: [],
+    amusePage: 1,
+    amuseTotalPage: 1,
+    amuse: [],
+    singPage: 1,
+    singTotalPage: 1,
+    sing: [],
+    broadcastPage: 1,
+    broadcastTotalPage: 1,
+    broadcast: [],
+    followPage: 1,
+    followTotalPage: 1,
+    follow: [],
   },
-  hotUpper: function (e) {
-    console.log('上拉刷新')
-  },
-  hotLower: function (e) {
-    console.log('下拉加载')
-  },
+
   hotScroll: function (e) {
     // console.log(e)
   },
@@ -196,11 +217,31 @@ Page({
       url: '/pages/my_profile/my_profile'
     })
   },
-  navtoNewRoom: function () { },
-  navtoNewHomeowners: function () { },
-  navtoGameHomeowners: function () { },
-  navtoGameRoom: function () { },
-
+  navtoNewRoom: function () {
+    console.log('最新')
+  },
+  navtoNewHomeowners: function () {
+    console.log('点击最新分类下的房主头像')
+  },
+  // navtoGameHomeowners: function () { },
+  navtoGameRoom: function () {
+    console.log('开黑')
+  },
+  navtoFriendRoom: function () {
+    console.log('交友')
+  },
+  navtoAmuseRoom: function () {
+    console.log('娱乐')
+  },
+  navtoSingRoom: function () {
+    console.log('唱歌')
+  },
+  navtoBroadcastingRoom: function () {
+    console.log('电台')
+  },
+  navtoFollowRoom: function () {
+    console.log('关注')
+  },
 
 
   preventD: function (e) {
@@ -226,7 +267,6 @@ Page({
 
   },
   onLoad: function (options) {
-
     // 解决 swiper 自适应高度问题 200为顶部head和tabs高度
     this.setData({
       scrollheight: app.globalData.windowHeight - (app.globalData.windowWidth / 750 * 200)
@@ -306,37 +346,46 @@ Page({
         _this.setData({
           topTabs: types
         })
-        console.log(types)
+        // console.log(types)
+        _this.data.curIdx = 0
         _this.roomList(types[0].type, types[0].value)
       }
     })
   },
   roomList: function (type, value) {
-    type = 'broadcast'//临时获取数据用
+    // type = 'broadcast'//临时获取数据用
+    if (this.ifPage()) {
+      wx.showToast({
+        title: '已经到底了',
+        icon: 'none',
+        duration: 1500
+      })
+      return;
+    }
+
     let data = { [type]: value, page: this.data.page, per_page: 20 }
     let _this = this
     console.log(data)
     request.postRequest('rooms/index', data).then(res => {
       console.log(res.data.rooms)
       var roomList = res.data.rooms
-      if (type == 'follow' && roomList.length >=1){
+      if (type == 'follow' && roomList.length >= 1) {
         _this.setData({
-          nofocus:true
+          nofocus: true
         })
-      } else if (type == 'follow'){
+      } else if (type == 'follow') {
         _this.setData({
           nofocus: false
         })
       }
-      // for (var i in roomList){
-      //   roomList[i].last_at = Utils.formatTime(roomList[i].last_at)
-      // }
+
+      let roomData = _this.updatePage(res.data.total_page).concat(roomList)
       //当前页面的数据存入缓存，以分类名命名
-      // wx.setStorageSync(type, roomList)
+      wx.setStorageSync(type, roomData)
 
       // if(data.hot){
       _this.setData({
-        [type]: roomList,
+        [type]: roomData,
         // roomList: roomList,
         // type: type
       })
@@ -349,26 +398,22 @@ Page({
  * 页面相关事件处理函数--监听用户下拉动作
  */
   onPullDownRefresh: function () {
-    wx.showNavigationBarLoading() //在标题栏中显示加载
-    //模拟加载
-    setTimeout(function () {
-      // complete
-      wx.hideNavigationBarLoading() //完成停止加载
-      wx.stopPullDownRefresh() //停止下拉刷新
-    }, 1500);
-  },
-
-  //下拉刷新
-  onPullDownRefresh: function () {
     var _this = this
+    _this.initData()
     wx.showNavigationBarLoading() //在标题栏中显示加载
     //模拟加载
     setTimeout(function () {
       // complete
-      _this.onShow()
+      _this.roomList(_this.data.topTabs[_this.data.curIdx].type, _this.data.topTabs[_this.data.curIdx].value)
       wx.hideNavigationBarLoading() //完成停止加载
       wx.stopPullDownRefresh() //停止下拉刷新
-    }, 1500);
+    }, 1800);
+  },
+  /**
+ * 页面上拉触底事件的处理函数
+ */
+  onReachBottom: function () {
+    this.roomList(this.data.topTabs[this.data.curIdx].type, this.data.topTabs[this.data.curIdx].value)
   },
   /**
    * 进入房间操作
@@ -377,6 +422,166 @@ Page({
     wx.navigateTo({
       url: '../room/room'
     })
+  },
+  /**
+   * 更新totalPage,以及page
+   */
+  updatePage: function (totalPage) {
+    var data = []
+    switch (this.data.curIdx) {
+      case 0:
+        this.data.hotPage++
+        this.data.hotTotalPage = totalPage
+        data = this.data.hot
+        break;
+      case 1:
+        this.data.newPage++
+        this.data.newTotalPage = totalPage
+        data = this.data.new
+        break;
+      case 2:
+        this.data.gang_upPage++
+        this.data.gang_upTotalPage = totalPage
+        data = this.data.gang_up
+        break;
+      case 3:
+        this.data.friendPage++
+        this.data.friendTotalPage = totalPage
+        data = this.data.friend
+        break;
+      case 4:
+        this.data.amusePage++
+        this.data.amuseTotalPage = totalPage
+        data = this.data.amuse
+        break;
+      case 5:
+        this.data.singPage++
+        this.data.singTotalPage = totalPage
+        data = this.data.sing
+        break;
+      case 6:
+        this.data.broadcastPage++
+        this.data.broadcastTotalPage = totalPage
+        data = this.data.broadcast
+        break;
+      case 7:
+        this.data.followPage++
+        this.data.followTotalPage = totalPage
+        data = this.data.follow
+        break;
+      case 8:
+        break;
+      default:
+        break;
+    }
+
+    return data;
+  },
+  /**
+   * 分页判断是否是最后一页
+   */
+  ifPage: function () {
+    var ifPage = false
+    switch (this.data.curIdx) {
+      case 0:
+        if (this.data.hotPage > this.data.hotTotalPage) {
+          ifPage = true
+        }
+        break;
+      case 1:
+        if (this.data.newPage > this.data.newTotalPage) {
+          ifPage = true
+        }
+        break;
+      case 2:
+        if (this.data.gang_upPage > this.data.gang_upTotalPage) {
+          ifPage = true
+        }
+        break;
+      case 3:
+        if (this.data.friendPage > this.data.friendTotalPage) {
+          ifPage = true
+        }
+        break;
+      case 4:
+        if (this.data.amusePage > this.data.amuseTotalPage) {
+          ifPage = true
+        }
+        break;
+      case 5:
+        if (this.data.singPage > this.data.singTotalPage) {
+          ifPage = true
+        }
+        break;
+      case 6:
+        if (this.data.broadcastPage > this.data.broadcastTotalPage) {
+          ifPage = true
+        }
+        break;
+      case 7:
+        if (this.data.followPage > this.data.followTotalPage) {
+          ifPage = true
+        }
+        break;
+      case 8:
+        break;
+      default:
+        break;
+    }
+
+    return ifPage;
+  },
+  /**
+ * 初始化数据
+ */
+  initData: function () {
+    switch (this.data.curIdx) {
+      case 0:
+        this.data.hotPage = 1
+        this.data.hotTotalPage = 1
+        this.data.hot = []
+        break;
+      case 1:
+        this.data.newPage = 1
+        this.data.newTotalPage = 1
+        this.data.new = []
+        break;
+      case 2:
+        this.data.gang_upPage = 1
+        this.data.gang_upTotalPage = 1
+        this.data.gang_up = []
+        break;
+      case 3:
+        this.data.friendPage = 1
+        this.data.friendTotalPage = 1
+        this.data.friend = []
+        break;
+      case 4:
+        this.data.amusePage = 1
+        this.data.amuseTotalPage = 1
+        this.data.amuse = []
+        break;
+      case 5:
+        this.data.singPage = 1
+        this.data.singTotalPage = 1
+        this.data.sing = []
+        break;
+      case 6:
+        this.data.broadcastPage = 1
+        this.data.broadcastTotalPage = 1
+        this.data.broadcast = []
+        break;
+      case 7:
+        this.data.followPage = 1
+        this.data.followTotalPage = 1
+        this.data.follow = []
+        break;
+      case 8:
+        break;
+      default:
+        break;
+    }
+    Utils.log(`初始化送出列表${this.data.curIdx}`)
   },
 
 })
@@ -391,4 +596,3 @@ function randomColor() {
   }
   return strColor
 }
-
