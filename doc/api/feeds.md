@@ -7,7 +7,7 @@
 ##### 1.1 请求参数说明
 |参数|名称|值类型|是否可空|备注
 |---|---|---|---|---|
-| type |动态类型|string|是|new:最新:follow关注:essence精华|
+| type |动态类型|string|是|new:最新 follow:关注 essence:精华|
 | feed_topic_id |动态话题id|string|是||
 | page |当前页码|int|否||
 | per_page |每页的条数|int|是|每页的数据条数，默认10|
