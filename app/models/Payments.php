@@ -210,6 +210,12 @@ class Payments extends BaseModel
             $opts['remark'] = '购买' . $product->full_name;
             $diamond = $product->diamond;
             $gold = $product->gold;
+
+            if ($product->draw_num) {
+                $user = $this->user;
+                $draw_num = $user->draw_num + $product->draw_num;
+                $user->setDrawNum($draw_num);
+            }
         }
 
         if ($diamond) {

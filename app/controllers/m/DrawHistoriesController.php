@@ -149,7 +149,7 @@ class DrawHistoriesController extends BaseController
             }
         }
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['draw_histories' => $draw_histories]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['draw_histories' => $draw_histories, 'free_draw_num' => $this->currentUser()->draw_num]);
     }
 
     // 我的奖品

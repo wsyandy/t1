@@ -40,9 +40,8 @@
                         </p>
                     {% endif %}
 
-                    {% set tamp_gold_egg = product.getParseFieldData(product.data, 'tamp_gold_egg') %}
-                    {% if tamp_gold_egg != '' %}
-                        <b>赠砸蛋{{ tamp_gold_egg }}次</b>
+                    {% if product.draw_num %}
+                        <b>赠砸蛋{{ product.draw_num }}次</b>
                     {% endif %}
                 </li>
 

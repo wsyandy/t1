@@ -185,7 +185,7 @@ html,body{
   justify-content: center;
   font-size: .32rem;
   color: #FFEF3B;
-  margin-bottom: .45rem;
+  /*margin-bottom: .45rem;*/
 }
 .gold_egg_box_hint span{
   color: rgba(255,255,255,0.40);
@@ -481,4 +481,15 @@ html,body{
   height: 100%;
   z-index: 100;
   background-color: rgba(0,0,0,0.5);
+}
+.gold_egg_free{
+  margin: .16rem .86rem .32rem;
+  width: 5.78rem;
+  height: .46rem;
+  background: url(../images/free_draw_number_bg.png) center no-repeat;
+  background-size: 5.78rem .46rem;
+  justify-content: center;
+  align-items: center;
+  font-size: .28rem;
+  color: #FFDC29;
 }

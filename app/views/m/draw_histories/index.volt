@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-    {{ theme_css('/m/css/draw_histories_1.css') }}
+    {{ theme_css('/m/css/draw_histories_2.css') }}
 {{ block_end() }}
 
 <script>
@@ -24,6 +24,7 @@
         <div :class="{'egg_gif_gifafter':isLottery,'egg_gif_start':true}"></div>
     </div>
     <p class="gold_egg_box_hint"><span class="wire"></span><span>100%中奖</span> 10钻石／次 <span class="wire"></span></p>
+    <div class="gold_egg_free" v-if="free_draw_num"><span>免费砸蛋次数剩余：${free_draw_num}次</span></div>
     <div class="gold_egg_butbox">
         <div @click="smashEggs(1)" class="gold_egg_butboxli"><span>砸蛋一个</span></div>
         <div @click="smashEggs(10)" class="gold_egg_butboxli ten_buttom"><span>砸蛋十个</span></div>
@@ -79,7 +80,7 @@
                     <span v-if="'gift' == draw_history.type">获得${draw_history.gift_name}</span>
                     <span v-else>获得${draw_history.type_text}</span>
 
-                    <img :src="draw_history.gift_image_small_url" v-if="'gift' == draw_history.type" />
+                    <img :src="draw_history.gift_image_small_url" v-if="'gift' == draw_history.type"/>
                     <span :class="{'diamond': draw_history.type =='diamond','gold': draw_history.type =='gold'}"
                           v-else>
                         ＋${draw_history.number}</span>
@@ -98,6 +99,7 @@
     var opts = {
         data: {
             draw_num: 1,
+            free_draw_num: '{{ current_user.draw_num }}',
             isLottery: false,
             isHintToast: false,
             isResultsToast: false,
@@ -181,6 +183,7 @@
                         });
 
                         self.draw_num = num;
+                        self.free_draw_num = resp.free_draw_num;
                     }
 
                     self.result(self, num);
