@@ -9,7 +9,11 @@
             <div class="family_top_left">
                 <img class="family-ico" src="{{ union.avatar_small_url }}" alt="">
                 <div class="family_name">
-                    <span>   {{ union.name }}</span>
+                    <div class="family_level">
+                        <span>   {{ union.name }}</span>
+                        <img class="ico_level" src="{{ union_level_images[union.union_level] }}" alt="">
+                        <a class="level_tip" href="/m/unions/union_level_detail?sid={{ sid }}&code={{ code }}&union_id={{ union.id }}" >点击了解等级</a>
+                    </div>
                     <span class="family_id">家族ID:{{ union.uid }} </span>
                 </div>
             </div>

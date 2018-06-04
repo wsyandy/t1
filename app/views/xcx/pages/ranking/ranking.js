@@ -5,7 +5,7 @@ Page({
   /**
    * 页面的初始数据
    */
-  data: {
+  data: { 
     /*顶部选项卡*/
     tabsIdx: 0,
     rankTabs: ["魅力榜", "贡献榜"],
@@ -22,6 +22,26 @@ Page({
     /*魅力榜*/
     curIdx: 0, /* scroll_tabs 索引值 与 curItem 对应 */
     curItem: 0, /*swiper-item 索引值 与 curIdx 对应*/
+    myranking: {
+      nowdailyCharmList: 120,
+      lastdailyCharmList: 100,
+
+      nowmonthlyCharmList: 1200,
+      lastmonthlyCharmList: 1100,
+
+      nowcharmList: 1000,
+      lastcharmList: 600,
+
+      nowdailyContributeList: 110,
+      lastdailyContributeList: 90,
+
+      nowmonthlyContributeList: 100,
+      lastmonthlyContributeList: 82,
+
+      nowcontributeList: 1100,
+      lastcontributeList: 890,
+
+    },
     dailyCharmList: [
       {
         nickname: '壹贰叁肆伍陆柒捌玖零',
@@ -629,7 +649,7 @@ Page({
     hideMask: true,
     hideInfo: true,
     ico_id: '/images/ico_id.png',
-    ico_prosecute: '/images/ico_close.png',
+    ico_prosecute: '/images/ico_prosecute.png',
     ico_nofocus: '/images/ico_nofocus.png',
     ico_onfocus: '/images/ico_onfocus.png',
     ico_close: '/images/ico_close.png',
@@ -656,6 +676,7 @@ Page({
     this.setData({
       tabsIdx: index
     })
+ 
   },
   /* 日、月、总选项卡点击 Swiper 跳转到对应显示页 */
   tabSelect: function (e) {
@@ -743,6 +764,10 @@ Page({
       })
     }, 1000) 
   },
+  /*举报*/
+  prosecute: function (e) {
+    console.log('去举报该用户')
+  }, 
 /*关闭弹窗*/
   closePopup: function (e) {
     this.setData({
@@ -750,6 +775,8 @@ Page({
       hideInfo: true,
     })
   }, 
+
+  
   
   /**
    * 生命周期函数--监听页面加载

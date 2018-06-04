@@ -205,7 +205,7 @@
 .rank_box1 .rank_info, .rank_box1 .rank_value {
   width: 100%;
   color: #333;
-  padding: 12rpx 0 0 0; 
+  padding: 12rpx 0 0 0;
 }
 
 .rank_box1 .rank_avatar {
@@ -319,6 +319,36 @@
 .rank_box3 .rank_nickname {
   color: #f37f32;
   text-align: center;
+}
+
+/*我的排名*/
+
+.my_ranking {
+  position: fixed;
+  width: 100%;
+  height: 70rpx;
+  background-color: rgba(255, 255, 255, 0.9);
+  font-size: 26rpx;
+  color: #707070;
+  justify-content: center;
+  align-items: center;
+  /* left: 0; */
+  bottom: 0;
+}
+.height70{
+   width: 100%;
+  height: 70rpx;
+  font-size: 0;
+}
+
+.my_ranking_now {
+  padding: 0 5rpx;
+  color: #151515;
+}
+
+.my_ranking_vary {
+  padding: 0 5rpx;
+  color: #f45189;
 }
 
 /*查看个人信息弹出层*/
@@ -436,18 +466,25 @@
   margin-left: 10rpx;
 }
 
-.not_at_room{
+.not_at_room {
   position: absolute;
   top: clac (50% - 40rpx);
   left: clac (50% - 145rpx);
   width: 290rpx;
-  height: 80rpx; 
+  height: 80rpx;
   border-radius: 8rpx;
-  background-color: rgba(0,0,0,0.7);
+  background-color: rgba(0, 0, 0, 0.7);
   font-size: 34rpx;
-  color: #FFFFFF;
+  color: #fff;
   justify-content: center;
-  align-items: center; 
+  align-items: center;
+}
+.ico_prosecute{
+  width: 48rpx;
+  height: 42rpx;
+  position: absolute;
+  top: 30rpx;
+  right:30rpx;
 }
 
 .ico_close {
@@ -457,8 +494,6 @@
   bottom: -100rpx;
   left: calc(50% - 35rpx);
 }
-
-
 
 /*无网络状态*/
 
