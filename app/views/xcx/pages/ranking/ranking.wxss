@@ -8,7 +8,7 @@
   height: 220rpx;
   padding: 20rpx;
   background-color: #fff;
-  border-bottom: 1px solid #EAEAEA;
+  border-bottom: 1px solid #eaeaea;
 }
 
 .rank_tabs {
@@ -18,27 +18,30 @@
   border: 1px solid #ddd;
   border-radius: 8rpx;
   font-size: 30rpx;
-  color: #F45189;
+  color: #f45189;
 }
 
-.rank_tab,.rank_tab_cur {
-  width: 50%; 
+.rank_tab, .rank_tab_cur {
+  width: 50%;
   justify-content: center;
   align-items: center;
 }
-.rank_tab_cur{ 
-  background: #F45189;
+
+.rank_tab_cur {
+  background: #f45189;
   color: #fff;
 }
 
 /*日榜月榜总榜*/
+
 .rank_type {
-  width: 600rpx; 
-  background-color: #fff; 
-  justify-content: space-between
+  width: 600rpx;
+  background-color: #fff;
+  justify-content: space-between;
 }
+
 .rank_type_item {
-  position: relative; 
+  position: relative;
   justify-content: center;
   align-items: center;
 }
@@ -46,28 +49,274 @@
 .rank_type_text {
   width: 160rpx;
   height: 56rpx;
-font-size: 28rpx;
-color: #A4A4A4;
-background: #F3F3F3;
-border-radius: 100rpx;
-align-items: center;
-justify-content: center;
+  font-size: 28rpx;
+  color: #a4a4a4;
+  background: #f3f3f3;
+  border-radius: 100rpx;
+  align-items: center;
+  justify-content: center;
 }
- 
+
 .rank_type_cur {
-   width: 160rpx;
+  width: 160rpx;
   height: 56rpx;
-font-size: 28rpx;
-color: #fff;
-background: #F45189;
-border-radius: 100rpx;
-align-items: center;
-justify-content: center;
- 
+  font-size: 28rpx;
+  color: #fff;
+  background: #f45189;
+  border-radius: 100rpx;
+  align-items: center;
+  justify-content: center;
 }
-.slider-wrapper { 
+
+.slider-wrapper {
   position: relative;
   display: block;
   background-color: #fff;
 }
- 
+
+/*列表*/
+
+.rank_box {
+  width: 100%;
+  padding-left: 30rpx;
+  background-color: #fff;
+}
+
+.rank_list {
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eaeaea;
+  padding: 26rpx 30rpx 26rpx 0;
+}
+
+.rank_number {
+  padding: 20rpx;
+  font-size: 24rpx;
+  color: #595959;
+}
+
+.rank_avatar {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 50%;
+  border: 1px solid #e6e6e6;
+}
+
+.rank_info {
+  width: 50%;
+  flex-direction: column;
+  padding: 0 20rpx;
+}
+
+.rank_nickname {
+  font-size: 28rpx;
+  color: #2d2d2d;
+  width: 100%;
+  display: block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  padding-bottom: 10rpx;
+}
+
+.rank_describe {
+  align-items: center;
+}
+
+.rank_male, .rank_female {
+  background: #9accf9;
+  border-radius: 100rpx;
+  padding: 0 10rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10rpx;
+}
+
+.rank_female {
+  background: #f99ad3;
+}
+
+.ico_sex {
+  width: 18rpx;
+  height: 17rpx;
+}
+
+.rank_age {
+  font-size: 20rpx;
+  color: #fff;
+  padding-left: 6rpx;
+}
+
+.ico_glory {
+  width: 30rpx;
+  height: 30rpx;
+}
+
+.rank_value {
+  width: 35%;
+  font-size: 26rpx;
+  color: #888;
+  justify-content: flex-end;
+}
+
+.rank_scroll {
+  position: relative;
+  flex-direction: column;
+  padding-top: 450rpx;
+  background-color: #f6f6f6;
+}
+
+.rank_avatar_bg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+/*第一名*/
+
+.rank_box1 {
+  position: absolute;
+  top: 0;
+  left: 33%;
+  width: 34%;
+  padding-top: 10rpx;
+  padding-bottom: 20rpx;
+  background-color: #fff;
+}
+
+.rank_box1 .rank_list {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  border-bottom: 0;
+}
+
+.rank_box1 .rank_avatar_box {
+  position: relative;
+  width: 260rpx;
+  height: 260rpx;
+  justify-content: center;
+  align-items: center;
+}
+
+.rank_box1 .rank_info, .rank_box1 .rank_value {
+  width: 100%;
+  color: #333;
+  padding-top: 12rpx;
+}
+
+.rank_box1 .rank_avatar {
+  width: 160rpx;
+  height: 160rpx;
+}
+
+.rank_box1 .rank_nickname, .rank_box1 .rank_describe, .rank_box1 .rank_value {
+  justify-content: center;
+  align-items: center;
+}
+
+.rank_box1 .rank_nickname {
+  color: #f45189;
+  text-align: center;
+}
+
+/*第二名*/
+
+.rank_box2 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 33%;
+  padding-top: 70rpx;
+  padding-bottom: 20rpx;
+  background-color: #fff;
+}
+
+.rank_box2 .rank_list {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  border-bottom: 0;
+}
+
+.rank_box2 .rank_avatar_box {
+  position: relative;
+  width: 200rpx;
+  height: 200rpx;
+  justify-content: center;
+  align-items: center;
+}
+
+.rank_box2 .rank_info, .rank_box2 .rank_value {
+  width: 100%;
+  color: #333;
+  padding-top: 12rpx;
+}
+
+.rank_box2 .rank_avatar {
+  width: 136rpx;
+  height: 136rpx;
+}
+
+.rank_box2 .rank_nickname, .rank_box2 .rank_describe, .rank_box2 .rank_value {
+  justify-content: center;
+  align-items: center;
+}
+
+.rank_box2 .rank_nickname {
+  color: #56b1e3;
+  text-align: center;
+}
+
+/*第三名*/
+
+.rank_box3 {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 33%;
+  padding-top: 70rpx;
+  padding-bottom: 20rpx;
+  background-color: #fff;
+}
+
+.rank_box3 .rank_list {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  border-bottom: 0;
+}
+
+.rank_box3 .rank_avatar_box {
+  position: relative;
+  width: 200rpx;
+  height: 200rpx;
+  justify-content: center;
+  align-items: center;
+}
+
+.rank_box3 .rank_info, .rank_box3 .rank_value {
+  width: 100%;
+  color: #333;
+  padding-top: 12rpx;
+}
+
+.rank_box3 .rank_avatar {
+  width: 136rpx;
+  height: 136rpx;
+}
+
+.rank_box3 .rank_nickname, .rank_box3 .rank_describe, .rank_box3 .rank_value {
+  justify-content: center;
+  align-items: center;
+}
+
+.rank_box3 .rank_nickname {
+  color: #f37f32;
+  text-align: center;
+}

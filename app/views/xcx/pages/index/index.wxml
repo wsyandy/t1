@@ -36,7 +36,6 @@
           </view>
         </view>
       </scroll-view>
-
     </swiper-item>
     <!-- 最新 -->
     <swiper-item>
