@@ -185,7 +185,7 @@ html,body{
   justify-content: center;
   font-size: .32rem;
   color: #FFEF3B;
-  /*margin-bottom: .45rem;*/
+  margin-bottom: .1rem;
 }
 .gold_egg_box_hint span{
   color: rgba(255,255,255,0.40);
