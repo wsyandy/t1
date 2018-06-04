@@ -168,15 +168,16 @@ class GiftOrdersController extends BaseController
         $gifts = \Gifts::findValidList($user, ['gift_type' => GIFT_TYPE_CAR]);
         if ($this->request->isPost()) {
             $gift = \Gifts::findFirstById($this->params('gift_id'));
+
             if (isBlank($gift)) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '礼物错误');
             }
 
             $content = $this->params('content');
-
+            $expire_day = $this->params('expire_day');
             $operator = $this->currentOperator();
-
-            \GiftOrders::giveCarBySystem($user->id, $operator->id, $gift, $content);
+            $opts = ['content' => $content, 'operator_id' => $operator->id, 'expire_day' => $expire_day];
+            \GiftOrders::giveCarBySystem($user, $gift, $opts);
             return $this->renderJSON(ERROR_CODE_SUCCESS, "赠送成功", ['error_url' => '/admin/gift_orders?user_id=' . $user->id]);
         }
 
