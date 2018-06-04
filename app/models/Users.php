@@ -76,6 +76,11 @@ class Users extends BaseModel
      * @type integer
      */
     private $_current_room_channel_status;
+    /**
+     * 动态数量
+     * @type integer
+     */
+    private $_feed_num = 0;
 
     //好友状态 1已添加,2等待验证，3等待接受
     public $friend_status;
@@ -1364,6 +1369,10 @@ class Users extends BaseModel
             }
 
             if ('nickname' == $k) {
+                if(mb_strlen($v) < 1){
+                    continue;
+                }
+                
                 list($res, $v) = BannedWords::checkWord($v);
                 if ($res) {
                     Chats::sendTextSystemMessage($this, "您设置的昵称名称违反规则,请及时修改");

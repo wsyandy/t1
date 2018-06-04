@@ -621,7 +621,8 @@ trait RoomAttrs
             '调情', '介绍所', '囚禁', '虐待', '包邮', '出售', '官方', '服务', '屁股', '搞基', '约炮', 'sao', '磕炮', '偷情',
             '系统小助手', '系统', '嫖', '客服小助手', '官方', '习近平', '李源潮', '李克强', '张高丽', '裸照', '网操', '网c', '磕泡泡',
             '糖糖', 'hello', '寻欢', 'heyhey', '咪爪', '妙声', '声声', '比邻', '荔枝', '刘延东', '彭丽媛', '汪洋', '马凯', '杨晶',
-            '常万全', '杨洁篪', '郭声琨', '王勇', '张德江', '六四', '网警', '巡查', '警察'
+            '常万全', '杨洁篪', '郭声琨', '王勇', '张德江', '六四', '网警', '巡查', '警察', '嗑炮', '磕炮', '嗑泡', '磕炮', 'kp',
+            '习大大', '荔枝', '甜甜', '妈逼', '傻逼', 'SB'
         ];
 
         foreach ($keywords as $keyword) {
@@ -679,17 +680,19 @@ trait RoomAttrs
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date("Ymd"));
-                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                break;
-            }
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date("Ymd"));
+                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                    break;
+                }
             default:
                 return '';
         }
