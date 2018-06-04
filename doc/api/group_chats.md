@@ -124,9 +124,9 @@
             id: int 用户ID,
             sex: 用户性别,
             avatar_small_url: 用户头像,
-            nickname: 用户昵称
+            nickname: 用户昵称,
+            user_chat: true 用户可以聊天  false 用户被禁言,
         },
-    user_chat: true 用户可以聊天  false 用户被禁言,
 }
 ```
 #5、退出群
@@ -163,9 +163,10 @@
             id: int 用户ID,
             sex: 用户性别,
             avatar_small_url: 用户头像,
-            nickname: 用户昵称
+            nickname: 用户昵称,
+            user_chat: true 用户可以聊天  false 用户被禁言,
         },
-    user_chat: true 用户可以聊天  false 用户被禁言,
+    
 }
 ```
 

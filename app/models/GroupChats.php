@@ -267,18 +267,18 @@ class GroupChats extends BaseModel
         $msg_db = self::getGroupChatsDb();
 
         if ($chat) {
-            $msg_db->zrem("chat_status_group_chat{$this->id}user" . $user_id, $user_id);
+            $msg_db->zrem("status_group_chat_user_ban_{$this->id}", $user_id);
             return;
         }
 
-        $msg_db->zadd("chat_status_group_chat{$this->id}user" . $user_id, time(), $user_id);
+        $msg_db->zadd("status_group_chat_user_ban_{$this->id}", time(), $user_id);
     }
 
     function canChat($user_id)
     {
         $msg_db = self::getGroupChatsDb();
-        $key = "chat_status_group_chat{$this->id}user" . $user_id;
-        $chat = $msg_db->zrange($key, 0, -1);
+        $key = "status_group_chat_user_ban_{$this->id}";
+        $chat = $msg_db->zscore($key, $user_id);
 
         if ($chat) {
             return false;

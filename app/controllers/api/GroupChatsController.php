@@ -77,10 +77,10 @@ class GroupChatsController extends BaseController
     {
         $keyword = $this->params('keyword');
 
-        if(intval($keyword) > 0){
+        if (intval($keyword) > 0) {
             $cond['conditions'] = 'uid = :uid:';
             $cond['bind']['uid'] = $keyword;
-        }else{
+        } else {
             $cond['conditions'] = 'name like :name:';
             $cond['bind']['name'] = '%' . $keyword . '%';
         }
@@ -106,7 +106,7 @@ class GroupChatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        if($group_chat->isGroupMember($this->currentUserId())){
+        if ($group_chat->isGroupMember($this->currentUserId())) {
             return $this->renderJSON(ERROR_CODE_FAIL, '您已经在此群中!');
         }
 
@@ -151,7 +151,6 @@ class GroupChatsController extends BaseController
         }
 
 
-
         $group_chat->kickGroupChat($user_id);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '退出成功');
@@ -174,8 +173,10 @@ class GroupChatsController extends BaseController
 
         $group_chat->joinGroupChat($user_id);
 
-        $res['user'] = \Users::findFirstById($user_id)->toGroupChatJson();
-        $res['user_chat'] = $group_chat->canChat($user_id);
+        $user = \Users::findFirstById($user_id);
+        $user->user_chat = $group_chat->canChat($user_id);
+        $res['user'] = $user->toGroupChatJson();
+
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '加入成功', $res);
     }
@@ -195,7 +196,7 @@ class GroupChatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '该用户不在群内！');
         }
 
-        if($group_chat->isGroupManager($user_id)){
+        if ($group_chat->isGroupManager($user_id)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '该用户已经是本群管理员！');
         }
 
@@ -384,11 +385,12 @@ class GroupChatsController extends BaseController
         if (!$group_chat) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
-        $user = $this->currentUser();
 
-        $res = $group_chat->toJson();
-        $res['user'] = $user;
-        $res['user_chat'] = $group_chat->canChat($user->id);
+        $user = $this->currentUser();
+        $user->user_chat = $group_chat->canChat($user->id);
+        $user_json = $user->toGroupChatJson();
+        $res = $group_chat->toDataJson();
+        $res['user'] = $user_json;
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
 
