@@ -147,7 +147,7 @@ class GroupChats extends BaseModel
         }
         $key = self::getJoinGroupChatKey($this->id);
         $msg_db = self::getGroupChatsDb();
-        $msg_db->zadd($key, 3, $user_id);  //  1群主  2 管理员  3 群员  4 待审核人员
+        $msg_db->zadd($key, time(), $user_id);
 
     }
 
@@ -158,7 +158,7 @@ class GroupChats extends BaseModel
         }
         $key = self::getReviewGroupChatKey($this->id);
         $msg_db = self::getGroupChatsDb();
-        $msg_db->zadd($key, 4, $user_id);
+        $msg_db->zadd($key, time(), $user_id);
 
     }
 
