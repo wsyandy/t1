@@ -1369,10 +1369,10 @@ class Users extends BaseModel
             }
 
             if ('nickname' == $k) {
-                if(mb_strlen($v) < 1){
+                if (mb_strlen($v) < 1) {
                     continue;
                 }
-                
+
                 list($res, $v) = BannedWords::checkWord($v);
                 if ($res) {
                     Chats::sendTextSystemMessage($this, "您设置的昵称名称违反规则,请及时修改");
@@ -2911,16 +2911,27 @@ class Users extends BaseModel
     {
         $level = $this->level;
         $experience = $this->experience;
+        $max = 386000;
+
+        if (isDevelopmentEnv() || time() >= beginOfDay(strtotime('2018-06-08'))) {
+            $max = 856920;
+        }
 
         if ($experience < 1) {
             return 0;
-        } elseif ($experience >= 386000) {
+        } elseif ($experience >= $max) {
             return 35;
         }
 
         $level_ranges = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000,
             10000, 11000, 16000, 21000, 26000, 31000, 36000, 56000, 76000, 96000, 116000, 136000, 186000, 236000, 286000,
             336000, 386000];
+
+        if (isDevelopmentEnv() || time() >= beginOfDay(strtotime('2018-06-08'))) {
+            $level_ranges = [0, 120, 246, 378, 516, 660, 810, 966, 1128, 1296, 1470, 3000, 4590, 6240, 7950, 9720, 11550,
+                13440, 15390, 17400, 19470, 28800, 38430, 48360, 58590, 69120, 109200, 150480, 192960, 236640, 281520,
+                390600, 502680, 617760, 735840, 856920];
+        }
 
         foreach ($level_ranges as $index => $level_range) {
 

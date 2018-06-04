@@ -16,14 +16,11 @@ class AwardHistories extends BaseModel
     //领取状态
     static $STATUS = [STATUS_ON => '点击领取', STATUS_OFF => '已领取'];
 
-    static $TYPE = [AWARD_DIAMOND => '钻石', AWARD_GOLD => '金币'];
+    static $TYPE = [AWARD_DIAMOND => '钻石', AWARD_HI_COIN => 'Hi币'];
 
     static $AUTH_STATUS = [AUTH_WAIT => '待审核', AUTH_SUCCESS => '审核成功', AUTH_FAIL => '审核失败'];
 
     static $CONTENT_TYPE = [CHAT_CONTENT_TYPE_TEXT => '文本消息', CHAT_CONTENT_TYPE_TEXT_NEWS => '图文消息'];
-
-    //图片文件
-    static $files = ['image' => APP_NAME . '/award_histories/image/%s'];
 
     function afterUpdate()
     {
@@ -46,7 +43,7 @@ class AwardHistories extends BaseModel
             'status_text' => $this->status_text,
             'type_text' => $this->type_text,
             'amount' => $this->amount,
-            'created_at_text' => date('Y年m月', $this->created_at),
+            'created_at_text' => date('Y年m月', strtotime('-1 month', $this->created_at)),
             'status' => $this->status
         ];
     }
@@ -54,13 +51,14 @@ class AwardHistories extends BaseModel
     function getAwards($user)
     {
         $type = $this->type;
-        $opts = ['remark' => '系统扶持奖励' . $this->amount . $this->type_text, 'target_id' => $this->id];
         switch ($type) {
             case 'diamond':
+                $opts = ['remark' => '系统扶持奖励' . $this->amount . $this->type_text, 'target_id' => $this->id];
                 $result = \AccountHistories::changeBalance($user, ACCOUNT_TYPE_SYSTEM_AWARD, $this->amount, $opts);
                 break;
-            case 'gold':
-                $result = \GoldHistories::changeBalance($user, GOLD_TYPE_SYSTEM_AWARD, $this->amount, $opts);
+            case 'hi_coin':
+                $opts = ['remark' => '系统扶持奖励' . $this->amount . $this->type_text, 'fee_type' => HI_COIN_FEE_TYPE_UNION_HOST_REWARD, 'hi_coins' => $this->amount];
+                $result = \HiCoinHistories::createHistory($user->id, $opts);
                 break;
             default:
                 $result = null;

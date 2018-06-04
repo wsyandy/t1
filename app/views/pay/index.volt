@@ -1,9 +1,9 @@
 
-{#{% if isDevelopmentEnv() %}#}
+{% if isDevelopmentEnv() %}
 
-    {#{{ partial('pay/index_test') }}#}
+    {{ partial('pay/index_test') }}
 
-{#{% else %}#}
+{% else %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -186,4 +186,4 @@
 </script>
 </body>
 </html>
-{#{% endif %}#}
+{% endif %}

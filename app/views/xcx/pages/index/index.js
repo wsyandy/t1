@@ -128,7 +128,7 @@ Page({
   getUserInfo: function (e) {
 
     app.getUserInfo(e, (res) => {
-      Utils.log(`data:${JSON.stringify(res)}`)
+      Utils.log(`用户授权信息:${JSON.stringify(res)}`)
       if (res) {
         this.setData({
           userInfo: res,
@@ -171,7 +171,6 @@ Page({
 
     switch (index) {
       case 0:
-
         var url = getCurrentPages()[getCurrentPages().length - 1].route //获取当前页面的路径
         Utils.log(`当前页面的路径:${url}`)
         if (url == 'pages/index/index') {
@@ -302,7 +301,6 @@ Page({
   /* 滚动选项卡点击 Swiper 跳转到对应显示页 */
   tabSelect: function (e) {
     let idx = e.currentTarget.dataset.idx
-    console.log(idx)
     this.setData({
       curIdx: idx,
       curItem: idx,
@@ -313,19 +311,15 @@ Page({
   /* Swiper 内容改变时，滚动选项卡跳转到对应位置 */
   tabSwiperChange: function (e) {
     let i = e.detail.current
-    console.log(i)
     this.setData({
       curIdx: i,
       toView: 'tabs_' + (i - 1)
     })
 
-    // 从缓存中去当前分类下的数据，取到则不调用接口
+    // 从缓存中取当前分类下的数据，取到则不调用接口
     if (wx.getStorageSync(this.data.topTabs[i].type)) {
       this.setData({
         [this.data.topTabs[i].type]: wx.getStorageSync(this.data.topTabs[i].type),
-        // roomList: wx.getStorageSync(this.data.topTabs[i].type),
-        // roomList: {},//后续修改至统一参数，根据type进行判断展示什么样式
-        // type: type,
       })
       return;
     }
@@ -346,7 +340,7 @@ Page({
         _this.setData({
           topTabs: types
         })
-        // console.log(types)
+        Utils.log(`tab:${JSON.stringify(types)}`)
         _this.data.curIdx = 0
         _this.roomList(types[0].type, types[0].value)
       }
@@ -362,12 +356,12 @@ Page({
       })
       return;
     }
-
-    let data = { [type]: value, page: this.data.page, per_page: 20 }
     let _this = this
-    console.log(data)
+    let data = { [type]: value, page: this.ifPage(true), per_page: 20 }
+    Utils.log(`请求房间列表参数:${JSON.stringify(data)}`)
+
     request.postRequest('rooms/index', data).then(res => {
-      console.log(res.data.rooms)
+      Utils.log(`房间列表:${JSON.stringify(res.data.rooms)}`)
       var roomList = res.data.rooms
       if (type == 'follow' && roomList.length >= 1) {
         _this.setData({
@@ -380,16 +374,10 @@ Page({
       }
 
       let roomData = _this.updatePage(res.data.total_page).concat(roomList)
-      //当前页面的数据存入缓存，以分类名命名
-      wx.setStorageSync(type, roomData)
-
-      // if(data.hot){
       _this.setData({
         [type]: roomData,
-        // roomList: roomList,
-        // type: type
       })
-      // }
+      wx.setStorageSync(type, roomData)//当前页面的数据存入缓存，以分类名命名
     })
 
   },
@@ -412,7 +400,7 @@ Page({
   /**
  * 页面上拉触底事件的处理函数
  */
-  onReachBottom: function () {
+  bindscrolltolower: function () {
     this.roomList(this.data.topTabs[this.data.curIdx].type, this.data.topTabs[this.data.curIdx].value)
   },
   /**
@@ -479,46 +467,56 @@ Page({
   },
   /**
    * 分页判断是否是最后一页
+   * 获取当前分类下的页码
    */
-  ifPage: function () {
+  ifPage: function (which = false) {
     var ifPage = false
+    var currentPage = 1
     switch (this.data.curIdx) {
       case 0:
+        currentPage = this.data.hotPage
         if (this.data.hotPage > this.data.hotTotalPage) {
           ifPage = true
         }
         break;
       case 1:
+        currentPage = this.data.newPage
         if (this.data.newPage > this.data.newTotalPage) {
           ifPage = true
         }
         break;
       case 2:
+        currentPage = this.data.gang_upPage
         if (this.data.gang_upPage > this.data.gang_upTotalPage) {
           ifPage = true
         }
         break;
       case 3:
+        currentPage = this.data.friendPage
         if (this.data.friendPage > this.data.friendTotalPage) {
           ifPage = true
         }
         break;
       case 4:
+        currentPage = this.data.amusePage
         if (this.data.amusePage > this.data.amuseTotalPage) {
           ifPage = true
         }
         break;
       case 5:
+        currentPage = this.data.singPage
         if (this.data.singPage > this.data.singTotalPage) {
           ifPage = true
         }
         break;
       case 6:
+        currentPage = this.data.broadcastPage
         if (this.data.broadcastPage > this.data.broadcastTotalPage) {
           ifPage = true
         }
         break;
       case 7:
+        currentPage = this.data.followPage
         if (this.data.followPage > this.data.followTotalPage) {
           ifPage = true
         }
@@ -529,7 +527,7 @@ Page({
         break;
     }
 
-    return ifPage;
+    return which ? currentPage : ifPage;
   },
   /**
  * 初始化数据

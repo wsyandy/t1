@@ -54,13 +54,14 @@ class GroupChats extends BaseModel
     {
         $name = fetch($opts, 'name');
         $introduce = fetch($opts, 'introduce');
+        $join_type = fetch($opts, 'join_type');
 
         $group_chats = new GroupChats();
         $group_chats->name = $name;
         $group_chats->introduce = $introduce;
         $group_chats->user_id = $user->id;
         $group_chats->status = STATUS_ON;
-        $group_chats->join_type = 'all';
+        $group_chats->join_type = $join_type;
         $group_chats->chat = true;
 
         $group_chats->last_at = time();
@@ -147,7 +148,7 @@ class GroupChats extends BaseModel
         }
         $key = self::getJoinGroupChatKey($this->id);
         $msg_db = self::getGroupChatsDb();
-        $msg_db->zadd($key, 3, $user_id);  //  1群主  2 管理员  3 群员  4 待审核人员
+        $msg_db->zadd($key, time(), $user_id);
 
     }
 
@@ -158,7 +159,7 @@ class GroupChats extends BaseModel
         }
         $key = self::getReviewGroupChatKey($this->id);
         $msg_db = self::getGroupChatsDb();
-        $msg_db->zadd($key, 4, $user_id);
+        $msg_db->zadd($key, time(), $user_id);
 
     }
 
