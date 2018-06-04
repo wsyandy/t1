@@ -36,9 +36,11 @@ class BackpacksController extends BaseController
         $backpack_id = $this->params('id');
         $user_id = $this->params('user_id');
         $src = $this->params('src', 'room');
-
         $notify_type = $src == 'room' ? 'bc' : 'ptp';
 
+        if (!$user_id) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
 
         $backpack = \Backpacks::findFirstById($backpack_id);
 
