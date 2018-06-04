@@ -351,21 +351,24 @@ class GiftOrders extends BaseModel
         \Users::updateUserCharmAndWealthRank($this);
     }
 
-    static function giveCarBySystem($receiver_id, $operator_id, $gift, $content, $gift_num = 1)
+    static function giveCarBySystem($receiver, $gift, $opts = [])
     {
         $sender_id = SYSTEM_ID;
 
         $sender = Users::findFirstById($sender_id);
 
-
-        $receiver = Users::findFirstById($receiver_id);
         if (!$receiver) {
             return false;
         }
 
+        $operator_id = fetch($opts, 'operator_id');
+        $content = fetch($opts, 'content');
+        $gift_num = fetch($opts, 'gift_num', 1);
+        $expire_day = fetch($opts, 'expire_day', 0);
+
         $gift_order = new GiftOrders();
         $gift_order->sender_id = $sender_id;
-        $gift_order->user_id = $receiver_id;
+        $gift_order->user_id = $receiver->id;
         $gift_order->gift_id = $gift->id;
         $gift_order->amount = $gift->amount * $gift_num;
         $gift_order->name = $gift->name;
@@ -385,8 +388,13 @@ class GiftOrders extends BaseModel
         $gift_order->type = GIFT_ORDER_TYPE_SYSTEM_SEND;
         $gift_order->product_channel_id = $receiver->product_channel_id;
         $gift_order->save();
+        $params = ['content' => $content];
 
-        \UserGifts::delay()->updateGiftExpireAt($gift_order->id, ['content' => $content]);
+        if ($expire_day) {
+            $params['expire_day'] = $expire_day;
+        }
+
+        \UserGifts::delay()->updateGiftExpireAt($gift_order->id, $params);
 
         return true;
     }

@@ -85,6 +85,7 @@ class UserGifts extends BaseModel
     static function updateGiftExpireAt($gift_order_id, $opts = [])
     {
         $content = fetch($opts, 'content');
+        $expire_day = fetch($opts, 'expire_day', 0);
 
         if (is_numeric($gift_order_id)) {
             $gift_order = \GiftOrders::findFirstById($gift_order_id);
@@ -118,17 +119,21 @@ class UserGifts extends BaseModel
             $user_gift->status = STATUS_ON;
         }
 
+        if (!$expire_day) {
+            $expire_day = $gift->expire_day ;
+        }
+
         if (isDevelopmentEnv()) {
             if ($user_gift->expire_at > time()) {
-                $user_gift->expire_at += $gift->expire_day * 60 * 2;
+                $user_gift->expire_at += $expire_day * 60 * 2;
             } else {
-                $user_gift->expire_at = time() + $gift->expire_day * 60 * 2;
+                $user_gift->expire_at = time() + $expire_day * 60 * 2;
             }
         } else {
             if ($user_gift->expire_at > time()) {
-                $user_gift->expire_at += $gift->expire_day * 86400;
+                $user_gift->expire_at += $expire_day * 86400;
             } else {
-                $user_gift->expire_at = time() + $gift->expire_day * 86400;
+                $user_gift->expire_at = time() + $expire_day * 86400;
             }
         }
 
