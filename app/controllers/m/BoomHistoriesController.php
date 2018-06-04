@@ -10,9 +10,6 @@ namespace m;
 
 class BoomHistoriesController extends BaseController
 {
-
-    static $boom_type = [BOOM_HISTORY_GIFT_TYPE, BOOM_HISTORY_DIAMOND_TYPE, BOOM_HISTORY_GOLD_TYPE];
-
     function indexAction()
     {
         $sid = $this->params('sid');
