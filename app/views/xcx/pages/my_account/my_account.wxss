@@ -50,6 +50,7 @@
   align-items: center;
   font-size: 30rpx;
   border-bottom: 1px solid #f3f3f3;
+ 
 }
 
 .top-up-list:last-child {
@@ -70,14 +71,17 @@
   width: 35%;
   align-items: center;
   justify-content: flex-end;
-  color: #969696;
+  
 }
 
 .top-up-diamond {
-  color: #2d2d2d;
+   color: #2d2d2d;
 }
-
+.top-up-rmb{
+  color: #969696;
+}
 .top-up-gold {
+  color: #2d2d2d;
   padding-left: 10rpx;
 }
 
@@ -92,7 +96,7 @@
   margin-left: 20rpx;
 }
 
-.is_checked {
+.is_checked .top-up-diamond ,.is_checked .top-up-gold,.is_checked .top-up-rmb{
   color: #f45189;
 }
 
