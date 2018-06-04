@@ -388,9 +388,10 @@ class GiftOrders extends BaseModel
         $gift_order->type = GIFT_ORDER_TYPE_SYSTEM_SEND;
         $gift_order->product_channel_id = $receiver->product_channel_id;
         $gift_order->save();
+        $params = ['content' => $content];
 
         if ($expire_day) {
-            $params = ['content' => $content, 'expire_day' => $expire_day];
+            $params['expire_day'] = $expire_day;
         }
 
         \UserGifts::delay()->updateGiftExpireAt($gift_order->id, $params);
