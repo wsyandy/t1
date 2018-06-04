@@ -34,4 +34,6 @@
 * [房间标签](room_tags.md)
 * [背包](backpack.md)
 * [动态](feeds.md)
+* [群聊](group_chats.md)
+
 ## Published with GitBook

@@ -27,24 +27,23 @@ class GroupChatsController extends BaseController
             'introduce' => $introduce,
         ];
 
-        $res = \GroupChats::findFirstUserId($this->currentUserId());
-        if ($res && $res->status == STATUS_ON) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '已有创建的群');
-        }
+        $res = \GroupChats::findFirstByUserId($this->currentUserId());
+//        if ($res && $res->status == STATUS_ON) {
+//            return $this->renderJSON(ERROR_CODE_FAIL, '已有创建的群');
+//        }
 
         if ($res && $res->status == STATUS_OFF) {
-            $res->name = $name;
-            $res->introduce = $introduce;
-            $res->status = STATUS_ON;
-            $res->update();
+            $opts['status'] = STATUS_ON;
+            $res->updateGroupChat($opts);
             $res->updateAvatar($avatar_file);
 
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功');
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功',['group_chat'=>$res]);
         }
 
         $group_chat = \GroupChats::createGroupChat($this->currentUser(), $opts);
         $group_chat->updateAvatar($avatar_file);
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功');
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功',['group_chat'=>$group_chat->toDataJson()]);
 
     }
 
@@ -53,7 +52,7 @@ class GroupChatsController extends BaseController
     {
         $group_chat_id = $this->params('id', 0);
 
-        $avatar_file = $this->params('avatar_file');
+        $avatar_file = $this->file('avatar_file');
         $group_chat = \GroupChats::findFirstById($group_chat_id);
         if (!$group_chat) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
@@ -62,10 +61,16 @@ class GroupChatsController extends BaseController
         if (!$this->currentUser()->isGroupChatHost($group_chat)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
-        $group_chat->updateAvatar($avatar_file);
+
+        if($avatar_file){
+            $group_chat->updateAvatar($avatar_file);
+        }
+
         $group_chat->updateGroupChat($this->params());
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功',['group_chat'=>$group_chat->toDataJson()]);
     }
+
+    //搜索群
 
     //加入群
     function addGroupChatAction()
@@ -354,7 +359,7 @@ class GroupChatsController extends BaseController
     }
 
     //搜索群成员
-    function searchMemberAction()
+    function searchUsersAction()
     {
         $nickname = $this->params('nickname');
 
@@ -389,6 +394,8 @@ class GroupChatsController extends BaseController
         $group_host_id = $group_chat->user_id;
         $group_manager_ids = $group_chat->getAllGroupManagers();
         $group_member_ids = $group_chat->getAllGroupMembers();
+
+
 
         $res['group_host'] = \Users::findFirstById($group_host_id);
         $res['group_managers'] = \Users::findByIds($group_manager_ids);
