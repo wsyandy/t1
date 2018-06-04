@@ -16,6 +16,7 @@ class GroupChatsController extends BaseController
     {
         $name = $this->params('name');
         $introduce = $this->params('introduce');
+        $join_type = $this->params('join_type');
         $avatar_file = $this->file('avatar_file');
 
         if (isBlank($name) || isBlank($introduce) || isBlank($avatar_file)) {
@@ -25,6 +26,7 @@ class GroupChatsController extends BaseController
         $opts = [
             'name' => $name,
             'introduce' => $introduce,
+            'join_type' => $join_type
         ];
 
         $res = \GroupChats::findFirstByUserId($this->currentUserId());
@@ -73,15 +75,24 @@ class GroupChatsController extends BaseController
     //搜索群
     function searchAction()
     {
-        $uid = $this->params('uid');
+        $keyword = $this->params('keyword');
 
-        $group_chat = \GroupChats::findFirstByUid($uid);
+        if(intval($keyword) > 0){
+            $cond['conditions'] = 'uid = :uid:';
+            $cond['bind']['uid'] = $keyword;
+        }else{
+            $cond['conditions'] = 'name like :name:';
+            $cond['bind']['name'] = '%' . $keyword . '%';
+        }
 
-        if (!$group_chat) {
+
+        $group_chats = \GroupChats::find($cond);
+
+        if (!$group_chats) {
             return $this->renderJSON(ERROR_CODE_FAIL, '未找到该群！');
         }
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', ['group_chat' => $group_chat->toDataJson()]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $group_chats->toJson('group_chats', 'toDataJson'));
 
     }
 
