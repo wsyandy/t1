@@ -5,10 +5,10 @@
 > http-post ```/api/group_chats/create```
 ##### 1.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
-|---|---|---|---|---|
+|---|---|---|---|---
 |name|群聊名称|string|否||
 |introduce|群聊简介|string|否||
-|avatar_file|群头像|file|否||
+|avatar_file|群头像|file|否|||
 
 ##### 1.2 回应参数说明
 ```
@@ -27,7 +27,6 @@
             created_at  创建时间戳
             last_at  最后活跃时间
             chat true 全员可聊天  false 全员禁言
-            type: 0
         },     
 }
 ```
@@ -36,11 +35,11 @@
 > http-post ```/api/group_chats/update```
 ##### 2.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
-|---|---|---|---|---|
+|---|---|---|---|---
 |id|群聊id|int|否||
 |name|群聊名称|string|是||
 |introduce|群聊简介|string|是||
-|avatar_file|群头像|file|是||
+|avatar_file|群头像|file|是|||
 
 ##### 2.2 回应参数说明
 ```
@@ -59,6 +58,6 @@
             created_at  创建时间戳
             last_at  最后活跃时间
             chat true 全员可聊天  false 全员禁言
-            type: 0
         },     
 }
+```
