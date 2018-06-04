@@ -5,7 +5,6 @@ body {
 .family_info {
     position: relative;
     width: 6.9rem;
-    height: 2.68rem;
     background-color: #FFFFFF;
     -webkit-box-shadow: 0 2px 0.3rem 0 rgba(0, 0, 0, 0.14);
     -moz-box-shadow: 0 2px 0.3rem 0 rgba(0, 0, 0, 0.14);
@@ -14,7 +13,7 @@ body {
     -moz-border-radius: 0.2rem;
     border-radius: 0.2rem;
     margin: 0.4rem auto;
-    padding: 0.3rem;
+    padding: 0.6rem 0.3rem;
 }
 
 .family-more {
@@ -569,4 +568,34 @@ body {
     left: .5rem;
     font-size: 0.46rem;
     color: #F45189;
+}
+
+/*家族等级*/
+.family_level{
+    position: relative;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+}
+.ico_level{
+    width: 0.42rem;
+    height: 0.42rem;
+    margin-left: 0.1rem
+}
+.level_tip{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 1.64rem;
+    height: 0.42rem;
+    line-height: 0.35rem;
+    background-image: url("../images/level_tip.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    -webkit-transform: translate(80%,-100%);
+    transform: translate(80%,-100%);
+    font-size: 0.18rem;
+    color: #FFFFFF;
+    text-align: center;
 }

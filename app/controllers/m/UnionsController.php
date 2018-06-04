@@ -152,6 +152,7 @@ class UnionsController extends BaseController
         }
         $this->view->sid = $sid;
         $this->view->code = $code;
+        $this->view->union_level_images = \Unions::$UNION_LEVEL_IMAGE;
     }
 
     //其他家族
@@ -530,4 +531,26 @@ class UnionsController extends BaseController
 
         return $this->renderJSON(ERROR_CODE_FAIL, '密码错误');
     }
+
+    function unionLevelDetailAction()
+    {
+
+        $id = $this->params('union_id');
+        $union = \Unions::findFirstById($id);
+
+        $union_level = \UnionLevelConfigs::findFirstById($union->union_level_config_id);
+        info($union_level);
+
+        $this->view->title = '家族等级';
+        $this->view->union_level = $union_level;
+        $this->view->union = $union;
+        $this->view->union_level_images = \Unions::$UNION_LEVEL_IMAGE;
+        $this->view->union_level_text = \Unions::$UNION_LEVEL_TEXT;
+    }
+
+    function unionLevelReferralAction()
+    {
+        $this->view->title = '等级介绍';
+    }
+
 }

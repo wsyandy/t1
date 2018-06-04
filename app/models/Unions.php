@@ -17,6 +17,10 @@ class Unions extends BaseModel
      * @type Users
      */
     private $_user;
+    /**
+     * @type UnionLevelConfigs
+     */
+    private $_union_level;
 
     static $STATUS = [STATUS_ON => '正常', STATUS_BLOCKED => '被封', STATUS_OFF => '解散', STATUS_PROGRESS => '创建中'];
     static $TYPE = [UNION_TYPE_PUBLIC => '公会', UNION_TYPE_PRIVATE => '家族'];
@@ -24,6 +28,11 @@ class Unions extends BaseModel
     static $RECOMMEND = [STATUS_ON => '是', STATUS_OFF => '否'];
     static $NEED_APPLY = [STATUS_ON => '申请能加入', STATUS_OFF => '所有人可加入'];
     static $PERMISSIONS = ['login_backstage' => '登录后台'];
+
+    static $UNION_LEVEL_IMAGE = ['/m/images/dengji_zero.png', '/m/images/dengji_one.png', '/m/images/dengji_two.png'
+        , '/m/images/dengji_three.png', '/m/images/dengji_four.png', '/m/images/dengji_five.png', '/m/images/dengji_six.png'];
+
+    static $UNION_LEVEL_TEXT = ['无等级', '一星级', '二星级', '三星级', '四星级', '五星级', '六星级'];
 
     function afterCreate()
     {
@@ -808,20 +817,18 @@ class Unions extends BaseModel
     static function generateFameValueRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day':
-                {
-                    $date = fetch($opts, 'date', date('Ymd'));
+            case 'day': {
+                $date = fetch($opts, 'date', date('Ymd'));
 
-                    $key = "total_union_fame_value_day_" . $date;
-                    break;
-                }
-            case 'week':
-                {
-                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                    $key = "total_union_fame_value_" . $start . "_" . $end;
-                    break;
-                }
+                $key = "total_union_fame_value_day_" . $date;
+                break;
+            }
+            case 'week': {
+                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                $key = "total_union_fame_value_" . $start . "_" . $end;
+                break;
+            }
             default:
                 return '';
         }
