@@ -96,7 +96,7 @@ class GroupChatsController extends BaseController
 
     }
 
-    //加入群
+    //加入群(加入队列)
     function addGroupChatAction()
     {
         $group_chat_id = $this->params('id');
@@ -106,6 +106,10 @@ class GroupChatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
+        if($group_chat->isGroupMember($this->currentUserId())){
+            return $this->renderJSON(ERROR_CODE_FAIL, '您已经在此群中!');
+        }
+
         if ($this->currentUser()->isGroupChatHost($group_chat)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '您已是本群群主!');
         }
@@ -113,14 +117,13 @@ class GroupChatsController extends BaseController
         if ($group_chat->join_type == 'review') {
             $group_chat->reviewJoinGroupChat($this->currentUserId());
 
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '加入成功,请等待审核!', ['user' => $this->currentUser(), 'status' => 2]);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '加入成功,请等待审核!', ['user' => $this->currentUser()->toGroupChatJson()]);
         }
 
         if ($group_chat->join_type == 'all') {
             $group_chat->joinGroupChat($this->currentUserId());
-            $res['user'] = $this->currentUser();
+            $res['user'] = $this->currentUser()->toGroupChatJson();
             $res['user_chat'] = $group_chat->canChat($this->currentUserId());
-            $res['status'] = 1;
 
             return $this->renderJSON(ERROR_CODE_SUCCESS, '加入成功', $res);
         }
@@ -128,13 +131,18 @@ class GroupChatsController extends BaseController
 
     }
 
-    //退出群
+    //退出群(移出队列)
     function quitGroupChatAction()
     {
-        $group_chat = new \GroupChats();
-        $group_members = $group_chat->getAllGroupMembers();
+        $group_chat_id = $this->params('id');
         $user_id = $this->currentUserId();
-        if (!in_array($user_id, $group_members)) {
+        $group_chat = \GroupChats::findFirstById($group_chat_id);
+
+        if ($this->currentUser()->isGroupChatHost(\GroupChats::findFirstByUserId($user_id))) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '群主不能退群!');
+        }
+
+        if (!$group_chat->isGroupMember($user_id)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '当前用户不在群内!');
         }
 
@@ -142,9 +150,7 @@ class GroupChatsController extends BaseController
             $group_chat->remManagerGroupChat($user_id);
         }
 
-        if ($this->currentUser()->isGroupChatHost(\GroupChats::findFirstByUserId($user_id))) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '群主不能退群!');
-        }
+
 
         $group_chat->kickGroupChat($user_id);
 
@@ -162,9 +168,13 @@ class GroupChatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
 
+        if ($group_chat->isGroupMember($user_id)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '当前用户已经在群内!');
+        }
+
         $group_chat->joinGroupChat($user_id);
 
-        $res['user'] = \Users::findFirstById($user_id);
+        $res['user'] = \Users::findFirstById($user_id)->toGroupChatJson();
         $res['user_chat'] = $group_chat->canChat($user_id);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '加入成功', $res);
@@ -180,10 +190,13 @@ class GroupChatsController extends BaseController
         if (!$this->currentUser()->isGroupChatHost($group_chat)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
-        $group_member_ids = $group_chat->getAllGroupMembers();
 
-        if (!in_array($user_id, $group_member_ids)) {
+        if (!$group_chat->isGroupMember($user_id)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '该用户不在群内！');
+        }
+
+        if($group_chat->isGroupManager($user_id)){
+            return $this->renderJSON(ERROR_CODE_FAIL, '该用户已经是本群管理员！');
         }
 
         $group_chat->managerGroupChat($user_id);
@@ -221,8 +234,7 @@ class GroupChatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
 
-        $group_member_ids = $group_chat->getAllGroupMembers();
-        if (!in_array($user_id, $group_member_ids)) {
+        if (!$group_chat->isGroupMember($user_id)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '该用户不在群内！');
         }
 
@@ -275,7 +287,7 @@ class GroupChatsController extends BaseController
         $join_type = $this->params('join_type');
 
         $group_chat = \GroupChats::findFirstById($group_chat_id);
-        if (!$group_chat) {
+        if (!$group_chat || !$join_type) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
         if (!$this->currentUser()->isGroupChatHost($group_chat)) {

@@ -106,3 +106,182 @@
     ]     
 }
 ```
+
+#4、加入群
+
+> http-post ```/api/group_chats/add_group_chat```
+##### 4.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|群聊id|int|否|||
+
+##### 4.2 回应参数说明
+```
+{
+    error_code  0 成功，非0失败
+    error_reason  失败原因，默认为空
+    user: {
+            id: int 用户ID,
+            sex: 用户性别,
+            avatar_small_url: 用户头像,
+            nickname: 用户昵称
+        },
+    user_chat: true 用户可以聊天  false 用户被禁言,
+}
+```
+#5、退出群
+
+> http-post ```/api/group_chats/quit_group_chat```
+##### 5.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|群聊id|int|否|||
+
+##### 5.2 回应参数说明
+```
+{
+    error_code  0 成功，非0失败
+    error_reason  失败原因，默认为空
+}
+```
+
+#6、群主邀请入群
+
+> http-post ```/api/group_chats/host_invite```
+##### 6.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|群聊id|int|否||
+|user_id|邀请用户id|int|否|||
+
+##### 6.2 回应参数说明
+```
+{
+    error_code  0 成功，非0失败
+    error_reason  失败原因，默认为空
+    user: {
+            id: int 用户ID,
+            sex: 用户性别,
+            avatar_small_url: 用户头像,
+            nickname: 用户昵称
+        },
+    user_chat: true 用户可以聊天  false 用户被禁言,
+}
+```
+
+#7、添加管理员
+
+> http-post ```/api/group_chats/add_manager```
+##### 7.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|群聊id|int|否||
+|user_id|管理员用户id|int|否|||
+
+##### 7.2 回应参数说明
+```
+{
+    error_code  0 成功，非0失败
+    error_reason  失败原因，默认为空
+}
+```
+
+#8、删除管理员
+
+> http-post ```/api/group_chats/delete_manager```
+##### 8.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|群聊id|int|否||
+|user_id|管理员用户id|int|否|||
+
+##### 8.2 回应参数说明
+```
+{
+    error_code  0 成功，非0失败
+    error_reason  失败原因，默认为空
+}
+```
+
+#9、踢出群聊
+
+> http-post ```/api/group_chats/kick```
+##### 8.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|群聊id|int|否||
+|user_id|用户id|int|否|||
+
+##### 8.2 回应参数说明
+```
+{
+    error_code  0 成功，非0失败
+    error_reason  失败原因，默认为空
+}
+```
+
+#10、解散群
+
+> http-post ```/api/group_chats/disband```
+##### 10.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|群聊id|int|否|||
+
+
+##### 10.2 回应参数说明
+```
+{
+    error_code  0 成功，非0失败
+    error_reason  失败原因，默认为空
+}
+```
+
+#11、设置加群方式
+
+> http-post ```/api/group_chats/set_join_type```
+##### 11.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|群聊id|int|否||
+|join_type|加群类型|string|否|all 直接加入  review 需要审核||
+
+##### 11.2 回应参数说明
+```
+{
+    error_code  0 成功，非0失败
+    error_reason  失败原因，默认为空
+}
+```
+
+#12、设置全员禁言
+
+> http-post ```/api/group_chats/close_chat```
+##### 12.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|群聊id|int|否||
+
+##### 12.2 回应参数说明
+```
+{
+    error_code  0 成功，非0失败
+    error_reason  失败原因，默认为空
+}
+```
+
+#13、取消全员禁言
+
+> http-post ```/api/group_chats/open_chat```
+##### 13.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|群聊id|int|否||
+
+##### 13.2 回应参数说明
+```
+{
+    error_code  0 成功，非0失败
+    error_reason  失败原因，默认为空
+}
+```

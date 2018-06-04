@@ -253,6 +253,15 @@ class GroupChats extends BaseModel
         return false;
     }
 
+    function isGroupMember($user_id)
+    {
+        $member_ids = $this->getAllGroupMembers();
+        if (in_array($user_id, $member_ids)) {
+            return true;
+        }
+        return false;
+    }
+
     function setChat($chat, $user_id)
     {
         $msg_db = self::getGroupChatsDb();

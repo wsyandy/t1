@@ -200,6 +200,17 @@ trait UserAttrs
         return $data;
     }
 
+    function toGroupChatJson()
+    {
+        $data = [
+            'id' => $this->id,
+            'sex' => $this->sex_text,
+            'avatar_small_url' => $this->avatar_small_url,
+            'nickname' => $this->nickname,
+            ];
+        return $data;
+    }
+
     function toExportJson()
     {
         return [
