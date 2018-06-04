@@ -42,20 +42,8 @@ class GroupChatsController extends BaseController
 
         $group_chat = \GroupChats::createGroupChat($this->currentUser(), $opts);
         $group_chat->updateAvatar($avatar_file);
-        $info = [
-            'id'=>$group_chat->id,
-            'user_id'=>$group_chat->user_id,
-            'name'=>$group_chat->name,
-            'introduce'=>$group_chat->introduce,
-            'avatar'=>$group_chat->avatar_file,
-            'uid'=>$group_chat->uid,
-            'status'=>$group_chat->status,
-            'join_type'=>$group_chat->join_type,
-            'created_at'=>$group_chat->created_at_text,
-            'last_at'=>$group_chat->last_at_text,
-            'type'=>$group_chat->type
-            ];
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功',['info'=>$info]);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功',['group_chat'=>$group_chat->toDataJson()]);
 
     }
 
@@ -64,7 +52,7 @@ class GroupChatsController extends BaseController
     {
         $group_chat_id = $this->params('id', 0);
 
-        $avatar_file = $this->params('avatar_file');
+        $avatar_file = $this->file('avatar_file');
         $group_chat = \GroupChats::findFirstById($group_chat_id);
         if (!$group_chat) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
@@ -73,10 +61,16 @@ class GroupChatsController extends BaseController
         if (!$this->currentUser()->isGroupChatHost($group_chat)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
-        $group_chat->updateAvatar($avatar_file);
+
+        if($avatar_file){
+            $group_chat->updateAvatar($avatar_file);
+        }
+
         $group_chat->updateGroupChat($this->params());
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功',['group_chat'=>$group_chat->toDataJson()]);
     }
+
+    //搜索群
 
     //加入群
     function addGroupChatAction()
@@ -365,7 +359,7 @@ class GroupChatsController extends BaseController
     }
 
     //搜索群成员
-    function searchMemberAction()
+    function searchUsersAction()
     {
         $nickname = $this->params('nickname');
 
@@ -400,6 +394,8 @@ class GroupChatsController extends BaseController
         $group_host_id = $group_chat->user_id;
         $group_manager_ids = $group_chat->getAllGroupManagers();
         $group_member_ids = $group_chat->getAllGroupMembers();
+
+
 
         $res['group_host'] = \Users::findFirstById($group_host_id);
         $res['group_managers'] = \Users::findByIds($group_manager_ids);
