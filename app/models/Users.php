@@ -1369,6 +1369,10 @@ class Users extends BaseModel
             }
 
             if ('nickname' == $k) {
+                if(mb_strlen($v) < 1){
+                    continue;
+                }
+                
                 list($res, $v) = BannedWords::checkWord($v);
                 if ($res) {
                     Chats::sendTextSystemMessage($this, "您设置的昵称名称违反规则,请及时修改");
