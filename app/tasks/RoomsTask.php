@@ -296,7 +296,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         while (true) {
 
-            $end_at = time() - 65;
+            $end_at = time() - 60;
             $target_ids = $hot_cache->zrangebyscore($cache_key, '-inf', $end_at, array('limit' => array(0, 1)));
             if (count($target_ids) < 1) {
                 return;
