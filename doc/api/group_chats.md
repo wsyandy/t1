@@ -124,9 +124,9 @@
             id: int 用户ID,
             sex: 用户性别,
             avatar_small_url: 用户头像,
-            nickname: 用户昵称
+            nickname: 用户昵称,
+            user_chat: true 用户可以聊天  false 用户被禁言,
         },
-    user_chat: true 用户可以聊天  false 用户被禁言,
 }
 ```
 #5、退出群
@@ -163,9 +163,10 @@
             id: int 用户ID,
             sex: 用户性别,
             avatar_small_url: 用户头像,
-            nickname: 用户昵称
+            nickname: 用户昵称,
+            user_chat: true 用户可以聊天  false 用户被禁言,
         },
-    user_chat: true 用户可以聊天  false 用户被禁言,
+    
 }
 ```
 
@@ -260,7 +261,7 @@
 ##### 12.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
-|id|群聊id|int|否||
+|id|群聊id|int|否|||
 
 ##### 12.2 回应参数说明
 ```
@@ -276,7 +277,7 @@
 ##### 13.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
-|id|群聊id|int|否||
+|id|群聊id|int|否|||
 
 ##### 13.2 回应参数说明
 ```
