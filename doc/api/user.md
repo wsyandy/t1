@@ -929,3 +929,22 @@
 }
 
 ```
+
+### 33 获取当前用户所在房间
+
+> http-get ```/api/users/current_room_id```
+
+##### 参数说明
+```
+公共参数
+```
+
+##### 回应参数说明
+```
+{
+    error_code
+    error_reason
+    current_room_id int 用户当前所在房间id
+}
+
+```

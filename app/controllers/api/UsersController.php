@@ -890,4 +890,9 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '非法访问!');
         }
     }
+
+    function currentRoomIdAction()
+    {
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['current_room_id' => $this->currentUser()->current_room_id]);
+    }
 }
