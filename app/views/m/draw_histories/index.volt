@@ -24,7 +24,7 @@
         <div :class="{'egg_gif_gifafter':isLottery,'egg_gif_start':true}"></div>
     </div>
     <p class="gold_egg_box_hint"><span class="wire"></span><span>100%中奖</span> 10钻石／次 <span class="wire"></span></p>
-    <div class="gold_egg_free" v-if="free_draw_num"><span>免费砸蛋次数剩余：${free_draw_num}次</span></div>
+    <div class="gold_egg_free" v-if="free_draw_num > 0"><span>免费砸蛋次数剩余：${free_draw_num}次</span></div>
     <div class="gold_egg_butbox">
         <div @click="smashEggs(1)" class="gold_egg_butboxli"><span>砸蛋一个</span></div>
         <div @click="smashEggs(10)" class="gold_egg_butboxli ten_buttom"><span>砸蛋十个</span></div>
