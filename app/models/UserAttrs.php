@@ -207,7 +207,8 @@ trait UserAttrs
             'sex' => $this->sex_text,
             'avatar_small_url' => $this->avatar_small_url,
             'nickname' => $this->nickname,
-            ];
+            'user_chat' => $this->user_chat
+        ];
         return $data;
     }
 
