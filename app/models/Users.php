@@ -76,6 +76,11 @@ class Users extends BaseModel
      * @type integer
      */
     private $_current_room_channel_status;
+    /**
+     * 动态数量
+     * @type integer
+     */
+    private $_feed_num = 0;
 
     //好友状态 1已添加,2等待验证，3等待接受
     public $friend_status;
@@ -1364,6 +1369,10 @@ class Users extends BaseModel
             }
 
             if ('nickname' == $k) {
+                if(mb_strlen($v) < 1){
+                    continue;
+                }
+                
                 list($res, $v) = BannedWords::checkWord($v);
                 if ($res) {
                     Chats::sendTextSystemMessage($this, "您设置的昵称名称违反规则,请及时修改");
@@ -3146,20 +3155,23 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day': {
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                break;
-            }
-            case 'week': {
-                $start = date("Ymd", beginOfWeek());
-                $end = date("Ymd", endOfWeek());
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "user_hi_coin_rank_list_" . $this->id;
-                break;
-            }
+            case 'day':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                    break;
+                }
+            case 'week':
+                {
+                    $start = date("Ymd", beginOfWeek());
+                    $end = date("Ymd", endOfWeek());
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id;
+                    break;
+                }
             default:
                 return [];
         }
@@ -3286,21 +3298,24 @@ class Users extends BaseModel
     static function generateFieldRankListKey($list_type, $field, $opts = [])
     {
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date("Ymd"));
-                $key = "day_" . $field . "_rank_list_" . $date;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "total_" . $field . "_rank_list";
-                break;
-            }
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date("Ymd"));
+                    $key = "day_" . $field . "_rank_list_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "total_" . $field . "_rank_list";
+                    break;
+                }
             default:
                 return '';
         }
@@ -3408,6 +3423,10 @@ class Users extends BaseModel
 
         $results = $db->zrevrange($key, $offset, $stop, 'withscores');
         $total_entries = $db->zcard($key);
+
+        if ($total_entries < 1) {
+            return [];
+        }
 
         if ($total_entries > $max_entries) {
             $total_entries = $max_entries;
@@ -3980,5 +3999,10 @@ class Users extends BaseModel
         \Stats::delay()->record('user', 'xcx_active', $user->getStatAttrs());
 
         return $user;
+    }
+
+    static function testRemoteDelay($opts)
+    {
+        info($opts);
     }
 }

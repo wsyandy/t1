@@ -45,12 +45,12 @@ return [
         'unions' => ['day_rank_list', 'week_rank_list', 'index', 'edit', 'update', 'family', 'total_rank_list', 'rooms', 'users_rank'],
         'gifts' => '*', 'emoticon_images' => '*', 'banners' => '*',
         'activities' => '*', 'rooms' => ['index', 'auto_hot', 'detail', 'add_user_agreement', 'delete_user_agreement', 'edit', 'update',
-            'types', 'update_types', 'hot_room_score', 'hot_room_amount_score', 'hot_room_num_score'], 'room_stats' => ['day_stat'],
+            'types', 'update_types', 'hot_room_score', 'hot_room_amount_score', 'hot_room_num_score', 'hot_search_keywrods'], 'room_stats' => ['day_stat'],
         'room_themes' => '*', 'broadcasts' => '*', 'albums' => '*', 'account_histories' => ['index'], 'gold_histories' => ['index'],
         'gift_orders' => ['detail'], 'user_gifts' => ['index'], 'voice_calls' => ['index'], 'union_histories' => ['basic'], 'hi_coin_histories' => ['basic', 'index'],
         'withdraw_histories' => ['basic'], 'activity_histories' => ['basic'], 'withdraw_accounts' => ['index'],
-        'payments' => ['index'], 'audios' => '*', 'audio_chapters' => '*', 'product_menus' => '*', 'room_tags' => '*', 'room_categories' => '*',
-        'gift_stats' => ['days'], 'draw_histories' => ['day_stat', 'hour_stat', 'index']
+        'audios' => '*', 'audio_chapters' => '*', 'product_menus' => '*', 'room_tags' => '*', 'room_categories' => '*',
+        'gift_stats' => ['days'], 'draw_histories' => ['day_stat', 'hour_stat', 'index'], 'search_histories' => ['room']
     ],
     'product_operator_assistant' => ['dashboard' => '*', 'users' => ['index', 'detail', 'edit', 'update'], 'rooms' => '*',
         'push_messages' => '*', 'weixin_kefu_messages' => '*', 'weixin_template_messages' => '*', 'banned_words' => ' *',

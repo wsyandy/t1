@@ -21,38 +21,46 @@
         </div>
         <div class="lastweekly_top10">
             <ul class="lastweekly_list">
-                <li>
-                    <div class="list_tit">贡献榜</div>
-                    <div class="list_info">
-                        <img :src="last_activity_users['wealth']['avatar_url']" class="list_avatar" alt="">
-                        <p v-text="last_activity_users['wealth']['nickname']"></p>
-                    </div>
-                </li>
-                <li>
-                    <div class="list_tit">魅力榜</div>
-                    <div class="list_info">
-                        <img :src="last_activity_users['charm']['avatar_url']" class="list_avatar" alt="">
-                        <p v-text="last_activity_users['charm']['nickname']"></p>
-                    </div>
-                </li>
-                <li>
-                    <div class="list_tit">礼物榜</div>
-                    <div class="list_info">
-                        <img :src="last_activity_users['total_gifts']['avatar_url']" class="list_avatar" alt="">
-                        <p v-text="last_activity_users['total_gifts']['nickname']"></p>
-                    </div>
-                </li>
-                <li>
-                    <div class="list_tit">情侣榜</div>
-                    <div class="list_info">
-                        <div class="list_avatars">
-                            <img :src="last_activity_users['cp'][0]['avatar_url']" class="list_avatar1" alt="">
-                            <img :src="last_activity_users['cp'][1]['avatar_url']" class="list_avatar2" alt="">
+                {% if wealth_user %}
+                    <li>
+                        <div class="list_tit">贡献榜</div>
+                        <div class="list_info">
+                            <img src="{{ wealth_user['avatar_url'] }}" class="list_avatar" alt="">
+                            <p>{{ wealth_user['nickname'] }}</p>
                         </div>
-                        <p>${last_activity_users['cp'][0]['nickname']}</p>
-                        <p>${last_activity_users['cp'][1]['nickname']}</p>
-                    </div>
-                </li>
+                    </li>
+                {% endif %}
+                {% if charm_user %}
+                    <li>
+                        <div class="list_tit">魅力榜</div>
+                        <div class="list_info">
+                            <img src="{{ charm_user['avatar_url'] }}" class="list_avatar" alt="">
+                            <p>{{ charm_user['nickname'] }}</p>
+                        </div>
+                    </li>
+                {% endif %}
+                {% if total_gifts_user %}
+                    <li>
+                        <div class="list_tit">礼物榜</div>
+                        <div class="list_info">
+                            <img src="{{ total_gifts_user['avatar_url'] }}" class="list_avatar" alt="">
+                            <p>{{ total_gifts_user['nickname'] }}</p>
+                        </div>
+                    </li>
+                {% endif %}
+                {% if cp_users %}
+                    <li>
+                        <div class="list_tit">情侣榜</div>
+                        <div class="list_info">
+                            <div class="list_avatars">
+                                <img src="{{ cp_users[0]['avatar_url'] }}" class="list_avatar1" alt="">
+                                <img src="{{ cp_users[1]['avatar_url'] }}" class="list_avatar2" alt="">
+                            </div>
+                            <p>{{ cp_users[0]['nickname'] }}</p>
+                            <p>{{ cp_users[1]['nickname'] }}</p>
+                        </div>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </div>
@@ -140,99 +148,98 @@
                 </ul>
             </div>
             {% if time() >= activity.start_at %}
-            <ul class="rank_list" v-show="curIdx!=3">
-                <li v-for="(user,index) in users"
-                    :class="[index==0?'rank_first':''|| index==1?'rank_second':''|| index==2?'rank_third':'']">
-                    <div class="rank_info">
-                        <div class="rank_num">
-                            <span v-text="index+1"></span>
+                <ul class="rank_list" v-show="curIdx!=3">
+                    <li v-for="(user,index) in users"
+                        :class="[index==0?'rank_first':''|| index==1?'rank_second':''|| index==2?'rank_third':'']">
+                        <div class="rank_info">
+                            <div class="rank_num">
+                                <span v-text="index+1"></span>
+                            </div>
+                            <div class="rank_avatar_bg">
+                                <img class="rank_avatar" :src="user.avatar_url" alt="">
+                                <img class="rank_avatar_border" v-if="index==0" :src="rank_first" alt="">
+                            </div>
+                            <div class="rank_name">
+                                <span v-text="user.nickname"></span>
+                            </div>
                         </div>
-                        <div class="rank_avatar_bg">
-                            <img class="rank_avatar" :src="user.avatar_url" alt="">
-                            <img class="rank_avatar_border" v-if="index==0" :src="rank_first" alt="">
-                        </div>
-                        <div class="rank_name">
-                            <span v-text="user.nickname"></span>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-            <ul class="lover_list" v-show="curIdx==3">
-                <li v-for="(cp_user,index) in cp_users">
-                    <div :class="['lover_info', index==0?'lover_info1':''|| index==1?'lover_info2':''|| index==2?'lover_info3':'']">
+                    </li>
+                </ul>
+                <ul class="lover_list" v-show="curIdx==3">
+                    <li v-for="(cp_user,index) in cp_users">
+                        <div :class="['lover_info', index==0?'lover_info1':''|| index==1?'lover_info2':''|| index==2?'lover_info3':'']">
 
-                        <div class="lover_num" :class="">
-                            <span v-text="'NO.'+(index+1)"></span>
-                        </div>
+                            <div class="lover_num" :class="">
+                                <span v-text="'NO.'+(index+1)"></span>
+                            </div>
 
+                            <div class="lover_imgs">
+                                <img class="lover_avatar" :src="cp_user[0]['avatar_url']" alt="">
+                                <img class="lover_heart" :src="index<3?lover_heart[index]:lover_heart[3]" alt="">
+                                <img class="lover_avatar" :src="cp_user[1]['avatar_url']" alt="">
+                            </div>
+
+                            <div class="lover_names">
+                                <span class="lover_name" v-text="cp_user[0]['nickname']"></span>
+                                <span class="symbol_and" v-text="index?'&':''"></span>
+                                <span class="lover_name" v-text="cp_user[1]['nickname']"></span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <div class="myself_lover" v-show="curIdx==3">
+                    <div class="myself" v-if="current_user_info">
                         <div class="lover_imgs">
-                            <img class="lover_avatar" :src="cp_user[0]['avatar_url']" alt="">
-                            <img class="lover_heart" :src="index<3?lover_heart[index]:lover_heart[3]" alt="">
-                            <img class="lover_avatar" :src="cp_user[1]['avatar_url']" alt="">
+                            <img class="lover_avatar" src="{{ current_user['avatar_url'] }}" alt="">
+                            <img class="lover_heart" :src="lover_heart[3]" alt="">
+                            <img class="lover_avatar" :src="current_user_info['other_user_avatar_url']" alt="">
                         </div>
-
                         <div class="lover_names">
-                            <span class="lover_name" v-text="cp_user[0]['nickname']"></span>
-                            <span class="symbol_and" v-text="index?'&':''"></span>
-                            <span class="lover_name" v-text="cp_user[1]['nickname']"></span>
+                            <span class="lover_name">{{ current_user['nickname'] }}</span>
+                            <span class="symbol_and">&</span>
+                            <span class="lover_name" v-text="current_user_info['other_user_nickname']"></span>
                         </div>
                     </div>
-                </li>
-            </ul>
-            <div class="myself_lover" v-show="curIdx==3">
-                <div class="myself" v-if="current_user_info">
-                    <div class="lover_imgs">
-                        <img class="lover_avatar" src="{{ current_user['avatar_url'] }}" alt="">
-                        <img class="lover_heart" :src="lover_heart[3]" alt="">
-                        <img class="lover_avatar" :src="current_user_info['other_user_avatar_url']" alt="">
+                    <div class="myself_info" v-show="curIdx==3" v-if="current_user_info">
+                        <p>情侣榜排名：<span class="highlight" v-text="current_user_info['current_rank_text']"></span>名</p>
+                        <p>情侣值：<span class="highlight"
+                                     v-text="current_user_info['current_score']"></span>分
+                        </p>
                     </div>
-                    <div class="lover_names">
-                        <span class="lover_name">{{ current_user['nickname'] }}</span>
-                        <span class="symbol_and">&</span>
-                        <span class="lover_name" v-text="current_user_info['other_user_nickname']"></span>
+                    <div class="myself_info" v-show="curIdx==3" v-if="!current_user_info">
+                        <p>您还没有Cp，快去寻找哪个Ta~</p>
                     </div>
                 </div>
-                <div class="myself_info" v-show="curIdx==3" v-if="current_user_info">
-                    <p>情侣榜排名：<span class="highlight" v-text="current_user_info['current_rank_text']"></span>名</p>
-                    <p>情侣值：<span class="highlight"
-                                 v-text="current_user_info['current_score']"></span>分
-                    </p>
-                </div>
-                <div class="myself_info" v-show="curIdx==3" v-if="!current_user_info">
-                    <p>暂无数据</p>
-                </div>
-            </div>
 
-            <div class="myself" v-show="curIdx<3">
-                <img class="myself_avatar" src="{{ current_user['avatar_url'] }}" alt="">
-                <div class="myself_text">
-                    <div class="myself_name">
-                        <span>{{ current_user['nickname'] }}</span>
+                <div class="myself" v-show="curIdx<3">
+                    <img class="myself_avatar" src="{{ current_user['avatar_url'] }}" alt="">
+                    <div class="myself_text">
+                        <div class="myself_name">
+                            <span>{{ current_user['nickname'] }}</span>
+                        </div>
+                        <div class="myself_info" v-show="curIdx==0">
+                            <p>贡献榜排名：<span class="highlight" v-text="current_user_info['current_rank_text']"></span>名
+                            </p>
+                            <p>贡献值：<span class="highlight"
+                                         v-text="current_user_info['current_score']"></span>分
+                            </p>
+                        </div>
+                        <div class="myself_info" v-show="curIdx==1">
+                            <p>魅力榜排名：<span class="highlight" v-text="current_user_info['current_rank_text']"></span>名
+                            </p>
+                            <p>魅力值：<span class="highlight"
+                                         v-text="current_user_info['current_score']"></span>分
+                            </p>
+                        </div>
+                        <div class="myself_info" v-show="curIdx==2">
+                            <p>礼物榜排名：<span class="highlight" v-text="current_user_info['current_rank_text']"></span>名
+                            </p>
+                            <p>礼物值：<span class="highlight"
+                                         v-text="current_user_info['current_score']"></span>分
+                            </p>
+                        </div>
                     </div>
-                    <div class="myself_info" v-show="curIdx==0">
-                        <p>贡献榜排名：<span class="highlight" v-text="current_user_info['current_rank_text']"></span>名
-                        </p>
-                        <p>贡献值：<span class="highlight"
-                                     v-text="current_user_info['current_score']"></span>分
-                        </p>
-                    </div>
-                    <div class="myself_info" v-show="curIdx==1">
-                        <p>魅力榜排名：<span class="highlight" v-text="current_user_info['current_rank_text']"></span>名
-                        </p>
-                        <p>魅力值：<span class="highlight"
-                                     v-text="current_user_info['current_score']"></span>分
-                        </p>
-                    </div>
-                    <div class="myself_info" v-show="curIdx==2">
-                        <p>礼物榜排名：<span class="highlight" v-text="current_user_info['current_rank_text']"></span>名
-                        </p>
-                        <p>礼物值：<span class="highlight"
-                                     v-text="current_user_info['current_score']"></span>分
-                        </p>
-                    </div>
-
                 </div>
-            </div>
             {% endif %}
         </div>
 
@@ -300,7 +307,6 @@
             green_leaf: '/m/images/green_leaf.png',
             orange_slice: '/m/images/orange_slice.png',
             bubble_two: '/m/images/bubble_two.png',
-            last_activity_users:{{ last_activity_users }},
             users: [],
             cp_users: [],
             awardList: [/*冠军礼物*/
@@ -368,13 +374,14 @@
                     type: type
                 };
                 $.authGet('/m/activities/get_current_activity_cp_rank_list', data, function (resp) {
+                    console.log(resp);
+                    vm.cp_users = [];
                     if (resp.error_code == 0) {
-                        vm.cp_users = [];
                         $.each(resp.users, function (index, item) {
-                            vm.current_user_info = resp.current_user_cp_info;
                             vm.cp_users.push(item);
                         });
                     }
+                    vm.current_user_info = resp.current_user_cp_info;
                 });
             },
             getUsers: function (type) {
@@ -385,14 +392,14 @@
                     type: type
                 };
                 $.authGet('/m/activities/get_current_activity_rank_list', data, function (resp) {
+                    vm.users = [];
                     console.log(resp);
                     if (resp.error_code == 0) {
-                        vm.users = [];
                         $.each(resp.users, function (index, item) {
-                            vm.current_user_info = resp.current_user_info;
                             vm.users.push(item);
                         });
                     }
+                    vm.current_user_info = resp.current_user_info;
                 });
             },
             tabSelect: function (index) {

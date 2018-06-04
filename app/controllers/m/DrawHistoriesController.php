@@ -20,20 +20,20 @@ class DrawHistoriesController extends BaseController
             'order' => 'id desc'
         ];
 
-        $draw_histories = \DrawHistories::findPagination($cond, 1, 20);
+        $draw_histories = \DrawHistories::findPagination($cond, 1, 15);
         $res = $draw_histories->toJson('draw_histories', 'toSimpleJson');
 
 
         $hot_cache = \DrawHistories::getHotWriteCache();
         $num = $hot_cache->zcard('draw_histories_1000');
-        if($num > 1000){
+        if ($num > 1000) {
             $hot_cache->zremrangebyrank('draw_histories_1000', 0, $num - 800);
         }
 
         $ids = $hot_cache->zrevrange('draw_histories_1000', 0, 10);
-        if($ids){
+        if ($ids) {
             $qian_draw_histories = \DrawHistories::findByIds($ids);
-        }else{
+        } else {
             $cond = ['conditions' => '(type=:type: or type=:type2:) and number >= 1000',
                 'bind' => ['type' => 'diamond', 'type2' => 'gift'],
                 'order' => 'id desc'
@@ -46,13 +46,13 @@ class DrawHistoriesController extends BaseController
 
 
         $num = $hot_cache->zcard('draw_histories_10000');
-        if($num > 1000){
+        if ($num > 1000) {
             $hot_cache->zremrangebyrank('draw_histories_10000', 0, $num - 800);
         }
         $ids = $hot_cache->zrevrange('draw_histories_10000', 0, 10);
-        if($ids){
+        if ($ids) {
             $wan_draw_histories = \DrawHistories::findByIds($ids);
-        }else{
+        } else {
             $cond = ['conditions' => '(type=:type: or type=:type2:) and number >= 10000',
                 'bind' => ['type' => 'diamond', 'type2' => 'gift'],
                 'order' => 'id desc'
@@ -65,13 +65,13 @@ class DrawHistoriesController extends BaseController
         $res['draw_histories'] = array_merge($wan_res['draw_histories'], $res['draw_histories']);
 
         $num = $hot_cache->zcard('draw_histories_100000');
-        if($num > 1000){
+        if ($num > 1000) {
             $hot_cache->zremrangebyrank('draw_histories_100000', 0, $num - 800);
         }
         $ids = $hot_cache->zrevrange('draw_histories_100000', 0, 10);
-        if($ids){
+        if ($ids) {
             $wan10_draw_histories = \DrawHistories::findByIds($ids);
-        }else{
+        } else {
             $cond = ['conditions' => 'type=:type: and number >= 30000',
                 'bind' => ['type' => 'diamond'],
                 'order' => 'id desc'
@@ -92,48 +92,64 @@ class DrawHistoriesController extends BaseController
     function drawAction()
     {
 
-        if ($this->request->isAjax()) {
+        if (!$this->request->isAjax()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '');
+        }
 
-            $num = $this->params('num', 1);
-            $amount = 10;
-            $total_amount = $amount * $num;
+        $user = $this->currentUser();
+        $num = $this->params('num', 1);
+        $loop_num = $num;
+        $amount = 10;
 
-            $remark = '抽奖消费' . $total_amount . '钻石';
-            $opts['remark'] = $remark;
-            $user = $this->currentUser();
+        $draw_num = $user->getDrawNum();
+        if ($draw_num > $num) {
+            $remain_draw_num = $draw_num - $num;
+            $num = 0;
+        } else {
+            $remain_draw_num = 0;
+            $num = $num - $draw_num;
+        }
 
-            debug($user->id, $user->diamond);
-            if ($user->diamond < $total_amount) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
-            }
+        if ($draw_num) {
+            $user->setDrawNum($remain_draw_num);
+        }
 
+
+        $total_amount = $amount * $num;
+        $remark = '抽奖消费' . $total_amount . '钻石';
+        $opts['remark'] = $remark;
+
+        if ($user->diamond < $total_amount) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
+        }
+
+        if ($total_amount) {
             $target = \AccountHistories::changeBalance($user, ACCOUNT_TYPE_DRAW_EXPENSES, $total_amount, $opts);
             if (!$target) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
             }
-
-            $draw_histories = [];
-
-            $hit_diamond_num = 0;
-            for ($i = 1; $i <= $num; $i++) {
-
-                if ($i >= mt_rand(8, 10) && $hit_diamond_num < 1) {
-                    $draw_history = \DrawHistories::createHistory($this->currentUser(), ['pay_type' => 'diamond', 'pay_amount' => $amount, 'hit_diamond' => true]);
-                } else {
-                    $draw_history = \DrawHistories::createHistory($this->currentUser(), ['pay_type' => 'diamond', 'pay_amount' => $amount]);
-                }
-
-                if ($draw_history->type == 'diamond') {
-                    $hit_diamond_num++;
-                    array_unshift($draw_histories, $draw_history->toSimpleJson());
-                } else {
-                    $draw_histories[] = $draw_history->toSimpleJson();
-                }
-            }
-
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['draw_histories' => $draw_histories]);
         }
 
+        $draw_histories = [];
+
+        $hit_diamond_num = 0;
+        for ($i = 1; $i <= $loop_num; $i++) {
+
+            if ($i >= mt_rand(8, 10) && $hit_diamond_num < 1) {
+                $draw_history = \DrawHistories::createHistory($this->currentUser(), ['pay_type' => 'diamond', 'pay_amount' => $amount, 'hit_diamond' => true]);
+            } else {
+                $draw_history = \DrawHistories::createHistory($this->currentUser(), ['pay_type' => 'diamond', 'pay_amount' => $amount]);
+            }
+
+            if ($draw_history->type == 'diamond') {
+                $hit_diamond_num++;
+                array_unshift($draw_histories, $draw_history->toSimpleJson());
+            } else {
+                $draw_histories[] = $draw_history->toSimpleJson();
+            }
+        }
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['draw_histories' => $draw_histories]);
     }
 
     // 我的奖品
@@ -157,7 +173,7 @@ class DrawHistoriesController extends BaseController
             'conditions' => 'user_id = :user_id:',
             'bind' => ['user_id' => $user->id],
             'order' => 'id desc']);
-        
+
         $this->view->total_gold = $draw_history->total_gold;
         $this->view->total_diamond = $draw_history->total_diamond;
         $this->view->car_gift_num = $draw_history->total_gift_num;;

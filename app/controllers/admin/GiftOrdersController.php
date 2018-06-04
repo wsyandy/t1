@@ -165,18 +165,30 @@ class GiftOrdersController extends BaseController
     function giveCarAction()
     {
         $user = \Users::findFirstById($this->params('user_id'));
-        $gifts = \Gifts::findValidList($user, ['gift_type' => GIFT_TYPE_CAR]);
+        $platform = $user->platform;
+        $product_channel_id = $user->product_channel_id;
+        $conditions['conditions'] = "(platforms like '*' or platforms like :platforms: or platforms = '')";
+        $conditions['bind']['platforms'] = "%" . $platform . "%";
+        $conditions['conditions'] .= " and (product_channel_ids = '' or product_channel_ids is null or product_channel_ids like :product_channel_ids:)";
+        $conditions['bind']['product_channel_ids'] = "%," . $product_channel_id . ",%";
+        $conditions['conditions'] .= ' and type = :gift_type:';
+        $conditions['bind']['gift_type'] = GIFT_TYPE_CAR;
+        $page = 1;
+        $per_page = 100;
+        $gifts = \Gifts::findPagination($conditions, $page, $per_page);
+
         if ($this->request->isPost()) {
             $gift = \Gifts::findFirstById($this->params('gift_id'));
+
             if (isBlank($gift)) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '礼物错误');
             }
 
             $content = $this->params('content');
-
+            $expire_day = $this->params('expire_day');
             $operator = $this->currentOperator();
-
-            \GiftOrders::giveCarBySystem($user->id, $operator->id, $gift, $content);
+            $opts = ['content' => $content, 'operator_id' => $operator->id, 'expire_day' => $expire_day];
+            \GiftOrders::giveCarBySystem($user, $gift, $opts);
             return $this->renderJSON(ERROR_CODE_SUCCESS, "赠送成功", ['error_url' => '/admin/gift_orders?user_id=' . $user->id]);
         }
 

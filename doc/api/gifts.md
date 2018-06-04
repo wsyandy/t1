@@ -136,7 +136,8 @@
             image_big_url: ''
             dynamic_image_url: ''
             num: 10
-            show_rank int 礼物展示排序
+            show_rank int 礼物展示排序,
+            is_expired boolean 是否过期 true过期 false 未过期
         }
         ...
     ]

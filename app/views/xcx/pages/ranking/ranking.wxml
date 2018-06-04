@@ -1,37 +1,254 @@
 <!--pages/ranking/ranking.wxml-->
 <view class="rank_head">
+  <!-- 顶部选项卡 -->
   <view class="rank_tabs">
-    <text class="{{tabsIdx==index?'rank_tab_cur':'rank_tab'}}" wx:for="{{tabs}}" data-index="{{index}}" wx:key="rank{{index}}" catchtap="rankTabs">{{item}}</text>
+    <text class="{{tabsIdx==index?'rank_tab_cur':'rank_tab'}}" wx:for="{{rankTabs}}" data-index="{{index}}" wx:key="rank{{index}}" catchtap="rankingTabs">{{item}}</text>
   </view>
-  <view class="rank_type">
-  <view catchtap='tabSelect' class="rank_type_item {{curIdx==index?'rank_type_cur':'rank_type_text'}}" wx:for="{{topTabs}}" wx:key="{{index}}"  data-idx="{{index}}"  >
-    <text >{{item}}</text>
+  <!-- 魅力榜 -->
+  <view class="rank_type" hidden="{{!tabsIdx==0}}">
+    <view catchtap='tabSelect' class="rank_type_item {{curIdx==index?'rank_type_cur':'rank_type_text'}}" wx:for="{{topTabs}}" wx:key="{{index}}" data-idx="{{index}}">
+      <text>{{item}}</text>
+    </view>
+  </view>
+  <!-- 贡献榜 -->
+  <view class="rank_type" hidden="{{!tabsIdx==1}}">
+    <view catchtap='tabSelect' class="rank_type_item {{onIdx==index?'rank_type_cur':'rank_type_text'}}" wx:for="{{topTabs}}" wx:key="{{index}}" data-idx="{{index}}">
+      <text>{{item}}</text>
+    </view>
   </view>
 </view>
-</view>
-
-
 <!-- swiper导航标签页 -->
 <view class='slider-wrapper'>
-  <swiper bindchange="tabSwiperChange" current="{{curItem}}" style='height:{{scrollheight}}px'>
+  <!-- 魅力榜 -->
+  <swiper bindchange="tabSwiperChange" current="{{curItem}}" style='height:{{scrollheight}}px' hidden="{{!tabsIdx==0}}">
     <!-- 日榜 -->
     <swiper-item>
       <scroll-view scroll-y style='height:{{scrollheight}}px'>
-123
+        <view class="rank_scroll">
+          <view class="rank_box{{index<3?index+1:''}}" wx:for="{{dailyCharmList}}" wx:key="charm{{index}}" data-idx="{{index}}">
+            <view class="rank_list">
+              <view class="rank_number" wx:if="{{index>2}}">
+                <text>{{index+1}}</text>
+              </view>
+              <view class="rank_avatar_box">
+                <image class='rank_avatar_bg' mode='scaleToFill' src="{{index==0?rank_first:''  || index==1?rank_second:'' || index==2?rank_third:''}}" wx:if="{{index<3}}"> </image>
+                <image class='rank_avatar' mode='scaleToFill' src="{{item.avatar_small_url}}"></image>
+              </view>
+
+              <view class="rank_info">
+                <text class="rank_nickname">{{item.nickname}}</text>
+                <view class="rank_describe">
+                  <view class="{{item.male?'rank_male':'rank_female'}}">
+                    <image class='ico_sex' mode='scaleToFill' src="{{item.male?ico_male:ico_female}}"></image>
+                    <text class="rank_age" wx:if="{{item.age}}">{{item.age}}</text>
+                  </view>
+                  <image class='ico_glory' mode='scaleToFill' src="{{item.glory}}"></image>
+
+                </view>
+              </view>
+
+              <view class="rank_value">
+                <text>魅力：</text>
+                <text>{{item.value}}</text>
+              </view>
+
+            </view>
+
+          </view>
+        </view>
       </scroll-view>
 
     </swiper-item>
     <!-- 月榜 -->
     <swiper-item>
       <scroll-view scroll-y style='height:{{scrollheight}}px'>
-abc
+        <view class="rank_scroll">
+          <view class="rank_box{{index<3?index+1:''}}" wx:for="{{monthlyCharmList}}" wx:key="charm{{index}}" data-idx="{{index}}">
+            <view class="rank_list">
+              <view class="rank_number" wx:if="{{index>2}}">
+                <text>{{index+1}}</text>
+              </view>
+              <view class="rank_avatar_box">
+                <image class='rank_avatar_bg' mode='scaleToFill' src="{{index==0?rank_first:''  || index==1?rank_second:'' || index==2?rank_third:''}}" wx:if="{{index<3}}"> </image>
+                <image class='rank_avatar' mode='scaleToFill' src="{{item.avatar_small_url}}"></image>
+              </view>
+
+              <view class="rank_info">
+                <text class="rank_nickname">{{item.nickname}}</text>
+                <view class="rank_describe">
+                  <view class="{{item.male?'rank_male':'rank_female'}}">
+                    <image class='ico_sex' mode='scaleToFill' src="{{item.male?ico_male:ico_female}}"></image>
+                    <text class="rank_age" wx:if="{{item.age}}">{{item.age}}</text>
+                  </view>
+                  <image class='ico_glory' mode='scaleToFill' src="{{item.glory}}"></image>
+
+                </view>
+              </view>
+
+              <view class="rank_value">
+                <text>魅力：</text>
+                <text>{{item.value}}</text>
+              </view>
+
+            </view>
+
+          </view>
+        </view>
       </scroll-view>
 
     </swiper-item>
     <!-- 总榜 -->
     <swiper-item>
       <scroll-view scroll-y style='height:{{scrollheight}}px'>
-2ef
+        <view class="rank_scroll">
+          <view class="rank_box{{index<3?index+1:''}}" wx:for="{{charmList}}" wx:key="charm{{index}}" data-idx="{{index}}">
+            <view class="rank_list">
+              <view class="rank_number" wx:if="{{index>2}}">
+                <text>{{index+1}}</text>
+              </view>
+              <view class="rank_avatar_box">
+                <image class='rank_avatar_bg' mode='scaleToFill' src="{{index==0?rank_first:''  || index==1?rank_second:'' || index==2?rank_third:''}}" wx:if="{{index<3}}"> </image>
+                <image class='rank_avatar' mode='scaleToFill' src="{{item.avatar_small_url}}"></image>
+              </view>
+
+              <view class="rank_info">
+                <text class="rank_nickname">{{item.nickname}}</text>
+                <view class="rank_describe">
+                  <view class="{{item.male?'rank_male':'rank_female'}}">
+                    <image class='ico_sex' mode='scaleToFill' src="{{item.male?ico_male:ico_female}}"></image>
+                    <text class="rank_age" wx:if="{{item.age}}">{{item.age}}</text>
+                  </view>
+                  <image class='ico_glory' mode='scaleToFill' src="{{item.glory}}"></image>
+
+                </view>
+              </view>
+
+              <view class="rank_value">
+                <text>魅力：</text>
+                <text>{{item.value}}</text>
+              </view>
+
+            </view>
+
+          </view>
+        </view>
+      </scroll-view>
+
+    </swiper-item>
+  </swiper>
+  <!-- 贡献榜 -->
+  <swiper bindchange="tabSwiperChange" current="{{onItem}}" style='height:{{scrollheight}}px' hidden="{{!tabsIdx==1}}">
+    <!-- 日榜 -->
+    <swiper-item>
+      <scroll-view scroll-y style='height:{{scrollheight}}px'>
+        <view class="rank_scroll">
+          <view class="rank_box{{index<3?index+1:''}}" wx:for="{{dailyContributeList}}" wx:key="charm{{index}}" data-idx="{{index}}">
+            <view class="rank_list">
+              <view class="rank_number" wx:if="{{index>2}}">
+                <text>{{index+1}}</text>
+              </view>
+              <view class="rank_avatar_box">
+                <image class='rank_avatar_bg' mode='scaleToFill' src="{{index==0?rank_first:''  || index==1?rank_second:'' || index==2?rank_third:''}}" wx:if="{{index<3}}"> </image>
+                <image class='rank_avatar' mode='scaleToFill' src="{{item.avatar_small_url}}"></image>
+              </view>
+
+              <view class="rank_info">
+                <text class="rank_nickname">{{item.nickname}}</text>
+                <view class="rank_describe">
+                  <view class="{{item.male?'rank_male':'rank_female'}}">
+                    <image class='ico_sex' mode='scaleToFill' src="{{item.male?ico_male:ico_female}}"></image>
+                    <text class="rank_age" wx:if="{{item.age}}">{{item.age}}</text>
+                  </view>
+                  <image class='ico_glory' mode='scaleToFill' src="{{item.glory}}"></image>
+
+                </view>
+              </view>
+
+              <view class="rank_value">
+                <text>贡献：</text>
+                <text>{{item.value}}</text>
+              </view>
+
+            </view>
+
+          </view>
+        </view>
+      </scroll-view>
+
+    </swiper-item>
+    <!-- 月榜 -->
+    <swiper-item>
+      <scroll-view scroll-y style='height:{{scrollheight}}px'>
+        <view class="rank_scroll">
+          <view class="rank_box{{index<3?index+1:''}}" wx:for="{{monthlyContributeList}}" wx:key="charm{{index}}" data-idx="{{index}}">
+            <view class="rank_list">
+              <view class="rank_number" wx:if="{{index>2}}">
+                <text>{{index+1}}</text>
+              </view>
+              <view class="rank_avatar_box">
+                <image class='rank_avatar_bg' mode='scaleToFill' src="{{index==0?rank_first:''  || index==1?rank_second:'' || index==2?rank_third:''}}" wx:if="{{index<3}}"> </image>
+                <image class='rank_avatar' mode='scaleToFill' src="{{item.avatar_small_url}}"></image>
+              </view>
+
+              <view class="rank_info">
+                <text class="rank_nickname">{{item.nickname}}</text>
+                <view class="rank_describe">
+                  <view class="{{item.male?'rank_male':'rank_female'}}">
+                    <image class='ico_sex' mode='scaleToFill' src="{{item.male?ico_male:ico_female}}"></image>
+                    <text class="rank_age" wx:if="{{item.age}}">{{item.age}}</text>
+                  </view>
+                  <image class='ico_glory' mode='scaleToFill' src="{{item.glory}}"></image>
+
+                </view>
+              </view>
+
+              <view class="rank_value">
+                <text>贡献：</text>
+                <text>{{item.value}}</text>
+              </view>
+
+            </view>
+
+          </view>
+        </view>
+      </scroll-view>
+
+    </swiper-item>
+    <!-- 总榜 -->
+    <swiper-item>
+      <scroll-view scroll-y style='height:{{scrollheight}}px'>
+        <view class="rank_scroll">
+          <view class="rank_box{{index<3?index+1:''}}" wx:for="{{charmList}}" wx:key="charm{{index}}" data-idx="{{index}}">
+            <view class="rank_list">
+              <view class="rank_number" wx:if="{{index>2}}">
+                <text>{{index+1}}</text>
+              </view>
+              <view class="rank_avatar_box">
+                <image class='rank_avatar_bg' mode='scaleToFill' src="{{index==0?rank_first:''  || index==1?rank_second:'' || index==2?rank_third:''}}" wx:if="{{index<3}}"> </image>
+                <image class='rank_avatar' mode='scaleToFill' src="{{item.avatar_small_url}}"></image>
+              </view>
+
+              <view class="rank_info">
+                <text class="rank_nickname">{{item.nickname}}</text>
+                <view class="rank_describe">
+                  <view class="{{item.male?'rank_male':'rank_female'}}">
+                    <image class='ico_sex' mode='scaleToFill' src="{{item.male?ico_male:ico_female}}"></image>
+                    <text class="rank_age" wx:if="{{item.age}}">{{item.age}}</text>
+                  </view>
+                  <image class='ico_glory' mode='scaleToFill' src="{{item.glory}}"></image>
+
+                </view>
+              </view>
+
+              <view class="rank_value">
+                <text>贡献：</text>
+                <text>{{item.value}}</text>
+              </view>
+
+            </view>
+
+          </view>
+        </view>
       </scroll-view>
 
     </swiper-item>

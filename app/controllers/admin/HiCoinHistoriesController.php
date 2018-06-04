@@ -104,7 +104,7 @@ class HiCoinHistoriesController extends BaseController
         $end_at = $this->params('end_at');
         $fee_type = $this->params('fee_type');
 
-        if (endOfDay(strtotime($end_at)) - beginOfDay(strtotime($start_at)) > 30 * 86400) {
+        if (endOfDay(strtotime($end_at)) - beginOfDay(strtotime($start_at)) > 31 * 86400) {
             echo "时间跨度不能超过一个月";
             return false;
         }

@@ -101,6 +101,10 @@ class RoomsController extends BaseController
 
         $users = \Users::findFieldRankListByKey($key, 'wealth', $page, $per_page);
 
+        if (!$users) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '');
+        }
+
         $res = $users->toJson('users', 'toRankListJson');
 
         $current_rank = $user->myRoomWealthRankByKey($key);
@@ -109,7 +113,6 @@ class RoomsController extends BaseController
             $res['current_rank'] = $current_rank;
             $res['is_host'] = $is_host;
         }
-
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
     }

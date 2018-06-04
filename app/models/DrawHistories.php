@@ -222,22 +222,23 @@ class DrawHistories extends BaseModel
                     'bind' => ['user_id' => $user->id, 'start_at' => time() - 300]
                 ]);
 
-                if ($user_hit_num > mt_rand(35, 60)) {
+                if ($user_hit_num > mt_rand(40, 75)) {
+
                     $user_hit_diamond = \DrawHistories::sum([
                         'conditions' => 'user_id = :user_id: and type = :type: and created_at>=:start_at:',
                         'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'start_at' => time() - 300],
                         'column' => 'number'
                     ]);
 
-                    if (($user_hit_num * 10 - $user_hit_diamond) / $user_hit_num * 10 > 0.5 && mt_rand(1, 100) < 75) {
+                    if (($user_hit_num * 10 - $user_hit_diamond) / $user_hit_num * 10 > 0.5 && mt_rand(1, 100) < 55) {
                         $user_rate_multi = mt_rand(2, 5) * intval($user_hit_num / 40);
                         if ($user_rate_multi > 10) {
                             $user_rate_multi = 10;
                         }
                     }
 
-                    if ($user_rate_multi > 5 && $total_get_amount > $total_pay_amount + 3000) {
-                        $user_rate_multi = mt_rand(2, 4);
+                    if ($user_rate_multi > 4 && $total_get_amount > $total_pay_amount + 3000) {
+                        $user_rate_multi = mt_rand(1, 4);
                     }
 
                     info('五分钟内倍率', $user->id, 'user_hit_num', $user_hit_num, 'user_hit_diamond', $user_hit_diamond, '倍率', $user_rate_multi);
@@ -272,7 +273,7 @@ class DrawHistories extends BaseModel
 
         $hour = intval(date("H"));
 
-        if ($number > 1000 && $is_block_user) {
+        if ($number > 10000 && $is_block_user) {
             return 0;
         }
 
@@ -304,9 +305,19 @@ class DrawHistories extends BaseModel
             // && $user_rate_multi < 30
             if ($number >= 10000) {
 
+                if ($total_pay_amount && (($user_total_get_amount + $number) / $total_pay_amount > 2)) {
+                    info('continue hit1w超出支出2倍', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
+                    return 0;
+                }
+
+                if ($user_total_get_amount + mt_rand(7000, 10000) > $total_pay_amount && $is_block_user) {
+                    info('continue hit1w超出支出, 屏蔽', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
+                    return 0;
+                }
+
                 $hit_1w_history = self::findFirst([
                     'conditions' => 'type=:type: and number>=:number: and created_at>=:start_at:',
-                    'bind' => ['type' => 'diamond', 'number' => 10000, 'start_at' => time() - 180],
+                    'bind' => ['type' => 'diamond', 'number' => 10000, 'start_at' => time() - 300],
                     'order' => 'id desc']);
 
                 if ($hit_1w_history) {
@@ -335,7 +346,7 @@ class DrawHistories extends BaseModel
                         return 0;
                     }
 
-                    if ($total_pay_amount < 15000 && !$user->union_id || $total_pay_amount < 50000 || !$user->segment || mt_rand(1, 100) < 70) {
+                    if ($total_pay_amount < 15000 && !$user->union_id || $total_pay_amount < 80000 || !$user->segment || mt_rand(1, 100) < 80) {
                         info('continue hit10w没资格', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
                         return 0;
                     }
@@ -343,7 +354,7 @@ class DrawHistories extends BaseModel
                     $user_hit_10w_history = self::findFirst([
                         'conditions' => 'user_id = :user_id: and type=:type: and number=:number:',
                         'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'number' => 100000]]);
-                    if ($user_hit_10w_history) {
+                    if ($user_hit_10w_history && (time() - $user_hit_10w_history->created_at < 7 * 3600 * 24 || $user_total_get_amount + mt_rand(80000, 100000) > $total_pay_amount)) {
                         info('continue hit10w已命中', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
                         return 0;
                     }
@@ -353,31 +364,31 @@ class DrawHistories extends BaseModel
                         return 0;
                     }
 
-                    if (!$user->isCompanyUser()) {
+                    $user_hit_10w_histories = self::find([
+                        'conditions' => 'type=:type: and number=:number:',
+                        'bind' => ['type' => 'diamond', 'number' => 100000],
+                        'columns' => 'id,user_id,created_at'
+                    ]);
 
-                        $user_hit_10w_histories = self::find([
-                            'conditions' => 'type=:type: and number=:number:',
-                            'bind' => ['type' => 'diamond', 'number' => 100000],
-                            'columns' => 'id,user_id,created_at'
-                        ]);
+                    foreach ($user_hit_10w_histories as $history) {
 
-                        foreach ($user_hit_10w_histories as $history) {
-                            $hit_user = Users::findFirstById($history->user_id);
-                            if ($hit_user && ($hit_user->device_id == $user->device_id || $hit_user->ip == $user->ip)) {
-                                info('continue hit10w 同一个用户', $user->id, $hit_user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
-                                $user_db = Users::getUserDb();
-                                $user_db->zadd('draw_histories_block_user_ids', time(), $user->id);
-                                return 0;
-                            }
-                            if (time() - $history->created_at < 3600 * 5) {
-                                info('continue hit10w 短时间内不能爆10万', $user->id, $hit_user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
-                                return 0;
-                            }
+                        $hit_user = Users::findFirstById($history->user_id);
+                        if ($hit_user && $hit_user->id != $user->id && ($hit_user->device_id == $user->device_id || $hit_user->ip == $user->ip)) {
+                            info('continue hit10w 同一个用户', $user->id, $hit_user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
+                            $user_db = Users::getUserDb();
+                            $user_db->zadd('draw_histories_block_user_ids', time(), $user->id);
+                            return 0;
+                        }
+
+                        if (time() - $history->created_at < 3600 * 5) {
+                            info('continue hit10w 短时间内不能爆10万', $user->id, $hit_user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
+                            return 0;
                         }
                     }
 
                     info('命中10万', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
                 }
+
             }
 
             $total_pay_amount_rate = mt_rand(3, 7);
@@ -440,7 +451,7 @@ class DrawHistories extends BaseModel
     static function isBlockUser($user)
     {
 
-        if(self::isWhiteList($user)){
+        if (self::isWhiteList($user)) {
             return false;
         }
 
@@ -463,7 +474,25 @@ class DrawHistories extends BaseModel
                 'order' => 'id desc']);
 
             if ($last_history) {
-                info($user->id, '已有', $device_user->id);
+
+                info($user->id, '设备已存在用户', $device_user->id);
+                $user_db = Users::getUserDb();
+                $user_db->zadd('draw_histories_block_user_ids', time(), $user->id);
+                break;
+            }
+        }
+
+        $user_hit_10w_histories = self::find([
+            'conditions' => 'type=:type: and number=:number:',
+            'bind' => ['type' => 'diamond', 'number' => 100000],
+            'columns' => 'id,user_id,created_at'
+        ]);
+
+        foreach ($user_hit_10w_histories as $history) {
+            $hit_user = Users::findFirstById($history->user_id);
+            if ($hit_user && ($hit_user->device_id == $user->device_id || $hit_user->ip == $user->ip)) {
+
+                info($user->id, '已存在用户中10万', $device_user->id);
                 $user_db = Users::getUserDb();
                 $user_db->zadd('draw_histories_block_user_ids', time(), $user->id);
                 break;
@@ -509,23 +538,16 @@ class DrawHistories extends BaseModel
             'bind' => ['user_id' => $user->id],
             'order' => 'id desc']);
 
-        $total_pay_amount = 0;
         if (!$last_history) {
             self::checkUser($user);
-        } else {
-            $total_pay_amount = intval($last_history->total_pay_amount);
         }
 
         $is_block_user = self::isBlockUser($user);
-        if ($is_block_user) {
-            info('屏蔽用户', $user->id, 'total_pay_amount', $total_pay_amount);
-            $user_rate_multi = 1;
-        } else {
-            // 计算用户倍率
-            list($user_rate_multi, $total_pay_amount) = self::calUserRateMulti($user, $last_history);
-        }
+        list($user_rate_multi, $total_pay_amount) = self::calUserRateMulti($user, $last_history);
 
-        info('cal', $user->id, '系统收入', $total_incr_diamond, '系统支出', $total_decr_diamond, 'user_rate_multi', $user_rate_multi);
+        if ($is_block_user && $user_rate_multi >= 5) {
+            $user_rate_multi = mt_rand(1, 5);
+        }
 
         $random = mt_rand(1, 1000);
 

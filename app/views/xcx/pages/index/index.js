@@ -9,311 +9,59 @@ Page({
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
     logo: '/images/logo_hi.png',
     avatarUrl: '',
-    topTabs: ['热门', '最新', '开黑', '唱歌', '交友', '电台', '关注', '附近'],
+    topTabs: [],
+    // topTabs: ['热门', '最新', '开黑', '唱歌', '交友', '电台', '关注', '附近'],
     toView: '',
     curIdx: 0, /* scroll_tabs 索引值 与 curItem 对应 */
     curItem: 0, /*swiper-item 索引值 与 curIdx 对应*/
     stars: '/images/tag_stars.png',
     scrollheight: '',/*设置可滚动 高度*/
-    /* 热门 */
     ico_people: '/images/ico_people.png',
-    hotList: [
-      {
-        room_cover: '/images/room_cover_1.jpg',
-        room_name: '听歌的小伙伴',
-        room_num: '999139',
-      },
-      {
-        room_cover: '/images/room_cover_2.jpg',
-        room_name: '新人交友',
-        room_num: '114',
-      },
-      {
-        room_cover: '/images/room_cover_1.jpg',
-        room_name: '王者荣耀开黑',
-        room_num: '9',
-      },
-      {
-        room_cover: '/images/room_cover_2.jpg',
-        room_name: '聊啊聊啊',
-        room_num: '98',
-      },
-      {
-        room_cover: '/images/room_cover_1.jpg',
-        room_name: '情感分析',
-        room_num: '999',
-      },
-      {
-        room_cover: '/images/room_cover_2.jpg',
-        room_name: '连麦K歌',
-        room_num: '8888',
-      },
-      {
-        room_cover: '/images/room_cover_1.jpg',
-        room_name: '听歌的小伙伴',
-        room_num: '139',
-      },
-      {
-        room_cover: '/images/room_cover_2.jpg',
-        room_name: '新人交友',
-        room_num: '114',
-      },
-      {
-        room_cover: '/images/room_cover_1.jpg',
-        room_name: '王者荣耀开黑',
-        room_num: '59',
-      },
-      {
-        room_cover: '/images/room_cover_2.jpg',
-        room_name: '聊啊聊啊',
-        room_num: '98',
-      },
-      {
-        room_cover: '/images/room_cover_1.jpg',
-        room_name: '情感分析',
-        room_num: '999',
-      },
-      {
-        room_cover: '/images/room_cover_2.jpg',
-        room_name: '连麦K歌',
-        room_num: '18',
-      },
-    ],
-    /* 最新 */
     lock: '/images/ico_lock.png',
-    newList: [
-      {
-        homeowners: '/images/room_cover_1.jpg',
-        room_name: '头脑大作战',
-        room_num: '3',
-        setup_time: '刚刚',
-        lock: false,
-      },
-      {
-        homeowners: '/images/room_cover_2.jpg',
-        room_name: '小宠爱',
-        room_num: '45',
-        setup_time: '1分钟前',
-        lock: true,
-      },
-      {
-        homeowners: '/images/room_cover_1.jpg',
-        room_name: '新人交友',
-        room_num: '11',
-        setup_time: '2分钟前',
-        lock: false,
-      },
-      {
-        homeowners: '/images/room_cover_2.jpg',
-        room_name: 'K歌之王',
-        room_num: '23',
-        setup_time: '3分钟前',
-        lock: false,
-      },
-
-    ],
-    /* 开黑 */
-    gameList: [
-      {
-        homeowners: '/images/room_cover_1.jpg',
-        room_name: '处CP，唱歌，开黑',
-        room_num: '3',
-        room_tag: '处CP',
-        color: '#f79c52'
-      },
-      {
-        homeowners: '/images/room_cover_2.jpg',
-        room_name: '王者荣耀开黑',
-        room_num: '45',
-        room_tag: '王者荣耀',
-        color: '#f79c52'
-      },
-      {
-        homeowners: '/images/room_cover_1.jpg',
-        room_name: '刺激战场',
-        room_num: '11',
-        room_tag: '绝地求生',
-        color: '#f79c52'
-      },
-      {
-        homeowners: '/images/room_cover_2.jpg',
-        room_name: '迷雾荣耀局金框',
-        room_num: '23',
-        room_tag: '球球大作战',
-        color: '#f79c52'
-      },
-    ],
-    /* 唱歌 */
-    singList: [
-      {
-        homeowners: '/images/room_cover_1.jpg',
-        room_name: '不想说的话',
-        room_num: '13',
-        room_tag: '连麦',
-        color: '#FF6C7D'
-      },
-      {
-        homeowners: '/images/room_cover_2.jpg',
-        room_name: '玩星星',
-        room_num: '245',
-        room_tag: '唱歌',
-        color: '#FF6C7D'
-      },
-      {
-        homeowners: '/images/room_cover_1.jpg',
-        room_name: '没心的大猫',
-        room_num: '12',
-        room_tag: '聊天',
-        color: '#FF6C7D'
-      },
-      {
-        homeowners: '/images/room_cover_2.jpg',
-        room_name: '喜欢的你',
-        room_num: '42',
-        room_tag: '交友',
-        color: '#FF6C7D'
-      },
-    ],
-    /* 交友 */
-    datingList: [
-      {
-        homeowners: '/images/room_cover_1.jpg',
-        room_name: '处CP，唱歌',
-        room_num: '3',
-        room_tag: '处CP',
-        color: '#726CFF'
-      },
-      {
-        homeowners: '/images/room_cover_2.jpg',
-        room_name: '聊天听歌',
-        room_num: '45',
-        room_tag: '聊天',
-        color: '#726CFF'
-      },
-      {
-        homeowners: '/images/room_cover_1.jpg',
-        room_name: '陪玩',
-        room_num: '11',
-        room_tag: '聊天',
-        color: '#726CFF'
-      },
-      {
-        homeowners: '/images/room_cover_2.jpg',
-        room_name: '唠嗑处对象交朋友',
-        room_num: '23',
-        room_tag: '陪玩',
-        color: '#726CFF'
-      },
-    ],
-    /* 电台 */
-    radioList: [
-      {
-        homeowners: '/images/room_cover_1.jpg',
-        room_name: '处CP，唱歌，开黑',
-        room_num: '3',
-        room_tag: '处CP',
-        color: '#FE4697'
-      },
-      {
-        homeowners: '/images/room_cover_2.jpg',
-        room_name: '王者荣耀开黑',
-        room_num: '45',
-        room_tag: '王者荣耀',
-        color: '#FE4697'
-      },
-      {
-        homeowners: '/images/room_cover_1.jpg',
-        room_name: '刺激战场',
-        room_num: '11',
-        room_tag: '绝地求生',
-        color: '#FE4697'
-      },
-      {
-        homeowners: '/images/room_cover_2.jpg',
-        room_name: '迷雾荣耀局金框',
-        room_num: '23',
-        room_tag: '球球大作战',
-        color: '#FE4697'
-      },
-    ],
-    /* 关注 */
-    focusList: [
-      {
-        homeowners: '/images/room_cover_1.jpg',
-        room_name: '处CP，唱歌，开黑',
-        room_num: '3',
-        room_tag: '处CP',
-        color: '#FE4697'
-      },
-      {
-        homeowners: '/images/room_cover_2.jpg',
-        room_name: '王者荣耀开黑',
-        room_num: '45',
-        room_tag: '王者荣耀',
-        color: '#726CFF'
-      },
-      {
-        homeowners: '/images/room_cover_1.jpg',
-        room_name: '刺激战场',
-        room_num: '11',
-        room_tag: '绝地求生',
-        color: '#FE4697'
-      },
-      {
-        homeowners: '/images/room_cover_2.jpg',
-        room_name: '迷雾荣耀局金框',
-        room_num: '23',
-        room_tag: '球球大作战',
-        color: '#F79C52'
-      },
-    ],
     nofocus: false,
     icon_nofocus: '/images/icon_nofocus.png',
-
     /* 附近 */
     ico_room: '/images/ico_room.png',
     ico_male: '/images/ico_male.png',
     ico_female: '/images/ico_female.png',
-    nearbyList: [
-      {
-        nickname: '孙悟空不要饭孙悟空不要饭孙悟空不要饭孙悟空不要饭',
-        avatar: '/images/room_cover_1.jpg',
-        signature: '这个家伙忙着连麦，一句话都没留下这个家伙忙着连麦，一句话都没留下',
-        room: 0,
-        distance: '附近',
-        male: 1,
-        age: 21,
-      },
-      {
-        nickname: '小龙女',
-        avatar: '/images/room_cover_2.jpg',
-        signature: '这个家伙忙着连麦，一句话都没留下',
-        room: 1,
-        distance: '400m',
-        male: 0,
-        age: 22,
-      },
-      {
-        nickname: '可爱的她',
-        avatar: '/images/room_cover_1.jpg',
-        signature: '这个家伙忙着连麦，一句话都没留下',
-        room: 1,
-        distance: '1.4km',
-        male: 1,
-        age: 23,
-      },
-      {
-        nickname: '约那个啥',
-        avatar: '/images/room_cover_2.jpg',
-        signature: '这个家伙忙着连麦，一句话都没留下',
-        room: 0,
-        distance: '2.4km',
-        male: 0,
-        age: 24,
-      },
+    // nearbyList: [
+    //   {
+    //     nickname: '孙悟空不要饭孙悟空不要饭孙悟空不要饭孙悟空不要饭',
+    //     avatar: '/images/room_cover_1.jpg',
+    //     signature: '这个家伙忙着连麦，一句话都没留下这个家伙忙着连麦，一句话都没留下',
+    //     room: 0,
+    //     distance: '附近',
+    //     male: 1,
+    //     age: 21,
+    //   },
+    //   {
+    //     nickname: '小龙女',
+    //     avatar: '/images/room_cover_2.jpg',
+    //     signature: '这个家伙忙着连麦，一句话都没留下',
+    //     room: 1,
+    //     distance: '400m',
+    //     male: 0,
+    //     age: 22,
+    //   },
+    //   {
+    //     nickname: '可爱的她',
+    //     avatar: '/images/room_cover_1.jpg',
+    //     signature: '这个家伙忙着连麦，一句话都没留下',
+    //     room: 1,
+    //     distance: '1.4km',
+    //     male: 1,
+    //     age: 23,
+    //   },
+    //   {
+    //     nickname: '约那个啥',
+    //     avatar: '/images/room_cover_2.jpg',
+    //     signature: '这个家伙忙着连麦，一句话都没留下',
+    //     room: 0,
+    //     distance: '2.4km',
+    //     male: 0,
+    //     age: 24,
+    //   },
 
-
-    ],
     /*个人中心左侧栏*/
     hideMask: true,
     hideInfo: true,
@@ -343,7 +91,6 @@ Page({
         text: '排行榜',
       },
 
-
     ],
   },
   hotUpper: function (e) {
@@ -354,28 +101,6 @@ Page({
   },
   hotScroll: function (e) {
     // console.log(e)
-  },
-
-  /* 滚动选项卡点击 Swiper 跳转到对应显示页 */
-  tabSelect: function (e) {
-    let idx = e.currentTarget.dataset.idx
-    console.log(idx)
-    this.setData({
-      curIdx: idx,
-      curItem: idx,
-      toView: 'tabs_' + (idx - 1)
-    })
-
-  },
-  /* Swiper 内容改变时，滚动选项卡跳转到对应位置 */
-  tabSwiperChange: function (e) {
-    let i = e.detail.current
-    console.log(i)
-    this.setData({
-      curIdx: i,
-      toView: 'tabs_' + (i - 1)
-    })
-
   },
 
   /*用户授权*/
@@ -524,16 +249,6 @@ Page({
         hasUserInfo: true
       })
     } else if (!this.data.canIUse) {
-      // 在没有 open-type=getUserInfo 版本的兼容处理
-      // wx.getUserInfo({
-      //   success: res => {
-      //     app.globalData.userInfo = res.userInfo
-      //     this.setData({
-      //       userInfo: res.userInfo,
-      //       hasUserInfo: true
-      //     })
-      //   }
-      // })
       wx.showModal({
         title: "微信版本太旧",
         content: "使用旧版本微信，将无法登陆、使用一些功能。请至 App Store、Play Store 或其他可信渠道更新微信。",
@@ -542,8 +257,41 @@ Page({
       })
     }
     this.showTab()//加载房间分类标题
-    // this.creatRoom('测试房间1')
+
   },
+  /* 滚动选项卡点击 Swiper 跳转到对应显示页 */
+  tabSelect: function (e) {
+    let idx = e.currentTarget.dataset.idx
+    console.log(idx)
+    this.setData({
+      curIdx: idx,
+      curItem: idx,
+      toView: 'tabs_' + (idx - 1)
+    })
+
+  },
+  /* Swiper 内容改变时，滚动选项卡跳转到对应位置 */
+  tabSwiperChange: function (e) {
+    let i = e.detail.current
+    console.log(i)
+    this.setData({
+      curIdx: i,
+      toView: 'tabs_' + (i - 1)
+    })
+
+    // 从缓存中去当前分类下的数据，取到则不调用接口
+    if (wx.getStorageSync(this.data.topTabs[i].type)) {
+      this.setData({
+        [this.data.topTabs[i].type]: wx.getStorageSync(this.data.topTabs[i].type),
+        // roomList: wx.getStorageSync(this.data.topTabs[i].type),
+        // roomList: {},//后续修改至统一参数，根据type进行判断展示什么样式
+        // type: type,
+      })
+      return;
+    }
+    this.roomList(this.data.topTabs[i].type, this.data.topTabs[i].value)
+  },
+
   showTab: function () {
     var _this = this
     request.postRequest('rooms/types').then(res => {
@@ -570,20 +318,33 @@ Page({
     console.log(data)
     request.postRequest('rooms/index', data).then(res => {
       console.log(res.data.rooms)
+      var roomList = res.data.rooms
+      if (type == 'follow' && roomList.length >=1){
+        _this.setData({
+          nofocus:true
+        })
+      } else if (type == 'follow'){
+        _this.setData({
+          nofocus: false
+        })
+      }
+      // for (var i in roomList){
+      //   roomList[i].last_at = Utils.formatTime(roomList[i].last_at)
+      // }
+      //当前页面的数据存入缓存，以分类名命名
+      // wx.setStorageSync(type, roomList)
+
       // if(data.hot){
       _this.setData({
-        hotList: res.data.rooms
+        [type]: roomList,
+        // roomList: roomList,
+        // type: type
       })
       // }
     })
 
   },
-  creatRoom: function (name, room_tag_ids) {
-    let data = { name: name, room_tag_ids: room_tag_ids }
-    request.postRequest('rooms/create', data).then(res => {
-      console.log(res)
-    })
-  },
+
   /**
  * 页面相关事件处理函数--监听用户下拉动作
  */
