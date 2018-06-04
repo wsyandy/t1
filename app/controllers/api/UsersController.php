@@ -893,6 +893,9 @@ class UsersController extends BaseController
 
     function currentRoomIdAction()
     {
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['current_room_id' => $this->currentUser()->current_room_id]);
+        if (!$this->otherUser()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['current_room_id' => $this->otherUser()->current_room_id]);
     }
 }
