@@ -65,7 +65,7 @@
 
 #3、搜索群聊
 
-> http-post ```/api/group_chats/search```
+> http-get ```/api/group_chats/search```
 ##### 3.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
