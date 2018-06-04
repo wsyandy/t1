@@ -93,10 +93,10 @@ class RedPackets extends BaseModel
             info('红包已经结束回收，删除对应进行中的红包id', $underway_red_packet_list_key, $this->id, $this->status);
 
             //|| $this->user->isCompanyUser() && $this->diamond >= 100
-            if ($this->diamond >= 10000) {
+            if ($this->user && $this->user->has_red_packet == STATUS_ON) {
                 $this->user->has_red_packet = STATUS_OFF;
                 $this->user->update();
-                if ($this->room) {
+                if ($this->room && $this->room->has_red_packet == STATUS_ON) {
                     $this->room->has_red_packet = STATUS_OFF;
                     $this->room->update();
                 }
