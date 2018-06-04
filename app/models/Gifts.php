@@ -292,9 +292,7 @@ class Gifts extends BaseModel
     {
         $platform = $user->platform;
         $product_channel_id = $user->product_channel_id;
-
         $gift_type = fetch($opts, 'gift_type');
-        $abroad = fetch($opts, 'abroad');
 
         $conditions = [
             'conditions' => "status = :status:",
@@ -303,12 +301,6 @@ class Gifts extends BaseModel
             ],
             'order' => 'rank desc, amount asc'
         ];
-
-        if ($abroad) {
-            $conditions['conditions'] .= " and abroad = 1";
-        } else {
-            $conditions['conditions'] .= " and abroad != 1";
-        }
 
         $conditions['conditions'] .= " and ( platforms like '*' or platforms like :platforms: or platforms = '')";
         $conditions['bind']['platforms'] = "%" . $platform . "%";
@@ -330,8 +322,12 @@ class Gifts extends BaseModel
         if (GIFT_TYPE_CAR == $gift_type) {
 
             foreach ($gifts as $gift) {
-                $user_gift = UserGifts::findFirstBy(['user_id' => $user->id, 'gift_id' => $gift->id]);
-
+                $user_gift = UserGifts::findFirst(
+                    [
+                        'conditions' => 'user_id = :user_id: and gift_id = :gift_id:',
+                        'bind' => ['user_id' => $user->id, 'gift_id' => $gift->id],
+                        'columns' => 'id'
+                    ]);
                 if ($user_gift) {
                     $gift->buy_status = true;
                 } else {
