@@ -356,6 +356,7 @@
             avatar_small_url: 用户头像,
             nickname: 用户昵称,
             user_chat: true 用户可以聊天  false 用户被禁言,
+            role: 0群员 5群主 10管理员
         },     
 }
 ```
@@ -425,6 +426,7 @@
          id: 用户ID,
          nickname: 用户昵称 ,
          avatar_small_url: 用户头像
+         role: 0群员 5群主 10管理员
       }
     ],
     [
@@ -432,6 +434,43 @@
          id: 用户ID,
          nickname: 用户昵称 ,
          avatar_small_url: 用户头像
+         role: 0群员 5群主 10管理员
+      }
+    ],
+}
+```
+
+#19、查看所有群成员
+
+> http-post ```/api/group_chats/members_info```
+##### 19.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|群聊id|int|否||
+|page|页码|integer|否||
+|per_page|每页个数|integer|可空|空表示数量10
+
+
+##### 19.2 回应参数说明
+```
+{
+    error_code  0 成功，非0失败
+    error_reason  失败原因，默认为空
+    users: 
+    [
+      {
+         id: 用户ID,
+         nickname: 用户昵称 ,
+         avatar_small_url: 用户头像
+         role: 0群员 5群主 10管理员
+      }
+    ],
+    [
+      {
+         id: 用户ID,
+         nickname: 用户昵称 ,
+         avatar_small_url: 用户头像
+         role: 0群员 5群主 10管理员
       }
     ],
 }

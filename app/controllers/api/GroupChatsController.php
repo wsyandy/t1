@@ -386,16 +386,26 @@ class GroupChatsController extends BaseController
     {
         $group_chat_id = $this->params('id');
         $group_chat = \GroupChats::findFirstById($group_chat_id);
+        $user = $this->currentUser();
 
         if (!$group_chat) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        if (!$this->currentUser()->isGroupChatHost($group_chat) && !$group_chat->isGroupMember($this->currentUserId())) {
+        if (!$user->isGroupChatHost($group_chat) && !$group_chat->isGroupMember($user->id)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '用户不在群内');
         }
 
-        $user = $this->currentUser();
+        if ($user->isGroupChatHost($group_chat)) {
+            $role = USER_ROLE_HOST_BROADCASTER;  //5
+        }
+        if ($group_chat->isGroupMember($user->id)) {
+            $role = USER_ROLE_NO;               //0
+        }
+        if ($group_chat->isGroupManager($user->id)) {
+            $role = USER_ROLE_MANAGER;          // 10
+        }
+        $user->role = $role;
         $user->user_chat = $group_chat->canChat($user->id);
         $user_json = $user->toGroupChatJson();
         $res['group_chat'] = $group_chat->toDataJson();
@@ -411,7 +421,7 @@ class GroupChatsController extends BaseController
         $nickname = $this->params('nickname');
         $group_chat_id = $this->params('id');
 
-        if(isBlank($nickname) || isBlank($group_chat_id)){
+        if (isBlank($nickname) || isBlank($group_chat_id)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
@@ -425,10 +435,22 @@ class GroupChatsController extends BaseController
         $members = [];
         foreach ($users_json['users'] as $user) {
             if ($group_chat->isGroupMember($user['id'])) {
+                $user_role = new \Users();
+                if ($user_role->isGroupChatHost($group_chat)) {
+                    $role = USER_ROLE_HOST_BROADCASTER;  //5
+                }
+                if ($group_chat->isGroupMember($user['id'])) {
+                    $role = USER_ROLE_NO;               //0
+                }
+                if ($group_chat->isGroupManager($user['id'])) {
+                    $role = USER_ROLE_MANAGER;          // 10
+                }
+
                 $members[] = [
                     'id' => $user['id'],
                     'nickname' => $user['nickname'],
                     'avatar_small_url' => $user['avatar_small_url'],
+                    'role' => $role,
                 ];
             }
         }
@@ -443,16 +465,39 @@ class GroupChatsController extends BaseController
         $group_chat_id = $this->params('id');
         $group_chat = \GroupChats::findFirstById($group_chat_id);
 
+        $per_page = $this->params('per_page', 10);
+        $page = $this->params('page');
+        $offset = $per_page * ($page - 1);
+
         $group_host_id = $group_chat->user_id;
         $group_manager_ids = $group_chat->getAllGroupManagers();
         $group_member_ids = $group_chat->getAllGroupMembers();
 
+        $host_id = [];
+        array_push($host_id, $group_host_id);
+        $total_all_user_ids = array_merge($host_id, $group_manager_ids, $group_member_ids);
+        $total = count($total_all_user_ids);
 
-        $res['group_host'] = \Users::findFirstById($group_host_id);
-        $res['group_managers'] = \Users::findByIds($group_manager_ids);
-        $res['group_members'] = \Users::findByIds($group_member_ids);
+        $user_ids = array_slice($total_all_user_ids, $offset, $per_page);
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
+        $users = \Users::findByIds($user_ids);
+
+        foreach ($users as $user) {
+            if ($user->isGroupChatHost($group_chat)) {
+                $role = USER_ROLE_HOST_BROADCASTER;  //5
+            }
+            if ($group_chat->isGroupMember($user->id)) {
+                $role = USER_ROLE_NO;               //0
+            }
+            if ($group_chat->isGroupManager($user->id)) {
+                $role = USER_ROLE_MANAGER;          // 10
+            }
+            $user->role = $role;
+        }
+        $users = new \PaginationModel($users, $total, $page, $per_page);
+        $users->clazz = "Users";
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toGroupChatJson'));
     }
 
     //查看单个群成员
@@ -491,6 +536,7 @@ class GroupChatsController extends BaseController
         $per_page = $this->params('per_page', 10);
         $page = $this->params('page');
         $offset = $per_page * ($page - 1);
+
         $group_chat_ids = array_slice($total_group_chat_ids, $offset, $per_page);
         $group_chats = \GroupChats::findByIds($group_chat_ids);
         $group_chats = new \PaginationModel($group_chats, $total, $page, $per_page);
