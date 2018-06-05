@@ -121,7 +121,7 @@ class GroupChatsController extends BaseController
         }
 
         if ($group_chat->join_type == 'all') {
-            $group_chat->addMyGroups($this->currentUserId(),$group_chat_id);
+            $group_chat->addMyGroups($this->currentUserId(), $group_chat_id);
             $group_chat->joinGroupChat($this->currentUserId());
             $res['user'] = $this->currentUser()->toGroupChatJson();
             $res['user_chat'] = $group_chat->canChat($this->currentUserId());
@@ -153,7 +153,7 @@ class GroupChatsController extends BaseController
 
 
         $group_chat->kickGroupChat($user_id);
-        $group_chat->remMyGroup($user_id,$group_chat_id);
+        $group_chat->remMyGroup($user_id, $group_chat_id);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '退出成功');
     }
@@ -165,6 +165,7 @@ class GroupChatsController extends BaseController
         $group_chat_id = $this->params('id');   //当前群的id
 
         $group_chat = \GroupChats::findFirstById($group_chat_id);
+
         if (!$this->currentUser()->isGroupChatHost($group_chat)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
@@ -174,7 +175,7 @@ class GroupChatsController extends BaseController
         }
 
         $group_chat->joinGroupChat($user_id);
-        $group_chat->addMyGroups($user_id,$group_chat_id);
+        $group_chat->addMyGroups($user_id, $group_chat_id);
 
         $user = \Users::findFirstById($user_id);
         $user->user_chat = $group_chat->canChat($user_id);
@@ -234,6 +235,7 @@ class GroupChatsController extends BaseController
         $group_chat_id = $this->params('id');
 
         $group_chat = \GroupChats::findFirstById($group_chat_id);
+
         if (!$this->currentUser()->isGroupChatHost($group_chat) && !$group_chat->isGroupManager($this->currentUserId())) {
             return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
@@ -389,7 +391,7 @@ class GroupChatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        if(!$group_chat->isGroupMember($this->currentUserId())){
+        if (!$this->currentUser()->isGroupChatHost($group_chat) && !$group_chat->isGroupMember($this->currentUserId())) {
             return $this->renderJSON(ERROR_CODE_FAIL, '用户不在群内');
         }
 
@@ -407,21 +409,26 @@ class GroupChatsController extends BaseController
     function searchUsersAction()
     {
         $nickname = $this->params('nickname');
+        $group_chat_id = $this->params('id');
 
-        $cond = ['conditions' => 'nickname like %' . $nickname . '%',
-            'bind' => ['nickname' => $nickname]
-        ];
-        $users = \Users::findByConditions($cond);
+        if(isBlank($nickname) || isBlank($group_chat_id)){
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
 
-        $group_chat = new \GroupChats();
-        $group_members = $group_chat->getAllGroupMembers();
+        $cond['conditions'] = 'nickname like :nickname:';
+        $cond['bind']['nickname'] = '%' . $nickname . '%';
+        $users = \Users::find($cond);
+
+        $users_json = $users->toJson('users', 'toGroupChatJson');
+        $group_chat = \GroupChats::findById($group_chat_id);
+
         $members = [];
-        foreach ($users as $user) {
-            if (in_array($user->id, $group_members)) {
-                $members = [
-                    'id' => $user->id,
-                    'nickname' => $user->nickname,
-                    'avatar_small_url' => $user->avatar_small_url,
+        foreach ($users_json['users'] as $user) {
+            if ($group_chat->isGroupMember($user['id'])) {
+                $members[] = [
+                    'id' => $user['id'],
+                    'nickname' => $user['nickname'],
+                    'avatar_small_url' => $user['avatar_small_url'],
                 ];
             }
         }
@@ -479,10 +486,15 @@ class GroupChatsController extends BaseController
     function myGroupChatsAction()
     {
         $group_chat = new \GroupChats();
-        $group_chat_ids = $group_chat->getMyGroupIds($this->currentUserId());
-
+        $total_group_chat_ids = $group_chat->getMyGroupIds($this->currentUserId());
+        $total = count($total_group_chat_ids);
+        $per_page = $this->params('per_page', 10);
+        $page = $this->params('page');
+        $offset = $per_page * ($page - 1);
+        $group_chat_ids = array_slice($total_group_chat_ids, $offset, $per_page);
         $group_chats = \GroupChats::findByIds($group_chat_ids);
-
+        $group_chats = new \PaginationModel($group_chats, $total, $page, $per_page);
+        $group_chats->clazz = 'GroupChats';
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $group_chats->toJson('group_chats', 'toDataJson'));
     }
 

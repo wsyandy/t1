@@ -365,6 +365,9 @@
 > http-get ```/api/group_chats/my_group_chats```
 ##### 17.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|page|页码|integer|否||
+|per_page|每页个数|integer|可空|空表示数量10
 
 ##### 17.2 回应参数说明
 ```
@@ -399,5 +402,37 @@
             chat true 全员可聊天  false 全员禁言
         },
     ]     
+}
+```
+
+#18、搜索群成员
+
+> http-post ```/api/group_chats/search_users```
+##### 18.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|群聊id|int|否||
+|nickname|搜索昵称|string|否|||
+
+##### 18.2 回应参数说明
+```
+{
+    error_code  0 成功，非0失败
+    error_reason  失败原因，默认为空
+    users: 
+    [
+      {
+         id: 用户ID,
+         nickname: 用户昵称 ,
+         avatar_small_url: 用户头像
+      }
+    ],
+    [
+      {
+         id: 用户ID,
+         nickname: 用户昵称 ,
+         avatar_small_url: 用户头像
+      }
+    ],
 }
 ```

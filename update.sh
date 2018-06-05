@@ -14,7 +14,4 @@ rm -f app/cache/volt/*.php
 echo 'restart async'
 ./async_restart.sh
 
-echo 'restart async'
-./async_restart.sh
-
 echo update_at_`date  +%Y%m%d+%H%M` >> update.log;
