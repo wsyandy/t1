@@ -5,13 +5,25 @@
     <title>大额充值</title>
     <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
     <meta name="format-detection" content="telephone=no"/>
-    {{ theme_css('/m/css/style_product.css') }}
+    {{ theme_css('/pay/css/style_product.css') }}
     {{ weixin_js('/js/jquery/1.11.2/jquery.min.js') }}
     {{ theme_js('/js/vue/2.0.5/vue.min.js', '/js/pub_pop.js', '/js/fastclick.js', '/js/clipboard.min.js', '/js/utils.js') }}
 </head>
 <body>
 
 <div id="app">
+    <!-- 支付宝支付提示 -->
+    <div class="zhifubao_pay_t">
+        <div class="share_box">
+            <h2>只需两步即可完成支付：</h2>
+            <img src="/pay/images/share.png" class="share">
+            <div class="share_text">
+                <p><i class="one"></i>点击右上角的<img src="/pay/images/share_icon.png" class="share_icon">按钮</p>
+                <p><i class="two"></i>选择 <img src="/pay/images/icon.png" class="icon"></p>
+            </div>
+        </div>
+    </div>
+
     <div class="weixin_chongzhi_top">
         <input required="required" type="text" class="name_input" id="user_id" placeholder="请输入您的Hi~ID"/>
         <i class="close_btn" @click="closeBtn"></i>
@@ -151,9 +163,12 @@
             }
         }
 
-        var vm = new XVue(opts);
+        var vm = new XVue(options);
         vm.changeAmount();
 
+        if ($.isWeixinClient()) {
+            $('.zhifubao_pay_t').show();
+        }
     })
 </script>
 </body>
