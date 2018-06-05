@@ -1,6 +1,6 @@
 php cli.php async stop
 
-sleep 3
+sleep 2
 
 echo "stop process num"
 ps aux | grep 'async start' |grep -v grep | wc -l
