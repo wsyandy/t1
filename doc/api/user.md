@@ -951,7 +951,7 @@
 
 
 ### 34情侣榜
->http-get ```/api/users/wealth_rank_list```
+>http-get ```/api/users/couple_rank_list```
 
 ##### 34.1 请求参数说明
 
