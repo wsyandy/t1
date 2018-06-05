@@ -541,6 +541,14 @@ class UnionsController extends BaseController
         $union_level = \UnionLevelConfigs::findFirstById($union->union_level_config_id);
         info($union_level);
 
+        $month_start = date('Ymd', beginOfMonth());
+        $month_end = date('Ymd', endOfMonth());
+
+        $room_db = \Rooms::getRoomDb();
+        $union_month_integrals_key = 'union_room_month_integrals_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
+        $month_integrals = $room_db->zscore($union_month_integrals_key, $union->id);
+        $union->month_integrals = $month_integrals ? $month_integrals : 0;
+
         $this->view->title = '家族等级';
         $this->view->union_level = $union_level;
         $this->view->union = $union;

@@ -502,11 +502,11 @@ class UnionsTask extends \Phalcon\Cli\Task
 
         foreach ($unions as $union) {
             $key = 'union_room_month_amount_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
-            $union_month_integrals_key = 'union_room_month_integrals_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
+            $total_host_broadcaster_time_key = 'union_room_month_time_integrals_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
 
             //累计的之前的分数
-            $total_host_broadcaster_time_key = 'union_room_month_time_integrals_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
-            $month_integrals = $user_db->zscore($union_month_integrals_key, $union->id);
+            $union_month_integrals_key = 'union_room_month_integrals_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
+            $month_integrals = $room_db->zscore($union_month_integrals_key, $union->id);
 
             $room_ids = $user_db->zrange($key, 0, -1);
             $rooms = \Rooms::findByIds($room_ids);
@@ -607,11 +607,11 @@ class UnionsTask extends \Phalcon\Cli\Task
 
         foreach ($unions as $union) {
             $key = 'union_room_month_amount_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
-            $union_month_integrals_key = 'union_room_month_integrals_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
+            $total_host_broadcaster_time_key = 'union_room_month_time_integrals_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
 
             //累计的之前的分数
-            $total_host_broadcaster_time_key = 'union_room_month_time_integrals_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
-            $month_integrals = $user_db->zscore($union_month_integrals_key, $union->id);
+            $union_month_integrals_key = 'union_room_month_integrals_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
+            $month_integrals = $room_db->zscore($union_month_integrals_key, $union->id);
 
             $room_ids = $user_db->zrange($key, 0, -1);
             $rooms = \Rooms::findByIds($room_ids);

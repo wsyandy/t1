@@ -20,7 +20,7 @@
             <div class="line"></div>
             <li>
                 <h3>本月积分</h3>
-                <span>{{ union.current_month_integrals }}</span>
+                <span>{{ union.month_integrals }}</span>
             </li>
         </ul>
     </div>
