@@ -1270,6 +1270,58 @@ trait UserAttrs
         return $current_user_info;
     }
 
+    function getCurrentRankListCpInfoForClient($type = 'week', $opts = [])
+    {
+        $db = \Users::getUserDb();
+        //先去当前用户的周情侣值最高的数据，拼接成员，到周总榜，拿到当前排名和当前分数
+        $total_cp_week_charm_key = \Users::generateFieldRankListKey($type, 'cp', $opts);
+
+        //当前用户周情侣值
+        $cp_week_charm_key = \Couples::generateCoupleKeyForUser($type, $this->id, $opts);
+        $height_data = $db->zrevrange($cp_week_charm_key, 0, 0);
+        info($height_data);
+        if (!$height_data) {
+            $total_entries = $db->zcard($total_cp_week_charm_key);
+
+            $current_rank = $total_entries + 1;
+            $current_user_info['current_rank'] = $current_rank;
+            $current_user_info['current_rank_text'] = $current_rank <= 100 ? $current_rank : '100+';
+            $current_user_info['current_score'] = 0;
+
+            return $current_user_info;
+        }
+        $other_user_id = $height_data[0];
+
+        $key = \Couples::generateSeraglioKey($this->id);
+        $status = $db->zscore($key, $other_user_id);
+        switch ($status) {
+            case 1:
+                $member = $other_user_id . '_' . $this->id;
+                break;
+            case 2:
+                $member = $this->id . '_' . $other_user_id;
+                break;
+        }
+
+        $rank = $db->zrrank($total_cp_week_charm_key, $member);
+        $current_score = $db->zscore($total_cp_week_charm_key, $member);
+
+        if (is_null($rank)) {
+            $total_entries = $db->zcard($total_cp_week_charm_key);
+            if ($total_entries) {
+                $rank = $total_entries;
+            }
+        }
+
+        $current_rank = $rank + 1;
+
+        $current_user_info['current_rank'] = $current_rank;
+        $current_user_info['current_rank_text'] = $current_rank <= 100 ? $current_rank : '100+';
+        $current_user_info['current_score'] = $current_score ? $current_score : 0;
+
+        return $current_user_info;
+    }
+
     //可用抽奖次数
     function getDrawNum()
     {

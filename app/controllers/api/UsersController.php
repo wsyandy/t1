@@ -811,7 +811,7 @@ class UsersController extends BaseController
         if ($page == 1) {
 
             $user = $this->currentUser();
-            $current_user_cp_info = $user->getCurrentRankListCpInfo($list_type);
+            $current_user_cp_info = $user->getCurrentRankListCpInfoForClient($list_type);
             $current_rank = $current_user_cp_info['current_rank'];
             $last_rank = $user->myLastFieldRank($list_type, 'cp');
             $changed_rank = 0;
