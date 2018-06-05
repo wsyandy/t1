@@ -8,6 +8,11 @@ return [
         'withdraw_histories' => ['index'], 'rooms' => ['index', 'forbidden_to_hot'], 'complaints' => ['index']
     ],
 
+    'customer_manager' => ['dashboard' => '*', 'users' => ['index', 'detail', 'basic', 'friend_list', 'followers',
+        'avatar', 'send_message', 'edit', 'update'],
+        'id_card_auths' => '*', 'withdraw_histories' => ['index'], 'rooms' => ['index', 'forbidden_to_hot'], 'complaints' => ['index']
+    ],
+
     'tester' => ['dashboard' => '*', 'users' => '*', 'devices' => ['index', 'edit', 'update', 'white_list', 'add_white_list', 'delete_white_list'],
         'product_channels' => ['index', 'edit', 'update', 'push'], 'sms_histories' => '*', 'orders' => '*', 'gift_orders' => '*', 'voice_calls' => '*', 'albums' => ['index', 'show'],
         'rooms' => ['index', 'detail', 'game_white_list', 'add_game_white_list'], 'soft_versions' => '*', 'payment_channels' => ['index', 'product_channels', 'edit', 'update',],
