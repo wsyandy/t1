@@ -242,3 +242,9 @@ body {
     color: #F45189;
     padding: 0.1rem;
 }
+
+.ico_level{
+    width: 0.42rem;
+    height: 0.42rem;
+    margin-left: 0.1rem
+}

@@ -10,9 +10,11 @@
                 <img class="family-ico" src="{{ union.avatar_small_url }}" alt="">
                 <div class="family_name">
                     <div class="family_level">
-                        <span>   {{ union.name }}</span>
-                        <img class="ico_level" src="{{ union_level_images[union.union_level] }}" alt="">
-                        <a class="level_tip" href="/m/unions/union_level_detail?sid={{ sid }}&code={{ code }}&union_id={{ union.id }}" >点击了解等级</a>
+                        <span>{{ union.name }}</span>
+                        <img class="ico_level" src="{{ union_level_images[union.union_level] }}" alt=""
+                             @click="levelHelp()">
+                        <a class="level_tip"
+                           href="/m/unions/union_level_detail?sid={{ sid }}&code={{ code }}&union_id={{ union.id }}">点击了解等级</a>
                     </div>
                     <span class="family_id">家族ID:{{ union.uid }} </span>
                 </div>
@@ -210,6 +212,10 @@
             this.memberList(0);
         },
         methods: {
+            levelHelp: function () {
+                var url = "/m/unions/union_level_detail&sid=" + '{{ sid }}' + "&code=" + '{{ code }}' + "&union_id=" + '{{ union.id }}';
+                location.href = url;
+            },
             rankUnion: function () {
                 var url = "/m/unions/rank&sid=" + '{{ sid }}' + "&code=" + '{{ code }}';
                 location.href = url;

@@ -518,8 +518,6 @@ class UnionsTask extends \Phalcon\Cli\Task
                 $room->amount = $user_db->zscore($key, $room->id);
                 $total_amount += $room->amount;
 
-                $room_db->zincrby($union_month_integrals_key, intval($total_amount / 10000), $union->id);
-
                 $total_host_broadcaster_time = $room->getDayUserTime('host_broadcaster', date("Ymd", strtotime('-1 day')));
                 if ($total_host_broadcaster_time >= 60 * 60 * 2) {
                     //房主在线时长积分
@@ -529,6 +527,7 @@ class UnionsTask extends \Phalcon\Cli\Task
                 }
             }
 
+            $room_db->zadd($union_month_integrals_key, intval($total_amount / 10000), $union->id);
             $current_month_integrals = $room_db->zscore($union_month_integrals_key, $union->id);
             $union->total_integrals = $union->total_integrals - $month_integrals + $current_month_integrals;
 
@@ -622,8 +621,6 @@ class UnionsTask extends \Phalcon\Cli\Task
             foreach ($rooms as $room) {
                 $room->amount = $user_db->zscore($key, $room->id);
                 $total_amount += $room->amount;
-
-                $room_db->zincrby($union_month_integrals_key, intval($total_amount / 10000), $union->id);
                 for ($date = $month_start; $date <= $month_end; $date += 86400) {
                     $total_host_broadcaster_time = $room->getDayUserTime('host_broadcaster', date("Ymd", $date));
                     if ($total_host_broadcaster_time >= 60 * 60 * 2) {
@@ -635,6 +632,7 @@ class UnionsTask extends \Phalcon\Cli\Task
                 }
             }
 
+            $room_db->zadd($union_month_integrals_key, intval($total_amount / 10000), $union->id);
             $current_month_integrals = $room_db->zscore($union_month_integrals_key, $union->id);
             $union->total_integrals = $union->total_integrals - $month_integrals + $current_month_integrals;
 

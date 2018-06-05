@@ -906,6 +906,7 @@ class Unions extends BaseModel
             'user_num' => $this->user_num,
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
+            'union_level'=>$this->union_level
         ];
 
         if (isset($this->url)) {

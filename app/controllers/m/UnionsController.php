@@ -88,6 +88,7 @@ class UnionsController extends BaseController
         $this->view->sid = $this->params('sid');
         $this->view->code = $this->params('code');
         $this->view->title = "推荐家族";
+        $this->view->union_level_images = json_encode(\Unions::$UNION_LEVEL_IMAGE,JSON_UNESCAPED_UNICODE);
     }
 
     //搜索
@@ -167,6 +168,7 @@ class UnionsController extends BaseController
         $this->view->title = "家族排行";
         $this->view->sid = $this->params('sid');
         $this->view->code = $this->params('code');
+        $this->view->union_level_images = json_encode(\Unions::$UNION_LEVEL_IMAGE,JSON_UNESCAPED_UNICODE);
     }
 
     function fameValueRankListAction()

@@ -44,7 +44,7 @@
 
                     <img class="family_avatar" :src="item.avatar_small_url" alt="">
                     <div class="family_info">
-                        <span class="family_name"> ${ item.name }</span>
+                        <span class="family_name"> ${ item.name } <img class="ico_level" :src="union_level_images[item.union_level]" alt=""></span>
                         <div class="family_prestige">
                             <span>声望${ item.fame_value }</span>
                         </div>
@@ -85,7 +85,8 @@
             page: 1,
             total_page: 1,
             union_list: [],
-            my_rank: 0
+            my_rank: 0,
+            union_level_images:{{ union_level_images }}
         },
         created: function () {
             this.list();

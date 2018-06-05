@@ -186,6 +186,11 @@ body {
     border-radius: 50%;
 
 }
+.ico_level{
+    width: 0.42rem;
+    height: 0.42rem;
+    margin-left: 0.1rem
+}
 
 .family_name {
     font-size: 0.3rem;

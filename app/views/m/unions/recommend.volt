@@ -21,7 +21,8 @@
                     </div>
                     <img class="family_avatar" :src="item.avatar_small_url" alt="">
                     <div class="family_info">
-                        <span class="family_name"> ${ item.name }</span>
+                        <span class="family_name"> ${ item.name }  <img class="ico_level" :src="union_level_images[item.union_level]" alt=""></span>
+
                         <div class="family_prestige">
                             <span>声望${ item.fame_value }</span>
                         </div>
@@ -55,7 +56,8 @@
             ranking_1: "/m/images/ranking_1.png",
             ranking_2: "/m/images/ranking_2.png",
             ranking_3: "/m/images/ranking_3.png",
-            is_recommend: true
+            is_recommend: true,
+            union_level_images:{{ union_level_images }}
         },
         created: function () {
             this.list();
