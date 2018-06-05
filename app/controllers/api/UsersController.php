@@ -765,8 +765,6 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
-        $product_channel_id = $this->currentProductChannelId();
-
         $users = \Users::findFieldRankList($list_type, 'wealth', $page, $per_page);
 
         $res = $users->toJson('users', 'toRankListJson');
@@ -789,6 +787,46 @@ class UsersController extends BaseController
             debug($current_rank, $last_rank);
 
             $user->saveLastFieldRankList($list_type, 'wealth', $current_rank);
+        }
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
+    }
+
+    function coupleRankListAction()
+    {
+        $list_type = $this->params('list_type');
+        $page = $this->params('page', 1);
+        $per_page = $this->params('per_page', 10);
+
+        if ($list_type != 'day' && $list_type != 'week' && $list_type != 'total') {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+
+        $key = \Users::generateFieldRankListKey($list_type, 'cp');
+
+        $users = \Couples::findCpRankListByKeyForClient($key, $page, $per_page);
+
+        $res = ['users' => $users];
+
+        if ($page == 1) {
+
+            $user = $this->currentUser();
+            $current_user_cp_info = $user->getCurrentRankListCpInfo($list_type);
+            $current_rank = $current_user_cp_info['current_rank'];
+            $last_rank = $user->myLastFieldRank($list_type, 'cp');
+            $changed_rank = 0;
+
+            if ($last_rank) {
+                $changed_rank = $last_rank - $current_rank;
+            }
+
+            $res['current_rank'] = $current_rank <= 100 ? $current_rank : $current_rank + 1000; //大于100加1000
+            $res['changed_rank'] = $changed_rank;
+            $res['current_rank_text'] = $current_user_cp_info['current_rank_text'];
+
+            debug($current_rank, $last_rank);
+
+            $user->saveLastFieldRankList($list_type, 'cp', $current_rank);
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
