@@ -407,7 +407,7 @@
 
 #18、搜索群成员
 
-> http-post ```/api/group_chats/entrance```
+> http-post ```/api/group_chats/search_users```
 ##### 18.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
