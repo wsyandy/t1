@@ -511,11 +511,7 @@ class DrawHistories extends BaseModel
         $data = self::getData();
         // 必中钻石
         if ($hit_diamond) {
-
-            if ($user->id == 575899) {
-                return $data[3];
-            }
-
+            
             $rate = mt_rand(1, 100);
             if ($rate < 5) {
                 return $data[7];
