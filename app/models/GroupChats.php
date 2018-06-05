@@ -27,6 +27,7 @@ class GroupChats extends BaseModel
     {
         return [
             'id'=>$this->id,
+            'group_id'=>$this->group_id,
             'user_id'=>$this->user_id,
             'name'=>$this->name,
             'introduce'=>$this->introduce,
@@ -99,9 +100,11 @@ class GroupChats extends BaseModel
     {
         $name = fetch($opts, 'name');
         $introduce = fetch($opts, 'introduce');
+        $group_id = fetch($opts,'group_id');
 
         $this->name = $name;
         $this->introduce = $introduce;
+        $this->group_id = $group_id;
 
         $this->update();
 
