@@ -26,18 +26,18 @@ class GroupChats extends BaseModel
     function toDataJson()
     {
         return [
-            'id'=>$this->id,
-            'group_id'=>$this->group_id,
-            'user_id'=>$this->user_id,
-            'name'=>$this->name,
-            'introduce'=>$this->introduce,
-            'avatar_file'=>$this->avatar_file_small_url,
-            'uid'=>$this->uid,
-            'status'=>$this->status,
-            'join_type'=>$this->join_type,
-            'created_at_text'=>$this->created_at_text,
-            'last_at_text'=>$this->last_at_text,
-            'chat'=>$this->chat,
+            'id' => $this->id,
+            'group_id' => $this->group_id,
+            'user_id' => $this->user_id,
+            'name' => $this->name,
+            'introduce' => $this->introduce,
+            'avatar_file' => $this->avatar_file_small_url,
+            'uid' => $this->uid,
+            'status' => $this->status,
+            'join_type' => $this->join_type,
+            'created_at_text' => $this->created_at_text,
+            'last_at_text' => $this->last_at_text,
+            'chat' => $this->chat,
         ];
     }
 
@@ -46,7 +46,7 @@ class GroupChats extends BaseModel
         if (isBlank($this->avatar_file)) {
             return null;
         }
-        $url = StoreFile::getUrl($this->avatar_file)."@!small";
+        $url = StoreFile::getUrl($this->avatar_file) . "@!small";
 
         return $url;
     }
@@ -100,7 +100,7 @@ class GroupChats extends BaseModel
     {
         $name = fetch($opts, 'name');
         $introduce = fetch($opts, 'introduce');
-        $group_id = fetch($opts,'group_id');
+        $group_id = fetch($opts, 'group_id');
 
         $this->name = $name;
         $this->introduce = $introduce;
@@ -291,24 +291,25 @@ class GroupChats extends BaseModel
     }
 
     //我的群聊
-    function addMyGroups($user_id,$group_chat_id)
+    function addMyGroups($user_id, $group_chat_id)
     {
         $msg_db = self::getGroupChatsDb();
-        $msg_db->zadd("group_chats_my_groups_".$user_id,time(),$group_chat_id);
+        $msg_db->zadd("group_chats_my_groups_" . $user_id, time(), $group_chat_id);
     }
+
     function getMyGroupIds($user_id)
     {
         $msg_db = self::getGroupChatsDb();
-        $group_chat_ids = $msg_db->zrange("group_chats_my_groups_".$user_id,0,-1);
+        $group_chat_ids = $msg_db->zrange("group_chats_my_groups_" . $user_id, 0, -1);
 
         return $group_chat_ids;
     }
-    function remMyGroup($user_id,$group_chat_id)
+
+    function remMyGroup($user_id, $group_chat_id)
     {
         $msg_db = self::getGroupChatsDb();
-        $msg_db->zrem("group_chats_my_groups)".$user_id, $group_chat_id);
+        $msg_db->zrem("group_chats_my_groups)" . $user_id, $group_chat_id);
 
     }
-
 
 }
