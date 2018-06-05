@@ -576,9 +576,14 @@ class UnionsController extends BaseController
 
         if ($this->request->isPost()) {
             $integrals = intval($this->params('integrals', 0));
+            $month_start = date('Ymd', beginOfMonth());
+            $month_end = date('Ymd', endOfMonth());
 
-            $union->current_month_integrals = $union->current_month_integrals + $integrals;
-            $union->total_integrals = $union->total_integrals + $integrals;
+            $room_db = \Rooms::getRoomDb();
+            $union_month_integrals_key = 'union_room_month_integrals_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
+            $room_db->zincrby($union_month_integrals_key, $integrals, $union->id);
+
+            $union->total_integrals += $integrals;
             if ($union->update()) {
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '操作成功', ['union' => $union->toJson()]);
             }
