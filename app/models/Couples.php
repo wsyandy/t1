@@ -343,14 +343,18 @@ class Couples extends BaseModel
 
         $all_users = [];
         $index = 0;
+        $rank = $offset + 1;
         foreach ($res as $ids_str => $score) {
             $ids = explode('_', $ids_str);
             $users = \Users::findByIds($ids);
             if (isPresent($users)) {
+                $users[0]->rank = $rank;
+                $users[1]->rank = $rank;
                 $all_users[$index]['sponsor'] = $users[0]->toRankListJson();
                 $all_users[$index]['pursuer'] = $users[1]->toRankListJson();
                 $all_users[$index]['score'] = $score;
                 $index++;
+                $rank += 1;
             }
         }
         return $all_users;
