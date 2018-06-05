@@ -13,7 +13,7 @@ class RoomsTask extends \Phalcon\Cli\Task
     {
 
         $cond = ['conditions' => 'status = :status: and last_at<:last_at:',
-            'bind' => ['status' => STATUS_ON, 'last_at' => time() - 3600 * 24],
+            'bind' => ['status' => STATUS_ON, 'last_at' => time() - 3600 * 12],
             'order' => 'id asc'
         ];
 
