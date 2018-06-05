@@ -15,11 +15,6 @@ class ProductsController extends BaseController
         $product_group_id = $this->params('product_group_id');
         $product_channel_id = $this->params('product_channel_id');
         $products = \Products::findByProductGroupId($product_group_id);
-
-        foreach ($products as $product) {
-            $data = json_decode($product->data, true);
-            $product->tamp_gold_egg = $data['tamp_gold_egg'];
-        }
         $this->view->products = $products;
         $this->view->product_channel_id = $product_channel_id;
         $this->view->product_group_id = $product_group_id;
@@ -30,7 +25,6 @@ class ProductsController extends BaseController
         $product = new \Products();
         $product_group_id = $this->params('product_group_id');
         $product->product_group_id = $product_group_id;
-        $product->tamp_gold_egg = 0;
         $this->view->product = $product;
         $this->view->product_group_id = $product_group_id;
     }
@@ -39,8 +33,11 @@ class ProductsController extends BaseController
     {
         $product = new \Products();
         $this->assign($product, 'product');
+        $draw_num = $this->params('product[draw_num]');
 
-        $product->data = json_encode(['tamp_gold_egg'=>$product->data]);
+        if ($draw_num) {
+            $product->data = json_encode(['draw_num' => $draw_num], JSON_UNESCAPED_UNICODE);
+        }
 
         if ($product->create()) {
             \OperatingRecords::logAfterCreate($this->currentOperator(), $product);
@@ -53,10 +50,6 @@ class ProductsController extends BaseController
     function editAction()
     {
         $product = \Products::findById($this->params('id'));
-
-        $data = json_decode($product->data, true);
-        $product->tamp_gold_egg = $data['tamp_gold_egg'];
-
         $this->view->product = $product;
         $this->view->product_group_id = $product->product_group_id;
     }
@@ -65,8 +58,15 @@ class ProductsController extends BaseController
     {
         $product = \Products::findById($this->params("id"));
         $this->assign($product, 'product');
+        $draw_num = $this->params('product[draw_num]', 0);
+        $data = [];
 
-        $product->data = json_encode(['tamp_gold_egg'=>$product->tamp_gold_egg]);
+        if ($product->data) {
+            $data = json_decode($product->data, true);
+        }
+
+        $data['draw_num'] = $draw_num;
+        $product->data = json_encode($data, JSON_UNESCAPED_UNICODE);
 
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $product);
         if ($product->update()) {

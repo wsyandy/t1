@@ -507,6 +507,9 @@
                     {% if isAllowed('boom_configs','index') %}
                         <li><a href="/admin/boom_configs">爆礼物配置</a></li>
                     {% endif %}
+                    {% if isAllowed('union_level_configs','index') %}
+                        <li><a href="/admin/union_level_configs">家族等级配置配置</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}

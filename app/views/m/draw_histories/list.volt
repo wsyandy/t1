@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-    {{ theme_css('/m/css/draw_histories_1.css') }}
+    {{ theme_css('/m/css/draw_histories_2.css') }}
 {{ block_end() }}
 
 <script>

@@ -1,0 +1,233 @@
+/* css reset */
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, a, input, button, p,img,span {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+ol, ul, li {
+    list-style: none;
+}
+a {
+    text-decoration: none;
+}
+
+
+body{
+    font-family: PingFangSC-Regular;
+    width: 100%;
+    height: 100%;
+    background: #ffffff;
+}
+img{
+    border:none;
+}
+@font-face {
+    font-family: din;
+    src: url(../font/din.ttf);
+}
+.dengji_box{
+    width: 100%;
+    height: 100%;
+}
+.dengji_box .dengji_top{
+    width: 7.4rem;
+    height: 3.36rem;
+    background: url(../images/dengji_bg.png) no-repeat;
+    background-size: 100%;
+    margin:0 auto;
+    margin-top: 0.3rem;
+}
+.dengji_box .dengji_top img{
+    display: block;
+    width: 1.96rem;
+    height: 1.96rem;
+    margin:0 auto;
+    padding-top: 0.48rem;
+}
+.dengji_box .dengji_top .title{
+    padding-top: 0.21rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dengji_box .dengji_top .title i{
+    display: inline-block;
+    width: 0.73rem;
+    height: 0.07rem;
+}
+.dengji_box .dengji_top .title .title_left{
+    background: url(../images/title_left.png) no-repeat;
+    background-size: 100%;
+}
+.dengji_box .dengji_top .title .title_right{
+    background: url(../images/title_right.png) no-repeat;
+    background-size: 100%;
+}
+.dengji_box .dengji_top .title span{
+    font-size: 0.32rem;
+    color: #FFFFFF;
+    padding:0 0.33rem;
+}
+.dengji_box .dengji_num_box{
+    border-top:1px solid #EEEEEE;
+}
+.dengji_box .dengji_num_box ul{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+}
+.dengji_box .dengji_num_box ul li{
+    text-align: center;
+    width: 49%;
+    box-sizing: border-box;
+    margin-top: 0.4rem;
+}
+.dengji_box .dengji_num_box ul li h3{
+    font-size: 0.3rem;
+    color: #EFB900;
+}
+.dengji_box .dengji_num_box ul li span{
+    font-size: 0.6rem;
+    color: #333333;
+    font-family: din;
+}
+.dengji_box .dengji_num_box .line{
+    width: 0.02rem;
+    height: 0.9rem;
+    background: #EEEEEE;
+    margin-top: 0.2rem;
+}
+.dengji_box .dengji_bottom{
+    position: absolute;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    -o-transform: translateX(-50%);
+    transform: translateX(-50%);
+    bottom: 0.64rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dengji_box .dengji_bottom a{
+    font-size: 0.28rem;
+    color: #666666;
+    margin-left: 0.1rem;
+}
+.dengji_box .dengji_bottom i{
+    display: inline-block;
+    width: 0.32rem;
+    height: 0.32rem;
+    background: url(../images/dengji_bottom.png) no-repeat;
+    background-size: 100%;
+}
+.gonglue_box{
+    padding:0 0.3rem;
+}
+.gonglue_box h3{
+    font-size: 0.32rem;
+    color: #333333;
+    margin-top: 0.6rem;
+}
+.gonglue_box p{
+    font-size: 0.28rem;
+    color: #666666;
+    margin-top: 0.2rem;
+}
+.text_box{
+    width: 100%;
+    padding:0.2rem;
+    background: #F3F3F3;
+    border-radius: 0.08rem;
+    margin-top: 0.2rem;
+}
+.text_box span{
+    display: block;
+    font-size: 0.28rem;
+    color: #333333;
+}
+.text_box b{
+    display: block;
+    font-size: 0.26rem;
+    color: #666666;
+    margin-top: 0.11rem;
+    line-height: 0.32rem;
+}
+.dengji_list{
+    background: #FFFFFF;
+    margin-top: 0.3rem;
+}
+.down_right{
+    left: 6.5rem !important;
+}
+.table{
+    width: 100%;
+    border-collapse:collapse;
+}
+.week_tr_title{
+    width: 100%;
+    font-size: 0.26rem;
+    color: #333333;
+    background: #F3F3F3;
+}
+.table tr{
+    height: 0.77rem;
+}
+.table tr td{
+    text-align: center;
+    font-family: PingFangSC-Medium;
+    border: 1px solid #CECECE;
+    font-size: 0.28rem;
+    color: #333333;
+}
+.table tr td img{
+    display: inline-block;
+    width: 0.54rem;
+    height: 0.54rem;
+    background: #D8D8D8;
+    border-radius: 0.15rem;
+    vertical-align: middle;
+}
+.gonglue_box h4{
+    font-size: 0.28rem;
+    color: #F45189;
+    margin-top: 0.4rem;
+}
+.text_bottom b{
+    font-size: 0.28rem;
+}
+.text_bottom{
+    margin-bottom: 1rem;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

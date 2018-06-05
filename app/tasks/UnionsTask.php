@@ -165,7 +165,7 @@ class UnionsTask extends \Phalcon\Cli\Task
 
         foreach ($rewards as $reward => $data) {
             echoLine("奖励" . $reward . "钻的用户");
-            $temp_file = 'reward_history_1_'. $reward . '.xls';
+            $temp_file = 'reward_history_1_' . $reward . '.xls';
             $uri = writeExcel($titles, $data, $temp_file, true);
             echoLine(StoreFile::getUrl($uri), $uri);
         }
@@ -488,6 +488,168 @@ class UnionsTask extends \Phalcon\Cli\Task
             $union->statUser($stat_at);
             $union->statRoom($stat_at);
             $union->statUserHiCoins($stat_at);
+        }
+    }
+
+    //每天刷新一次
+    function updateUnionIntegralsAction()
+    {
+        $user_db = \Users::getUserDb();
+        $room_db = \Rooms::getRoomDb();
+        $month_start = date('Ymd', beginOfMonth());
+        $month_end = date('Ymd', endOfMonth());
+        $unions = \Unions::find(['conditions' => 'status=' . STATUS_ON]);
+
+        foreach ($unions as $union) {
+            $key = 'union_room_month_amount_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
+            $union_month_integrals_key = 'union_room_month_integrals_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
+
+            //累计的之前的分数
+            $total_host_broadcaster_time_key = 'union_room_month_time_integrals_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
+            $month_integrals = $user_db->zscore($union_month_integrals_key, $union->id);
+
+            $room_ids = $user_db->zrange($key, 0, -1);
+            $rooms = \Rooms::findByIds($room_ids);
+
+            info($key, $room_ids);
+            $total_amount = 0;
+
+            foreach ($rooms as $room) {
+                $room->amount = $user_db->zscore($key, $room->id);
+                $total_amount += $room->amount;
+
+                $room_db->zincrby($union_month_integrals_key, intval($total_amount / 10000), $union->id);
+
+                $total_host_broadcaster_time = $room->getDayUserTime('host_broadcaster', date("Ymd", strtotime('-1 day')));
+                if ($total_host_broadcaster_time >= 60 * 60 * 2) {
+                    //房主在线时长积分
+                    $room_db->zincrby($total_host_broadcaster_time_key, 1, $union->id);
+                    //当月积分
+                    $room_db->zincrby($union_month_integrals_key, 1, $union->id);
+                }
+            }
+
+            $current_month_integrals = $room_db->zscore($union_month_integrals_key, $union->id);
+            $union->total_integrals = $union->total_integrals - $month_integrals + $current_month_integrals;
+
+            $union->update();
+            info('家族总积分', $union->total_integrals, '今日新增', $current_month_integrals - $month_integrals, '房主在线时长积分', $room_db->zscore($total_host_broadcaster_time_key, $union->id));
+        }
+    }
+
+    //每月刷新一次
+    function updateUnionLevelAction()
+    {
+        $db = \Rooms::getRoomDb();
+        $month_start = date('Ymd', beginOfMonth(time() - 86400));
+        $month_end = date('Ymd', endOfMonth(time() - 86400));
+
+        $grading_scores = [0, 150, 300, 500, 1000, 1500, 2000];     //保级积分
+
+        $unions = \Unions::find(['conditions' => 'status=' . STATUS_ON]);
+
+        foreach ($unions as $union) {
+            $key = 'union_room_month_time_integrals_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
+            $current_month_integrals = $db->zscore($key, $union->id);
+            //先确保达到保级积分
+            info('当月积分', $current_month_integrals, '当前等级', $union->union_level);
+            if ($current_month_integrals >= $grading_scores[intval($union->union_level)]) {
+                $union->union_level = $this->getUnionLevel($union->total_integrals);
+                $union->update();
+            } else {
+                if (!$union->union_level) {
+                    $union->union_level -= 1;
+                    $union->update();
+                }
+            }
+        }
+    }
+
+    function getUnionLevel($total_integrals)
+    {
+        switch (true) {
+            case $total_integrals >= 200 && $total_integrals <= 500:
+                $union_level = 1;
+                break;
+            case $total_integrals > 500 && $total_integrals <= 1000:
+                $union_level = 2;
+                break;
+            case $total_integrals > 1000 && $total_integrals <= 2000:
+                $union_level = 3;
+                break;
+            case $total_integrals > 2000 && $total_integrals <= 5000:
+                $union_level = 4;
+                break;
+            case $total_integrals > 5000 && $total_integrals <= 10000:
+                $union_level = 5;
+                break;
+            case $total_integrals > 10000:
+                $union_level = 6;
+                break;
+            default:
+                $union_level = 0;
+                break;
+        }
+
+        return $union_level;
+
+    }
+
+    function repairUnionLevelAction($opts)
+    {
+        $user_db = \Users::getUserDb();
+        $room_db = \Rooms::getRoomDb();
+        $stat_at = strtotime($opts[0]);
+        $month_start = date('Ymd', beginOfMonth($stat_at));
+        $month_end = date('Ymd', endOfMonth($stat_at));
+        $unions = \Unions::find(['conditions' => 'status=' . STATUS_ON]);
+        $grading_scores = [0, 150, 300, 500, 1000, 1500, 2000];     //保级积分
+
+        foreach ($unions as $union) {
+            $key = 'union_room_month_amount_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
+            $union_month_integrals_key = 'union_room_month_integrals_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
+
+            //累计的之前的分数
+            $total_host_broadcaster_time_key = 'union_room_month_time_integrals_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
+            $month_integrals = $user_db->zscore($union_month_integrals_key, $union->id);
+
+            $room_ids = $user_db->zrange($key, 0, -1);
+            $rooms = \Rooms::findByIds($room_ids);
+
+            info($key, $room_ids);
+            $total_amount = 0;
+
+            foreach ($rooms as $room) {
+                $room->amount = $user_db->zscore($key, $room->id);
+                $total_amount += $room->amount;
+
+                $room_db->zincrby($union_month_integrals_key, intval($total_amount / 10000), $union->id);
+                for ($date = $month_start; $date <= $month_end; $date += 86400) {
+                    $total_host_broadcaster_time = $room->getDayUserTime('host_broadcaster', date("Ymd", $date));
+                    if ($total_host_broadcaster_time >= 60 * 60 * 2) {
+                        //房主在线时长积分
+                        $room_db->zincrby($total_host_broadcaster_time_key, 1, $union->id);
+                        //当月积分
+                        $room_db->zincrby($union_month_integrals_key, 1, $union->id);
+                    }
+                }
+            }
+
+            $current_month_integrals = $room_db->zscore($union_month_integrals_key, $union->id);
+            $union->total_integrals = $union->total_integrals - $month_integrals + $current_month_integrals;
+
+            $union->update();
+            info('家族总积分', $union->total_integrals, '今日新增', $current_month_integrals - $month_integrals, '房主在线时长积分', $room_db->zscore($total_host_broadcaster_time_key, $union->id));
+
+            if ($current_month_integrals >= $grading_scores[intval($union->union_level)]) {
+                $union->union_level = $this->getUnionLevel($union->total_integrals);
+                $union->update();
+            } else {
+                if (!$union->union_level) {
+                    $union->union_level -= 1;
+                    $union->update();
+                }
+            }
         }
     }
 }

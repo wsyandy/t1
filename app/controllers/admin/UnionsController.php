@@ -450,7 +450,7 @@ class UnionsController extends BaseController
             $is_room_db = true;
             $user_db = \Rooms::getRoomDb();
         }
-        
+
         if (!$start_at_time && !$end_at_time) {
             $key = 'union_user_total_wealth_rank_list_union_id_' . $union->id;
             $charm_key = 'union_user_total_charm_rank_list_union_id_' . $union->id;
@@ -568,4 +568,25 @@ class UnionsController extends BaseController
     {
 
     }
+
+    function updateIntegralsAction()
+    {
+        $id = $this->params('id');
+        $union = \Unions::findFirstById($id);
+
+        if ($this->request->isPost()) {
+            $integrals = intval($this->params('integrals', 0));
+
+            $union->current_month_integrals = $union->current_month_integrals + $integrals;
+            $union->total_integrals = $union->total_integrals + $integrals;
+            if ($union->update()) {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '操作成功', ['union' => $union->toJson()]);
+            }
+
+            return $this->renderJSON(ERROR_CODE_FAIL, '操作失败');
+        }
+
+        $this->view->id = $id;
+    }
+
 }

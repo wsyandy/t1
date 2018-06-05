@@ -36,6 +36,9 @@
     {% if isAllowed('unions','edit') %}
         <a href="/admin/unions/edit/{{ union.id }}" class="modal_action">编辑</a><br/>
     {% endif %}
+    {% if isAllowed('unions','update_integrals') %}
+        <a href="/admin/unions/update_integrals?id={{ union.id }}" class="modal_action">家族积分</a><br/>
+    {% endif %}
 {% endmacro %}
 
 {% macro avatar_img(union) %}
@@ -52,6 +55,8 @@
     声望：{{ union.fame_value }} 成员数：{{ union.user_num }}<br/>
     推荐：{{ union.recommend_text }} 设置：{{ union.need_apply_text }} <br/>
     公告：{{ union.notice }}<br/>
+    家族等级：{{ union.union_level }}<br/>
+    总积分：{{ union.total_integrals }}<br/>
 {% endmacro %}
 
 {{ simple_table(unions, ['ID': 'id','uid': 'uid',"头像":"avatar_img",'家族名称': 'name','族长': 'user_link','家族信息':'family_info',

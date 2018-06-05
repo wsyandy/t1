@@ -1,0 +1,1 @@
+alter table unions drop column current_month_integrals;

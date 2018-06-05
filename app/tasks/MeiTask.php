@@ -49,8 +49,12 @@ EOF;
         }
     }
 
-    function clearGiftOrderAction()
+    function getTotalFeedsAction()
     {
-
+        $feeds = Feeds::findTotalFeeds(1, 10);
+        echoLine($feeds);
+        foreach ($feeds as $feed) {
+            echoLine($feed);
+        }
     }
 }

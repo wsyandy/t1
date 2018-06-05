@@ -84,7 +84,7 @@ class DrawHistoriesController extends BaseController
         $res['draw_histories'] = array_merge($wan10_res['draw_histories'], $res['draw_histories']);
 
         shuffle($res['draw_histories']);
-
+        $this->view->current_user = $this->currentUser();
         $this->view->draw_histories = json_encode($res['draw_histories'], JSON_UNESCAPED_UNICODE);
     }
 
@@ -149,7 +149,7 @@ class DrawHistoriesController extends BaseController
             }
         }
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['draw_histories' => $draw_histories]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['draw_histories' => $draw_histories, 'free_draw_num' => $this->currentUser()->draw_num]);
     }
 
     // 我的奖品
