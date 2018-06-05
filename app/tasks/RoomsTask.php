@@ -8,7 +8,8 @@
  */
 class RoomsTask extends \Phalcon\Cli\Task
 {
-    //检查用户是否在房间
+
+    // 检查不活跃的在线房间
     function checkUserRoomAction()
     {
 
@@ -44,14 +45,14 @@ class RoomsTask extends \Phalcon\Cli\Task
 
     }
 
-    function checkUserRoom2Action()
+    // 检查协议房间
+    function checkAddAgreementRoomsAction()
     {
 
-        $cond = ['conditions' => 'status = :status: and last_at<:last_at:',
-            'bind' => ['status' => STATUS_ON, 'last_at' => time()]];
+        $cond = ['conditions' => 'user_agreement_num>:user_agreement_num: and last_at<:last_at:',
+            'bind' => ['user_agreement_num' => 1, 'last_at' => time() - 600]];
 
-        $rooms = Rooms::findForeach($cond);
-        $hot_cache = Rooms::getHotWriteCache();
+        $rooms = Rooms::findPagination($cond, 1, 100);
 
         foreach ($rooms as $room) {
 
@@ -59,232 +60,19 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            $key = $room->getUserListKey();
-            $user_ids = $hot_cache->zrange($key, 0, -1);
-            if (count($user_ids) < 1) {
+            $user_num = $room->getRealUserNum();
+            if ($user_num > 1) {
+                continue;
+            }
+
+            if ($user_num < 1 && $room->status != STATUS_OFF) {
                 $room->status = STATUS_OFF;
                 $room->save();
-                info('no user', $room->id, 'online_status_text', $room->online_status_text, date('c', $room->last_at));
-                continue;
             }
 
-            $users = Users::findByIds($user_ids);
-            foreach ($users as $user) {
+            \Rooms::deleteUserAgreement($room->id);
 
-                if ((time() - $room->last_at) > 3600 * 12) {
-                    $room->exitRoom($user, true);
-                    info("room_last_at", $room->id, 'user', $user->id, 'last_at', date("YmdH", $room->last_at));
-                    continue;
-                }
-
-                if ($user->isSilent()) {
-                    continue;
-                }
-
-                // 用户已不再房间里或者状态不正常
-                if ($user->current_room_id != $room->id || !$user->isNormal() || (time() - $user->last_at) > 3600 * 12) {
-
-                    $current_room_id = $user->current_room_id;
-                    $current_room_seat_id = $user->current_room_seat_id;
-                    info('fix room', $room->id, 'user', $user->id, 'current_room_id', $user->current_room_id, $current_room_seat_id, 'last_at', date("YmdH", $user->last_at));
-
-                    $room->exitRoom($user, true);
-                    if ($current_room_id == $room->id) {
-                        ////$room->pushExitRoomMessage($user, $current_room_seat_id);
-                    }
-                }
-
-
-                //检测麦位状态
-                $room_seats = RoomSeats::findByUserId($user->id);
-                foreach ($room_seats as $room_seat) {
-                    // 房间和麦位匹配
-                    if ($room_seat->room_id == $user->current_room_id && $room_seat->id == $user->current_room_seat_id) {
-                        continue;
-                    }
-
-                    $room_seat->user_id = 0;
-                    $room_seat->save();
-                    info('fix room_seat', $room_seat->id, 'user', $user->id, $user->current_room_seat_id);
-                }
-
-
-                if ($user->current_room_seat_id) {
-                    $current_room_seat = $user->current_room_seat;
-                    if ($current_room_seat->user_id != $user->id) {
-                        info('fix current_room_seat', $current_room_seat->id, 'user', $user->id, $user->current_room_seat_id);
-                        $user->current_room_seat_id = 0;
-                        $user->save();
-                    }
-                }
-            }
-        }
-    }
-
-    function checkAbnormalExitRoomAction()
-    {
-
-        $target_ids = Rooms::getAbnormalExitRoomList();
-        $total = count($target_ids);
-        if ($total < 1) {
-            info("no users", $target_ids);
-            return;
-        }
-
-        info($total);
-
-        foreach ($target_ids as $target_id) {
-
-            list($room_id, $user_id) = explode("_", $target_id);
-            if (!$room_id || !$user_id) {
-                continue;
-            }
-
-            $user = Users::findFirstById($user_id);
-            $room = Rooms::findFirstById($room_id);
-
-            $current_room_id = $user->current_room_id;
-            $current_room_seat_id = $user->current_room_seat_id;
-            $need_push = false;
-
-            if ($current_room_id != $room->id || !$user->isNormal()) {
-                Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
-                $room->exitRoom($user, true);
-                $need_push = true;
-                info('room_is_change', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdH", $user->last_at));
-            } else {
-
-                $time = time() - 15 * 60;
-
-                if ($user->last_at <= $time) {
-
-                    $user_fd = $user->getUserFd();
-                    if ($user_fd) {
-                        info($user->id, 'user_fd', $user_fd, 'room_id', $room->id, 'current_room_id', $current_room_id, 'last_at', date("YmdH", $user->last_at));
-                        continue;
-                    }
-
-                    info('fix room', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdHis", $user->last_at));
-
-                    $need_push = true;
-                    Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
-                    $room->exitRoom($user, true);
-                }
-            }
-
-            if ($current_room_id == $room->id && $need_push) {
-                ////$room->pushExitRoomMessage($user, $current_room_seat_id);
-            }
-
-            //检测麦位状态
-            $room_seats = RoomSeats::findByUserId($user->id);
-
-            foreach ($room_seats as $room_seat) {
-                // 房间和麦位匹配
-                if ($room_seat->room_id == $user->current_room_id && $room_seat->id == $user->current_room_seat_id) {
-                    continue;
-                }
-
-                $room_seat->user_id = 0;
-                $room_seat->save();
-                info('fix room_seat', $room_seat->id, 'user', $user->id, $user->current_room_seat_id);
-            }
-
-
-            if ($user->current_room_seat_id) {
-                $current_room_seat = $user->current_room_seat;
-                if ($current_room_seat->user_id != $user->id) {
-                    info('fix current_room_seat', $current_room_seat->id, 'user', $user->id, $user->current_room_seat_id);
-                    $user->current_room_seat_id = 0;
-                    $user->save();
-                }
-            }
-        }
-    }
-
-    function checkExceExitRooms2Action()
-    {
-
-        $hot_cache = Rooms::getHotReadCache();
-        $end_at = time() - 60;
-        $target_ids = $hot_cache->zrangebyscore(Rooms::generateAbnormalExitRoomListKey(), $end_at - 36000, $end_at, array('limit' => array(0, 10000)));
-        $total = count($target_ids);
-        if ($total < 1) {
-            info("no users", $target_ids);
-            return;
-        }
-
-        info('count', $total);
-
-        foreach ($target_ids as $target_id) {
-
-            list($room_id, $user_id) = explode("_", $target_id);
-            if (!$room_id || !$user_id) {
-                info('no ', $room_id, $user_id);
-                Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
-                continue;
-            }
-
-            $user = Users::findFirstById($user_id);
-            $room = Rooms::findFirstById($room_id);
-            if (!$user || !$room || $user->id == $room->user_id) {
-                info('no_obj or 房主', $room_id, $user_id);
-                Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
-                continue;
-            }
-
-            $current_room_id = $user->current_room_id;
-            $current_room_seat_id = $user->current_room_seat_id;
-
-            // 不在房间 或 在其他房间
-            if (!$current_room_id || $current_room_id != $room->id) {
-                // 声网检测
-                if (!AgoraApi::exitChannel($user, $room)) {
-                    info('在其他房间 退出声网失败 room_is_change', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdHis", $user->last_at));
-                    continue;
-                }
-
-                Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
-                $room->exitRoom($user);
-                info('在其他房间 room_is_change', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdHis", $user->last_at));
-                continue;
-            }
-
-            // 在原来房间
-
-            list($in_channel, $user_role) = AgoraApi::inChannel($user, $room);
-
-            // 不在频道
-            if (!$in_channel) {
-                info('不在频道 退出房间', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdHis", $user->last_at));
-                Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
-                $room->exitRoom($user);
-                continue;
-            }
-
-            // 在频道，角色错误
-            if ($in_channel && $user_role == USER_ROLE_BROADCASTER && $user->id != $room->user_id && $current_room_seat_id < 1) {
-                AgoraApi::kickingRule($user, $room, 1);
-                Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
-                $room->exitRoom($user);
-                info('角色错误 退出房间', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdHis", $user->last_at));
-                continue;
-            }
-
-            $user_fd = $user->getUserFd();
-            if (!$user_fd) {
-
-                info('fd未连接 退出房间', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdHis", $user->last_at));
-
-                Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
-                $room->exitRoom($user);
-                AgoraApi::kickingRule($user, $room, 1);
-                continue;
-            }
-
-            info('fd已连接', $user->id, 'user_fd', $user_fd, 'room_id', $room->id, 'current_room_id', $current_room_id, 'last_at', date("YmdHis", $user->last_at));
-            Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
-
+            info('清除协议', $room->id, $room->user_id, 'user_num', $user_num);
         }
     }
 
