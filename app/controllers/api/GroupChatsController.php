@@ -386,10 +386,14 @@ class GroupChatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
+        if(!$group_chat->isGroupMember($this->currentUserId())){
+            return $this->renderJSON(ERROR_CODE_FAIL, '用户不在群内');
+        }
+
         $user = $this->currentUser();
         $user->user_chat = $group_chat->canChat($user->id);
         $user_json = $user->toGroupChatJson();
-        $res = $group_chat->toDataJson();
+        $res['group_chat'] = $group_chat->toDataJson();
         $res['user'] = $user_json;
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
