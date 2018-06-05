@@ -121,6 +121,7 @@ class GroupChatsController extends BaseController
         }
 
         if ($group_chat->join_type == 'all') {
+            $group_chat->addMyGroups($this->currentUserId(),$group_chat_id);
             $group_chat->joinGroupChat($this->currentUserId());
             $res['user'] = $this->currentUser()->toGroupChatJson();
             $res['user_chat'] = $group_chat->canChat($this->currentUserId());
@@ -152,6 +153,7 @@ class GroupChatsController extends BaseController
 
 
         $group_chat->kickGroupChat($user_id);
+        $group_chat->remMyGroup($user_id,$group_chat_id);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '退出成功');
     }
@@ -172,6 +174,7 @@ class GroupChatsController extends BaseController
         }
 
         $group_chat->joinGroupChat($user_id);
+        $group_chat->addMyGroups($user_id,$group_chat_id);
 
         $user = \Users::findFirstById($user_id);
         $user->user_chat = $group_chat->canChat($user_id);
@@ -377,7 +380,7 @@ class GroupChatsController extends BaseController
     }
 
     //用户进入群聊
-    function entranceGroupChatAction()
+    function entranceAction()
     {
         $group_chat_id = $this->params('id');
         $group_chat = \GroupChats::findFirstById($group_chat_id);
@@ -470,6 +473,17 @@ class GroupChatsController extends BaseController
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '发送成功');
+    }
+
+    //我的群聊
+    function myGroupChatsAction()
+    {
+        $group_chat = new \GroupChats();
+        $group_chat_ids = $group_chat->getMyGroupIds($this->currentUserId());
+
+        $group_chats = \GroupChats::findByIds($group_chat_ids);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $group_chats->toJson('group_chats', 'toDataJson'));
     }
 
 

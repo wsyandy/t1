@@ -35,8 +35,8 @@ class GroupChats extends BaseModel
             'uid'=>$this->uid,
             'status'=>$this->status,
             'join_type'=>$this->join_type,
-            'created_at'=>$this->created_at_text,
-            'last_at'=>$this->last_at_text,
+            'created_at_text'=>$this->created_at_text,
+            'last_at_text'=>$this->last_at_text,
             'chat'=>$this->chat,
         ];
     }
@@ -288,6 +288,26 @@ class GroupChats extends BaseModel
         }
 
         return true;
+    }
+
+    //我的群聊
+    function addMyGroups($user_id,$group_chat_id)
+    {
+        $msg_db = self::getGroupChatsDb();
+        $msg_db->zadd("group_chats_my_groups_".$user_id,time(),$group_chat_id);
+    }
+    function getMyGroupIds($user_id)
+    {
+        $msg_db = self::getGroupChatsDb();
+        $group_chat_ids = $msg_db->zrange("group_chats_my_groups_".$user_id,0,-1);
+
+        return $group_chat_ids;
+    }
+    function remMyGroup($user_id,$group_chat_id)
+    {
+        $msg_db = self::getGroupChatsDb();
+        $msg_db->zrem("group_chats_my_groups)".$user_id, $group_chat_id);
+
     }
 
 
