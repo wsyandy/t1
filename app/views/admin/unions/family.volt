@@ -56,7 +56,6 @@
     推荐：{{ union.recommend_text }} 设置：{{ union.need_apply_text }} <br/>
     公告：{{ union.notice }}<br/>
     家族等级：{{ union.union_level }}<br/>
-    本月积分：{{ union.current_month_integrals }}<br/>
     总积分：{{ union.total_integrals }}<br/>
 {% endmacro %}
 

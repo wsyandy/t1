@@ -37,7 +37,7 @@
                     <img src="/m/images/dengji_five.png" alt="">
                     <span>五星级</span>
                 </td>
-                <td>5001</td>
+                <td>5001-10000</td>
                 <td>1500</td>
             </tr>
 
@@ -46,7 +46,7 @@
                     <img src="/m/images/dengji_four.png" alt="">
                     <span>四星级</span>
                 </td>
-                <td>2001</td>
+                <td>2001-5000</td>
                 <td>1000</td>
             </tr>
             <tr>
@@ -54,7 +54,7 @@
                     <img src="/m/images/dengji_three.png" alt="">
                     <span>三星级</span>
                 </td>
-                <td>1001</td>
+                <td>1001-2001</td>
                 <td>500</td>
             </tr>
             <tr>
@@ -62,7 +62,7 @@
                     <img src="/m/images/dengji_two.png" alt="">
                     <span>二星级</span>
                 </td>
-                <td>501</td>
+                <td>501-1000</td>
                 <td>300</td>
             </tr>
             <tr>
@@ -70,7 +70,7 @@
                     <img src="/m/images/dengji_one.png" alt="">
                     <span>一星级</span>
                 </td>
-                <td>200</td>
+                <td>200-500</td>
                 <td>150</td>
             </tr>
         </table>
