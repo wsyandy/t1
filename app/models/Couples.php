@@ -333,6 +333,29 @@ class Couples extends BaseModel
         return $all_users;
     }
 
+    //api周榜
+    static function findCpRankListByKeyForClient($key, $page, $per_page)
+    {
+        $db = \Users::getUserDb();
+
+        $offset = $per_page * ($page - 1);
+        $res = $db->zrevrange($key, $offset, $offset + $per_page - 1, 'withscores');
+
+        $all_users = [];
+        $index = 0;
+        foreach ($res as $ids_str => $score) {
+            $ids = explode('_', $ids_str);
+            $users = \Users::findByIds($ids);
+            if (isPresent($users)) {
+                $all_users[$index]['sponsor'] = $users[0]->toRankListJson();
+                $all_users[$index]['pursuer'] = $users[1]->toRankListJson();
+                $all_users[$index]['score'] = $score;
+                $index++;
+            }
+        }
+        return $all_users;
+    }
+
     //清空双方cp信息
     static function clearCoupleInfo($sponsor_id, $pursuer_id)
     {

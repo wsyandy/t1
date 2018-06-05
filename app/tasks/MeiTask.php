@@ -56,5 +56,8 @@ EOF;
         foreach ($feeds as $feed) {
             echoLine($feed);
         }
+
+        $user = Users::findFirstById(1109095);
+        echoLine($user->getUserFd(), $user->current_room_signal_status);
     }
 }
