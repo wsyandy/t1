@@ -41,6 +41,13 @@ class PayController extends ApplicationController
             'bind' => ['product_group_id' => $product_group->id, 'status' => STATUS_ON],
             'order' => 'amount asc']);
 
+        if (isDevelopmentEnv()) {
+            $products = \Products::find([
+                'conditions' => 'product_group_id = :product_group_id: and status = :status: and (apple_product_no="" or apple_product_no is null)',
+                'bind' => ['product_group_id' => $product_group->id, 'status' => STATUS_ON],
+                'order' => 'amount asc']);
+        }
+
         $payment_channel_ids = \PaymentChannelProductChannels::findPaymentChannelIdsByProductChannelId($product_channel->id);
         $payment_channels = \PaymentChannels::findByIds($payment_channel_ids);
         $selected_payment_channels = [];
