@@ -37,6 +37,8 @@
            voice_file_url string 语音地址
            content string 内容
            like_users_num int 点赞人数
+           dislike_users_num int 踩雷人数
+           age 用户年龄
            comment_users_num int 评论人数
            user_id int 动态用户id
            feed_images:[
@@ -153,6 +155,8 @@
     voice_file_url string 语音地址
     content string 内容
     like_users_num int 点赞人数
+    dislike_users_num int 踩雷人数
+    age 用户年龄
     comment_users_num int 评论人数
     user_id int 动态用户id
     feed_images:[
