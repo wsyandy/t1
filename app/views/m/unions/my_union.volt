@@ -11,10 +11,10 @@
                 <div class="family_name">
                     <div class="family_level">
                         <span>{{ union.name }}</span>
-                        <img class="ico_level" src="{{ union_level_images[union.union_level] }}" alt=""
-                             @click="levelHelp()">
-                        <a class="level_tip"
-                           href="/m/unions/union_level_detail?sid={{ sid }}&code={{ code }}&union_id={{ union.id }}">点击了解等级</a>
+                            <img class="ico_level" src="{{ union_level_images[union.union_level] }}" alt=""
+                                 @click="levelHelp()" v-if="union.union_level>0 || is_show_zero">
+                            <a class="level_tip"
+                               href="/m/unions/union_level_detail?sid={{ sid }}&code={{ code }}&union_id={{ union.id }}"  v-if="union.union_level>0 || is_show_zero">点击了解等级</a>
                     </div>
                     <span class="family_id">家族ID:{{ union.uid }} </span>
                 </div>
@@ -187,6 +187,7 @@
 <script>
     var opts = {
         data: {
+            is_show_zero:"{{ is_show_zero }}",
             union: {{ union }},
             president: {{ president }},
             user: {{ user }},

@@ -148,8 +148,10 @@ class UnionsController extends BaseController
         $this->view->union = $union;
         if ($union && $union->id == $user->union_id) {
             $this->view->title = "我的家族";
+            $this->view->is_show_zero = true;
         } else {
             $this->view->title = $union->name;
+            $this->view->is_show_zero = false;
         }
         $this->view->sid = $sid;
         $this->view->code = $code;

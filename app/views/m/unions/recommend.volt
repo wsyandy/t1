@@ -21,7 +21,9 @@
                     </div>
                     <img class="family_avatar" :src="item.avatar_small_url" alt="">
                     <div class="family_info">
-                        <span class="family_name"> ${ item.name }  <img class="ico_level" :src="union_level_images[item.union_level]" alt=""></span>
+                        <span class="family_name"> ${ item.name }  <img class="ico_level"
+                                                                        :src="union_level_images[item.union_level]"
+                                                                        alt="" v-if="item.union_level>0"></span>
 
                         <div class="family_prestige">
                             <span>声望${ item.fame_value }</span>
