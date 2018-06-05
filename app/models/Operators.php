@@ -7,7 +7,7 @@ class Operators extends BaseModel
     static $STATUS = [OPERATOR_STATUS_NORMAL => '正常', OPERATOR_STATUS_BLOCKED => '禁用'];
     static $ROLE = [
         'admin' => '管理员', 'customer' => '客服', 'tester' => '测试', 'editor' => '编辑',
-        'producter' => '产品经理',
+        'customer_manager' => '客服经理', 'producter' => '产品经理',
         'product_operator' => '产品运营专员', 'product_operator_assistant' => '产品运营助理',
         'product_activity_operator' => '产品活动运营专员',
         'operat_manager' => '推广运营经理', 'operator' => '推广运营专员'
