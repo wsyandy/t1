@@ -50,7 +50,7 @@ class RoomsTask extends \Phalcon\Cli\Task
     {
 
         $cond = ['conditions' => 'user_agreement_num>:user_agreement_num: and last_at<:last_at:',
-            'bind' => ['user_agreement_num' => 1, 'last_at' => time() - 600]];
+            'bind' => ['user_agreement_num' => 1, 'last_at' => time() - 300]];
 
         $rooms = Rooms::findPagination($cond, 1, 100);
 
