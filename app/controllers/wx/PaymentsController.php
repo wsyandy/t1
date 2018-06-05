@@ -29,7 +29,13 @@ class PaymentsController extends BaseController
             if (!$payment_channel->isValid()) {
                 continue;
             }
-            if ($payment_channel->payment_type == 'weixin_js') {
+            $pay_type = 'weixin_js';
+
+            if (isDevelopmentEnv()) {
+                $pay_type = 'weixin_h5';
+            }
+
+            if ($payment_channel->payment_type == $pay_type) {
                 $selected_payment_channel = $payment_channel;
                 break;
             }
